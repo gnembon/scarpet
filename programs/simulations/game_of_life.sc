@@ -16,17 +16,17 @@ $   );
 $   if ( opacity(block(filler_block)) != 0,
 $       print('Warning: You have selected a block '+filler_block+' that is not 100% transparent.\nThis may cause massive lag.')
 $   );
-$	radius = floor(size/2);
+$   radius = floor(size/2);
 $   global_gol_location= l(center_x, center_y, center_z);
 $   global_gol_radius = radius;
-$	global_gol_tick = tick_interval;
-$	global_gol_block = block(filler_block);
+$   global_gol_tick = tick_interval;
+$   global_gol_block = block(filler_block);
 $   scan(center_x, center_y, center_z, radius+1, 3*radius+3, radius+1, radius+1, radius+1, radius+1, set(_, block('air')));
 $   scan(center_x, center_y-radius-2, center_z, radius+1, 2*radius+2, radius+1, radius+1, 0, radius+1, set(_,'white_concrete'));   
 $   scan(center_x, center_y-radius-1, center_z, radius+1, 0, radius+1, set(_,'black_concrete'));
 $   scan(center_x, center_y-radius-1, center_z, radius  , 0, radius  , set(_,'air'));
 $   for( l(l(-1,-1),l(-1,1),l(1,-1),l(1,1)),
-$		l(dx, dz) = _;
+$       l(dx, dz) = _;
 $       scan(center_x+dx*(radius+1),center_y+radius+1,center_z+dz*(radius+1), 
 $            0,2*radius+1,0, 0,0,0,
 $            set(_, block('end_rod[facing=up]')));
@@ -36,7 +36,7 @@ $              set(_, block('end_rod[facing='+if(dx<0,'east','west')+']')));
 $       volume(center_x+dx*(radius+1),center_y+radius+1,center_z+dz*(radius+1), 
 $              center_x+dx*(radius+1),center_y+radius+1,center_z,
 $              set(_, block('end_rod[facing='+if(dz<0,'south','north')+']')));
-$		set(center_x+dx*(radius+1),center_y+radius+1,center_z+dz*(radius+1),block('conduit[waterlogged=false]'));
+$       set(center_x+dx*(radius+1),center_y+radius+1,center_z+dz*(radius+1),block('conduit[waterlogged=false]'));
 $       set(center_x              ,center_y+radius+1,center_z+dz*(radius+1),block('conduit[waterlogged=false]'));
 $       set(center_x+dx*(radius+1),center_y+radius+1,center_z              ,block('conduit[waterlogged=false]'))
 $   )
@@ -45,16 +45,16 @@ $ gol_tick() -> (
 $	if(!(global_gol_radius>0), exit('Game of Life arena not initialized'));
 $	if ( not(global_gol_tick > 1) || tick_time()%global_gol_tick == 0,
 $       l(cx, cy, cz) = global_gol_location;
-$		offset = 2*global_gol_radius+3;
+$       offset = 2*global_gol_radius+3;
 $       scan(cx, cy, cz, global_gol_radius, global_gol_radius, global_gol_radius,
 $           nb = for(neighbours(_),_==global_gol_block);
 $           set(_x, _y-offset,_z,  if(nb==3, global_gol_block, nb==2, _, block('air')) )
 $       );
-$		scan(cx, cy-offset, cz, global_gol_radius, global_gol_radius, global_gol_radius, 
+$       scan(cx, cy-offset, cz, global_gol_radius, global_gol_radius, global_gol_radius, 
 $           if(_!=block(_x,_y+offset,_z), set(_x,_y+offset,_z,_))
 $       )
 $   )
-$) 
+$)
 
 
 
