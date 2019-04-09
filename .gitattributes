@@ -1,1 +1,2 @@
 * linguist-vendored
+*.sc linguist-language=Lisp
