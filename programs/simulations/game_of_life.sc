@@ -55,9 +55,3 @@ $           if(_!=block(_x,_y+offset,_z), set(_x,_y+offset,_z,_))
 $       )
 $   )
 $)
-
-
-
-
-
-
