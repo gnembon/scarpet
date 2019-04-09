@@ -54,7 +54,7 @@ $		scan(cx, cy-offset, cz, global_gol_radius, global_gol_radius, global_gol_radi
 $           if(_!=block(_x,_y+offset,_z), set(_x,_y+offset,_z,_))
 $       )
 $   )
-$)
+$) 
 
 
 
