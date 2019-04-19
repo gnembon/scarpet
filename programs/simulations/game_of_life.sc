@@ -41,7 +41,8 @@ $       set(center_x              ,center_y+radius+1,center_z+dz*(radius+1),bloc
 $       set(center_x+dx*(radius+1),center_y+radius+1,center_z              ,block('conduit[waterlogged=false]'))
 $   )
 $);
-$ gol_tick() -> (
+$
+$ _gol_tick() -> (
 $	if(!(global_gol_radius>0), exit('Game of Life arena not initialized'));
 $	if ( not(global_gol_tick > 1) || tick_time()%global_gol_tick == 0,
 $       l(cx, cy, cz) = global_gol_location;

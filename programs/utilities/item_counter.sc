@@ -30,7 +30,7 @@ $ counter_start(x, y, z, dx, dy, dz) -> (
 $    counter_remove();
 $    global_counter_area = l(x, y, z, dx, dy, dz);
 $    global_counter_tickstart = tick_time();
-$    particle_rect('dust 0.1 0.8 0.1 2',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
+$    particle_rect('dust 0.1 0.8 0.1 1',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
 $    str('Counter started around %d %d %d', x, y, z)
 $ );	
 $
@@ -40,7 +40,7 @@ $    if(!global_counter_area, exit('Counter hasn\'t been setup yet, call counter
 $    for(vars('global_counter_item_'), undef(_) );
 $    global_counter_tickstart = tick_time();
 $    l(x, y, z, dx, dy, dz) = global_counter_area;
-$    particle_rect('dust 0.8 0.1 0.1 2',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
+$    particle_rect('dust 0.8 0.1 0.1 1',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
 $    str('Counter reset around %d %d %d', x, y, z)
 $ );
 $
@@ -51,7 +51,7 @@ $ 'to list drop and drop rates => /script invoke counter';
 $ counter() -> (
 $    if(!global_counter_area, exit('Counter hasn\'t been setup yet, call counter_start'));
 $    l(x, y, z, dx, dy, dz) = global_counter_area;
-$    particle_rect('dust 0.8 0.8 0.1 2',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
+$    particle_rect('dust 0.8 0.8 0.1 1',x-dx,y-dy,z-dz,x+dx,y+dy,z+dz,0.1);
 $    current_counts = map(vars('global_counter_item_'), l(_ - 'global_counter_item_', var(_)));
 $    duration = (tick_time()-global_counter_tickstart)/(20*60*60);
 $    if (!current_counts || !duration, exit('No items has been counted yet'));
