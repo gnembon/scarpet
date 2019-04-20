@@ -1,8 +1,9 @@
 /script run 
-$ 'Handy function to check enchantment level on a tool';
 $ 'Sample tool return value with /script run p~\'holds\':';
-$ '[golden_pickaxe, 1, {id:"minecraft:golden_pickaxe",Count:1b,tag:{Enchantments:[{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]';
+$ '[golden_pickaxe, 1, {id:"minecraft:golden_pickaxe",Count:1b,tag:{Enchantments:';
+$ '  [{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]';
 $ 'call with \'_axe\' to match any pickaxe';
+$ 'Handy function to check enchantment level on a tool';
 $ __check_held_enchantment_level(entity, tool_re, enchantment) -> 
 $ (
 $   if (entity~'gamemode_id'==3, return(0));
@@ -25,7 +26,7 @@ $   if ( !(rand(5)),
 $       l(x,y,z) = pos(entity);
 $       particle('cloud', x+rand(10)-rand(10),y+rand(10)-rand(10),z+rand(10)-rand(10),level*level,2,level/3);
 $       if ( !(rand(5)),
-$           sound('item.elytra.flying', x+rand(10)-rand(10),y+rand(10)-rand(10),z+rand(10)-rand(10),rand(0.05*lvl),0.3+rand(lvl/2))
+$           sound('item.elytra.flying', x+rand(10)-rand(10),y+rand(10)-rand(10),z+rand(10)-rand(10),rand(0.05*level),0.3+rand(level/2))
 $       )
 $   )
 $ );
