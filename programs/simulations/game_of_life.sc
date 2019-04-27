@@ -42,9 +42,10 @@ $       set(center_x+dx*(radius+1),center_y+radius+1,center_z              ,bloc
 $   )
 $);
 $
-$ _gol_tick() -> (
-$	if(!(global_gol_radius>0), exit('Game of Life arena not initialized'));
-$	if ( not(global_gol_tick > 1) || tick_time()%global_gol_tick == 0,
+$ _gol_tick() -> 
+$(
+$   if(!(global_gol_radius>0), exit('Game of Life arena not initialized'));
+$   if ( not(global_gol_tick > 1) || tick_time()%global_gol_tick == 0,
 $       l(cx, cy, cz) = global_gol_location;
 $       offset = 2*global_gol_radius+3;
 $       scan(cx, cy, cz, global_gol_radius, global_gol_radius, global_gol_radius,
