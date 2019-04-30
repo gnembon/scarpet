@@ -630,8 +630,8 @@ implements java.lang.Cloneable</pre>
 
  <h3><code>loop(num,expr(_),exit(_)?)</code></h3>
  <p>Evaluates expression <code>expr</code>, <code>num</code> number of times. Optionally,
- if <code>cond</code> condition is present, stops the execution if the condition becomes true.
- Both <code>expr</code> and <code>cond</code> receive <code>_</code> system variable indicating the iteration</p>
+ if <code>exit</code> condition is present, stops the execution if the condition becomes true.
+ Both <code>expr</code> and <code>exit</code> receive <code>_</code> system variable indicating the iteration</p>
  <pre>
      loop(5, tick())  =&gt; repeat tick 5 times
      list = l(); loop(5, x = _; loop(5, list += l(x, _) ) ); list
