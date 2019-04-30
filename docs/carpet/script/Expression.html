@@ -706,8 +706,8 @@ implements java.lang.Cloneable</pre>
  Consecutive calls to <code>expr</code> can access that value to apply more values. You also need to specify
  the initial value to apply for the accumulator</p>
  <pre>
-     reduce([1,2,3,4],_+_,0)  =&gt; 10
-     reduce([1,2,3,4],_*_,1)  =&gt; 24
+     reduce([1,2,3,4],_a+_,0)  =&gt; 10
+     reduce([1,2,3,4],_a*_,1)  =&gt; 24
  </pre>
  </div></div>
 </li>
