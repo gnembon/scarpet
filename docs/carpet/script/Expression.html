@@ -554,9 +554,10 @@ implements java.lang.Cloneable</pre>
  <p>extracts a substring, or sublist (based on the type of the result of the expression under expr with starting index
  of <code>from</code>, and ending at <code>to</code> if provided, or the end, if omitted</p>
  <pre>
-     split('',foo)  =&gt; [f, o, o]
-     split('.','foo.bar')  =&gt; []
-     split('\\.','foo.bar')  =&gt; [foo, bar]
+     slice('foobar', 0, 0)  =&gt; 'f'
+     slice('foobar', 3)  =&gt; 'bar'
+     slice(range(10), 3, 5)  =&gt; [3, 4, 5]
+     slice(range(10), 5)  =&gt; [5, 6, 7, 8, 9]
  </pre>
 
 
