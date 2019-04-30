@@ -581,10 +581,10 @@ implements java.lang.Cloneable</pre>
  </pre>
 
  <h3><code>range(to), range(from, to), range(from, to, step)</code></h3>
- <p>Creates a range of numbers from <code>from</code>, no greater/larger than <code>limit</code>.
+ <p>Creates a range of numbers from <code>from</code>, no greater/larger than <code>to</code>.
  The <code>step</code> parameter dictates not only the increment size, but also direction (can be negative).
  The returned value is not a proper list, just the iterator
- but if for whatever reason you need a proper list with all items evaluated, use <code>l(range(limit))</code>.
+ but if for whatever reason you need a proper list with all items evaluated, use <code>l(range(to))</code>.
  Primarily to be used in higher order functions</p>
  <pre>
      range(10)  =&gt; [...]
