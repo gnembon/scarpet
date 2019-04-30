@@ -992,7 +992,8 @@ implements java.lang.Cloneable</pre>
  <p>returns a random number from <code>0.0</code>
  (inclusive) to <code>expr</code> (exclusive).
  In boolean context (in conditions, boolean functions, or <code>bool</code>), returns
- false if the randomly selected value is less than 0</p>
+ false if the randomly selected value is less than 1. This means that <code>rand(2)</code> returns true half
+ of the time and <code>rand(5)</code> returns true for 80% (4/5) of the time</p>
  <pre>
  map(range(10), floor(rand(10))) =&gt; [5, 8, 0, 6, 9, 3, 9, 9, 1, 8]
  map(range(10), bool(rand(2))) =&gt; [1, 1, 1, 0, 0, 1, 1, 0, 0, 0]
