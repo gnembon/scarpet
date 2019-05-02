@@ -426,8 +426,6 @@ extends java.lang.Object</pre>
  <p>Boolean function, true if a block is air.... or cave air...
  or void air.... or any other air they come up with.</p>
  <h3><code>liquid(pos)</code></h3>
- <p>Boolean function, true if the block is liquid.</p>
- <h3><code>liquid(pos)</code></h3>
  <p>Boolean function, true if the block is liquid, or liquidlogged</p>
  <h3><code>flammable(pos)</code></h3>
  <p>Boolean function, true if the block is flammable</p>
@@ -681,11 +679,7 @@ extends java.lang.Object</pre>
  <p>Triple of entity motion vector, <code>l(motion_x, motion_y, motion_z)</code></p>
  <h3><code>query(e,'motion_x'), query(e,'motion_y'), query(e,'motion_z')</code></h3>
  <p>Respective component of the motion vector</p>
- <h3><code>query(e,'name')</code></h3>
- <p>String of entity name</p>
- <h3><code>query(e,'custom_name')</code></h3>
- <p>String of entity name</p>
- <h3><code>query(e,'type')</code></h3>
+ <h3><code>query(e,'name'), query(e,'custom_name'), query(e,'type')</code></h3>
  <p>String of entity name</p>
  <pre>
  query(e,'name')  =&gt; Leatherworker
@@ -910,7 +904,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;fillAndScanCommand(int&nbsp;x,
                                   int&nbsp;y,
                                   int&nbsp;z)</pre>
-<div class="block"><h1><code>/script scan</code>, <code>/script scan</code> and <code>/script outline</code> commands</h1>
+<div class="block"><h1><code>/script scan</code>, <code>/script fill</code> and <code>/script outline</code> commands</h1>
  <div style="padding-left: 20px; border-radius: 5px 45px; border:1px solid grey;">
  <p>These commands can be used to evaluate an expression over an area of blocks. They all need to have specified
  the origin of the analyzed area (which is used as referenced (0,0,0), and two corners of an area to analyzed. If
