@@ -365,7 +365,7 @@ extends java.lang.Object</pre>
  <p>All the functions below can be used with block value, queried with coord triple, or 3-long list.
  All <code>pos</code> in the functions referenced below refer to either method of passing block position</p>
  <h3><code>set(pos, block, property?, value?, ...)</code></h3>
- <p>First part of the <code>set</code> function is either a coord triple, list of tree numbers, or other block
+ <p>First part of the <code>set</code> function is either a coord triple, list of three numbers, or other block
  with coordinates. Second part, <code>block</code> is either block value as a result of <code>block()</code> function
  string value indicating the block name, and optional <code>property - value</code> pairs for extra block properties.
  If <code>block</code> is specified only by name, then if a destination block is the same the <code>set</code> operation
@@ -421,22 +421,22 @@ extends java.lang.Object</pre>
  </pre>
 
  <h3><code>solid(pos)</code></h3>
- <p>Boolean function, true of the block is solid</p>
+ <p>Boolean function, true if the block is solid</p>
  <h3> <code>air(pos)</code></h3>
  <p>Boolean function, true if a block is air.... or cave air...
  or void air.... or any other air they come up with.</p>
  <h3><code>liquid(pos)</code></h3>
- <p>Boolean function, true of the block is liquid.</p>
+ <p>Boolean function, true if the block is liquid.</p>
  <h3><code>liquid(pos)</code></h3>
- <p>Boolean function, true of the block is liquid, or liquidlogged</p>
+ <p>Boolean function, true if the block is liquid, or liquidlogged</p>
  <h3><code>flammable(pos)</code></h3>
- <p>Boolean function, true of the block is flammable</p>
+ <p>Boolean function, true if the block is flammable</p>
  <h3><code>transparent(pos)</code></h3>
- <p>Boolean function, true of the block is transparent</p>
+ <p>Boolean function, true if the block is transparent</p>
  <h3><code>opacity(pos)</code></h3>
  <p>Numeric, returning opacity level of a block</p>
  <h3><code>blocks_daylight(pos)</code></h3>
- <p>Boolean function, true of the block blocks daylight</p>
+ <p>Boolean function, true if the block blocks daylight</p>
  <h3><code>emitted_light(pos)</code></h3>
  <p>Numeric, returning light level emitted from block</p>
  <h3><code>light(pos)</code></h3>
@@ -467,7 +467,7 @@ extends java.lang.Object</pre>
  top('ocean_floor', x, z)  =&gt; 41
  </pre>
  <h3><code>loaded(pos)</code></h3>
- <p>Boolean function, true of the block is loaded. Normally <code>scarpet</code> doesn't check if operates on
+ <p>Boolean function, true if the block is loaded. Normally <code>scarpet</code> doesn't check if it operates on
  loaded area - the game will automatically load missing blocks. We see this as advantage.
  Vanilla <code>fill/clone</code> commands only check the specified corners for loadness.</p>
  <pre>
@@ -475,9 +475,9 @@ extends java.lang.Object</pre>
  loaded(100000,100,1000000)  =&gt; 0
  </pre>
  <h3><code>loaded_ep(pos)</code></h3>
- <p>Boolean function, true of the block is loaded and entity processing, as per 1.13.2</p>
+ <p>Boolean function, true if the block is loaded and entity processing, as per 1.13.2</p>
  <h3><code>suffocates(pos)</code></h3>
- <p>Boolean function, true of the block causes suffocation.</p>
+ <p>Boolean function, true if the block causes suffocation.</p>
  <h3><code>power(pos)</code></h3>
  <p>Numeric function, returning redstone power level at position.</p>
  <h3><code>ticks_randomly(pos)</code></h3>
@@ -711,7 +711,7 @@ extends java.lang.Object</pre>
  <h3><code>query(e,'silent')</code></h3>
  <p>Boolean, True if the entity is silent.</p>
  <h3><code>query(e,'gravity')</code></h3>
- <p>Boolean, True if the entity is affected y gravity, like most entities do.</p>
+ <p>Boolean, True if the entity is affected by gravity, like most entities do.</p>
  <h3><code>query(e,'immune_to_fire')</code></h3>
  <p>Boolean, True if the entity is immune to fire.</p>
  <h3><code>query(e,'dimension')</code></h3>
@@ -727,7 +727,7 @@ extends java.lang.Object</pre>
  <h3><code>query(e,'item')</code></h3>
  <p>Name of the item if its an item entity, <code>null</code> otherwise</p>
  <h3><code>query(e,'count')</code></h3>
- <p>Number of items in a stack from item entity.<code>null</code> otherwise</p>
+ <p>Number of items in a stack from item entity, <code>null</code> otherwise</p>
  <h3><code>query(e,'is_baby')</code></h3>
  <p>Boolean, true if its a baby.</p>
  <h3><code>query(e,'target')</code></h3>
@@ -792,13 +792,13 @@ extends java.lang.Object</pre>
  <h3><code>modify(e, 'pitch', pitch), modify(e, 'yaw', yaw)</code></h3>
  <p>Changes entity's pitch or yaw.</p>
  <h3><code>modify(e, 'move', x, y, z), modify(e, 'move', l(x,y,z) )</code></h3>
- <p>Moves th entity by a vector from its current location.</p>
+ <p>Moves the entity by a vector from its current location.</p>
  <h3><code>modify(e, 'motion', x, y, z), modify(e, 'motion', l(x,y,z) )</code></h3>
- <p>Sets the motion vector (where an how much entity is moving).</p>
+ <p>Sets the motion vector (where and how much entity is moving).</p>
  <h3><code>modify(e, 'motion_z', x), modify(e, 'motion_y', y), modify(e, 'motion_z', z)</code></h3>
  <p>Sets the corresponding component of the motion vector.</p>
  <h3><code>modify(e, 'accelerate', x, y, z), modify(e, 'accelerate', l(x, y, z) )</code></h3>
- <p>Sets adds a vector to the motion vector. Most realistic way to apply a force to an entity.</p>
+ <p>Adds a vector to the motion vector. Most realistic way to apply a force to an entity.</p>
  <h3><code>modify(e, 'custom_name'), modify(e, 'custom_name', name )</code></h3>
  <p>Sets a custom name for an entity. No argument sets it empty, not removes it. Vanilla doesn't allow removing
  of attributes.</p>
@@ -855,7 +855,7 @@ extends java.lang.Object</pre>
  negative offset, and <code>p</code> for positive.</p>
  <h3><code>diamond(cx, cy, cz, radius?, height?)</code></h3>
  <p>Iterates over a diamond like area of blocks. With no radius and height, its 7 blocks centered around the middle
- (block + neighbours). With radius it expands shape on x and z coords, and wit custom height, on z. Any of these can be
+ (block + neighbours). With radius it expands shape on x and z coords, and wit custom height, on y. Any of these can be
  zero as well. radius of 0 makes a stick, height of 0 makes a diamond shape pad.</p>
  </div></div>
 </li>
