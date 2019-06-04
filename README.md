@@ -3,6 +3,21 @@ Public Repository of scarpet programs for Minecraft
 
 ## Changelog
 
+### v1.3
+ - Added 1.14 specific structures to plop for 1.14 (fabric-carpet)
+ - added `destroy` and `harvest` functions for other valid methods of breaking blocks
+ - added `schedule` to delay execution of user defined functions for later ticks
+ - scarpet now allows to intercept most important user actions related events. Check `utilities\event_test.sc` and load via `/script load event_test` to test event handling.
+
+### v1.2
+ - fixes to lists handling
+ - fixed issue with running 'run' command in functions
+ - scripts can now be loaded from files in /scripts/ folder inside world directory. These also can be edited normally, without extra $ to indicate new lines.
+ - each file represents a package and is run independently from others.
+ - /script load/unload <package>
+ - /script in <package> run/invoke etc...
+ - script modules loaded from scripts / bundled with carpetmod can make new commands. details - later.
+ 
 ### v1.1
  - `put` function to modify lists content
  - `_` in loop functions can be used to change content of sublists
