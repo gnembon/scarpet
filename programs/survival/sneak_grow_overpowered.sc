@@ -10,4 +10,3 @@ _crouch_grow_tick() ->
         )
     )
 )
-__
