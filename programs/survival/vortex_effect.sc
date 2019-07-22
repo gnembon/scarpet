@@ -1,8 +1,8 @@
-'Sample tool return value with /script run p~\'holds\':';
-'[golden_pickaxe, 1, {id:"minecraft:golden_pickaxe",Count:1b,tag:{Enchantments:';
-'  [{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]';
-'call with \'_axe\' to match any pickaxe';
-'Handy function to check enchantment level on a tool';
+// Sample tool return value with /script run p~\'holds\':
+// [golden_pickaxe, 1, {id:"minecraft:golden_pickaxe",Count:1b,tag:{Enchantments:
+//   [{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]
+// call with \'_axe\' to match any pickaxe
+// Handy function to check enchantment level on a tool
 __check_held_enchantment_level(entity, tool_re, enchantment) -> 
 (
   if (entity~'gamemode_id'==3, return(0));
@@ -18,7 +18,7 @@ __check_held_enchantment_level(entity, tool_re, enchantment) ->
   lvl
 );
 
-'spawns random cloud particles and plays random sounds around tornado players';
+// spawns random cloud particles and plays random sounds around tornado players
 __tornado_ambiance(entity, level) ->
 (
   if ( !(rand(5)),
@@ -30,7 +30,7 @@ __tornado_ambiance(entity, level) ->
   )
 );
 
-'moves entities around player, depending on the level of the enchantment';
+// moves entities around player, depending on the level of the enchantment
 __move_entities(entity, level) ->
 (
   eid = entity ~ 'id';
@@ -47,7 +47,7 @@ __move_entities(entity, level) ->
   )
 );
 
-'adjusts level down from 3,4,5 to 1,2,3 and causes tornado';
+// adjusts level down from 3,4,5 to 1,2,3 and causes tornado
 __create_tornado(entity, level) ->
 (
   level = min(level-2, 3);
@@ -55,7 +55,7 @@ __create_tornado(entity, level) ->
   __move_entities(entity, level)
 );
 
-'tick routine that works with players holding axes only';
+// tick routine that works with players holding axes only
 _tornado_tick_players_only() -> 
 (
   for( player('*'),
@@ -65,7 +65,7 @@ _tornado_tick_players_only() ->
   )
 );
 
-'tick routine that works with any entity holding such an axe. Evaluates all entities each tick';
+// tick routine that works with any entity holding such an axe. Evaluates all entities each tick
 _tornado_tick_entities_precise() -> 
 (
   for( entity_list('living'),
@@ -75,8 +75,8 @@ _tornado_tick_entities_precise() ->
   )
 );
 
-'tick routine that works with any entity holding such an axe. ';
-'May delay detection by up to 2 seconds, but only searches all entities every 40 ticks';
+// tick routine that works with any entity holding such an axe. 
+// May delay detection by up to 2 seconds, but only searches all entities every 40 ticks
 _tornado_tick_entities_robust() -> 
 (
   tornado_entities = 'global_tornado_'+current_dimension();

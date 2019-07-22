@@ -1,15 +1,15 @@
 game_of_life_init(center_x, center_y, center_z, size, filler_block, tick_interval) ->
 (
-   'Game of life initializer script.';
-   'Makes sure there is space for the setup and space is clear.';
-   'Sets up the scene, and saves positions in global.';
+   //Game of life initializer script.
+   //Makes sure there is space for the setup and space is clear.
+   //Sets up the scene, and saves positions in global.
    
-   'First we remove all the potential decimal bits from args making sure they are numbers';
+   //First we remove all the potential decimal bits from args making sure they are numbers
    l(center_x, center_y, center_z, size, interval) = map(l(center_x, center_y, center_z, size, interval), floor(_));
    if ( center_y < 1.5*size+5 || center_y > 255-size/2-5,
        exit(str('Your specified center point at Y%d and size of %d means it won\'t fit in world limits',center_y, size))
    );
-   'Who builds even in Minecraft?';
+   //Who builds even in Minecraft?
    if ( size % 2 == 0,
        exit(str('Pls choose an odd size of the game of life arena'))
    );
