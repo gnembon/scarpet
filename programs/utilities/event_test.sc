@@ -83,11 +83,3 @@ __on_player_stops_sneaking(player) -> print('Player '+player+' stops sneaking.')
 __on_player_starts_sprinting(player) -> print('Player '+player+' starts sprinting.');
 
 __on_player_stops_sprinting(player) -> print('Player '+player+' stops sprinting.')
-
-
-
-
-
-
-
-

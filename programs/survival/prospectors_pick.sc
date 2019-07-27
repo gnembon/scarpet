@@ -1,73 +1,112 @@
+// scarpet 1.4
 
-//Expose this option to the players to be able to switch between cave and surface modes with /script invoke';
-select_ore_finder(option) -> 
+__holds2(entity, item_regex, enchantment) -> 
 (
-  if( option == 'surface',
-      (
-          __scanned_elevation(player) -> 8;
-          __link_player(x, y, z, p, part) -> particle(part, x, top('light',x,z)+1 , z, 10)
-          //Showing ores on world surface'
-      ),
-      option == 'caves', 
-      (
-          __scanned_elevation(player) -> player ~ 'y';
-          __link_player(x, y, z, p, part) -> particle_line(part, pos(p)+l(0,1.2,0), x+0.5, y+0.5, z+0.5, 0.3)
-          //Showing ores in caves via beams'
-      ),
-      'Unsuported option: '+option+' choose \'caves\' or \'surface\''
-  )
-);
-//The default option would be caves
-select_ore_finder('caves');
-
-//Handy function to check enchantment level on a tool
-//Sample tool return value with /script run p~\'holds\':
-//[golden_pickaxe, 1, {id:"minecraft:golden_pickaxe",Count:1b,tag:{Enchantments:[{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]
-//call with \'_axe\' to match any pickaxe
-__check_held_enchantment_level(entity, tool_re, enchantment) -> 
-(
-  if (entity~'gamemode_id'==3, return(0));
-  for(l('main','offhand'),
-      holds = query(entity, 'holds', _);
-      if( holds,
-          l(what, count, nbt) = holds;
-          if( (what ~ tool_re) && ( ench = (nbt ~ 'lvl:\\d+s,id:"minecraft:'+enchantment+'"') ),
-              lvl = max(lvl, number(ench ~ '(?<=lvl:)\\d') )
-          )
-      )
-  );
-  lvl
-);
-
-__check_ores_for_player(player, outer(ore_levels)) -> 
-(
-   lvl = __check_held_enchantment_level(player, 'golden_pickaxe','fortune');
-   if(lvl && !rand(5),
-       l(x, y, z) = pos(player);
-       scan(x, __scanned_elevation(player), z, 8, 8, 8,
-           if (!rand(5) && (_ ~ '_ore'),
-               current_block = _ ;
-               for(get(ore_levels, min(lvl-1, 2)),
-                   l(ore, part, thres) = _ ;
-                   if ( current_block == ore && for(neighbours(current_block), _ == ore) >= thres,
-                       __link_player(_x, _y, _z, player, part)
-                   )
-               )
+   if (entity~'gamemode_id'==3, return(0));
+   for(l('mainhand','offhand'),
+       holds = query(entity, 'holds', _);
+       if( holds,
+           l(what, count, nbt) = holds;
+           if( (what ~ item_regex) && (ench = (nbt ~ 'lvl:\\d+s,id:"minecraft:'+enchantment+'"')),
+               level = max(level, number(ench ~ '(?<=lvl:)\\d') )
            )
-       )
-   )
+		)	
+	);
+	level
+);
+ 
+__holds(entity, item_regex, enchantment) -> 
+(
+	if (entity~'gamemode_id'==3, return(0));
+	for(l('mainhand','offhand'),
+		holds = query(entity, 'holds', _);
+		if( holds,
+			l(what, count, nbt) = holds;
+			if ((what ~ item_regex) && (enchants = get(nbt,'Enchantments[]')),
+				// nbt query returns a scalar for lists of size one
+				if (type(enchants)!='list', enchants = l(enchants));
+				for (enchants, 
+					if ( get(_,'id') == 'minecraft:'+enchantment,
+						level = max(level, get(_,'lvl'))
+					)
+				)	
+			)
+		)
+	);
+	level
 );
 
-_ore_finder_tick() -> 
+global_overworld_ores = l(
+	l('coal_ore','dust 0.1 0.1 0.1 0.5'),
+	l('iron_ore', 'dust 0.6 0.3 0.1 0.5'),
+	l('redstone_ore', 'dust 0.9 0.1 0.1 0.5'),
+	
+	l('gold_ore','dust 0.9 0.9 0.0 0.5'),
+	l('lapis_ore', 'dust 0.1 0.1 1.0 0.5'),
+	
+	l('diamond_ore','dust 0.3 0.8 1.0 0.5'), 
+	l('emerald_ore', 'dust 0.4 1.0 0.4 0.5')
+);
+
+//l('nether_quartz_ore','dust 0.9 0.9 0.9 0.5'), 
+
+__on_tick() ->
 (
-   ore_levels = l(
-       l( l('coal_ore','dust 0.1 0.1 0.1 0.5', 4), l('iron_ore', 'dust 0.6 0.3 0.1 0.5', 3) ),
-       l( l('coal_ore','dust 0.1 0.1 0.1 0.5', 5), l('iron_ore', 'dust 0.6 0.3 0.1 0.5', 3),
-          l('gold_ore','dust 0.9 0.9 0.0 0.5', 2), l('redstone_ore', 'dust 0.9 0.1 0.1 0.5', 3) ),
-       l( l('coal_ore','dust 0.1 0.1 0.1 0.5', 6), l('iron_ore', 'dust 0.6 0.3 0.1 0.5', 3),
-          l('gold_ore','dust 0.9 0.9 0.0 0.5', 2), l('redstone_ore', 'dust 0.9 0.1 0.1 0.5', 3),
-          l('nether_quartz_ore','dust 0.9 0.9 0.9 0.5', 3), l('lapis_ore', 'dust 0.1 0.1 1.0 0.5', 0),
-          l('diamond_ore','dust 0.3 0.8 1.0 0.5', 0), l('emerald_ore', 'dust 0.4 1.0 0.4 0.5', 0), )
-   );
-   for(player('*'), __check_ores_for_player(_))   
+	for (player('!spectating'), player = _;
+		if ( level = __holds(player, 'golden_pickaxe', 'fortune'),
+			player_pos = pos(player);
+			l(x, y, z) = map(player_pos, floor(_));
+			player_in_caves = top('terrain',player_pos) > (y+3);
+			// modify reference Y level, around diamond level for surface tracking
+			base_y = if(player_in_caves, y, 8);
+			loop(level*40,
+				try (
+					l(block_x, block_y, block_z) = l(x, base_y, z) 
+							+ l(rand(16)-rand(16), rand(16)-rand(16), rand(16)-rand(16));
+					block = block(block_x, block_y, block_z);
+					if (block ~ '_ore',
+						for(range(level-1, 1+2*level),
+							l(oreblock, ore_particle) = get(global_overworld_ores, _);
+							if (block == oreblock,
+								if( player_in_caves,
+									particle_line(ore_particle, 
+										player_pos+l(0,1.2,0), 
+										block_x+0.5, block_y+0.5, block_z+0.5, 
+										0.8
+									)
+								,//else	
+									particle(ore_particle, 
+										block_x, top('terrain',block)+1 , block_z,
+										20
+									)
+								);
+								throw()
+							)
+						)
+					)
+				)
+			)
+		)
+	)
+);
+__on_tick_nether() ->
+(
+	for (player('!spectating'), player = _;
+		if ( lvl = __holds(player, 'golden_pickaxe', 'fortune'),
+			player_pos = pos(player);
+			l(x, y, z) = player_pos;
+			loop(lvl*40,
+				block = block(player_pos + l(rand(16)-rand(16),rand(16)-rand(16),rand(16)-rand(16)));
+				if (block == 'nether_quartz_ore',
+					l(block_x, block_y, block_z) = pos(block);
+					particle_line('dust 0.9 0.9 0.9 0.5', 
+						player_pos+l(0, 1.2, 0),
+						block_x+0.5, block_y+0.5, block_z+0.5,
+						0.8
+					)
+				)
+			)
+		)
+	)
 )
+ 
