@@ -34,18 +34,12 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
 
 global_lowercase = split('', 'abcdefghijklmnopqrstuvwxyz');
 global_uppercase = split('', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-_uc_first(s) -> (
-        first = slice(s, 0, 1);
-        idx = first(range(0, 25), first == get(global_lowercase, _));
-        if (!idx, return(s));
-        get(global_uppercase, idx) + slice(s, 1)
+_remap (c, s, d) -> (
+        i = first(range(0, length(s)), c == get(s, _));
+        if (!i, return(c));
+        get(d, i)
 );
-_lc_first(s) -> (
-        first = slice(s, 0, 1);
-        idx = first(range(0, 25), first == get(global_uppercase, _));
-        if (!idx, return(s));
-        get(global_lowercase, idx) + slice(s, 1)
-);
+_uc_first (s) -> (_remap(slice(s, 0, 1), global_lowercase, global_uppercase) + slice(s, 1));
 
 __on_player_clicks_block (player, block, face) -> (
         if (__silk_spawner(player, block),
