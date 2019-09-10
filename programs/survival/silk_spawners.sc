@@ -3,9 +3,9 @@
 
 __silk_spawner (player, block) -> (
         if (block != 'spawner', return());
-        item_mainhand = player ~ 'holds';
-        if (!item_mainhand || !(get(item_mainhand, 0) == 'diamond_pickaxe'), return());
-        nbt = get(item_mainhand, 2);
+        tool = player ~ 'holds';
+        if (!tool || get(tool, 0) != 'diamond_pickaxe', return());
+        nbt = get(tool, 2);
         if (!nbt, return());
         ench = get(nbt, 'Enchantments[]');
         if (!ench, return());
@@ -14,6 +14,7 @@ __silk_spawner (player, block) -> (
         false
 );
 
+// unbreak BlockEntityData for spawners (security risk on creative servers)
 __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (!item || get(item, 0) != 'spawner', return());
         nbt = get(item, 2);
@@ -21,6 +22,7 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         data = get(nbt, 'BlockEntityTag{}');
         if (!data, return());
         l(x, y, z) = pos(block);
+        // we *need* dicts or hashes or something
         if (face == 'up', y = y + 1);
         if (face == 'down', y = y - 1);
         if (face == 'north', z = z - 1);
