@@ -8,10 +8,11 @@ _remap (c, s, d) -> (
         if (!i, return(c));
         get(d, i)
 );
-global_lowercase = split('', 'abcdefghijklmnopqrstuvwxyz');
-global_uppercase = split('', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
 // utility function _uc_first (string) capitalizes the first character of
 // string by mapping 'UPPERCASE' onto 'lowercase' with _remap
+global_lowercase = split('', 'abcdefghijklmnopqrstuvwxyz');
+global_uppercase = split('', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 _uc_first (s) -> (_remap(slice(s, 0, 1), global_lowercase, global_uppercase) + slice(s, 1));
 
 // utility function _adjacent_block (block, face)
