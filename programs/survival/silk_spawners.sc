@@ -48,13 +48,13 @@ __silk_spawner (player, block) -> (
 // no drop instant mine any spawner with silk touch diamond pickaxe
 // adds useful text to spawner tooltip, and enchant glow just because
 __on_player_clicks_block (player, block, face) -> (
-        if (__silk_spawner(player, block),
-                data = block_data(pos(block));
-                type = _uc_first(get(split(':', get(data, 'SpawnData.id')), 1));
-                frill = 'Enchantments:[{}],display:{Name:"{\\\"text\\\":\\\"' + type + ' Spawner\\\",\\\"italic\\\":\\\"false\\\",\\\"color\\\":\\\"aqua\\\"}"},';
-                inventory_set(player, inventory_find(player, null, 0), 1, 'spawner', '{' + frill + 'BlockEntityTag:' + data + '}');
-                destroy(block)
-        )
+        if (!__silk_spawner(player, block), return());
+        data = block_data(pos(block));
+        type = _uc_first(get(split(':', get(data, 'SpawnData.id')), 1));
+        frill = 'Enchantments:[{}],display:{Name:"{\\\"text\\\":\\\"' + type + ' Spawner\\\",\\\"italic\\\":\\\"false\\\",\\\"color\\\":\\\"aqua\\\"}"},';
+        inventory_set(player, inventory_find(player, null, 0), 1, 'spawner', '{' + frill + 'BlockEntityTag:' + data + '}');
+        // don't double destroy in creative
+        if (player ~ 'gamemode' != 'creative', destroy(block))
 );
 
 // unbreak BlockEntityData for spawners (security risk on creative servers)
