@@ -29,6 +29,7 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (face == 'south', z = z + 1);
         if (face == 'east', x = x + 1);
         if (face == 'west', x = x - 1);
+        if (block(x, y, z) != block('air'), return());
         slot = query(player, 'selected_slot');
         inventory_set(player, slot, get(inventory_get(player, slot), 1) - 1);
         set(x, y, z, 'spawner'+data)
