@@ -69,6 +69,6 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (tgt != block('air'), return());
         slot = query(player, 'selected_slot');
         inventory_set(player, slot, get(inventory_get(player, slot), 1) - 1);
-        l(x, y, z) = tgt;
+        l(x, y, z) = pos(tgt);
         set(x, y, z, 'spawner'+data)
 );
