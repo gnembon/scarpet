@@ -14,6 +14,18 @@ __silk_spawner (player, block) -> (
         false
 );
 
+// we *need* dicts or hashes or something
+_adjacent_block (block, face) -> (
+        l(x, y, z) = pos(block);
+        if (face == 'up', y = y + 1);
+        if (face == 'down', y = y - 1);
+        if (face == 'north', z = z - 1);
+        if (face == 'south', z = z + 1);
+        if (face == 'east', x = x + 1);
+        if (face == 'west', x = x - 1);
+        block(x, y, z)
+);
+
 // unbreak BlockEntityData for spawners (security risk on creative servers)
 __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (!item || get(item, 0) != 'spawner', return());
@@ -21,17 +33,11 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (!nbt, return());
         data = get(nbt, 'BlockEntityTag{}');
         if (!data, return());
-        l(x, y, z) = pos(block);
-        // we *need* dicts or hashes or something
-        if (face == 'up', y = y + 1);
-        if (face == 'down', y = y - 1);
-        if (face == 'north', z = z - 1);
-        if (face == 'south', z = z + 1);
-        if (face == 'east', x = x + 1);
-        if (face == 'west', x = x - 1);
-        if (block(x, y, z) != block('air'), return());
+        tgt = _adjacent_block(block, face);
+        if (tgt != block('air'), return());
         slot = query(player, 'selected_slot');
         inventory_set(player, slot, get(inventory_get(player, slot), 1) - 1);
+        l(x, y, z) = tgt;
         set(x, y, z, 'spawner'+data)
 );
 
