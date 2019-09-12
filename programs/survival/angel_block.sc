@@ -57,7 +57,7 @@ __on_player_uses_item (player, item, hand) -> (
         if (f == 'south', z = z + 1.25);
         if (f == 'east', x = x + 1.25);
         if (f == 'west', x = x - 1.25);
-        set(x, y, z, global_angel_block);
+        if (!set(x, y, z, global_angel_block), return());
 
         if (player ~ 'gamemode' == 'creative', return());
         slot = query(player, 'selected_slot');

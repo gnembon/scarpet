@@ -67,8 +67,10 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (!data, return());
         tgt = _adjacent_block(block, face);
         if (tgt != block('air'), return());
-        slot = query(player, 'selected_slot');
-        inventory_set(player, slot, get(inventory_get(player, slot), 1) - 1);
         l(x, y, z) = pos(tgt);
-        set(x, y, z, 'spawner'+data)
+        if (!set(x, y, z, 'spawner'+data), return());
+        // don't consume items in creative
+        if (player ~ 'gamemode' != 'creative', destroy(return));
+        slot = query(player, 'selected_slot');
+        inventory_set(player, slot, get(inventory_get(player, slot), 1) - 1)
 );
