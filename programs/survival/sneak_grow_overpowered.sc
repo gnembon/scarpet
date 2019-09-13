@@ -1,14 +1,19 @@
-_crouch_grow_tick() -> 
+__on_tick() -> _sneak_grow();
+__on_tick_nether() -> _sneak_grow();
+__on_tick_ender() -> _sneak_grow();
+
+_sneak_grow() -> 
 (
-    for(filter(player('*'), _ ~ 'sneaking'),
-        if (tick_time()%4 == 0,
-            l(x, y, z) = pos(_);
-            scan(x, y, z, 8, 8, 8,
-                if (material(_) == 'plant',
-                    particle('happy_villager', _, 2, 0.4);
-                    random_tick(_);
-                )
-            )
-        )
+	for(filter(player('*'), _ ~ 'sneaking'),
+		player_pos = pos(_);
+		loop ( 500,
+			target = player_pos
+					+l(rand(12),rand(8),rand(12))
+					-l(rand(12),rand(8),rand(12));
+			if (material(target) == 'plant' && ticks_randomly(target), 
+				particle('happy_villager', target, 2, 0.4)
+			);
+            random_tick(target)
+		)
     )
 )
