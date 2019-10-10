@@ -36,7 +36,7 @@ mandelbrot_segment_offset(x1,y1,z1, size, center_x, center_z, radius, do_log, xs
            b0 = b_min+(_/zsize)*img_length;
            ops = mandelbrot(a0, b0, 254);
            ops = if(do_log, log1p(ops) , 8*ops/255  );
-           set(xpos, y1, zpos, element(palette, ops )) 
+           set(xpos, y1, zpos, get(palette, ops )) 
        )
    )
 );

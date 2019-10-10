@@ -1,3 +1,4 @@
+//scarpet v1.5
 __holds(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));
@@ -36,29 +37,24 @@ __cascade_smash(center_pos, ttl, position) ->
 (
 	block = block(position);
 	if (ttl <= 0 || __is_invalid_for_smashing(block), return());
-	data_component = if (data = block_data(block), 
-		',TileEntityData:'+data,
-		''
-	);
-	properties_component = if (
-		property_list = filter(block_properties(block),_!='waterlogged'),
-			',Properties:{'+ join(',', map (property_list,
-				value = property(block, _);
-				if (block == 'chest' && _ == 'type', value = 'single');
-				_+':"'+value+'"'
-			))+'}'
-		, // else
-			''
+	block_data = block_data(block);
+	properties_tag = if ( property_list = filter(block_properties(block),_!='waterlogged'),
+		properties = nbt('{}');
+		for(property_list,
+			value = property(block, _);
+			if (block == 'chest' && _ == 'type', value = 'single');
+			put(properties, _, '"'+value+'"')
+		);
+		properties
 	);
 	block_name = str(block);
 	set(position, if(property(block,'waterlogged')=='true','water','air'));
 	l(x,y,z) = position;
 	l(cx, cy, cz) = center_pos;
-	falling_block = spawn(
-		'falling_block',
-		x+0.5, y+0.5, z+0.5, 
-		'{BlockState:{Name:"minecraft:'+block_name+'"'+properties_component+'}'+data_component+',Time:1}'
-	);
+	nbttag = nbt('{BlockState:{Name:"minecraft:'+block_name+'"},Time:1}');
+	if (block_data, put(nbttag, 'TileEntityData', block_data));
+	if (properties_tag, put(nbttag, 'BlockState.Properties', properties_tag));
+	falling_block = spawn('falling_block', x+0.5, y+0.5, z+0.5, nbttag);
 	modify(falling_block,'motion',
 		(x-cx)/10+rand(0.05),
 		2*ttl/10+0.5+rand(0.2)+(y-cy)/10,

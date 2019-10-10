@@ -3,19 +3,24 @@
 //   [{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]
 // call with \'_axe\' to match any pickaxe
 // Handy function to check enchantment level on a tool
-__check_held_enchantment_level(entity, tool_re, enchantment) -> 
+__check_held_enchantment_level(entity, item_regex, enchantment) -> 
 (
-  if (entity~'gamemode_id'==3, return(0));
-  for(l('main','offhand'),
-      holds = query(entity, 'holds', _);
-      if( holds,
-          l(what, count, nbt) = holds;
-          if( (what ~ tool_re) && ( ench = (nbt ~ 'lvl:\\d+s,id:"minecraft:'+enchantment+'"') ),
-              lvl = max(lvl, number(ench ~ '(?<=lvl:)\\d') )
-          )
-      )
-  );
-  lvl
+	if (entity~'gamemode_id'==3, return(0));
+	for(l('mainhand','offhand'),
+		holds = query(entity, 'holds', _);
+		if( holds,
+			l(what, count, nbt) = holds;
+			if ((what ~ item_regex) && (enchs = get(nbt,'Enchantments[]')),
+				if (type(enchs)!='list', enchs = l(enchs));
+				for (enchs, 
+					if ( get(_,'id') == 'minecraft:'+enchantment,
+						lvl = max(lvl, get(_,'lvl'))
+					)
+				)	
+			)
+		)
+	);
+	lvl
 );
 
 // spawns random cloud particles and plays random sounds around tornado players

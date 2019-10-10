@@ -3,6 +3,11 @@
 // Reference:	https://www.cnblogs.com/skywang12345/p/3310835.html
 // Thanks:		gnembon
 
+//////////////////////////////////////////////////////
+// This is now a programming excercise as scarpet v1.5 
+// natively suports map objects via m() function
+//////////////////////////////////////////////////////
+
 // HashMap enables users to get value by a key quickly
 // it requires you to define a key's hash-code generator method
 
