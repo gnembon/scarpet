@@ -110,3 +110,7 @@ __on_player_finishes_using_item(player, item_tuple, hand) ->
 	print('    > nbt: '+nbt);
 	print('  - hand: '+hand)
 );
+
+__on_player_drops_item(player) -> print('Player '+player+' drops current item.');
+
+__on_player_drops_stack(player) -> print('Player '+player+' drops current stack.');
