@@ -1,9 +1,20 @@
 # scarpet
 Public Repository of scarpet programs for Minecraft.
 Check https://gnembon.github.io/scarpet/ for full language docs.
-Obtain scarpet either through https://github.com/gnembon/carpetmod/releases or https://github.com/gnembon/fabric-carpet/releases
+Obtain scarpet through carpet mod: https://github.com/gnembon/fabric-carpet/releases
 
 ## Changelog
+
+### v1.5 (pending)
+ - added maps via `m()` function
+ - added proper nbt support via `nbt()` function
+ - all containers (lists, maps and nbts) now have unified api via `get`, `has`, `put` and `delete` functions
+ - new `.` operator - highest priority - to access containers elements, alias for `get` function
+ - numbers have to start because of that with a number, so `.123` won't float anymore, use `0.123` instead
+ - added `in_dimension(dimension, expr)` to change the execution context for the subexpression, for instance to place blocks in the nether while running a script in the overworld
+ - added carpet mod setting `/carpet scriptsAutoload` to automatically load scarpet packages from disk on server / game start which works even with `/script` command fully disabled.
+ - added `entity_event` to add functions to be called when certain events happen for an entity
+ - added two more general use events: `player_releases_item` (bows, aborting actions, controlled client side), and `player_finishes_using_item` (item consumed, eating etc. server controlled).
 
 ### v1.4
  - `top` to get the top block at position now requires full block coordinates, but Y value is ignored.
