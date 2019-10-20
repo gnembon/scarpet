@@ -35,7 +35,7 @@ __place_block(player, pos, dir, num) ->
 	if (num <= 0, return());
 	l(x, y, z) = pos;
 	if(!place_item(holds_offhand:0, x, y, z), return());
-	__remove_offhand(player);
+	if(player ~ 'gamemode' != 'creative', __remove_offhand(player));
 	schedule(5, '__place_block', player, pos + dir, dir, num - 1)
 );
 
