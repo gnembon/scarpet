@@ -2,7 +2,8 @@ global_bridge_item = 'golden_hoe';
 
 __can_bridge(entity) -> 
 (
-	if (!(player ~ 'sneaking'), return(false));
+	if (entity ~ 'gamemode' == 'adventure', return(false));
+	if (!(entity ~ 'sneaking'), return(false));
 	holds_mainhand = query(entity, 'holds', 'mainhand');
 	holds_offhand = query(entity, 'holds', 'offhand');
 	if (!holds_mainhand || !holds_offhand, return(false));
