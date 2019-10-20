@@ -1,4 +1,4 @@
-global_bridge_item = 'golden_hoe';
+global_bridge_item = 'golden_sword';
 
 __can_bridge(entity) -> 
 (
@@ -34,7 +34,8 @@ __place_block(player, pos, dir, num) ->
 	if (!holds_offhand, return());
 	if (num <= 0, return());
 	l(x, y, z) = pos;
-	if(place_item(holds_offhand:0, x, y, z), __remove_offhand(player));
+	if(!place_item(holds_offhand:0, x, y, z), return());
+	__remove_offhand(player);
 	schedule(5, '__place_block', player, pos + dir, dir, num - 1)
 );
 
