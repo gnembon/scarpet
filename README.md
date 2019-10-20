@@ -1,20 +1,23 @@
 # scarpet
-Public Repository of scarpet programs for Minecraft.
+Public Repository of scarpet apps for Minecraft.
 Check https://gnembon.github.io/scarpet/ for full language docs.
 Obtain scarpet through carpet mod: https://github.com/gnembon/fabric-carpet/releases
 
 ## Changelog
 
-### v1.5 (pending)
+### v1.5
+ - added ability for apps to keep their persistent state using `load_app_data` and `store_app_data` functions
  - added maps via `m()` function
  - added proper nbt support via `nbt()` function
  - all containers (lists, maps and nbts) now have unified api via `get`, `has`, `put` and `delete` functions
- - new `.` operator - highest priority - to access containers elements, alias for `get` function
+ - added L-value behaviour to certain functions and operators, like `get`, `has`, `put`, `delete`, `=`, `+=`
+ - new `:` operator - highest priority - to access containers elements, alias for `get` function
+ - changed priority of `~` match operator to match `:`
  - numbers have to start because of that with a number, so `.123` won't float anymore, use `0.123` instead
  - added `in_dimension(dimension, expr)` to change the execution context for the subexpression, for instance to place blocks in the nether while running a script in the overworld
- - added carpet mod setting `/carpet scriptsAutoload` to automatically load scarpet packages from disk on server / game start which works even with `/script` command fully disabled.
+ - added carpet mod setting `/carpet scriptsAutoload` to automatically load scarpet packages from disk on server / game start which works even with `/script` command fully disabled. However, scipts to stay loaded need to return proper app config by defining `__config()` function. See `/script load` section for details.
  - added `entity_event` to add functions to be called when certain events happen for an entity
- - added two more general use events: `player_releases_item` (bows, aborting actions, controlled client side), and `player_finishes_using_item` (item consumed, eating etc. server controlled).
+ - added four more general use events: `player_releases_item` (bows, aborting actions, controlled client side), `player_finishes_using_item` (item consumed, eating etc. server controlled), `player_drops_item` for single item dropped, and `player_drops_stack` for dropping entire stack.
 
 ### v1.4
  - `top` to get the top block at position now requires full block coordinates, but Y value is ignored.

@@ -6,11 +6,11 @@ __holds(entity, item_regex, enchantment) ->
 		holds = query(entity, 'holds', _);
 		if( holds,
 			l(what, count, nbt) = holds;
-			if ((what ~ item_regex) && (enchs = nbt.'Enchantments[]'),
+			if ((what ~ item_regex) && (enchs = nbt:'Enchantments[]'),
 				if (type(enchs)!='list', enchs = l(enchs));
 				for (enchs, 
-					if ( _.'id' == 'minecraft:'+enchantment,
-						lvl = max(lvl, _.'lvl')
+					if ( _:'id' == 'minecraft:'+enchantment,
+						lvl = max(lvl, _:'lvl')
 					)
 				)	
 			)

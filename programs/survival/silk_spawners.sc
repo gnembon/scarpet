@@ -1,19 +1,6 @@
 // Reimplementation of Silk Spawners mod in scarpet 1.5
 // By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 
-// utility function _adjacent_block (block, face)
-// returns the block next to the provided block, in the specified direction
-_adjacent_block (b, f) -> (
-        l(x, y, z) = pos(b);
-        if (f == 'up', y = y + 1);
-        if (f == 'down', y = y - 1);
-        if (f == 'north', z = z - 1);
-        if (f == 'south', z = z + 1);
-        if (f == 'east', x = x + 1);
-        if (f == 'west', x = x - 1);
-        block(x, y, z)
-);
-
 // private __silk_spawner (player, block)
 // returns: true if and only if
 //  - player is holding a silk touch diamond pickaxe
@@ -55,7 +42,7 @@ __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (!nbt, return());
         data = nbt.'BlockEntityTag{}';
         if (!data, return());
-        tgt = _adjacent_block(block, face);
+        tgt = block(pos_offset(block, face));
         if (tgt != block('air'), return());
         l(x, y, z) = pos(tgt);
         if (!set(x, y, z, 'spawner'+data), return());

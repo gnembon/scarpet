@@ -17,7 +17,7 @@ global_breakrange = null;
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 (
-	if (hand != 'mainhand' || !item_tuple || item_tuple.0 !='stone_pickaxe', return());
+	if (hand != 'mainhand' || !item_tuple || item_tuple:0 !='stone_pickaxe', return());
 	global_radius = (global_radius + 1)%3;
 	diameter = 2*global_radius+1;
 	print('hammer mode '+diameter+'x'+diameter);
@@ -44,7 +44,7 @@ __on_player_breaks_block(player, block) ->
 	global_breakrange = null;
 	if (!global_radius || !block_range, return());
 	item_mainhand = player ~ 'holds';
-	if(!item_mainhand || !(item_mainhand.0 == 'stone_pickaxe'), return());
+	if(!item_mainhand || !(item_mainhand:0 == 'stone_pickaxe'), return());
 	for(block_range, harvest(player, _))
 )
 
