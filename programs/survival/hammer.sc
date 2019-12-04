@@ -33,7 +33,7 @@ __on_player_clicks_block(player, block, face) ->
 	global_breakrange = null;
 	if (!global_radius, return());
 	item_mainhand = player ~ 'holds';
-	if (!item_mainhand || !(item_mainhand.0 == 'stone_pickaxe'), return());
+	if (!item_mainhand || !(item_mainhand:0 == 'stone_pickaxe'), return());
 	global_breakrange = __get_block_range(pos(block), face);
 	for(global_breakrange, particle('block '+block(_), _, 100, 0, 0.7))
 );
