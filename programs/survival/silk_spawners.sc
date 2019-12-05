@@ -23,7 +23,7 @@ __silk_spawner (player, block) -> (
 __on_player_clicks_block (player, block, face) -> (
         if (!__silk_spawner(player, block), return());
         data = block_data(pos(block));
-        type = title(get(split(':', data.'SpawnData.id'), 1));
+        type = title(get(split(':', data:'SpawnData.id'), 1));
 		item_nbt = nbt('{Item:{id:"minecraft:spawner",Count:1b}}');
         spawner_nbt = nbt('{Enchantments:[{}],display:{Name:"{\\\"text\\\":\\\"' + type + ' Spawner\\\",\\\"italic\\\":\\\"false\\\",\\\"color\\\":\\\"aqua\\\"}"}}');
 		put(spawner_nbt, 'BlockEntityTag', data);
@@ -36,11 +36,9 @@ __on_player_clicks_block (player, block, face) -> (
 // unbreak BlockEntityData for spawners (security risk on creative servers)
 // mojang intentionally disabled this for a reason, but we need it.
 __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
-        if (!item || item.0 != 'spawner', return());
+        if (item:0 != 'spawner', return());
 		if (hand != 'mainhand', return());
-        nbt = item.2;
-        if (!nbt, return());
-        data = nbt.'BlockEntityTag{}';
+        data = item:2:'BlockEntityTag{}';
         if (!data, return());
         tgt = block(pos_offset(block, face));
         if (tgt != block('air'), return());
