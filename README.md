@@ -5,6 +5,23 @@ Obtain scarpet through carpet mod: https://github.com/gnembon/fabric-carpet/rele
 
 ## Changelog
 
+### v1.6
+ - scarpet programs loaded via world scripts folders are now referred to as scarpet apps.
+ - functions are now proper function values, and are closures thanks to the redefined `outer` call, so they can hold state. Good alternative to global values.
+ - added anonymous functions via `_(args) -> body`
+ - scripts now ignore redundant and unnecessary extra semicolons - feel free to spam them at the end of expressions, even if not needed.
+ - added `call` to call functions directly (by name or lambda reference)
+ - added `copy` for deep copy of nested values. With that - all values are now passed by reference in function arguments
+ - added `loaded_status()`, `generation_status()` and `chunk_tickets()` to debug loading issues using scarpet.
+ - calling `block()` directly on a block value, like in `scan()` will cause to resolve it. Otherwise block values are lazy until they are needed.
+ - apps can now bind to the events on the fly, no need to have callbacks defined only on the first code pass
+ - entity events are now separated between apps. There can be multiple apps running the same entity at the same time, not knowing about each other.
+ - loops and higher order functions now will not accept the `exit` block, since `continue()` and `break()` functions were introduced to use in loops and higher order functions.
+ - restored `plop` function for 1.15
+ - scarpet markers are cleaned automatically if an app is not loaded.
+ - added `replace(str, regex, repl)`, `replace_first(str, regex, repl)`, `escape_nbt`
+ - added new entity options, `ai` and `no_clip`
+
 ### v1.5
  - added ability for apps to keep their persistent state using `load_app_data` and `store_app_data` functions
  - added maps via `m()` function
