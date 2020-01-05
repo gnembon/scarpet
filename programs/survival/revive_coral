@@ -1,16 +1,14 @@
 //allows player to revive dead corals with water bottles
 __on_player_right_clicks_block (player, item_tuple,hand, block,face,hitvec) -> (
 	l(item, count, nbt) = item_tuple || l('None', 0, null);
-	dead=l('dead_brain_coral_block','dead_bubble_coral_block','dead_fire_coral_block','dead_horn_coral_block','dead_tube_coral_block');
-	live=l('brain_coral_block','bubble_coral_block','fire_coral_block','horn_coral_block','tube_coral_block');
-	listpos=dead ~ block;
-	if(item=='potion'&& dead ~ block !=null,
-		print('WOrks');
-		set(pos(block),get(live,listpos));
+	position=pos(block);
+	types=l('brain','bubble','fire','horn','tube');
+	block=block-'dead_'-'_coral_block';
+	if(item=='potion'&& types ~ block != null && nbt=='{Potion:"minecraft:water"}',
+		set(position,block+'_coral_block');
 		gamemode=query(player,'gamemode');
-		if(gamemode!='creative',  //if player is in creative, will retain water bottle
-			slot=query(player,'selected_slot');
-			inventory_set(player,slot,1,'glass_bottle');
+		if(gamemode!='creative',
+			inventory_set(player,query(player,'selected_slot'),1,'glass_bottle');
 		);
 	);
 );
