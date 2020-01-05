@@ -802,7 +802,7 @@ implements java.lang.Cloneable</pre>
  <p>Evaluates expression <code>expr</code>, <code>num</code> number of times.
 <code>expr</code> receives <code>_</code> system variable indicating the iteration.</p>
  <pre>
-     loop(5, tick())  =&gt; repeat tick 5 times
+     loop(5, game_tick())  =&gt; repeat tick 5 times
      list = l(); loop(5, x = _; loop(5, list += l(x, _) ) ); list
        // double loop, produces: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4], [1, 0], [1, 1], ... , [4, 2], [4, 3], [4, 4]]
  </pre>
@@ -1221,7 +1221,7 @@ implements java.lang.Cloneable</pre>
 
  <h3><code>sleep(expr)</code></h3>
  <p>Halts the execution of the program (and the game itself) for <code>expr</code> milliseconds.
- All in all, its better to use <code>tick(expr)</code> to let the game do its job while the program waits</p>
+ All in all, its better to use <code>game_tick(expr)</code> to let the game do its job while the program waits</p>
  <pre>sleep(50)</pre>
  <h3><code>time()</code></h3>
  <p>Returns the number of milliseconds since 'some point',
