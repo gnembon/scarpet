@@ -1,5 +1,5 @@
 __on_player_attacks_entity(player,entity)->(
-	if(entity=='Pufferfish'||'Tropical fish'||'Salmon'||'Cod', 
+	if(has(global_fishez,str(entity))&& entity ~ 'health'==0,
 		schedule(0,'__add_dead_fish',entity);//if not the fish's health isn't 0 and I cant check if its dead or not
 	);
 );
@@ -7,12 +7,14 @@ global_puff=0;
 global_trop=0;
 global_salmon=0;
 global_cod=0;
+global_fishez = m('Pufferfish', 'Tropical Fish', 'Salmon','Cod');
+
 
 __add_dead_fish(entity)->(
-	if (entity=='Pufferfish'&& query(entity,'health')==0,
+	if (entity=='Pufferfish',
 		global_puff+=1;
 	);
-	if (entity=='Tropical Fish'&& query(entity,'health')==0,
+	if (entity=='Tropical Fish',
 		global_trop+=1;
 	);
 	if (entity=='Salmon'&& query(entity,'health')==0,
