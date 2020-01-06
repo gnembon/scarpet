@@ -1,5 +1,7 @@
 __on_player_attacks_entity(player,entity)->(
-	schedule(0,'__add_dead_fish',entity)//if not the fish's health isn't 0 and I cant check if its dead or not
+	if(entity=='Pufferfish'||'Tropical fish'||'Salmon'||'Cod', 
+		schedule(0,'__add_dead_fish',entity);//if not the fish's health isn't 0 and I cant check if its dead or not
+	);
 );
 global_puff=0;
 global_trop=0;
