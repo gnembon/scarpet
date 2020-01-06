@@ -4,7 +4,7 @@ __on_player_right_clicks_block (player, item_tuple,hand, block,face,hitvec) -> (
 	position=pos(block);
 	types=l('brain','bubble','fire','horn','tube');
 	block=block-'dead_'-'_coral_block';
-	if(item=='potion'&& types ~ block != null && nbt=='{Potion:"minecraft:water"}',
+	if(item=='potion'&& types ~ block != null && nbt:'Potion' == 'minecraft:water',
 		set(position,block+'_coral_block');
 		gamemode=query(player,'gamemode');
 		if(gamemode!='creative',
