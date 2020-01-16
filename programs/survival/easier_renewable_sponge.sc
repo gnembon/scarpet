@@ -1,4 +1,7 @@
-__on_player_attacks_entity(player,entity)->(
+//killing one of each type of fish gives a random chance to get sponge
+//By: Ghoulboy
+
+_on_player_attacks_entity(player,entity)->(
 	if(global_fishez ~ entity,
 		schedule(0,'__add_dead_fish',entity);//if not the fish's health may not yet be calculated, and I cant check if its dead or not
 	);
