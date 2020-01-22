@@ -1,4 +1,6 @@
 //allows player to revive dead corals with water bottles
+//By Ghoulboy
+
 __on_player_right_clicks_block (player, item_tuple,hand, block,face,hitvec) -> (
     // player holds a water bottle and targets a dead coral block
     if(item_tuple:0=='potion'&& block ~ '^dead_\\w+_coral_block$' && item_tuple:2:'Potion' == 'minecraft:water',
