@@ -5,6 +5,14 @@
 //written for scarpet 1.6 in carpet mod 1.3.0. Both from the amazing gnembon (although...how'd you get this far without knowing that?)
 //https://github.com/gnembon/fabric-carpet/releases
 
+__config() ->
+(
+	m(
+		l('stay_loaded', true),
+		l('scope', 'global')
+		)
+);
+
 // namespaces for items and placed signs differ, so map each wall_sign to it's item equivalent
 global_item_to_block = m ( 
 							l ('acacia_sign', 'acacia_wall_sign'), 
