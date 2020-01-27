@@ -9,9 +9,8 @@ __on_player_attacks_entity(player,entity)->(
 	);
 );
 
-global_fishez = l('','Pufferfish', 'Tropical Fish', 'Salmon','Cod');
-global_vars=l('',global_puff,global_trop,global_salmon,global_cod);
-
+global_fishez = l('','Pufferfish', 'Tropical Fish', 'Salmon','Cod');//The empty space is only so that I can check if the item is in the list cos
+global_vars=l('',global_puff,global_trop,global_salmon,global_cod);//I can't use has()
 
 __add_dead_fish(entity)->(
 	if(entity ~ 'health'!=0,return());
