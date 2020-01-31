@@ -41,3 +41,14 @@ distance_sq(vec1, vec2) -> reduce(vec1 - vec2, _a + _*_, 0);
 distance(vec1, vec2) -> sqrt(reduce(vec1 - vec2, _a + _*_, 0));
 
 dot(vec1, vec2) -> reduce(vec1 * vec2, _a * _, 0);
+
+//num is the number you're rounding, rnum is the number (10,100,0.1 but also 5) to which you are rounding
+rnd(num,rpos)->(
+	if(floor(num/rpos)==(num/rpos),return(num));
+	upperbound=ceil(num/rpos)*rpos;	//The multiple of rpos above num
+	lowerbound=upperbound-rpos;	//The multiple of rpos below num
+	if((num-lowerbound)<(upperbound-num),
+		return(lowerbound),//4 rounds to 10, as does 4.999999
+		return(upperbound)//6 rounds to 10, and no special case for equals, cos 5 also rounds to 10
+	);
+);
