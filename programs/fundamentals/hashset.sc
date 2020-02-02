@@ -3,6 +3,11 @@
 // Reference:	https://www.cnblogs.com/skywang12345/p/3310835.html
 // Thanks:		gnembon'
 
+//////////////////////////////////////////////////////
+// This is now a programming excercise as scarpet v1.5 
+// natively suports map objects via m() function
+//////////////////////////////////////////////////////
+
 // HashSet is a simplified version of HashMap, it enables users to get a item by its hashcode quickly
 // it requires you to define an item\'s hash-code generator method
 

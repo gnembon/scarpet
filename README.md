@@ -1,9 +1,40 @@
 # scarpet
-Public Repository of scarpet programs for Minecraft.
+Public Repository of scarpet apps for Minecraft.
 Check https://gnembon.github.io/scarpet/ for full language docs.
-Obtain scarpet either through https://github.com/gnembon/carpetmod/releases or https://github.com/gnembon/fabric-carpet/releases
+Obtain scarpet through carpet mod: https://github.com/gnembon/fabric-carpet/releases
 
 ## Changelog
+
+### v1.6
+ - scarpet programs loaded via world scripts folders are now referred to as scarpet apps.
+ - functions are now proper function values, and are closures thanks to the redefined `outer` call, so they can hold state. Good alternative to global values.
+ - added anonymous functions via `_(args) -> body`
+ - scripts now ignore redundant and unnecessary extra semicolons - feel free to spam them at the end of expressions, even if not needed.
+ - added `call` to call functions directly (by name or lambda reference)
+ - added `copy` for deep copy of nested values. With that - all values are now passed by reference in function arguments
+ - added `loaded_status()`, `generation_status()` and `chunk_tickets()` to debug loading issues using scarpet.
+ - calling `block()` directly on a block value, like in `scan()` will cause to resolve it. Otherwise block values are lazy until they are needed.
+ - apps can now bind to the events on the fly, no need to have callbacks defined only on the first code pass
+ - entity events are now separated between apps. There can be multiple apps running the same entity at the same time, not knowing about each other.
+ - loops and higher order functions now will not accept the `exit` block, since `continue()` and `break()` functions were introduced to use in loops and higher order functions.
+ - restored `plop` function for 1.15
+ - scarpet markers are cleaned automatically if an app is not loaded.
+ - added `replace(str, regex, repl)`, `replace_first(str, regex, repl)`, `escape_nbt`
+ - added new entity options, `ai` and `no_clip`
+
+### v1.5
+ - added ability for apps to keep their persistent state using `load_app_data` and `store_app_data` functions
+ - added maps via `m()` function
+ - added proper nbt support via `nbt()` function
+ - all containers (lists, maps and nbts) now have unified api via `get`, `has`, `put` and `delete` functions
+ - added L-value behaviour to certain functions and operators, like `get`, `has`, `put`, `delete`, `=`, `+=`
+ - new `:` operator - highest priority - to access containers elements, alias for `get` function
+ - changed priority of `~` match operator to match `:`
+ - numbers have to start because of that with a number, so `.123` won't float anymore, use `0.123` instead
+ - added `in_dimension(dimension, expr)` to change the execution context for the subexpression, for instance to place blocks in the nether while running a script in the overworld
+ - added carpet mod setting `/carpet scriptsAutoload` to automatically load scarpet packages from disk on server / game start which works even with `/script` command fully disabled. However, scipts to stay loaded need to return proper app config by defining `__config()` function. See `/script load` section for details.
+ - added `entity_event` to add functions to be called when certain events happen for an entity
+ - added four more general use events: `player_releases_item` (bows, aborting actions, controlled client side), `player_finishes_using_item` (item consumed, eating etc. server controlled), `player_drops_item` for single item dropped, and `player_drops_stack` for dropping entire stack.
 
 ### v1.4
  - `top` to get the top block at position now requires full block coordinates, but Y value is ignored.

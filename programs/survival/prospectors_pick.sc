@@ -1,19 +1,4 @@
 // scarpet 1.4
-
-__holds2(entity, item_regex, enchantment) -> 
-(
-   if (entity~'gamemode_id'==3, return(0));
-   for(l('mainhand','offhand'),
-       holds = query(entity, 'holds', _);
-       if( holds,
-           l(what, count, nbt) = holds;
-           if( (what ~ item_regex) && (ench = (nbt ~ 'lvl:\\d+s,id:"minecraft:'+enchantment+'"')),
-               level = max(level, number(ench ~ '(?<=lvl:)\\d') )
-           )
-		)	
-	);
-	level
-);
  
 __holds(entity, item_regex, enchantment) -> 
 (
