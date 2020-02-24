@@ -43,4 +43,4 @@ distance(vec1, vec2) -> sqrt(reduce(vec1 - vec2, _a + _*_, 0));
 dot(vec1, vec2) -> reduce(vec1 * vec2, _a * _, 0);
 
 //num is the number you're rounding, rnum is the number (10,100,0.1 but also 5) to which you are rounding
-rnd(num,precision)->(return(round(num/precision)*precision));
+rnd(num,precision)-> round(num/precision)*precision;
