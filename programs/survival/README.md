@@ -93,9 +93,9 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm
 	
-### shear_coral.sc:
+### shear_corals.sc:
 #### By Ghoulboy
-	You can shear a coral, dead or alive, and there will be 0-6 drops which can be either coral fans or corals
+	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals
 	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block
 
