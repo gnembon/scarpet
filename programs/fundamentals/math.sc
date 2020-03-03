@@ -41,3 +41,17 @@ distance_sq(vec1, vec2) -> reduce(vec1 - vec2, _a + _*_, 0);
 distance(vec1, vec2) -> sqrt(reduce(vec1 - vec2, _a + _*_, 0));
 
 dot(vec1, vec2) -> reduce(vec1 * vec2, _a * _, 0);
+
+hcf(num1,num2) -> (
+	q=1;
+	while(q!=0,num1*num2,
+		q=max(num1,num2)-min(num1,num2)
+		if(num1>num2,
+			num1=q,
+			num2=q
+		);
+	);
+	return(max(num1,num2))
+);
+
+lcm(num1,num2) -> return(num1*num2/hcf(num1,num2));
