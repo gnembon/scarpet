@@ -55,3 +55,19 @@ hcf(num1,num2) -> (
 );
 
 lcm(num1,num2) -> return(num1*num2/hcf(num1,num2));
+
+hcflist(list)->(
+	f=get(list,0);
+	loop(length(list)-1,
+		f=hcf(get(list,_+1),f)
+	);
+	return(f)
+);
+
+lcmlist(list)->(
+	f=get(list,0);
+	loop(length(list)-1,
+		f=lcm(get(list,_+1),f)
+	);
+	return(f)
+);
