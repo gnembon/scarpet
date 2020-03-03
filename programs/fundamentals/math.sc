@@ -45,7 +45,7 @@ dot(vec1, vec2) -> reduce(vec1 * vec2, _a * _, 0);
 hcf(num1,num2) -> (
 	q=1;
 	while(q!=0,num1*num2,
-		q=max(num1,num2)-min(num1,num2)
+		q=max(num1,num2)-min(num1,num2);
 		if(num1>num2,
 			num1=q,
 			num2=q
