@@ -53,9 +53,15 @@ Various scripts that modify various game elements, often replicating popular mod
 ### inventory_refill.sc:
 #### By gnembonmc
 	There is a video on his channel about this
-	Right clicking on an inventory and having partially empty slots in your inventory will refill the mfrom the inventory
+	Right clicking on an inventory and having partially empty slots in your inventory will refill them from the inventory
 	Left clicking will send your items to any unfilled slots in the inventory
 	(Please add a better descreption as right now it just sounds like a less laggy storage_drawers.sc)
+
+### locate_block.sc:
+#### By Ghoulboy
+	This will allow you to see how many blocks of a specific type there are in an area around a point
+	locate will tell you first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat
+	hist will print a histogram like in gnembon's ancient debris video, but this will accept any block, and if there are less than 	40 blocks for that y level, it will print a nice looking histogram
 
 ### magic_doors.sc:
 #### By gnembonmc
