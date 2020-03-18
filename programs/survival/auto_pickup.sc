@@ -43,7 +43,7 @@ _move_items_to_inventory(player, coords) ->
 				)			
 			);
 			slot = inventory_find(player, null);
-			if (slot < 36, // skip #40, like in vanilla
+			if (slot != null && slot < 36, // skip #40, like in vanilla
 				inventory_set(player, slot, count, item_name, item_nbt);
 				throw()
 			)
