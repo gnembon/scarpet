@@ -21,6 +21,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	When you break a block, the item gets tp-ed to player, and left on ground if inventory is full
 	ALso works for inventory blocks, delaying the check until they are done to grab the items off the ground
 
+### better_lighter.sc:
+#### By Ghoulboy78
+	When you right click with a torch, it will place torches in a 128 perimeter, and at night it will palce torches on the surface.
+	In survival consumes torches
+
 ### bridge.sc:
 #### By Aplet123
 	When holding golden sword(configurable), sneaking and clicking block, the blocks in the offhand will be placed
