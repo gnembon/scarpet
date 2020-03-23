@@ -1,7 +1,21 @@
 # scarpet
-Public Repository of scarpet apps for Minecraft.
-Check https://gnembon.github.io/scarpet/ for full language docs.
-Obtain scarpet through carpet mod: https://github.com/gnembon/fabric-carpet/releases
+Public Repository of scarpet apps for Minecraft. 
+
+All programs are available as is. They might be incorrect, they might be outdated. If you see some problems, either [open a pull request with a fix](https://github.com/gnembon/scarpet/compare) or [report on the bug tracker for someone else to look into it](https://github.com/gnembon/scarpet/issues)
+
+## Documentation and Examples
+
+[Scarpet API docs](https://github.com/gnembon/fabric-carpet/blob/master/docs/scarpet/Documentation.md)
+
+## How to get scarpet
+
+[Get scarpet with carpet mod](https://github.com/gnembon/fabric-carpet/releases)
+
+## Editor support
+
+[Notepad++](https://github.com/gnembon/fabric-carpet/blob/master/docs/scarpet/resources/editors/npp/scarpet.xml)
+
+[Intellij IDEA keyword sets](https://github.com/gnembon/fabric-carpet/blob/master/docs/scarpet/resources/editors/idea/)
 
 ## Changelog
 

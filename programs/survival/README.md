@@ -53,9 +53,15 @@ Various scripts that modify various game elements, often replicating popular mod
 ### inventory_refill.sc:
 #### By gnembonmc
 	There is a video on his channel about this
-	Right clicking on an inventory and having partially empty slots in your inventory will refill the mfrom the inventory
+	Right clicking on an inventory and having partially empty slots in your inventory will refill them from the inventory
 	Left clicking will send your items to any unfilled slots in the inventory
 	(Please add a better descreption as right now it just sounds like a less laggy storage_drawers.sc)
+
+### locate_block.sc:
+#### By Ghoulboy
+	This will allow you to see how many blocks of a specific type there are in an area around a point
+	locate will tell you first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat
+	hist will print a histogram like in gnembon's ancient debris video, but this will accept any block, and if there are less than 	40 blocks for that y level, it will print a nice looking histogram
 
 ### magic_doors.sc:
 #### By gnembonmc
@@ -93,6 +99,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm
 	
+### shear_corals.sc:
+#### By Ghoulboy
+	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals
+	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	In creative it will not drop anything, like for any block
+
 ### signs_for_water_streams.sc:
 #### By indoorjetpacks
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
