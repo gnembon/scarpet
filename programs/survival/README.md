@@ -21,6 +21,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere
 	
+### cam.sc:
+#### By Ghoulboy
+    Like /c and /s, but configurable
+	
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
 	If you kill one of each type of fish(Pufferfish, tropical fish, salmon, cod)
