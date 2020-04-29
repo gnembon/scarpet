@@ -21,6 +21,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere
 	
+### cam.sc:
+#### By Ghoulboy
+    Like /c and /s, but configurable
+	
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
 	If you kill one of each type of fish(Pufferfish, tropical fish, salmon, cod)
@@ -120,6 +124,12 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	This random ticks plants in a 23*23*17 volume around the player
 	Blocks near the player will be random ticked more often
+
+### speed.sc:
+#### By Ghoulboy
+    This app calculates speed of a player
+    It will display a number in the scoreboard. Divide said number by 100 to get actual speed
+    Speed toggle in minihud is obviously much better
 
 ### storage_drawers.sc:
 #### By gnembonmc
