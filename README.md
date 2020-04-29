@@ -17,6 +17,8 @@ All programs are available as is. They might be incorrect, they might be outdate
 
 [Intellij IDEA keyword sets](https://github.com/gnembon/fabric-carpet/blob/master/docs/scarpet/resources/editors/idea/)
 
+[Vscode Autocompletion](https://github.com/imurx/vscode-scarpet)
+
 ## Changelog
 
 ### v1.6
