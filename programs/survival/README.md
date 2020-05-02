@@ -7,9 +7,17 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4
 	(Please enter an explanation here)
+	
+### auto_lighter.sc
+#### By gnembon
+	When right clicks on a torch pointing not on the block but in the air, this will start to send
+	out torches and light up the caves in the 128 block sphere around the player. If the player is in 
+    survival, it will yeet the torches from its inventory. 
+	
+	App is multiplayer compatible.
 
 ### auto_pickup.sc:
-#### By gnembonmc
+#### By gnembon
 	There is a video on his channel about this
 	When you break a block, the item gets tp-ed to player, and left on ground if inventory is full
 	ALso works for inventory blocks, delaying the check until they are done to grab the items off the ground

@@ -1,29 +1,25 @@
 // requires carpet 1.2.1 (towards scarpet v1.6)
 
 // scripts that spreads torches in caves up to 128 block in a sphere around the player
-// currently it works 'creatively', so does not consume torches from the player inventory_set
-// also - works only with one player in the game - multiplayer support could be added if `schedule`
-// is used instead of __on_tick, or if player is passed in various functions.
+// in survival gamemodes consumes torches from the player inventory
 
 ///right click on a torch while looking at nothing to toggle.
 
-global_spread_love;
-__config() -> m(l('scope', 'global'));
-
-__on_player_uses_item(p, it, hand) ->
+__on_player_uses_item(player, item, hand) ->
 (
 	if (hand != 'mainhand', return());
-	if (it:0 == 'torch',
-		ench = it:2:'Enchantments[]';
+	if (item:0 == 'torch',
+		ench = item:2:'Enchantments[]';
 		global_spread_love = 0;
-		delete(it:2:'Enchantments');
+		delete(item:2:'Enchantments');
 		if (!ench,
 			global_spread_love = 1;
-			if (ench==null, it:2 = nbt('{}'));
-			put(it:2:'Enchantments','[]');
-			put(it:2:'Enchantments', '{lvl:1s,id:"minecraft:protection"}', 0);
+			if (ench==null, item:2 = nbt('{}'));
+			put(item:2:'Enchantments','[]');
+			put(item:2:'Enchantments', '{lvl:1s,id:"minecraft:protection"}', 0);
+			schedule(0, 'spread_torches', player);
 		);
-		inventory_set(p, p~'selected_slot', it:1, it:0, it:2);
+		inventory_set(player, player~'selected_slot', item:1, item:0, item:2);
 	) 
 );
 
@@ -31,23 +27,46 @@ __distance_sq(vec1, vec2) -> reduce(vec1 - vec2, _a + _*_, 0);
 
 global_effect_radius = 128;
 
-__on_tick() ->
+spread_torches(player) ->
 (
-	
-	if (global_spread_love && (p = player())~'holds':0 == 'torch',
-		cpos = pos(p);
+	if (global_spread_love && player~'holds':0 == 'torch',
+		is_survival = !(player~'gamemode_id' % 2);
+		cpos = pos(player);
 		d = global_effect_radius*2;
 		loop(4000,
 			lpos = cpos+l(rand(d), rand(d), rand(d)) - d/2;
 			if (__distance_sq(cpos, lpos) <= 16384  
 					&& air(lpos) && light(lpos) < 8 && sky_light(lpos) < 8
 					&& solid(pos_offset(lpos, 'down')),
-				__send_torch(p, lpos);
+				if (is_survival && not_able_loose_torch(player),
+					//running out of torches as survival
+					return();
+				);
+				__send_torch(player, lpos);
 				success += 1;
-				if (success > 2, return());
+				if (success > 2, 
+					//spread the limit already, continue next tick
+					schedule(1, 'spread_torches', player);
+					return()
+				);
 			)
-		)
+		);
+		// failed to find a spot, but still have space
+		schedule(1, 'spread_torches', player)
 	)
+);
+
+not_able_loose_torch(p) ->
+(
+	// we are not using inventory_remove, because we would like to skip the holding slot if possible
+	slot = inventory_find(p, 'torch', p~'selected_slot'+1);
+	if (slot == null,
+		slot = inventory_find(p, 'torch');
+		if (slot == null, return(true));
+	);
+	item = inventory_get(p, slot);
+	inventory_set(p, slot, item:1-1, item:0, item:2);
+	false
 );
 
 torch_test() ->
