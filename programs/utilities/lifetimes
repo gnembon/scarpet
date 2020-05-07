@@ -1,3 +1,5 @@
+// by Ghoulboy78
+
 __command()->(
     print(
         'Available commands:\n'+
