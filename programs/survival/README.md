@@ -30,8 +30,9 @@ Various scripts that modify various game elements, often replicating popular mod
 	which can be very useful anywhere
 	
 ### cam.sc:
-#### By Ghoulboy
-    Like /c and /s, but configurable
+#### By Gnembon
+    As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
+    app nbt's for future use. The whole shabang.
 	
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
