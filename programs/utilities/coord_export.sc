@@ -35,7 +35,7 @@ circle_iter(origin, dist) ->
 
 // similar to rect_iter, but returns if points are in range(circular check)
 
-circle_biome(origin, dist, biomename) ->
+circle_biome(origin, dist, biomename, include_soul_sand) ->
 (
 	l(x,z) = origin;
 	dist = abs(dist);
@@ -43,7 +43,7 @@ circle_biome(origin, dist, biomename) ->
 	l(zmin, zmax) = l(z-dist, z+dist+1);
 	c_for(ax=xmin, ax<xmax, ax+=1,
 		c_for(az=zmin, az< zmax, az+=1,
-			if( (ax - x)^2 + (az - z) ^2 <= dist ^2 && !( lower(biome(l(16*ax, 0, 16*az)))==lower(biomename) || lower(biome(l(16*ax, 0, 16*az)))==lower('soul_sand_valley')  ),return(0)
+			if( (ax - x)^2 + (az - z) ^2 <= dist ^2 && !( lower(biome(l(16*ax, 0, 16*az)))==lower(biomename) || (include_soul_sand && lower(biome(l(16*ax, 0, 16*az)))==lower('soul_sand_valley'))  ),return(0)
 			)			
 		)
 	);
@@ -68,7 +68,7 @@ check_warped_fortress(xz, dist) ->
 	mid = (alpha + omega)/2 ;
 	l(cx, cy, cz) = mid / 16;
 	l(cx, cy, cz) = l(floor(cx), floor(cy), floor(cz));
-	return (circle_biome(l(cx,cz), dist, 'warped_forest'));
+	return (circle_biome(l(cx,cz), dist, 'warped_forest', 1));
 );
 
 // Check coordinate whether it can has fortress, then size of it, and midpoint, and finally check its surrounding biome.
@@ -122,7 +122,7 @@ amidst_ship(origin, dist) ->
 			listed+= _)
 	);
 	return(listed)	
-)
+);
 // Returns end cities coordinate which has end ship, from origin within distance(chunk)
 
 amidst_nether(origin, dist) ->
@@ -179,5 +179,17 @@ amidst_warped_fortress(origin, dist, finds, checkrange) ->
 //Returns Fortress surrounded with warped forest or soul sand valley, finds = fortresses to find, checkrange = surrounding range of biomes(8+ asserts maximum efficiency)
 
 // coordinates input should be chunk positions, dist = chunk range(1 chunk = 16 block range), finds = number to find, checkrange = to vaild range(8 = 128 block)
+
+amidst_gold_farm(origin, dist, finds, checkrange) ->
+(
+	listed = l();
+	found = 0;
+	for (circle_iter(origin, dist),
+		coord = _;if(circle_biome(_/16, checkrange, 'nether_wastes', false), listed += _;found+=1;if(found > finds, return(listed)))
+	);
+	return (listed)
+)
+
+		
 
 
