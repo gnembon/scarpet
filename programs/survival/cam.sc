@@ -1,4 +1,3 @@
-
 // safe and fair spectator camera app by gnembon
 // saves player's position, motion, angles, effects and restores them on landing
 // saves player configs between saves
@@ -33,7 +32,7 @@ __command() ->
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
       ,
-         if (__survival_defaults(p), 
+         if (__survival_defaults(p),
             __remove_camera_effects(p)
          );
       );
@@ -41,7 +40,7 @@ __command() ->
       __assert_player_can_cam_out(p);
       if (global_survival_timeout > 0,
          global_is_in_switching = true;
-         for(range(global_survival_timeout, 0, -1), 
+         for(range(global_survival_timeout, 0, -1),
             schedule((global_survival_timeout+1-_)*20, _(outer(_)) -> print(format('v camera mode in '+_+'...')))
          );
          player_name = p~'name';
@@ -49,6 +48,7 @@ __command() ->
          schedule((global_survival_timeout+1)*20, _(outer(player_name), outer(player_dim) )-> (
             global_is_in_switching = false;
             p = player(player_name);
+            __assert_player_can_cam_out(p);
             if (p && p~'dimension' == player_dim,
                __store_player_takeoff_params(p);
                __turn_to_camera_mode(p);
@@ -79,7 +79,7 @@ __get_player_stored_takeoff_params(player_name) ->
    if (effects_tags,
       // fixing vanilla list parser
       if (type(effects_tags)!='list',effects_tags = l(effects_tags));
-      
+
       for(effects_tags, etag = _;
          effect = m();
          effect:'name' = etag:'Name';
@@ -96,8 +96,8 @@ __store_player_takeoff_params(player) ->
    tag = nbt('{}');
    // need to print to float string
    //otherwise mojang will interpret 0.0d as 0i and fail to insert
-   for(pos(player), put(tag:'Position',str('%.6fd',_),_i)); 
-   for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i)); 
+   for(pos(player), put(tag:'Position',str('%.6fd',_),_i));
+   for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i));
    tag:'Yaw' = str('%.6f', player~'yaw');
    tag:'Pitch' = str('%.6f', player~'pitch');
    for (player~'effect',
