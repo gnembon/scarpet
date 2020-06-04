@@ -12,11 +12,12 @@ __on_player_uses_item(player, item, hand) ->
 		ench = item:2:'Enchantments[]';
 		global_spread_love = 0;
 		delete(item:2:'Enchantments');
-		if (!ench,
+		if (!ench && player~'gamemode_id'!=3,
 			global_spread_love = 1;
 			if (ench==null, item:2 = nbt('{}'));
 			put(item:2:'Enchantments','[]');
 			put(item:2:'Enchantments', '{lvl:1s,id:"minecraft:protection"}', 0);
+		    	global_survival=!(player~'gamemode_id' % 2);
 			schedule(0, 'spread_torches', player);
 		);
 		inventory_set(player, player~'selected_slot', item:1, item:0, item:2);
@@ -27,10 +28,12 @@ __distance_sq(vec1, vec2) -> reduce(vec1 - vec2, _a + _*_, 0);
 
 global_effect_radius = 128;
 
+global_survival=false;
+
 spread_torches(player) ->
 (
 	if (global_spread_love && player~'holds':0 == 'torch',
-		is_survival = !(player~'gamemode_id' % 2);
+		is_survival = global_survival;
 		cpos = pos(player);
 		d = global_effect_radius*2;
 		loop(4000,
