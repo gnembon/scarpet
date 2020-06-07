@@ -30,7 +30,7 @@ global_effect_radius = 128;
 
 global_survival=false;
 
-spread_torches(player) ->
+spread_torches(player, initial_gamemode) ->
 (
 	if (global_spread_love && player~'holds':0 == 'torch' && player ~'gamemode_id' == initial_gamemode,
 		is_survival = global_survival;
