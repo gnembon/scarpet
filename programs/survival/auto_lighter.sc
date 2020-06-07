@@ -18,7 +18,7 @@ __on_player_uses_item(player, item, hand) ->
 			put(item:2:'Enchantments','[]');
 			put(item:2:'Enchantments', '{lvl:1s,id:"minecraft:protection"}', 0);
 		    	global_survival=!(player~'gamemode_id' % 2);
-			schedule(0, 'spread_torches', player);
+			schedule(0, 'spread_torches', player, player~'gamemode_id');
 		);
 		inventory_set(player, player~'selected_slot', item:1, item:0, item:2);
 	) 
@@ -135,5 +135,4 @@ clear_all_torches() ->
 	l(x,y,z) = pos(player());
 	scan(x,y,z,128,128,128,if(_=='torch', set(_, 'air')));
 )
-
 
