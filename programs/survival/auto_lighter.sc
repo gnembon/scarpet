@@ -32,7 +32,7 @@ global_survival=false;
 
 spread_torches(player) ->
 (
-	if (global_spread_love && player~'holds':0 == 'torch',
+	if (global_spread_love && player~'holds':0 == 'torch' && player ~'gamemode_id' == initial_gamemode,
 		is_survival = global_survival;
 		cpos = pos(player);
 		d = global_effect_radius*2;
@@ -135,4 +135,3 @@ clear_all_torches() ->
 	l(x,y,z) = pos(player());
 	scan(x,y,z,128,128,128,if(_=='torch', set(_, 'air')));
 )
-
