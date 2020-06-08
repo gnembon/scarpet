@@ -1,5 +1,10 @@
 __config() -> m( l('scope', 'global'));
 
+__command()->print(
+	'/loaded_chunks_display set_pos x y z: Makes the display load from that point in that dimension\n'+
+	'/loaded_chunks_display set_refresh_rate rate : Makes the display refresh that many times per tick.'
+	);
+
 global_chunk_colors = m(
     // loaded ticking
 	l(3,                   l('lime_concrete',      'green_concrete'   )),
@@ -76,6 +81,7 @@ __remove_previous_setup(new_player) ->
 	if (!global_current_setup, return());
 	//__on_tick() -> null;
 	undef('__on_tick');
+	global_position=l(0,0,0);
 	p = player(global_current_setup:'player_name');
 	if (p && 
 			global_block_markers:((item = inventory_get(p, global_current_setup:'inventory_slot')):0)==global_current_setup:'source_dimension' && 
@@ -96,6 +102,10 @@ __remove_previous_setup(new_player) ->
 	!disabled
 );
 
+global_position=l(0,0,0);
+
+set_pos(x,y,z)->global_position=l(x,y,z);
+
 __setup_tracker(player, item) ->
 (
 	setup = m();
@@ -103,7 +113,7 @@ __setup_tracker(player, item) ->
 	setup:'player_name' = str(player);
 	setup:'inventory_slot' = player ~ 'selected_slot';
 	setup:'plot_dimension' = player ~ 'dimension';
-	setup:'plot_center' = map(pos(player), floor(_))-l(0,1,0);
+	setup:'plot_center' = if(global_position,global_position,map(pos(player), floor(_))-l(0,1,0));
 	setup:'radius' = item:1;
 	setup:'source_dimension' = global_block_markers:(item:0);
 	multiplier = 1;
@@ -138,8 +148,13 @@ __setup_tracker(player, item) ->
 );
 
 global_status_cache = m();
+global_refresh_rate=1;
+
+set_refresh_rate(rate)->global_refresh_rate=20/rate;
+
 __chunk_visualizer_tick() ->
 (
+	if(tick_time() % global_refresh_rate,return());
 	setup = global_current_setup;
 	if(!setup, return());
 	p = player();
