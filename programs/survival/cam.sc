@@ -1,173 +1,68 @@
-// safe and fair spectator camera app by gnembon
-// saves player's position, motion, angles, effects and restores them on landing
-// saves player configs between saves
-// places spectating players without config in a safe places
-// and adds timeout for the player so they cannot switch instantly
-// change setting below to change that behaviour (0 to disable timeout)
-global_survival_timeout = 3;
-
-// additional player checks are here. comment lines that you think are not needed
-__assert_player_can_cam_out(player) ->
-(
-   if(!query(player,'nbt','OnGround'), exit('You must be on firm ground.'));
-   if(query(player,'nbt','Air') < 300, exit('You must be in air, not suffocating nor in liquids.'));
-   if(player ~ 'is_burning', exit('You must not be on fire.'));
-   null
+__command()->(
+    print('This camera acts the same as /c, except it will tp you back to the start location, and remember previous enchantments!');
+    print('    /cam c: Will put you into spectator mode and give you night vision and conduit power to see better');
+    print('    /cam s: Will put you back into survival, give you back any conduit power and night vision effects you had before');
+    print('    /cam tpback true/false: If true, will tp you back to the start location, if not will not');
+    print('    /cam checkvalid true/false: If true, will enable some checks to be made for changing into spectator, like drowning or burning');
+    print('    /cam checkspecific check, true/false: Will toggle those checks on or off for turning into spectator');
+    print('    /cam checks: Will print all available checks, along with their default and actual values');
 );
 
-// none of your business below
+global_prevnv=l(0,0);//Night vision duration, Night vision amplification
+global_prevcp=l(0,0);//Conduit power duration, Conduit power amplification
+global_tpback=true;
+global_checkvalid=true;
+global_checkspecific=m(
+    l('falling',true),
+    l('suffocating',true),
+    l('burning',true)
+);//you can add more checks in the future
 
-
-
-
-__command() ->
-(
-   p = player();
-   current_gamemode = p~'gamemode';
-   if ( current_gamemode == 'spectator',config = __get_player_stored_takeoff_params(p~'name');
-      if (config&&(p~'dimension'==config:'dimension'),
-         __restore_player_params(p, config);
-         __remove_player_config(p~'name');
-         __remove_camera_effects(p);
-      ,
-         if (__survival_defaults(p), 
-	if(config = __get_player_stored_takeoff_params(p~'name'), __restore_player_params_irregular(p, config);__remove_player_config(p~'name'));
-            __remove_camera_effects(p)
-         );
-      );
-   , (current_gamemode == 'survival'||current_gamemode == 'creative') && !global_is_in_switching, // else if survival - switch to spectator
-      __assert_player_can_cam_out(p);
-      if (global_survival_timeout > 0,
-         global_is_in_switching = true;
-         for(range(global_survival_timeout, 0, -1), 
-            schedule((global_survival_timeout+1-_)*20, _(outer(_)) -> print(format('v camera mode in '+_+'...')))
-         );
-         player_name = p~'name';
-         player_dim = p~'dimension';
-         schedule((global_survival_timeout+1)*20, _(outer(player_name), outer(player_dim) )-> (
-            global_is_in_switching = false;
-            p = player(player_name);
-            if (p && p~'dimension' == player_dim,
-               __store_player_takeoff_params(p);
-               __turn_to_camera_mode(p);
-            )
-         ));
-      ,
-         __store_player_takeoff_params(p);
-         __turn_to_camera_mode(p);
-      )
-   );
-   ''
+c()->(
+    player=player();
+    valid=__valid(player);//will return null if you can go into spectator mode
+    if(valid,return('You cannot go into spectator while '+valid));
+    run('gamemode spectator '+player);
+    global_prevnv=query(player,'effect','night_vision');
+    global_prevcp=query(player,'effect','conduit_power');
+    modify(player, 'effect', 'night_vision', 0, 0, false, false);//remove pre-existing effects
+    modify(player, 'effect', 'conduit_power', 0, 0, false, false);//cos otherwise its buggy
+    modify(player, 'effect', 'night_vision', 1000000, 255, false, false);
+    modify(player, 'effect', 'conduit_power', 1000000, 255, false, false);
+    global_pos=pos(player);
+    return(null)
 );
 
-
-__get_player_stored_takeoff_params(player_name) ->
-(
-   tag = load_app_data();
-   if(!tag, return (null));
-   player_tag = tag:player_name;
-   if (!player_tag, return(null));
-   config = m();
-   config:'pos' = player_tag:'Position.[]';
-   config:'motion' = player_tag:'Motion.[]';
-   config:'yaw' = player_tag:'Yaw';
-   config:'pitch' = player_tag:'Pitch';
-   config:'effects' = l();
-   config:'dimension' = player_tag:'dimension';
-   effects_tags = player_tag:'Effects.[]';
-   if (effects_tags,
-      // fixing vanilla list parser
-      if (type(effects_tags)!='list',effects_tags = l(effects_tags));
-      
-      for(effects_tags, etag = _;
-         effect = m();
-         effect:'name' = etag:'Name';
-         effect:'amplifier' = etag:'Amplifier';
-         effect:'duration' = etag:'Duration';
-         config:'effects' += effect;
-      );
-   );
-   config
+s()->(
+    player=player();
+    if(!query(player,'gamemode_id'),return('Can\'t use command in survival!'));//cos survvial is 0, so you cant use to to teleport back to a spot
+    run('gamemode survival '+player);
+    modify(player, 'effect', 'night_vision', get(global_prevnv,1), get(global_prevnv,1), true, true);
+    modify(player, 'effect', 'conduit_power', get(global_prevcp,1), get(global_prevcp,1), true, true);
+    if(global_tpback,modify(player,'pos',global_pos));//tps you back to start
+    return(null)
 );
 
-__store_player_takeoff_params(player) ->
-(
-   tag = nbt('{}');
-   // need to print to float string
-   //otherwise mojang will interpret 0.0d as 0i and fail to insert
-   for(pos(player), put(tag:'Position',str('%.6fd',_),_i)); 
-   for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i)); 
-   tag:'Yaw' = str('%.6f', player~'yaw');
-   tag:'Pitch' = str('%.6f', player~'pitch');
-   tag:'dimension' = str(player~'dimension');
-   for (player~'effect',
-      l(name, amplifier, duration) = _;
-      etag = nbt('{}');
-      etag:'Name' = name;
-      etag:'Amplifier' = amplifier;
-      etag:'Duration' = duration;
-      put(tag:'Effects', etag, _i);
-   );
-   apptag = load_app_data();
-   if (!apptag, apptag = nbt('{}'));
-   apptag:(player~'name') = tag;
-   store_app_data(apptag);
-   null
+tpback(tpback)->global_tpback=tpback;
+checkvalid(checkvalid)->global_checkvalid=checkvalid;
+checkspecific(check,val)->global_checkspecific:check:1=val;//I think its the correct syntax
+
+checks()->(
+    player=player();
+    print('All currently available checks to turn into spectator mode');
+    print('- falling '+global_checkspecific:0);
+    print('- suffocating '+global_checkspecific:1);
+    print('- burning '+global_checkspecific:2);
 );
 
-__restore_player_params(player, config) ->
-(
-   modify(player, 'gamemode', 'survival');
-   for(l('pos', 'motion', 'yaw', 'pitch'), modify(player, _, config:_));
-   for (config:'effects',
-      modify(player, 'effect', _:'name', _:'duration', _:'amplifier')
-   );
+__valid(player)->(
+    cause = null
+    if(!global_checkvalid, return cause);// if checking for validity is off, return null
+    if(global_checkspecific:0&& !(query(player,'nbt','OnGround')||player~'jumping'),cause='falling');//falling, but not jumping
+    if(global_checkspecific:1&& query(player,'nbt','Air')<300,cause='suffocating');//suffocating, and also bobbing up and down in water, eg. waterlogged trapdoor
+    if(global_checkspecific:2&& player~'burning',Scause='burning');//burning, and any others?
+    return cause
 );
 
-__restore_player_params_irregular(player, config) ->
-(
-   modify(player, 'gamemode', 'survival');
-   for (config:'effects',
-      modify(player, 'effect', _:'name', _:'duration', _:'amplifier')
-   );
-);
-
-__remove_player_config(player_name) ->
-(
-   tag = load_app_data();
-   delete(tag:player_name);
-   store_app_data(tag);
-);
-
-
-__remove_camera_effects(player) ->
-(
-   modify(player, 'effect', 'night_vision', null);
-   modify(player, 'effect', 'dolphins_grace', null);
-   modify(player, 'gamemode', 'survival');
-   print('Sneak if you are troubled')
-);
-
-__turn_to_camera_mode(player) ->
-(
-   modify(player, 'effect', 'night_vision', 999999, 0, false, false);
-   modify(player, 'effect', 'dolphins_grace', 999999, 0, false, false);
-   modify(player, 'gamemode', 'spectator');
-);
-
-__survival_defaults(player) ->
-(
-   yposes = l();
-   l(x,y,z) = pos(player);
-   for(range(2), yposes+=y+_; yposes+=y-_);
-   for( yposes,
-      scan(x, _, z, 32, 0, 32,
-         if( air(_) && air(pos_offset(_, 'up')) && solid(pos_offset(_, 'down')),
-            modify(player, 'pos', pos(_)+l(0.5,0.7,0.5));
-            return(true);
-         )
-      )
-   );
-   print(format('rb Cannot find a safe spot to land within 32 blocks away'));
-   false;
-);
+//Conditions for cheating (copy pastad code from Minerva Datapack where I originally devised these checks)
+//execute unless data entity @s {Dimension:0} run scoreboard players set @s valid 0 <- dunno about this one
