@@ -1,4 +1,3 @@
-
 // safe and fair spectator camera app by gnembon
 // saves player's position, motion, angles, effects and restores them on landing
 // saves player configs between saves
@@ -21,23 +20,22 @@ __assert_player_can_cam_out(player) ->
 
 
 
-
-
 __command() ->
 (
    p = player();
    current_gamemode = p~'gamemode';
-   if ( current_gamemode == 'spectator',
-      if (config = __get_player_stored_takeoff_params(p~'name'),
-         __remove_camera_effects(p);
+   if ( current_gamemode == 'spectator',config = __get_player_stored_takeoff_params(p~'name');
+      if (config&&(p~'dimension'==config:'dimension'),
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
+         __remove_camera_effects(p);
       ,
          if (__survival_defaults(p), 
+	if(config = __get_player_stored_takeoff_params(p~'name'), __restore_player_params_irregular(p, config);__remove_player_config(p~'name'));
             __remove_camera_effects(p)
          );
       );
-   , current_gamemode == 'survival' && !global_is_in_switching, // else if survival - switch to spectator
+   , (current_gamemode == 'survival'||current_gamemode == 'creative') && !global_is_in_switching, // else if survival - switch to spectator
       __assert_player_can_cam_out(p);
       if (global_survival_timeout > 0,
          global_is_in_switching = true;
@@ -75,6 +73,7 @@ __get_player_stored_takeoff_params(player_name) ->
    config:'yaw' = player_tag:'Yaw';
    config:'pitch' = player_tag:'Pitch';
    config:'effects' = l();
+   config:'dimension' = player_tag:'dimension';
    effects_tags = player_tag:'Effects.[]';
    if (effects_tags,
       // fixing vanilla list parser
@@ -100,6 +99,7 @@ __store_player_takeoff_params(player) ->
    for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i)); 
    tag:'Yaw' = str('%.6f', player~'yaw');
    tag:'Pitch' = str('%.6f', player~'pitch');
+   tag:'dimension' = str(player~'dimension');
    for (player~'effect',
       l(name, amplifier, duration) = _;
       etag = nbt('{}');
@@ -124,6 +124,14 @@ __restore_player_params(player, config) ->
    );
 );
 
+__restore_player_params_irregular(player, config) ->
+(
+   modify(player, 'gamemode', 'survival');
+   for (config:'effects',
+      modify(player, 'effect', _:'name', _:'duration', _:'amplifier')
+   );
+);
+
 __remove_player_config(player_name) ->
 (
    tag = load_app_data();
@@ -137,11 +145,11 @@ __remove_camera_effects(player) ->
    modify(player, 'effect', 'night_vision', null);
    modify(player, 'effect', 'dolphins_grace', null);
    modify(player, 'gamemode', 'survival');
+   print('Sneak if you are troubled')
 );
 
 __turn_to_camera_mode(player) ->
 (
-   modify(player, 'effect');
    modify(player, 'effect', 'night_vision', 999999, 0, false, false);
    modify(player, 'effect', 'dolphins_grace', 999999, 0, false, false);
    modify(player, 'gamemode', 'spectator');
@@ -151,11 +159,11 @@ __survival_defaults(player) ->
 (
    yposes = l();
    l(x,y,z) = pos(player);
-   for(range(32), yposes+=y+_; yposes+=y-_);
+   for(range(2), yposes+=y+_; yposes+=y-_);
    for( yposes,
       scan(x, _, z, 32, 0, 32,
-         if( air(_) && air(pos_offset(_, 'up')) && suffocates(pos_offset(_, 'down')),
-            modify(player, 'pos', pos(_)+l(0.5,0.2,0.5));
+         if( air(_) && air(pos_offset(_, 'up')) && solid(pos_offset(_, 'down')),
+            modify(player, 'pos', pos(_)+l(0.5,0.7,0.5));
             return(true);
          )
       )
