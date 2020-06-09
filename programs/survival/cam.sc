@@ -41,7 +41,7 @@ __command() ->
       __assert_player_can_cam_out(p);
       if (global_survival_timeout > 0,
          global_is_in_switching = true;
-         for(range(global_survival_timeout, 0, -1),
+         for(range(global_survival_timeout, 0, -1), 
             schedule((global_survival_timeout+1-_)*20, _(outer(_)) -> print(format('v camera mode in '+_+'...')))
          );
          player_name = p~'name';
@@ -80,7 +80,6 @@ __get_player_stored_takeoff_params(player_name) ->
    if (effects_tags,
       // fixing vanilla list parser
       if (type(effects_tags)!='list',effects_tags = l(effects_tags));
-
       for(effects_tags, etag = _; 
          effect = m();
          effect:'name' = etag:'Name';
