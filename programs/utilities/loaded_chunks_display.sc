@@ -150,7 +150,7 @@ __setup_tracker(player, item) ->
 global_status_cache = m();
 global_refresh_rate=1;
 
-set_refresh_rate(rate)->global_refresh_rate=20/rate;
+set_refresh_rate(rate)->global_refresh_rate=number(20/rate);
 
 __chunk_visualizer_tick() ->
 (
