@@ -1,3 +1,4 @@
+
 // safe and fair spectator camera app by gnembon
 // saves player's position, motion, angles, effects and restores them on landing
 // saves player configs between saves
@@ -32,7 +33,7 @@ __command() ->
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
       ,
-         if (__survival_defaults(p),
+         if (__survival_defaults(p), 
             __remove_camera_effects(p)
          );
       );
@@ -80,7 +81,7 @@ __get_player_stored_takeoff_params(player_name) ->
       // fixing vanilla list parser
       if (type(effects_tags)!='list',effects_tags = l(effects_tags));
 
-      for(effects_tags, etag = _;
+      for(effects_tags, etag = _; 
          effect = m();
          effect:'name' = etag:'Name';
          effect:'amplifier' = etag:'Amplifier';
