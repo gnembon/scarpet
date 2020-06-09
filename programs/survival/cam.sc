@@ -135,7 +135,7 @@ __remove_player_config(player_name) ->
 __remove_camera_effects(player) ->
 (
    modify(player, 'effect', 'night_vision', null);
-   modify(player, 'effect', 'dolphins_grace', null);
+   modify(player, 'effect', 'conduit_power', null);
    modify(player, 'gamemode', 'survival');
 );
 
@@ -143,7 +143,7 @@ __turn_to_camera_mode(player) ->
 (
    modify(player, 'effect');
    modify(player, 'effect', 'night_vision', 999999, 0, false, false);
-   modify(player, 'effect', 'dolphins_grace', 999999, 0, false, false);
+   modify(player, 'effect', 'conduit_power', 999999, 0, false, false);
    modify(player, 'gamemode', 'spectator');
 );
 
