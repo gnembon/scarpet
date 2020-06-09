@@ -80,8 +80,8 @@ __get_player_stored_takeoff_params(player_name) ->
    if (effects_tags,
       // fixing vanilla list parser
       if (type(effects_tags)!='list',effects_tags = l(effects_tags));
-       
-      for(effects_tags, etag = _; 
+      
+      for(effects_tags, etag = _;
          effect = m();
          effect:'name' = etag:'Name';
          effect:'amplifier' = etag:'Amplifier';
