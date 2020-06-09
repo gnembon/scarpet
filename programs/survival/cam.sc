@@ -80,6 +80,7 @@ __get_player_stored_takeoff_params(player_name) ->
    if (effects_tags,
       // fixing vanilla list parser
       if (type(effects_tags)!='list',effects_tags = l(effects_tags));
+       
       for(effects_tags, etag = _; 
          effect = m();
          effect:'name' = etag:'Name';
@@ -96,8 +97,8 @@ __store_player_takeoff_params(player) ->
    tag = nbt('{}');
    // need to print to float string
    //otherwise mojang will interpret 0.0d as 0i and fail to insert
-   for(pos(player), put(tag:'Position',str('%.6fd',_),_i));
-   for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i));
+   for(pos(player), put(tag:'Position',str('%.6fd',_),_i)); 
+   for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i)); 
    tag:'Yaw' = str('%.6f', player~'yaw');
    tag:'Pitch' = str('%.6f', player~'pitch');
    for (player~'effect',
