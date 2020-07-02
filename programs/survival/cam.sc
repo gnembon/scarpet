@@ -21,7 +21,11 @@ __assert_player_can_cam_out(player) ->
 
 
 
-
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
 
 __command() ->
 (
