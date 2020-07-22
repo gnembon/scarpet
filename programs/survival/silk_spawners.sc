@@ -2,6 +2,11 @@
 // By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 // 1.16 update by Jackson Harada
 
+//keeps script loaded upon server start
+__config() -> (m(
+  l('stay_loaded','true')
+));
+
 // private __silk_spawner (player, block)
 // returns: true if and only if
 //  - player is holding a silk touch diamond or netherite pickaxe
