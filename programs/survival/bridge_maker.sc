@@ -1,6 +1,6 @@
 //Bridge maker, right click with golden sword and blocks in offhand to start placing.
 //Video: https://youtu.be/6QxQXymqRoA
-//By: Ghoulboy
+//By: Ghoulboy and Aplet123
 
 __config()->{'scope'->'player'};//So that you can't accidentlly load it in global mode and mess it up
 
