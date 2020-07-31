@@ -9,7 +9,7 @@
 __silk_spawner (player, block) -> (
         if (block != 'spawner', return());
         tool = player ~ 'holds';
-        if (!tool || get(tool, 0) != 'diamond_pickaxe' || 'netherite_pickaxe', return());
+        if (!tool || get(tool, 0) != 'diamond_pickaxe' || get(tool, 0) != 'netherite_pickaxe', return());
         nbt = get(tool, 2);
         if (!nbt, return());
         ench = get(nbt, 'Enchantments[]');
