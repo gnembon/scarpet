@@ -105,6 +105,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm
 	
+### right_click_harvest.sc
+#### By Sir_Gavith
+	You can right click on a crop to harvest it and replant it
+	Supported crops are Wheat, Carrots, Potatoes, Beetroot and Nether Wart
+	
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals
@@ -177,4 +182,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Aplet123
 	Ghoulboy
 	indoorjetpacks
+	Sir_Gavith
 	(Many more hopefully!)
