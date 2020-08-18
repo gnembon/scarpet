@@ -167,6 +167,6 @@ __survival_defaults(player) ->
          )
       )
    );
-   print(format('rb Cannot find a safe spot to land within 32 blocks away'));
+   print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
 );
