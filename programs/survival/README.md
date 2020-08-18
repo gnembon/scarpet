@@ -165,11 +165,16 @@ Various scripts that modify various game elements, often replicating popular mod
 	(Please enter an explanation, as it quite unclear)
 
 ### vortex_effect.sc:
-#### By gnembonmc
-	There is a video on his channel about this.
-	If you hold an axe with Sharpness, stuff will start flying around you at faster and faster speeds.
-	Vortex 1 is a useful magnet, and Vortex 3 is a crazy random tornado which no-one wants except for a prank or messing around.
-	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon.
+#### By gnembon
+	There is a video on his channel about this
+	If you hold an ax with Sharpness, stuff will start flying around you at faster and faster speeds
+	Vortex 1 is a useful magnet, and Vortex 3 is a crazy random tornado which no-one wants except for a prank or messing around
+	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon
+	
+### world_map.sc:
+#### By gnembon
+	https://www.youtube.com/watch?v=TqgyvnjEAn4
+	Cos gnembon was too lazy to wait for amidst to update.
 
 ### Current content creators:
 	gnembonmc(obviously)
