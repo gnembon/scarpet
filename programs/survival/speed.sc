@@ -1,27 +1,42 @@
-roundmath(num,precision)->return (round(num/precision)*precision);
+//Speed display
+//By: Ghoulboy
 
-//scoreboard_add('Speed');
-scoreboard_display('sidebar','Speed');
-global_prevpos=l(0,0,0);
-global_pos=l(0,0,0);
-print('Divide number on the side of the screen by 100 to get actual speed in m/s!');
+import('math','_euclidean');
+
+//Funcs
+
+__setup_player(player)->(
+    global_prevpos:player=pos(player);
+    global_pos:player=pos(player);
+    entity_event(player,'on_tick','__display')
+);
+
 __display(player)->(
-    global_pos=pos(player);
-    speed=(speed+speed(global_pos,global_prevpos))/2;
-    if(global_true,print(roundmath(speed*20,0.01)));
-    scoreboard('Speed',player,roundmath(speed*2000,0.01));
-    global_prevpos=pos(player);
+    if(tick_time()%global_refresh_rate==0,
+        global_pos:player=pos(player);
+
+        speed=_euclidean(global_pos:player,global_prevpos:player)*20/global_refresh_rate;
+        scoreboard('Speed',player,roundmath(speed*1000,1));
+
+        global_prevpos:player=pos(player)
+    )
 );
 
-for(entity_selector('@e[type=player]'),
-    global_prevpos=pos(p);
-    global_pos=pos(p);
-    entity_event(_,'on_tick','__display')
-);
+__on_player_connects(player)->__setup_player(player);
 
-speed(pos1,pos2)->(
-    l(dx,dy,dz)=pos1-pos2;
-    return(sqrt(dx*dx+dy*dy+dz*dz))
-);
+roundmath(num,precision)->return(round(num/precision)*precision);
 
-global_true=false;
+//Initial code
+
+scoreboard_add('Speed');
+scoreboard_display('sidebar','Speed');
+global_prevpos={};
+global_pos={};
+global_refresh_rate=20;
+
+
+print('Divide number on the side of the screen by 1000 to get actual speed in m/s!');
+
+for(player('*'),
+    __setup_player(_)
+);

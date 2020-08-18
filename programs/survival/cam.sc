@@ -21,7 +21,11 @@ __assert_player_can_cam_out(player) ->
 
 
 
-
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
 
 __command() ->
 (
@@ -74,6 +78,7 @@ __get_player_stored_takeoff_params(player_name) ->
    config:'motion' = player_tag:'Motion.[]';
    config:'yaw' = player_tag:'Yaw';
    config:'pitch' = player_tag:'Pitch';
+   config:'dimension' = player_tag:'Dimension';
    config:'effects' = l();
    effects_tags = player_tag:'Effects.[]';
    if (effects_tags,
@@ -100,6 +105,7 @@ __store_player_takeoff_params(player) ->
    for(player~'motion', put(tag:'Motion',str('%.6fd',_),_i)); 
    tag:'Yaw' = str('%.6f', player~'yaw');
    tag:'Pitch' = str('%.6f', player~'pitch');
+   tag:'Dimension' = player~'dimension';
    for (player~'effect',
       l(name, amplifier, duration) = _;
       etag = nbt('{}');
@@ -117,6 +123,7 @@ __store_player_takeoff_params(player) ->
 
 __restore_player_params(player, config) ->
 (
+   run('execute in minecraft:'+config:'dimension'+' run tp @s ~ ~ ~');
    modify(player, 'gamemode', 'survival');
    for(l('pos', 'motion', 'yaw', 'pitch'), modify(player, _, config:_));
    for (config:'effects',
@@ -160,6 +167,6 @@ __survival_defaults(player) ->
          )
       )
    );
-   print(format('rb Cannot find a safe spot to land within 32 blocks away'));
+   print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
 );

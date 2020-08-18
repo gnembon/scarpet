@@ -21,6 +21,44 @@ All programs are available as is. They might be incorrect, they might be outdate
 
 ## Changelog
 
+### v1.7
+ - support for threaded execution via `task`, `task_value`, `task_join`, `task_count`, `task_completed`, `synchronize` and `task_dock`
+ - added `import` support - allows to modularize your apps and use libraries (extension `.scl`)
+ - structure API to query and modify game structures via `structures`, `structure_set`, `structure_eligibility`
+ - POI API to access and make changes to the POI system via `poi` and `set_poi`
+ - global system variables for better interapperability via `system_variable_get` and `system_variable_set`
+ - noise generation via `perlin` and `simplex`
+ - scoreboard API via `scoreboard`, `scoreboard_add`, `scoreboard_remove`, `scoreboard_display`
+ - client facing shapes drawing via `draw_shape`
+ - ability for scripts to read, load and write to files of with NBT and plain text. Better organization of scripts files
+ - API for handling stats via `statistic`s and event `__on_statistic`
+ - added game event handlers
+   - `__on_player_interacts_with_block`
+   - `__on_player_places_block`
+   - `__on_chunk_generated`
+   - `__on_lightning`
+   - `__on_player_takes_damage`
+   - `__on_player_deals_damage`
+   - `__on_player_dies`
+   - `__on_player_respawns`
+   - `__on_player_connects`
+   - `__on_player_disconects`
+   - `__on_player_chooses_recipe`
+   - `__on_player_switches_slot`
+ - added `__on_close`
+ - events with global scope (like `__on_tick`) can only be triggered for apps with global scope.
+ - expanded entity api: `permission_level`, `effect`, `breeding_age`, `pose`, `display_name`, `command_name`, `team`, `gamemode`, `jumping`, `jump`, `silent`, `gravity`, `fire`, `hunger`, `saturation`, `exhaustion`, `add_exhaustion`, `nbt`, `nbt_merge`
+ - added stack traces to error messages
+ - player enderchest access
+ - support for `'\n'` and `'\t'` characters in strings
+ - added `seed`, `in_slime_chunk`, `reset_chunk`, `without_updates`, `c_for`, `is_chunk_generated`, `world_time`, `day_time`, `inhabited_time`, `last_tick_times`, `spawn_potential`, `portal_cooldown`, `portal_timer`, `add_chunk_ticket`, `reload_chunk`, `view_distance`, `mob_counts`, `unix_time`, `convert_date`, `parse_nbt`, `encode_nbt`, `recipe_data`
+ - better support for `break` and `continue` in functions like `scan` and `volume`
+ - added support for all new nether blocks, materials, sounds, etc
+ - `set_biome` is now y value sensitive. Use 0 in the end and overworld, and actual Y value for the nether
+ - lots of bugfixes...
+
+
+
 ### v1.6
  - scarpet programs loaded via world scripts folders are now referred to as scarpet apps.
  - functions are now proper function values, and are closures thanks to the redefined `outer` call, so they can hold state. Good alternative to global values.

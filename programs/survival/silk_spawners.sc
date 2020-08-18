@@ -1,14 +1,20 @@
 // Reimplementation of Silk Spawners mod in scarpet 1.5
 // By "Pegasus Epsilon" <pegasus@pimpninjas.org>
+// 1.16 update by Jackson Harada
+
+//keeps script loaded upon server start
+__config() -> (m(
+  l('stay_loaded','true')
+));
 
 // private __silk_spawner (player, block)
 // returns: true if and only if
-//  - player is holding a silk touch diamond pickaxe
+//  - player is holding a silk touch diamond or netherite pickaxe
 //  - block is a spawner
 __silk_spawner (player, block) -> (
         if (block != 'spawner', return());
         tool = player ~ 'holds';
-        if (!tool || get(tool, 0) != 'diamond_pickaxe', return());
+        if (!tool || get(tool, 0) != 'diamond_pickaxe', !tool || get(tool, 0) != 'netherite_pickaxe', return());
         nbt = get(tool, 2);
         if (!nbt, return());
         ench = get(nbt, 'Enchantments[]');
@@ -18,7 +24,7 @@ __silk_spawner (player, block) -> (
         false
 );
 
-// no drop instant mine any spawner with silk touch diamond pickaxe
+// no drop instant mine any spawner with silk touch diamond or netherite pickaxe
 // adds useful text to spawner tooltip, and enchant glow just because
 __on_player_clicks_block (player, block, face) -> (
         if (!__silk_spawner(player, block), return());
