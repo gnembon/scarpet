@@ -36,9 +36,10 @@ spread_torches(player, initial_gamemode) ->
 		is_survival = global_survival;
 		cpos = pos(player);
 		d = global_effect_radius*2;
+		dd = global_effect_radius*global_effect_radius;
 		loop(4000,
 			lpos = cpos+l(rand(d), rand(d), rand(d)) - d/2;
-			if (__distance_sq(cpos, lpos) <= 16384  
+			if (__distance_sq(cpos, lpos) <= dd  
 					&& air(lpos) && light(lpos) < 8 && sky_light(lpos) < 8
 					&& solid(pos_offset(lpos, 'down')),
 				if (is_survival && not_able_loose_torch(player),
@@ -49,13 +50,13 @@ spread_torches(player, initial_gamemode) ->
 				success += 1;
 				if (success > 2, 
 					//spread the limit already, continue next tick
-					schedule(1, 'spread_torches', player);
+					schedule(1, 'spread_torches', player, initial_gamemode);
 					return()
 				);
 			)
 		);
 		// failed to find a spot, but still have space
-		schedule(1, 'spread_torches', player)
+		schedule(1, 'spread_torches', player, initial_gamemode)
 	)
 );
 
@@ -133,5 +134,6 @@ __find_stage(age, maxage) ->
 clear_all_torches() ->
 (
 	l(x,y,z) = pos(player());
-	scan(x,y,z,128,128,128,if(_=='torch', set(_, 'air')));
+	d = global_effect_radius;
+	scan(x,y,z,d,d,d,if(_=='torch', set(_, 'air')));
 )
