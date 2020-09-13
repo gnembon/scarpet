@@ -611,7 +611,7 @@ global_structure_data =
    
    //custom end city model
    
-   'end_city' -> { 'custom' -> _(structure_pos, pieces) -> 
+   'endcity' -> { 'custom' -> _(structure_pos, pieces) -> 
       (
          dim = current_dimension();
          print_pos = call(global_data:dim:'map_mapper', structure_pos);
@@ -668,6 +668,8 @@ global_structure_data =
       )
    },
 };
+// for pre 1.16.2 compatibility
+global_structure_data:'end_city' = global_structure_data:'endcity';
 
 
 // chunk states / statuses
