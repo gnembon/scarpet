@@ -1,3 +1,5 @@
+//first shown on Xisumavoid's YouTube channel
+//https://youtu.be/FMu8T8KriQY
 __config() ->
 (
 	return(m(l('scope','player'),l('stay_loaded',true)))
