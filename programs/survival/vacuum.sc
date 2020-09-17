@@ -19,8 +19,8 @@ __move_items() ->
 				prevCount = shulkerInventory:_:'Count';
 				prevSlot = _;
 				if(itemName != 'null' && prevCount != stack_limit(itemName),
-				  //only works on items already in inventory
-          itemSlot = inventory_find(player(),itemName);
+				  	//only works on items already in inventory
+          				itemSlot = inventory_find(player(),itemName);
 					if(itemSlot != null && inventory_get(player(),itemSlot):2 == itemNbt,
 						itemCount = inventory_get(player(),itemSlot):1;
 						if(stack_limit(itemName) < prevCount + itemCount,
