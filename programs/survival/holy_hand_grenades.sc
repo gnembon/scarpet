@@ -92,9 +92,9 @@ __cascade_smash(center_pos, ttl, bias, position) ->
 	if (properties_tag, put(nbttag, 'BlockState.Properties', properties_tag));
 	falling_block = spawn( 'falling_block', x+0.5, y+0.5, z+0.5, nbttag );
 	modify(falling_block,'motion',
-		(x-cx)/10+rand(0.05)+dx,
-		2*ttl/10+0.5+rand(0.2)+(y-cy)/10+dy,
-		(z-cz)/10+rand(0.05)+dz
+		((x-cx)/10+rand(0.05)+dx)/hardness(pos(x, y, z)),
+		(2*ttl/10+0.5+rand(0.2)+(y-cy)/10+dy)/hardness(pos(x, y, z)),
+		((z-cz)/10+rand(0.05)+dz)/hardness(pos(x, y, z))
 	);
 	if (!rand(6), particle('explosion',position+rand(1)));
 	if (!rand(6), sound('entity.dragon_fireball.explode',position, 1.2+rand(0.1), 0.4+rand(0.3)));
