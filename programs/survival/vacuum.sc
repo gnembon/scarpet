@@ -67,15 +67,6 @@ __move_items() ->
 						while(playerSlot != null &&
 							prevCount != stack_limit(itemName),41,
 							
-							//reset slot and count in case they changed last during iteration
-							prevCount = shulkerInventory:currentIteration:'Count';
-							playerSlot = inventory_find(player(),itemName);
-							
-							//break early to prevent duping or overfilled stacks
-							if(playerSlot == null || prevCount == stack_limit(itemName),
-								break();
-							);
-							
 							playerSlotData = inventory_get(player(),playerSlot);
 							
 							//check to ensure nbt matches
@@ -92,6 +83,10 @@ __move_items() ->
 								
 								//remove item before putting in box to prevent duplication
 								inventory_remove(player(),itemName,moveAmount);
+								
+								//reset slot and count as at least one of them changed
+								prevCount = shulkerInventory:currentIteration:'Count';
+								playerSlot = inventory_find(player(),itemName);
 							)
 						)
 					)
