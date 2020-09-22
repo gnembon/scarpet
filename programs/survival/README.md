@@ -146,6 +146,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	https://www.youtube.com/watch?v=g7Ku73ElDBs
 	Cos im too lazy to write all the shit down.
 	
+### vacuum.sc
+#### By rv3r
+	Puts inventory items into inventory shulker boxes as long as the item is already present.
+	Idea first shown by Xisumavoid https://youtu.be/FMu8T8KriQY
+	
 ### veinminer.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -182,4 +187,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Aplet123
 	Ghoulboy
 	indoorjetpacks
+	rv3r
 	(Many more hopefully!)
