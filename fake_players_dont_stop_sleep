@@ -1,0 +1,27 @@
+//Stops fake players from blocking sleep
+//By: Sanluli
+
+__config() -> {'scope' -> 'global', 'stay_loaded' -> true};
+
+global_sleeptick = 0;
+
+__on_tick() ->
+(
+    if(global_sleeptick == 100,
+        day_time(23999);
+        run('weather clear');
+    );
+
+    for(entity_list('player'),
+        // 在主世界 且 没睡觉 且 旁观者模式 且 不是假人 -> 重置睡眠计时
+        if(_~'dimension' == 'overworld' && _~'pose' != 'sleeping' && _~'gamemode' != 'spectator' && _~'player_type' != 'fake' , 
+            //print(_~'name' + ': ' + _~'dimension' + ' ' + _~'pose' + ' ' + _~'gamemode' + ' ' + _~'player_type');
+            global_sleeptick = 0;
+            
+            return();
+        )
+    );
+    // 睡眠计时器
+    global_sleeptick += 1;
+    //print(global_sleeptick)
+);
