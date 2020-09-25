@@ -10,13 +10,15 @@ global_allPlayerSleep = false;
 
 __on_tick() ->
 (
-    if(global_allPlayerSleep && __check_sleeping_enough(),
-        global_allPlayerSleep = false;
-        if(run('gamerule doDaylightCycle'),
-            l = day_time() + 24000;
-            day_time(l - l % 24000);
+    in_dimension('overworld',
+        if(global_allPlayerSleep && __check_sleeping_enough(),
+            global_allPlayerSleep = false;
+            if(run('gamerule doDaylightCycle'),
+                l = day_time() + 24000;
+                day_time(l - l % 24000);
+            );
+            if(run('gamerule doWeatherCycle'), run('weather clear'));
         );
-        if(run('gamerule doWeatherCycle'), run('weather clear'));
     );
 );
 
