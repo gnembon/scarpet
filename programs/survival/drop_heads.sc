@@ -7,7 +7,6 @@ __on_player_dies(player) -> (
     zv = rand(0.5)-0.25;
 
     motion = '[' + xv + 'd, ' + yv + 'd, ' + zv + 'd' + ']';
-    print(motion);
     data = '{Motion: ' + motion + ', Item: {id: "minecraft:player_head", Count:1b, tag:{SkullOwner: "' + player + '"}}}, PickupDelay: 3s';
     spawn('item', pos(player), data);
   );
