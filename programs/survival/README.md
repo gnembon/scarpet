@@ -33,6 +33,10 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
     app nbt's for future use. The whole shabang.
+    
+### drop_heads.sc:
+#### By RubberDuck55
+	When a player is killed there is a 33% chance of a head to be dropped
 	
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
@@ -188,4 +192,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Ghoulboy
 	indoorjetpacks
 	rv3r
+	RubberDuck55
 	(Many more hopefully!)
