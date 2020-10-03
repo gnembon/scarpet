@@ -115,6 +115,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
+### shulkerboxes.sc:
+#### By gnembon
+	Shulkerboxes get vacuum and restock ability.
+	Vacuum shulkerboxes will automatically suck in items bypassing player main inventory
+	Restock/swap shulkerboxes will automatically cause player to restock/swap stacks from their hotbar with items from the shulkerboxes
+
 ### signs_for_water_streams.sc:
 #### By indoorjetpacks
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
