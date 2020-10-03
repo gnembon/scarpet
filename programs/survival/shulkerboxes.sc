@@ -124,7 +124,7 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
             [shulker_item, scount, shulker_tag] = current_item_tuple;
             // only consider shulkerboxes that are stacked to 1, 
             // and have a custom name, which contains 'vacuum' and have non-empty inventory
-            if ( shulker_item ~ '_shulker_box$' 
+            if ( shulker_item ~ 'shulker_box$' 
                   && scount == 1 
                   && (nametag = shulker_tag:'display.Name') != null
                   && lower(parse_nbt(nametag):'text') ~ 'vacuum'
@@ -274,7 +274,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
          // and have a custom name, which contains restock / swap with appropriate option
          // and replacement count is non-zero for restock boxes
          // and have non-empty inventory
-         if ( shulker_item ~ '_shulker_box$' 
+         if ( shulker_item ~ 'shulker_box$' 
                && scount == 1 
                && (nametag = shulker_tag:'display.Name') != null
                && (shulker_type = lower(parse_nbt(nametag):'text') ~ '(restock|swap)\\s+(same|next|random|first)')
