@@ -3,6 +3,13 @@
 // by gnembon
 ///
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __command() -> '
 Any shulkerbox with \'vacuum\' in its name
 will have vacuum capability

@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 (
 	start_pos = pos(block);

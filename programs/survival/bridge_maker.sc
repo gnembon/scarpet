@@ -2,8 +2,19 @@
 //Video: https://youtu.be/6QxQXymqRoA
 //By: Ghoulboy and Aplet123
 
-__config()->{'scope'->'player'};//So that you can't accidentlly load it in global mode and mess it up
+__config() ->
 
+(
+
+	m(
+
+		l('stay_loaded', true),
+
+		l('scope', 'player') //So that you can't accidentlly load it in global mode and mess it up
+
+		)
+
+);
 //Global variables
 
 global_bridge_tool='golden_sword';
