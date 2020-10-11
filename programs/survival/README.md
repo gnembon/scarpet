@@ -131,6 +131,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
 	Useful for placing water/lava flows if you make a lot of them. Looking at you, SciCraft server.
 	
+### silk_blockstates.sc:
+#### By BisUmTo
+	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
+	It doesn't apply to containers and blacklisted blocks.
+	
 ### silk_spawners.sc:
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Silk Spawners mod in scarpet 1.5.
@@ -138,11 +143,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
 
-### silk_blockstates.sc:
-#### By BisUmTo
-	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
-	It doesn't apply to containers and blacklisted blocks.
-	
 ### smasher.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
