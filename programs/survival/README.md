@@ -109,6 +109,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it.
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm.
 	
+### rope_ladders.sc:
+#### By BisUmTo
+	Right clicking on a ladder with an other one, will extend the existing one down.
+	https://youtu.be/Mgz6XEIcpgc
+
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
@@ -132,6 +137,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Allows to silk touch mine spawners if holding a diamond or netherite pick with silk touch.
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
+
+### silk_blockstates.sc:
+#### By BisUmTo
+	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
+	It doesn't apply to containers and blacklisted blocks.
 	
 ### smasher.sc:
 #### By gnembonmc
@@ -179,6 +189,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keeps track of villager poi system?
 	(Please enter an explanation, as it quite unclear)
 
+### vines_instant_mine.sc:
+#### By BisUmTo
+	Shears will instant-mine vines
+
 ### vortex_effect.sc:
 #### By gnembon
 	There is a video on his channel about this
@@ -199,4 +213,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	indoorjetpacks
 	rv3r
 	RubberDuck55
+	BisUmTo
 	(Many more hopefully!)
