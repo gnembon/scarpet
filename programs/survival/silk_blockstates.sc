@@ -1,5 +1,5 @@
 ///
-// Silk Blockstates
+// Silky Blockstates
 // by BisUmTo
 // (Carpet Mod 1.4.11)
 //
@@ -7,12 +7,13 @@
 // It doesn't apply to containers and blacklisted blocks.
 ///
 
-__config() -> {'stay_loaded' -> true};
+__config() -> {'stay_loaded' -> true, 'scope' -> 'global'};
 
 global_drop_in_creative = true;
 global_create_item_whitelist = ['^spawner$', '^cake$'];
 global_preserve_block_state_blacklist = ['_bed$', '_door$', '^sticky_piston$', '^piston$', '^bee_nest$', '_banner$', '^beehive$', '^redstone_wire$'];
 global_preserve_block_data_blacklist = ['^bee_nest$', '^beehive$', '^campfire$', '^soul_campfire$', '^lectern$', '^jukebox$', '_banner$', '^player_head$', '_bed$'];
+global_need_forced_placement = ['^spawner$','_sign$'];
 
 // returns a map with all block_properties of the block and the relative value
 block_state(block) -> (
@@ -76,7 +77,7 @@ _preserve_block_state(player, block) -> (
             return()
         )
     );
-    modify(item:0, 'nbt_merge', str('{Item:{tag:{BlockStateTag:%s}}}', encode_blockstate));
+    modify(item:0, 'nbt_merge', str('{Item:{tag:{Silked:1b,BlockStateTag:%s}}}', encode_blockstate));
     uuid = item:0 ~ 'command_name';
     //_add_item_lore(uuid, '\\u00a7lBlockStateTag:\\u00a7r', 'gray');
     for(blockstate, _add_item_lore(uuid, _formatted_property(_, blockstate:_), 'gray'))
@@ -92,7 +93,7 @@ _preserve_block_data(player, block, blockdata) -> (
             return()
         )
     );
-    modify(item:0, 'nbt_merge', str('{Item:{tag:{BlockEntityTag:%s}}}', blockdata));
+    modify(item:0, 'nbt_merge', str('{Item:{tag:{Silked:1b,BlockEntityTag:%s}}}', blockdata));
     uuid = item:0 ~ 'command_name';
     //_add_item_lore(uuid, '\\u00a7lBlockEntityTag:\\u00a7r', 'gray');
     c_for(i = 0, i < length(blockdata), i += 50,
@@ -116,9 +117,16 @@ _match_any(string, list) -> (
     false
 );
 
+// return true if that item_tuple needs a forced placement
+__need_forced_placement(item_tuple) -> (
+    [item, count, nbt] = item_tuple;
+    if(_match_any(item, global_need_forced_placement) && nbt:'Silked', return(true));
+    if(nbt:'Silked' && nbt:'BlockStateTag{}':'wall', true, false)
+);
+
 // inject into the dropped-item the custom nbt
 __on_player_breaks_block(player, block) ->
-if(player ~ 'holds':2:'display.Name' ~ '#',
+if(player ~ 'sneaking' && _holds_enchant(player, 'silk_touch'),
     blockdata = block_data(block);
     container_size = inventory_size(block);
     // wait for the dropped-item to spawn
@@ -133,7 +141,8 @@ if(player ~ 'holds':2:'display.Name' ~ '#',
 );
 
 // fixes the BlockEntityTag for deopped players and the wall_ version of blocks
-__on_player_places_block(player, item_tuple, hand, block) -> (
+__on_player_places_block(player, item_tuple, hand, block) -> 
+if(__need_forced_placement(item_tuple),
     [item, count, nbt] = item_tuple;
     if(!nbt || (!nbt:'BlockStateTag{}' && !nbt:'BlockEntityTag{}'), return());
     // if not in blacklist, get the blockstate from item's nbt and format it correctly
