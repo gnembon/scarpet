@@ -1,4 +1,11 @@
 // scarpet 1.4
+
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
  
 __holds(entity, item_regex, enchantment) -> 
 (

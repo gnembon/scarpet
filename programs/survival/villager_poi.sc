@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 //to keep track of last seen entity id per player
 global_last_entity_id = m();
 

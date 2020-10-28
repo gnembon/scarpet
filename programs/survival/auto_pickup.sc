@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 // seems like drops are generated later, before the callback is made
 // so we execute moving items at the end of the tick
 __on_player_breaks_block(player, block) -> 

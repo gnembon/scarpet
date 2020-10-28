@@ -1,6 +1,13 @@
 // Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4
 // By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 // specify your preferred angel block here
 global_angel_block = block('bedrock');
 
