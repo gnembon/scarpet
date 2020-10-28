@@ -1,5 +1,12 @@
 //A Balanced way to get player heads in survival.
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_player_dies(player) -> (
   if(rand(1) <= 0.3,
     xv = rand(0.5)-0.25;

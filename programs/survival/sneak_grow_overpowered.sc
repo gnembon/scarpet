@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_tick() -> _sneak_grow();
 __on_tick_nether() -> _sneak_grow();
 __on_tick_ender() -> _sneak_grow();

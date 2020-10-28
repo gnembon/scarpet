@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 find_cage(center_x, center_y, center_z, radius) -> 
 (
     locations = l();

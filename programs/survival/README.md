@@ -138,6 +138,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
 	
+### sleep_ignore_fake_players.sc:
+#### By Sanluli36li
+	Skip the night and no longer required fake players to sleep.
+	Different from `OnePlayerSleeping`, still all real player is required on the server to cause night to pass.
+
 ### smasher.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -203,6 +208,8 @@ Various scripts that modify various game elements, often replicating popular mod
 	Ghoulboy
 	indoorjetpacks
 	rv3r
+	Sanluli36li
 	RubberDuck55
 	Mdaff386
+	TheCatSaber
 	(Many more hopefully!)
