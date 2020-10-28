@@ -1,6 +1,13 @@
 // when player right clicks with an empty hand on stained glass blob of blocks
 // they disappear for a moment and reappear soon
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 (
 	if (hand != 'mainhand', return());

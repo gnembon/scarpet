@@ -1,4 +1,12 @@
 //scarpet v1.5
+
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __holds(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));

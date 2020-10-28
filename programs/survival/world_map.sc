@@ -9,7 +9,13 @@ use:
  - /world_map tp
 ';
 
-__config() -> { 'scope' -> 'global', 'stay_loaded' -> true };
+__config() -> 
+(
+	m(
+		l('stay_loaded', true),
+		l('scope', 'global')
+	)
+);
 
 global_map_view_distance = 0;
 

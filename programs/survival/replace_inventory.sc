@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_player_uses_item(player, item_tuple, hand) -> if (hand == 'mainhand', _check_hand(player));
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) -> 
 	if (hand == 'mainhand' && item_tuple, _check_hand(player));

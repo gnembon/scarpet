@@ -5,6 +5,13 @@
 
 ///right click on a torch while looking at nothing to toggle.
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __on_player_uses_item(player, item, hand) ->
 (
 	if (hand != 'mainhand', return());

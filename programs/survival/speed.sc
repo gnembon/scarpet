@@ -1,6 +1,13 @@
 //Speed display
 //By: Ghoulboy
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 import('math','_euclidean');
 
 //Funcs

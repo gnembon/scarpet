@@ -1,6 +1,13 @@
 //killing one of each type of fish gives a random chance to get sponge
 //By: Ghoulboy
 
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 global_debug=false;//for debugging purposes only
 
 __on_player_attacks_entity(player,entity)->(

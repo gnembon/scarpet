@@ -3,6 +3,14 @@
 //   [{lvl:3s,id:"minecraft:fortune"},{lvl:1s,id:"minecraft:unbreaking"}],Damage:0}}]
 // call with \'_axe\' to match any pickaxe
 // Handy function to check enchantment level on a tool
+
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __check_held_enchantment_level(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));
