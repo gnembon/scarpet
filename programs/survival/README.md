@@ -33,6 +33,10 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
     app nbt's for future use. The whole shabang.
+    
+### drop_heads.sc:
+#### By RubberDuck55
+	When a player is killed there is a 33% chance of a head to be dropped
 	
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
@@ -110,6 +114,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
 	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
+
+### shulkerboxes.sc:
+#### By gnembon
+	Shulkerboxes get vacuum and restock ability.
+	Vacuum shulkerboxes will automatically suck in items bypassing player main inventory
+	Restock/swap shulkerboxes will automatically cause player to restock/swap stacks from their hotbar with items from the shulkerboxes
 
 ### signs_for_water_streams.sc:
 #### By indoorjetpacks
@@ -194,4 +204,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	indoorjetpacks
 	rv3r
 	Sanluli36li
+	RubberDuck55
 	(Many more hopefully!)
