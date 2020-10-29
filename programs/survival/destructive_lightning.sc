@@ -22,7 +22,6 @@ __on_tick() -> (
             fireball_pos = (_ ~ 'pos')+look;  //finds lightning bolt position
             if (global_last != query(_, 'uuid'),  //only summons one fireball per bolt
                 spawn('tnt', (_ ~ 'pos'));
-                game_tick(50);
                 fireball = spawn('fireball', fireball_pos,
                 str('{power:[%.2f,%.2f,%.2f],direction:[0.0,0.0,0.0]},ExplosionPower:5',look/5)); //summons fireball
             global_last = query(_, 'uuid');
