@@ -30,9 +30,9 @@ escape_string(string,d) -> (
 );
 
 // returns true if the block is repleaceable while trying to place a block in its position
-replaceable(block) ->(
-    ['air', 'bubble_column', 'cave_air', 'crimson_roots', 'dead_bush', 'fern', 'fire', 'grass', 'large_fern', 'lava','nether_sprout','sea_grass', 'soul_fire', 'structure_void', 'tall_grass', 'vines', 'void_air', 'warped_roots', 'water'] ~ block != null || (block == 'snow' && property(block, 'layers') == 1)
-);
+global_replaceable = {'air', 'bubble_column', 'cave_air', 'crimson_roots', 'dead_bush', 'fern', 'fire', 'grass', 'large_fern', 'lava','nether_sprout','sea_grass', 'soul_fire', 'structure_void', 'tall_grass', 'vines', 'void_air', 'warped_roots', 'water'};
+replaceable(block) ->
+     has(global_replaceable, str(block)) || block == 'snow' && property(block, 'layers') == 1;
 
 // adds string as new Lore line to the dropped-item with the given uuid
 _add_item_lore(uuid, string, color) -> (
