@@ -161,6 +161,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	https://www.youtube.com/watch?v=g7Ku73ElDBs
 	Cos im too lazy to write all the shit down.
 	
+### updater.sc
+#### By Firigion
+	Once loaded, right clicking an obsrever or budded block with a pice of bamboo will trigger or update it. 
+	Useful to replace some lost functionality of flint and steal or fireball, without creating a fire block.
+
 ### vacuum.sc
 #### By rv3r
 	Puts inventory items into inventory shulker boxes as long as the item is already present.
