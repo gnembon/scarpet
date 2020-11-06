@@ -79,6 +79,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
 	(Please input more detailed explanation)
 	
+### nether_poi.sc:
+#### By Firigion
+	When holding an ender eye, all nether portal points of interest will be shown iwth a marker.
+	Useful when slicing portals, update supressing and debugging stuff.
+	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
+	
 ### prospectors_pick.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
