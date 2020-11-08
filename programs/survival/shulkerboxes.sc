@@ -1,6 +1,7 @@
 ///
 // vacuum and restock
 // by gnembon
+// (keep ability added by Senth)
 ///
 
 // stay loaded
@@ -19,7 +20,8 @@ Current vacuum mode:'+global_vacuum+'
 use /shulkerboxes toggle_vacuum to change it
    
 Any shulkerbox with \'swap\' or \'restock\'
-followed with \'same\', \'first\', \'next\' or \'random\'
+followed with \'keep\', \'same\', \'first\',
+\'next\' or \'random\'
 will restock player inventory
  - swap: will swap a hotbar stack every time it changes
  - restock: will replace fully used up stacks
@@ -284,7 +286,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
          if ( shulker_item ~ 'shulker_box$' 
                && scount == 1 
                && (nametag = shulker_tag:'display.Name') != null
-               && (shulker_type = lower(parse_nbt(nametag):'text') ~ '(restock|swap)\\s+(same|next|random|first)')
+               && (shulker_type = lower(parse_nbt(nametag):'text') ~ '(restock|swap)\\s+(same|keep|next|random|first)')
                && ([action_type, idx_choice] = shulker_type; (action_type!='restock' || count == 0 ) )
                && (shulker_stacks = shulker_tag:'BlockEntityTag.Items[]') != null ,
             if (type(shulker_stacks)=='nbt', shulker_stacks = [shulker_stacks]);
@@ -292,7 +294,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
             for( shulker_stacks,
                if( _:'id' == item_fqdn,
                   replacement_index = if (
-                     idx_choice == 'same',
+                     idx_choice == 'same' || idx_choice == 'keep',
                         _i,
                      idx_choice == 'random', 
                         floor(rand(sb_item_count)),
@@ -317,6 +319,10 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
                   swapped_id = swapped_item_tag:'id';
                   swapped_count = swapped_item_tag:'Count';
                   swapped_tag = swapped_item_tag:'tag';
+                  // keep - skip if the stack size is 1
+                  if (idx_choice == 'keep' && swapped_count == 1,
+                     continue();
+                  );
                   // shulker box changes
                   if (count>0, // replace tag
                      // because 'minecraft:stone' gets parsed as a string 'minecraft' as a tag
@@ -325,7 +331,12 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
                      swapped_item_tag:'Count' = count+'b';
                      if (tag, swapped_item_tag:'tag' = tag, delete(swapped_item_tag:'tag'));
                      put(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']', swapped_item_tag, 'replace');
-                  , // remove that item from the list
+                  , // else if, keep 1 in the shulker box
+                  idx_choice == 'keep',
+                     swapped_count += -1;
+                     swapped_item_tag:'Count' = 1+'b';
+                     put(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']', swapped_item_tag, 'replace');
+                  , // else remove that item from the list
                      delete(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']');
                   );
                   inventory_set(inventory, islot, 1, shulker_item, shulker_tag);
