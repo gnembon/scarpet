@@ -19,6 +19,8 @@ All programs are available as is. They might be incorrect, they might be outdate
 
 [Vscode Autocompletion](https://github.com/imurx/vscode-scarpet)
 
+[Atom syntax highlighting](https://github.com/replaceitem/scarpet-language-atom)
+
 ## Changelog
 
 ### v1.7
