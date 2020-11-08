@@ -34,6 +34,11 @@ Various scripts that modify various game elements, often replicating popular mod
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
     app nbt's for future use. The whole shabang.
     
+### destructive_lightning.sc:
+#### By Mdaff386
+    Once you start it any lightning that strikes, either natural, summoned or a channeling trident, 
+    a tnt and fireball will be summoned to create a small crater where the lightning strikes.
+
 ### drop_heads.sc:
 #### By RubberDuck55
 	When a player is killed there is a 33% chance of a head to be dropped
@@ -219,6 +224,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	rv3r
 	Sanluli36li
 	RubberDuck55
+	Mdaff386
 	BisUmTo
 	TheCatSaber
 	(Many more hopefully!)
