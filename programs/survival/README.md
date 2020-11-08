@@ -109,6 +109,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it.
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm.
 	
+### rope_ladders.sc:
+#### By BisUmTo
+	Right clicking on a ladder with an other one, will extend the existing one down.
+	https://youtu.be/Mgz6XEIcpgc
+
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
@@ -125,6 +130,11 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By indoorjetpacks
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
 	Useful for placing water/lava flows if you make a lot of them. Looking at you, SciCraft server.
+	
+### silk_blockstates.sc:
+#### By BisUmTo
+	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
+	It doesn't apply to containers and blacklisted blocks.
 	
 ### silk_spawners.sc:
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
@@ -184,6 +194,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keeps track of villager poi system?
 	(Please enter an explanation, as it quite unclear)
 
+### vines_instant_mine.sc:
+#### By BisUmTo
+	Shears will instant-mine vines
+
 ### vortex_effect.sc:
 #### By gnembon
 	There is a video on his channel about this
@@ -205,5 +219,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	rv3r
 	Sanluli36li
 	RubberDuck55
+	BisUmTo
 	TheCatSaber
 	(Many more hopefully!)
