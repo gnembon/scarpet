@@ -128,7 +128,7 @@ __make_set_function(dim, material, replace_block) -> (
 
 
 
-////// Spirals ///////
+////// Helixes ///////
 
 // ---- Utils ----
 
@@ -146,7 +146,7 @@ __rotated90(list_to_rotate) -> ( //rotates 90 degrees
 	map(list_to_rotate, l(_:1, -_:0))
 );
 
-__spiral_get_step(circle, perimeter, advance_step, i) ->( //defaults to axis y
+__helix_get_step(circle, perimeter, advance_step, i) ->( //defaults to axis y
 	circle_pos = circle:(i%perimeter);
 	step = l(circle_pos:0, i * advance_step, circle_pos:1) ;
 );
@@ -172,34 +172,34 @@ __assert_pitch(pitch) -> (
 
 // ---- Draw funtions ----
 
-__preview_spiral(circle, center, pitch, size, iterations_left) -> (
+__preview_helix(circle, center, pitch, size, iterations_left) -> (
 	
 	perimeter = length(circle); // ammount of blocks in one revolution
 	advance_step = if(global_settings:'slope_mode', pitch, pitch/perimeter); //pitch encodes slope if slope_mode == true
 	
-	loop(floor( size / advance_step) - 1 , //loop over the total ammount of spirals
-		this_step = __spiral_get_step(circle, perimeter, advance_step, _);
-		next_step = __spiral_get_step(circle, perimeter, advance_step, _+1);
+	loop(floor( size / advance_step) - 1 , //loop over the total ammount of helixes
+		this_step = __helix_get_step(circle, perimeter, advance_step, _);
+		next_step = __helix_get_step(circle, perimeter, advance_step, _+1);
 		draw_shape('line', 15, 'from', center + this_step, 'to', center + next_step);
 	);
 	
 	if(iterations_left > 0, 
-		schedule(10, '__preview_spiral', circle, center, pitch, size, iterations_left-1)
+		schedule(10, '__preview_helix', circle, center, pitch, size, iterations_left-1)
 	);
 );
 
-preview_spiral(radius, pitch, size, time) -> (
+preview_helix(radius, pitch, size, time) -> (
 	if(__assert_pitch(pitch), return('') );
 	
 	center = __get_center(); // center coordiantes
 	circle = __make_circle(radius);
 	
 	iterations = time * 2; // time is a value in seconds, will render every 10 gt
-	__preview_spiral(circle, center, pitch, size, iterations);	
+	__preview_helix(circle, center, pitch, size, iterations);	
 );
 
-//main funtion to draw spiral from material
-__draw_spiral(circle, center, pitch, size, material) -> (
+//main funtion to draw helix from material
+__draw_helix(circle, center, pitch, size, material) -> (
 	
 	dim = player() ~ 'dimension';
 	
@@ -214,8 +214,8 @@ __draw_spiral(circle, center, pitch, size, material) -> (
 	__make_set_function(dim, material, replace_block);
 
 	//else, make out of material
-	loop(floor( size / advance_step), //loop over the total ammount of spirals
-		this_step =  __spiral_get_step(circle, perimeter, advance_step, _);
+	loop(floor( size / advance_step), //loop over the total ammount of helixes
+		this_step =  __helix_get_step(circle, perimeter, advance_step, _);
 		__set_function(center + this_step);
 	);
 		
@@ -224,32 +224,32 @@ __draw_spiral(circle, center, pitch, size, material) -> (
 );
 
 
-spiral(radius, pitch, size, material) -> (
+helix(radius, pitch, size, material) -> (
 	center = __get_center(); // center coordiantes
 	circle = __make_circle(radius);
-	__draw_spiral(circle, center, pitch, size, material);
+	__draw_helix(circle, center, pitch, size, material);
 );
 
-antispiral(radius, pitch, size, material) -> (
+antihelix(radius, pitch, size, material) -> (
 	center = __get_center(); // center coordiantes
 	circle = __make_circle(radius);
 	circle = __reflect(circle); // to spin the other way around
-	__draw_spiral(circle, center, pitch, size, material);
+	__draw_helix(circle, center, pitch, size, material);
 
 );
 
-multispiral(radius, pitch, size, ammount, material) -> (
+multihelix(radius, pitch, size, ammount, material) -> (
 	center = __get_center(); // center coordiantes
 	circle = __make_circle(radius);
 	perimeter = length(circle); // ammount of blocks in one revolution
 	loop(ammount,
 		jump = floor(_ * perimeter/ammount); // by how many places to advance to get to the next circle
 		this_circ = __extend(slice(circle, jump), slice(circle, 0, jump) ); // redefine the circle last for this iteration
-		__draw_spiral(this_circ, center, pitch, size, material);
+		__draw_helix(this_circ, center, pitch, size, material);
 	);
 );
 
-antimultispiral(radius, pitch, size, ammount, material) -> (
+antimultihelix(radius, pitch, size, ammount, material) -> (
 	center = __get_center(); // center coordiantes
 	circle = __make_circle(radius);
 	circle = __reflect(circle); // to spin the other way around
@@ -257,11 +257,75 @@ antimultispiral(radius, pitch, size, ammount, material) -> (
 	loop(ammount,
 		jump = floor(_ * perimeter/ammount); // by how many places to advance to get to the next circle
 		this_circ = __extend(slice(circle, jump), slice(circle, 0, jump) ); // redefine the circle last for this iteration
-		__draw_spiral(this_circ, center, pitch, size, material);
+		__draw_helix(this_circ, center, pitch, size, material);
 	);
 );
 
+////// Spirals ///////
 
+// ---- Utils ----
+
+__arclength_poly(exponent, turns, radius) -> (
+	radius * (360 * turns) ^ (exponent +1) / (exponent + 1 );
+);
+
+__arclength_exp(base, turns, radius) -> (
+	radius * sqrt(1+ln(base)^2)/ln(base) * base^(360*turns - 1)
+); 
+
+
+// ---- Draw funtions ----
+
+__draw_spiral(arclength, material) -> (
+
+	dim = player() ~ 'dimension';
+	center = __get_center();
+
+	replace_block = __get_replace_block();
+	global_this_story = [];
+	position_list = [];
+	
+	// define function to set with
+	__make_set_function(dim, material, replace_block);
+	parameter = l( range(arclength) ) / arclength;
+
+	for( parameter,
+		position = map(center + __circular_parametric_curve_get_step( u(_) , v(_) , 0), floor(_) );
+		// check for repeated spots
+		if( position_list ~ position, 
+			continue(),
+			position_list:length(position_list) = position
+		);
+		__set_function(position);
+	);
+
+	__put_into_history(global_this_story, dim); //ensure max history size is not exceeded
+	print(str('Set %d blocks', length(global_this_story) ));
+	return('');
+
+);
+
+spiral(turns, exponent, radius, phase, material) -> (
+	u(t, outer(exponent), outer(radius), outer(phase)) -> radius * t^exponent * cos(t + phase);
+	v(t, outer(exponent), outer(radius), outer(phase)) -> radius * t^exponent * sin(t + phase);
+	//__draw_spiral( __arclength_poly(exponent, turns, radius), material) 
+	__arclength_poly(exponent, turns, radius)
+);
+
+logspiral(turns, base, radius, phase, material) -> (
+	u(t, outer(base), outer(radius), outer(phase)) -> radius * base^t * cos(t + phase);
+	v(t, outer(base), outer(radius), outer(phase)) -> radius * base^t * sin(t + phase);
+);
+
+antispiral(turns, exponent, radius, phase, material) -> (
+	u(t, outer(exponent), outer(radius), outer(phase)) -> radius * t^exponent * cos(-t + phase);
+	v(t, outer(exponent), outer(radius), outer(phase)) -> radius * t^exponent * sin(-t + phase);
+);
+
+antilogspiral(turns, base, radius, phase, material) -> (
+	u(t, outer(base), outer(radius), outer(phase)) -> radius * base^t * cos(-t + phase);
+	v(t, outer(base), outer(radius), outer(phase)) -> radius * base^t * sin(-t + phase);
+);
 
 ////// Waves ///////
 
@@ -351,7 +415,7 @@ wave(wavelength, amplitude, size, material) -> (
 
 // ---- Utils ----
 
-__circle_wave_get_step(u, v, w) -> [u, w, v]; // defaults to y axis
+__circular_parametric_curve_get_step(u, v, w) -> [u, w, v]; // defaults to y axis
 
 __get_arclength_planar(R, A, k, arc) -> (
 	// Arclength should be int(sqrt( (A * k * cos(k*t))^2 + (A * sin(k*t) + d)^2 ))
@@ -397,7 +461,7 @@ __draw_circle_wave(parameter, material) -> (
 	__make_set_function(dim, material, replace_block);
 
 	for( parameter,
-		position = map(center + __circle_wave_get_step( u(_) , v(_) , w(_)), floor(_) );
+		position = map(center + __circular_parametric_curve_get_step( u(_) , v(_) , w(_)), floor(_) );
 		// check for repeated spots
 		if( position_list ~ position, 
 			continue(),
@@ -429,7 +493,6 @@ cwave_planar_partial(radius, amplitude, cycles, from, to, material) -> (
 cwave_transverse(radius, amplitude, cycles, material) -> (
 	cwave_transverse_partial(radius, amplitude, cycles, 0, 360, material);
 );
-
 
 cwave_transverse_partial(radius, amplitude, cycles, from, to, material) -> (
 	
@@ -493,12 +556,44 @@ star(outer_radius, inner_radius, n_points, phase, material) -> (
 	inner_points = __get_points(inner_radius, n_points, phase);
 	outer_points = __get_points(outer_radius, n_points, phase + 360/n_points/2);
 	interlaced_list = __interlace_lists(inner_points, outer_points);
-	interlaced_list:length(interlaced_list) = inner_points:0;
+	interlaced_list:length(interlaced_list) = inner_points:0; // add first point at the end to close curve
 	
 	// get points and draw the connecting lines
 	loop(length(interlaced_list)-1,
-		p1 = center + __circle_wave_get_step(interlaced_list:_:0, interlaced_list:_:1, 0) ;
-		p2 = center + __circle_wave_get_step(interlaced_list:(_+1):0, interlaced_list:(_+1):1, 0) ;
+		p1 = center + __circular_parametric_curve_get_step(interlaced_list:_:0, interlaced_list:_:1, 0) ;
+		p2 = center + __circular_parametric_curve_get_step(interlaced_list:(_+1):0, interlaced_list:(_+1):1, 0) ;
+		__draw_line(p1, p2);		
+	);
+	
+	__put_into_history(global_this_story, dim); //ensure max history size is not exceeded
+	print(str('Set %d blocks', length(global_this_story) ));
+	return('');
+);
+
+
+////// Polygon ///////
+// builds on star utils
+
+polygon(radius, n_points, rotation, material) -> (
+
+	dim = player() ~ 'dimension';
+	center = __get_center();
+
+	replace_block = __get_replace_block();
+	global_this_story = [];
+	position_list = [];
+
+	// define function to set with
+	__make_set_function(dim, material, replace_block);
+
+	// get points in inner and pouter radius + interlace them
+	points = __get_points(radius, n_points, rotation);
+	points:length(points) = points:0; // add first point at the end to close curve
+	
+	// get points and draw the connecting lines
+	loop(length(points)-1,
+		p1 = center + __circular_parametric_curve_get_step(points:_:0, points:_:1, 0) ;
+		p2 = center + __circular_parametric_curve_get_step(points:(_+1):0, points:(_+1):1, 0) ;
 		__draw_line(p1, p2);		
 	);
 	
@@ -633,27 +728,27 @@ set_circle_axis(axis) -> (
 	);
 	global_settings:'circle_axis' = axis;
 	if( axis == 'x',
-		__spiral_get_step(circle, perimeter, advance_step, i) ->(
+		__helix_get_step(circle, perimeter, advance_step, i) ->(
 			circle_pos = circle:(i%perimeter);
 			step = l(i * advance_step, circle_pos:0, circle_pos:1) ;
 		);
-		__circle_wave_get_step( u , v , w) -> l(w, u, v);
+		__circular_parametric_curve_get_step( u , v , w) -> l(w, u, v);
 		,
 		axis == 'y',
-		__spiral_get_step(circle, perimeter, advance_step, i) ->( //defaults to axis y
+		__helix_get_step(circle, perimeter, advance_step, i) ->( //defaults to axis y
 			circle_pos = circle:(i%perimeter);
 			step = l(circle_pos:0, i * advance_step, circle_pos:1)
 		);
-		__circle_wave_get_step( u , v , w) -> l(u, w, v);
+		__circular_parametric_curve_get_step( u , v , w) -> l(u, w, v);
 		,
 		axis == 'z',
-		__spiral_get_step(circle, perimeter, advance_step, i) ->(
+		__helix_get_step(circle, perimeter, advance_step, i) ->(
 			circle_pos = circle:(i%perimeter);
 			step = l(circle_pos:0, circle_pos:1, i * advance_step) ;
 		);
-		__circle_wave_get_step( u , v , w) -> l(u, v, w);
+		__circular_parametric_curve_get_step( u , v , w) -> l(u, v, w);
 	);
-	print(format(str('b Spirals and circular waves will now generate along the %s axis', axis) ) );
+	print(format(str('b Circular curves will now generate perpendicular to the %s axis', axis) ) );
 	return('')
 );
 
@@ -728,7 +823,7 @@ toggle_replace_block() -> (
 			'g Hold bucket for liquids, feather for air, ender eye for end portal, and flint and steel for nether portal.') );
 		__set_block(pos, material, replace_block) -> if(block(pos) == replace_block, __set_and_save(pos, material) ),
 		//else
-		print(format( 'b Spiral will paste completly, replacing whatever is there.') );
+		print(format( 'b Curve will paste completly, replacing whatever is there.') );
 		__set_block(pos, material, replace_block) -> __set_and_save(pos, material)
 	);
 	return('')
@@ -737,8 +832,8 @@ toggle_replace_block() -> (
 toggle_slope_mode() -> (
 	global_settings:'slope_mode' = !global_settings:'slope_mode';
 	if(global_settings:'slope_mode',
-		print(format('b Second argument of spiral commands is now slope (in blocks)') ),
-		print(format('b Second argument of spiral commands is now pitch (separation between revolutions)') )
+		print(format('b Second argument of helix commands is now slope (in blocks)') ),
+		print(format('b Second argument of helix commands is now pitch (separation between revolutions)') )
 	);
 	return('')
 );
@@ -803,8 +898,8 @@ settings() -> (
 	__make_value_setting('undo_history_size', 'Sets the maximum ammount of actions to undo', [10, 100, 500] , true);
 	__make_value_setting('max_operations_per_tick', 'Sets the maximum ammount of operations per gametick', [2000, 10000, 50000] , true);
 	print(player(), format( 'b Shapes settings:' ));
-	__make_toggle_setting('slope_mode', 'Defines behaviour of second argument in spiral definitions: slope or pitch');
-	__make_value_setting('circle_axis', 'Axis along which circular stuff is generated. Affects stars, spirals and cwaves', ['x', 'y', 'z'] , false);
+	__make_toggle_setting('slope_mode', 'Defines behaviour of second argument in helix definitions: slope or pitch');
+	__make_value_setting('circle_axis', 'Axis along which circular stuff is generated. Affects stars, helixes and cwaves', ['x', 'y', 'z'] , false);
 	__make_value_setting('wave_axis', 'Axis along which and into which waves are generated', ['xy', 'xz', 'yx' ,'yz','zx', 'zy'] , false);
 	print(player(), '');
 	return('')
@@ -1003,7 +1098,7 @@ __reset_positions('the_nether');
 __reset_positions('the_end');
 
 
-////// Help //////
+////// Handle Markers //////
 
 help() -> (
 	print(player(), '======================');
@@ -1151,14 +1246,14 @@ help_curves() -> (
 	print(player(), format(description1) );
 	print(player(), format(description2) );
 	print(player(), format(description3) );
-	__make_help_categories_buttons(['Spiral', 'Wave', 'CWave', 'Star']);
+	__make_help_categories_buttons(['Helix', 'Wave', 'CWave', 'Star', 'Polygon']);
 	print(player(), '');
 );
 
-help_spiral() -> (
+help_helix() -> (
 		print(player(), '======================');
-	print(player(), format( 'b Spirals help:' ));
-	description1 = ['w Spirals are defined by their radius, how fast they grow and how tall they are. ',
+	print(player(), format( 'b Helixes help:' ));
+	description1 = ['w Helixes are defined by their radius, how fast they grow and how tall they are. ',
 					'w The second argument can be either ',
 					'b pitch ',
 					'w or ',
@@ -1167,15 +1262,15 @@ help_spiral() -> (
 					'tb settings',
 					'^bg Click to run!',
 					'!/curves settings',
-					'w . In the former case, you you set how many blocks the spiral advances each time it completes a full revolution. ',
+					'w . In the former case, you you set how many blocks the helix advances each time it completes a full revolution. ',
 					'w In the latter, you define how many blocks it advances each block. '
 					];
-	description2 = ['w You can set the diretion along which the spiral forms with the ',
+	description2 = ['w You can set the diretion along which the helix forms with the ',
 					'b circle_axis ',
 					'w setting.'
 					];
-	description3 = ['w Spirals come in four flavours: regular spiral, antispiral, which is just the spiral rotating in the opposite direction, and multispiral variations of those. ',
-					'w Multispirals take a fourth argument that set how many spirals to generate. They will evenly spaced along the circle. '
+	description3 = ['w Helixes come in four flavours: regular helix, antihelix, which is just the helix rotating in the opposite direction, and multihelix variations of those. ',
+					'w Multihelixes take a fourth argument that set how many helixes to generate. They will evenly spaced along the circle. '
 					];
 	print(player(), format(description1) );
 	print(player(), format(description2) );
@@ -1250,6 +1345,27 @@ help_star() -> (
 	description1 = ['w Stars are defined by the outer radius, the inner radius, the number of points N and the phase or rotation. ',
 					'w The way they are constructed is by selecting N points along the circle with outer radius, anther N points along the inner circle and connecting them with straight lines. ',
 					'w This means that setting inner radius equal to outer radius will generate polygons with 2N sides, and setting N to 2 will generate a rhombus.'
+					];
+	description2 = ['w You can set the direction perpendicular to the star with the ',
+					'b circle_axis ',
+					'w setting in ',
+					'tb settings',
+					'^bg Click to run!',
+					'!/curves settings',
+					'w .'
+					];
+
+	print(player(), format(description1) );
+	print(player(), format(description2) );
+	print(player(), '');
+);
+
+
+help_polygon() -> (
+		print(player(), '======================');
+	print(player(), format( 'b Polygon help:' ));
+	description1 = ['w Polygons are defined the radius, the number of points N and the phase or rotation. ',
+					'w They way they are constructed is simply by placing equidistant points in a circle and connecting them with straight lines, so all polygons will be regular.'
 					];
 	description2 = ['w You can set the direction perpendicular to the star with the ',
 					'b circle_axis ',
