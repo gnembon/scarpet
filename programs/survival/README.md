@@ -86,10 +86,20 @@ Various scripts that modify various game elements, often replicating popular mod
 	
 ### nether_poi.sc:
 #### By Firigion
-	When holding an ender eye, all nether portal points of interest will be shown iwth a marker.
+	When holding an ender eye, all nether portal points of interest will be shown with a marker.
 	Useful when slicing portals, update supressing and debugging stuff.
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 	
+### nopickup.sc:
+#### By KonaeAkira
+	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
+	/nopickup add <item> will add <item> to the blacklist
+	/nopickup remove <item> will remove <item> from the blacklist
+	/nopickup list will list all blacklisted items for current player
+	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
+	Blacklists are player-bound and are saved even between server restarts
+	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+
 ### prospectors_pick.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -238,4 +248,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Mdaff386
 	BisUmTo
 	TheCatSaber
+	KonaeAkira
 	(Many more hopefully!)
