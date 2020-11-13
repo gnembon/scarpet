@@ -94,6 +94,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By KonaeAkira
 	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
 	/nopickup add <item> will add <item> to the blacklist
+	/nopickup setlimit <item> <count> sets the maximum allowed number of <item>s in inventory.
 	/nopickup remove <item> will remove <item> from the blacklist
 	/nopickup list will list all blacklisted items for current player
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
