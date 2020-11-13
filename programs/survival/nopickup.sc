@@ -9,7 +9,13 @@
 
 __config() -> {
 	'stay_loaded' -> true,
-	'legacy_command_type_support' -> true
+	'legacy_command_type_support' -> true,
+	'arguments' -> {
+		'count' -> {
+			'type' -> 'int',
+			'min' -> 0
+		}
+	}
 };
 
 __command() -> null;
@@ -27,10 +33,24 @@ __on_player_connects(player) -> (
 
 __on_player_collides_with_entity(player, entity) -> (
 	if (entity~'pickup_delay' == 0,
-		if (has(global_forbidden, entity~'item':0),
-			modify(entity, 'pickup_delay', 20);
+		item = entity~'item';
+		if (has(global_forbidden, item:0),
+			pickup_limit = global_forbidden:(item:0);
+			if (pickup_limit == 0 || _count_in_inventory(item) + item:1 > pickup_limit,
+				modify(entity, 'pickup_delay', 20);
+			);
 		);
 	);
+);
+
+_count_in_inventory(item) -> (
+	num_slots = inventory_size(player());
+	slot = -1;
+	count = 0;
+	while ((slot = inventory_find(player(), item:0, slot + 1)) != null, num_slots,
+		count += inventory_get(player(), slot):1;
+	);
+	return(count);
 );
 
 _save_to_file() -> (
@@ -40,7 +60,6 @@ _save_to_file() -> (
 );
 
 list() -> (
-	// print(global_forbidden);
 	if (global_forbidden != {},
 		print('List of forbidden items:');
 		print(keys(global_forbidden));
@@ -61,8 +80,17 @@ add(item) -> (
 	return(null);
 );
 
+setlimit(item, count) -> (
+	if (has(global_forbidden, str(item:0)),
+		global_forbidden:(str(item:0)) = number(count);
+		_save_to_file();
+		print('Set pickup limit for [' + item:0 + '] to ' + count);
+	,
+		print('[' + item:0 + '] is not forbidden');
+	);
+);
+
 remove(item) -> (
-	item_str = str(item:0);
 	if (has(global_forbidden, str(item:0)),
 		delete(global_forbidden, str(item:0));
 		_save_to_file();
