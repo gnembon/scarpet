@@ -58,7 +58,7 @@ _count_in_inventory(item) -> (
 	while ((slot = inventory_find(player(), item:0, slot + 1)) != null, num_slots,
 		count += inventory_get(player(), slot):1;
 	);
-	return(count);
+	count;
 );
 
 // saves global_forbidden to the UUID's own config file
@@ -79,7 +79,6 @@ list() -> (
 	,
 		print('There are no forbidden items');
 	);
-	return(null);
 );
 
 add(item) -> (
@@ -91,7 +90,6 @@ add(item) -> (
 		_save_to_file();
 		print('You can no longer pick up [' + item:0 + ']');
 	);
-	return(null);
 );
 
 // sets the pickup limit for an item in the blacklist
@@ -115,7 +113,6 @@ remove(item) -> (
 	,
 		print('[' + item:0 + '] is not forbidden');
 	);
-	return(null);
 );
 
 clear() -> (
@@ -123,5 +120,4 @@ clear() -> (
 	global_forbidden = {};
 	_save_to_file();
 	print('Cleared the list of forbidden items');
-	return(null);
 );
