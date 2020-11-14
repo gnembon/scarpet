@@ -43,7 +43,7 @@ __on_player_collides_with_entity(player, entity) -> (
 );
 
 _init() -> (
-	global_uuid = player~'uuid';
+	global_uuid = player()~'uuid';
 	global_forbidden = parse_nbt(read_file(global_uuid, 'nbt'));
 	if (global_forbidden == 'null', // config file for this UUID doesn't exist
 		global_forbidden = {};
