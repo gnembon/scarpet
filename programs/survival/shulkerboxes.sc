@@ -20,13 +20,14 @@ Current vacuum mode:'+global_vacuum+'
 use /shulkerboxes toggle_vacuum to change it
    
 Any shulkerbox with \'swap\' or \'restock\'
-followed with \'keep\', \'same\', \'first\',
+followed with \'same\', \'keep\', \'first\',
 \'next\' or \'random\'
 will restock player inventory
  - swap: will swap a hotbar stack every time it changes
  - restock: will replace fully used up stacks
  
  - same: will return only matching items
+ - keep: as same but will keep 1 item in the shulkerbox
  - first: will always return first item from a box
  - next: will return items in sequence
  - random: will draw a random stack
