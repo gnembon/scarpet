@@ -72,9 +72,7 @@ __on_player_collides_with_entity(player, entity) -> if (global_vacuum == 'collis
                entity_event(entity, 'on_tick', '__item_animation', max_age, player);
             ,
                actual_left = __add_item_to_vacuum_sboxes(player, item, count, tag, true);
-               if (actual_left != 0, exit()); // this never happens, we just mock added them. Magic
-               modify(entity, 'nbt_merge', '{Item:{Count:0b}}');
-               modify(entity, 'remove')
+               modify(entity, 'nbt_merge', '{Item:{Count:'+actual_left+'b}}');
             )
          );
       );
