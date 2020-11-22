@@ -34,6 +34,10 @@ Various scripts that modify various game elements, often replicating popular mod
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
     app nbt's for future use. The whole shabang.
     
+### carried_totem.sc
+#### By KingOfTheClouds
+	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
+
 ### destructive_lightning.sc:
 #### By Mdaff386
     Once you start it any lightning that strikes, either natural, summoned or a channeling trident, 
