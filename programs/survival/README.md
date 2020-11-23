@@ -49,6 +49,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
+	
+### eyeremover.sc
+#### By rv3r
+	Shift right-click on a filled end portal frame to empty it and receive the eye of ender. Note that any 
+	existing portal will break.
+	
+	Only really useful in peaceful.
 
 ### hammer.sc:
 #### By gnembonmc
