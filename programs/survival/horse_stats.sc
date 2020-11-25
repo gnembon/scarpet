@@ -2,7 +2,7 @@
 
 __command() -> (
 	target = query(player(), 'trace', 4.5, 'entities');
-	if (target == 'Horse' || target == 'Donkey' || target == 'Mule',
+	if (has({'horse', 'donkey', 'mule'}, target~'type'),
 		stats = map(['generic.max_health', 'generic.movement_speed', 'horse.jump_strength'],
 			__get_attribute(target, _));
 		print(format(
