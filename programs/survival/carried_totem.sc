@@ -8,10 +8,10 @@ __on_player_takes_damage(player, amount, source, source_entity) -> (
 	&& query(player, 'holds', 'offhand'):0 != totem
 	&& inventory_remove(player, totem),
 		// borrow the offhand slot
-		if(offhand_stack = inventory_set(player, -1, 1, totem),
-			schedule(0, _(player, what, count, nbt) -> (
-				inventory_set(player, -1, count, what, nbt)
-			), player, offhand_stack:0, offhand_stack:1, offhand_stack:2)
+		if(stack = inventory_set(player, -1, 1, totem),
+			schedule(0, _(outer(player), outer(stack)) -> (
+				inventory_set(player, -1, stack:1, stack:0, stack:2)
+			))
 		, //else (to clear the GUI glitch)
 			schedule(0, _(player) -> (inventory_set(player, -1, 0)), player)
 		)
