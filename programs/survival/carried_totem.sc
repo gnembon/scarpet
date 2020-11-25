@@ -1,7 +1,5 @@
 // Allow a Totem of Undying anywhere in the inventory to activate
 
-__config() -> ({ 'stay_loaded' -> true });
-
 __on_player_takes_damage(player, amount, source, source_entity) -> (
 	totem = 'totem_of_undying';
 	if(player~'health' <= amount
