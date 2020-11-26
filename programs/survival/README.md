@@ -68,7 +68,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Right clicking with fire charge enchanted with any level of power will shoot it, causing blocks to blow up and fly back as
 	falling block entities.
 	The higher the power, the further back the blocks go.
-	
+
+### horse_stats.sc:
+#### By KingOfTheClouds
+	The command /horse_stats prints the health, speed and jump attributes of the horse/donkey/mule the player is looking at.
+
 ### inventory_refill.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
