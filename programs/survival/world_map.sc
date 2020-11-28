@@ -1292,7 +1292,7 @@ __apply_structure_changes(world_chunk, area_visitor, structure_start_visitor) ->
          loop(chunk_size, cdz = _;
             str_pos = sampling_pos+[16*cdx, 0, 16*cdz];
             starts = call(structure_fetcher, str_pos);
-            for (pairs(starts), point_structures += [_:0, _:1, str_pos]);
+            for (filter(pairs(starts), _:1)), point_structures += [_:0, _:1, str_pos]);
          )
       );
       for (point_structures, [structure, data, str_pos] = _;
