@@ -564,8 +564,8 @@ global_structure_data =
    'ruined_portal'    -> { 'main' -> [ 'crying_obsidian', 1, 'gold_block', 'crying_obsidian'] },
    'treasure'         -> { 'main' -> ['air', 1, 'sandstone_wall', 'chest'] },
    'monument'         -> { 'main' -> ['prismarine_brick_slab', 1, 'sea_lantern', 'prismarine_brick_stairs'] },
-   'desert_temple'    -> { 'main' -> [ 'cut_sandstone', 1, 'chiseled_red_sandstone', 'smooth_red_sandstone_stairs'] },
-   'jungle_temple'    -> { 'main' -> [ 'mossy_cobblestone', 1, 
+   'desert_pyramid'    -> { 'main' -> [ 'cut_sandstone', 1, 'chiseled_red_sandstone', 'smooth_red_sandstone_stairs'] },
+   'jungle_pyramid'    -> { 'main' -> [ 'mossy_cobblestone', 1, 
          'mossy_cobblestone', 'mossy_cobblestone', 'mossy_cobblestone_stairs'] },
    'mansion'          -> { 'main' -> [ 'dark_oak_planks', 1, 
          'dark_oak_planks', 'dark_oak_wood', 'cobblestone', 'dark_oak_stairs'] },
@@ -676,6 +676,8 @@ global_structure_data =
 };
 // for pre 1.16.2 compatibility
 global_structure_data:'end_city' = global_structure_data:'endcity';
+global_structure_data:'jungle_temple' = global_structure_data:'jungle_pyramid';
+global_structure_data:'desert_temple' = global_structure_data:'desert_pyramid';
 
 
 // chunk states / statuses
