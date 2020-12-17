@@ -57,7 +57,7 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
         set(offset_by_one, sign, 'facing', face); // place the sign
         // Use one from the hand, but only if not in creative
         if( !player~'gamemode_id'%2,
-          inventory_set(player,  player~'selected_slot', count-1)
+          inventory_set(player, if(hand=='mainhand', player~'selected_slot', 40), count-1)
         )
       )
     )
