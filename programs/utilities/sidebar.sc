@@ -5,10 +5,17 @@
 //
 // Simple command that allows deopped players to change the scoreboard on the sidebar.
 //
-// /sidebar show <scoreboard>
+// Command to show a specific score on the sidebar:
+// /sidebar <score>
+//
+// Command to hide the sidebar:
+// /sidebar
 ///
 
-__config() -> {'scope'->'global'};
-__command() -> '';
-
-show(value) -> run(str('/scoreboard objectives setdisplay sidebar %s',value));
+__config() -> {
+    'stay_loaded' -> true,
+    'commands' -> {
+        '' -> _() -> run('scoreboard objectives setdisplay sidebar'),
+        '<objective>' -> _(score) -> run('scoreboard objectives setdisplay sidebar ' + score:0)
+    }
+}
