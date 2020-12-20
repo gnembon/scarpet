@@ -3,7 +3,7 @@
 // by Gnottero
 // (Carpet Mod 1.4.20)
 //
-// Allows the player to milk sheeps as well
+// Allows the player to milk sheeps using a bucket.
 ///
 
 __config() -> {'stay_loaded' -> true};
