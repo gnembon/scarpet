@@ -1,3 +1,11 @@
+///
+// Simply Harvest
+// by Gnottero & BisUmTo
+// (Carpet Mod 1.4.20)
+//
+// Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
+///
+
 __config() -> {'stay_loaded' -> true, 'scope' -> 'global'};
 
 global_seeds = {
