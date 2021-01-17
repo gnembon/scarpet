@@ -156,7 +156,6 @@ __on_player_respawns(playerOof)->(
             inventory_set(player, _: 3, _: 1, _: 0, _: 2);
         );
 
-        print(global_toKeepEffect);
         // Apply effects
         for (global_toKeepEffect,
             if (_: 3 == 'âny' || lower(_: 3) == player ~ 'name',
@@ -518,7 +517,7 @@ dontSpawnWithItem(item, player) -> (
 dontSpawnWithEffect(name, player) -> (
     if (player() ~ 'permission_level' > 1,
         global_toKeepEffect = filter(global_toKeepEffect,
-            _: 0 != name || _: 4 != player;
+            _: 0 != name || _: 3 != player;
         );
         toKeepEffect = map(global_toKeepEffect, l(_: 0, str(_: 1), str(_: 2), _: 3));
         delete_file('toKeepEffect', 'nbt');
@@ -535,7 +534,7 @@ timeToTrack(val) -> (
             global_timeToTrack = val;
         ,
             if (global_timeToTrack == 'onUse',
-                changeCompassPos();
+                schedule(0, 'changeCompassPos');
             );
             global_timeToTrack = round(val * 20);
         );
