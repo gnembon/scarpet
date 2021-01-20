@@ -805,6 +805,7 @@ global_structure_data =
 global_structure_data:'end_city' = global_structure_data:'endcity';
 global_structure_data:'jungle_temple' = global_structure_data:'jungle_pyramid';
 global_structure_data:'desert_temple' = global_structure_data:'desert_pyramid';
+global_structure_data:'swamp_hut' = global_structure_data:'witch_hut';
 
 
 // chunk states / statuses
