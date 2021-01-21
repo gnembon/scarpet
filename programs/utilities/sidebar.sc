@@ -1,7 +1,7 @@
 ///
 // Deopped Players Sidebar Changer
 // by BisUmTo
-// (Carpet Mod 1.4.9)
+// (Carpet Mod 1.4.18)
 //
 // Simple command that allows deopped players to change the scoreboard on the sidebar.
 //
