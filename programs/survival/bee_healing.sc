@@ -1,5 +1,5 @@
 // Bees have an annoying habit of drowning themselves, so yeah
-__config()->{'stay_loaded' -> true, 'scope' -> 'global'};
+__config()->{'scope' -> 'global'};
 
 begin()->(
     bees = entity_selector('@e[type=bee]');

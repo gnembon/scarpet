@@ -1,7 +1,9 @@
+// If you want your script to work with the persist flag, signal the event 'item_consumed' with the inventory slot before the item is removed
+// For example: signal_event('item_consumed', player, player ~ 'selected_slot');
+
 __config()->{
-    'stay_loaded' -> true,
     'commands' -> {
-        'giveCompass' -> _() -> giveCompass(entity_selector('@p'): 0),
+        'giveCompass' -> _() -> giveCompass(player()),
         'track <player>' -> ['track'],
         'spawnWith item <item> <amt>' -> ['spawnWithItem', 'âny', false],
         'spawnWith item <item> <amt> <player>' -> ['spawnWithItem', false],
@@ -603,7 +605,7 @@ includes(list, v) -> {
 };
 
 distance(v1, v2) -> (
-    sqrt(reduce(v1, _a+(_-(v2: _i))^2, 0));
+    sqrt(reduce(v1 - v2, _a + _*_, 0));
 );
 
 if (global_timeToTrack != 'onUse',
