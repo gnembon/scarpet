@@ -1,7 +1,7 @@
 ///
 // Silky Blockstates
 // by BisUmTo
-// (Carpet Mod 1.4.11)
+// (Carpet Mod 1.4.20)
 //
 // While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
 // It doesn't apply to containers and blacklisted blocks.
@@ -16,13 +16,13 @@ global_preserve_block_data_blacklist = ['^bee_nest$', '^beehive$', '^campfire$',
 global_need_forced_placement = ['^spawner$','_sign$'];
 
 // returns a map with all block_properties of the block and the relative value
-block_state(block) -> (
-    keys = block_properties(block) ;
-    values = map(keys, property(block, _));
-    m = {};
-    for(keys, m:_ = values:_i);
-    return(m);
-);
+//block_state(block) -> (
+//    keys = block_properties(block) ;
+//    values = map(keys, property(block, _));
+//    m = {};
+//    for(keys, m:_ = values:_i);
+//    return(m);
+//);
 
 // returns the escaped version of the string (\->\\, d->\d)
 escape_string(string,d) -> (
