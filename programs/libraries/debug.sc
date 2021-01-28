@@ -113,7 +113,7 @@ debug(...v) -> (
     allFormatted += actuallyFormatted + ' ';
   );
 
-  print(allFormatted);
+  print(entity_selector('@a'), allFormatted);
 );
 
 concat(a, b) -> (
