@@ -98,6 +98,12 @@ formatType(v) -> (
 );
 
 debug(...v) -> (
+  if((type(v: 0) == 'entity' && v:0 ~ 'type' == 'player') || (type(v: 0) == 'list' && all(v: 0, type(_) == 'entity' && _ ~ 'type' == 'player')),
+      player = v: 0;
+    ,
+      player = player('*');
+  );
+
   allFormatted = '';
   for (v,
     formatted = formatType(_);
@@ -113,7 +119,7 @@ debug(...v) -> (
     allFormatted += actuallyFormatted + ' ';
   );
 
-  print(entity_selector('@a'), allFormatted);
+  print(player, allFormatted);
 );
 
 concat(a, b) -> (

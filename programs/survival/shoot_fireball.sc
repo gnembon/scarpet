@@ -14,7 +14,7 @@ __on_player_uses_item(player, item_tuple, hand)->(
         modify(fireball, 'nbt_merge', {'Owner' -> query(player, 'nbt', 'UUID')}); // Make the fireball count as a player kill
         modify(fireball, 'fire', 20); // Seems to make it last longer?
 
-        if(!player ~ 'gamemode_id' % 2, // Remove a fire charge from the selected slot or offhand if the player is in survival mode
+        if(player ~ 'gamemode' == 'survival' || player ~ 'gamemode' == 'adventure', // Remove a fire charge from the selected slot or offhand if the player is in survival mode
             inventory_set(player, if(hand == 'offhand', -1, player ~ 'selected_slot'), (item_tuple: 1) - 1);
         );
     );
