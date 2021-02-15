@@ -24,10 +24,9 @@ formatType(v) -> (
   , t == 'string',
     c: 0 = '#ff8000 '+v;
   , t == 'list',
+    c: 0 = 'y [';
     for (v,
-      if (_i == 0,
-        c: 0 = 'y [';
-      ,
+      if (_i != 0,
         put(c, null, 'y , ');
       );
       c = concat(c, formatType(_))
@@ -36,10 +35,9 @@ formatType(v) -> (
 
   , t == 'map',
     p = pairs(v);
+    c: 0 = 'r {';
     for (p,
-      if (_i == 0,
-        c: 0 = 'r {';
-      ,
+      if (_i != 0,
         put(c, null, 'r , ');
       );
       c = concat(c, formatType(_: 0));
@@ -54,10 +52,9 @@ formatType(v) -> (
     if (t2 == 'map',
       // If the nbt is like a map, parse it like a map but with nbt colors
       p = pairs(parse_nbt(v));
+      c: 0 = '#00cccc {';
       for (p,
-        if (_i == 0,
-          c: 0 = '#00cccc {';
-        ,
+        if (_i != 0,
           put(c, null, '#00cccc , ');
         );
         put(c, null, '#00cccc '+_: 0+': ');
@@ -66,10 +63,9 @@ formatType(v) -> (
       put(c, null, '#00cccc }');
     , t2 == 'list',
       // If the nbt is like a list, parse it like a list but with nbt colors
+      c: 0 = '#00cccc [';
       for (n,
-        if (_i == 0,
-          c: 0 = '#00cccc [';
-        ,
+        if (_i != 0,
           put(c, null, '#00cccc , ');
         );
         c = concat(c, formatType(_))
@@ -98,7 +94,7 @@ formatType(v) -> (
 );
 
 debug(...v) -> (
-  if((type(v: 0) == 'entity' && v:0 ~ 'type' == 'player') || (type(v: 0) == 'list' && all(v: 0, type(_) == 'entity' && _ ~ 'type' == 'player')),
+  if((type(v: 0) == 'entity' && v:0 ~ 'type' == 'player') || (type(v: 0) == 'list' && all(v: 0, type(_) == 'entity' && _ ~ 'type' == 'player') && length(v: 0) != 0),
       player = v: 0;
     ,
       player = player('*');
