@@ -12,6 +12,10 @@
 
 // namespaces for items and placed signs differ, so map each wall_sign to it's item equivalent
 
+__config)(->{
+	'stay_loaded'->true
+};
+
 global_item_to_block = {
 	'acacia_sign'-> 'acacia_wall_sign',
 	'birch_sign'-> 'birch_wall_sign',
