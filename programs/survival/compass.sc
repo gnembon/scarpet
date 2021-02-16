@@ -1,5 +1,5 @@
-// If you want your script to work with the persist flag, signal the event 'item_consumed' with the inventory slot before the item is removed
-// For example: signal_event('item_consumed', player, player ~ 'selected_slot');
+// If you want your script to work with the persist flag, signal the event 'compass:item_consumed' with the inventory slot before the item is removed
+// For example: signal_event('compass:item_consumed', player, player ~ 'selected_slot');
 
 __config()->{
     'commands' -> {
@@ -292,7 +292,7 @@ __on_player_uses_item(player, item_tuple, hand)->(
 
     // Signal the item consumed event if the player used an item that can be consumed
     if (includes(['water_bucket', 'lava_bucket', 'fire_charge', 'item_frame', 'painting', 'pufferfish_bucket', 'salmon_bucket', 'cod_bucket', 'tropical_fish_bucket', 'axolotl_bucket', 'minecart', 'chest_minecart', 'furnace_minecart', 'hopper_minecart', 'bonemeal', 'ender_pearl', 'eye_of_ender', 'firework_rocket', 'tnt_minecart', 'armor_stand', 'name_tag', 'end_crystal', 'splash_potion', 'lingering_potion', 'spruce_boat', 'birch_boat', 'jungle_boat', 'acacia_boat', 'dark_oak_boat'], item_tuple: 0),
-        signal_event('item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+        signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
     );
 );
 
@@ -450,10 +450,10 @@ item_consumed(slot) -> (
     );
 );
 
-handle_event('item_consumed', 'item_consumed');
+handle_event('compass:item_consumed', 'item_consumed');
 
 __on_player_places_block(player, item_tuple, hand, block)->(
-    signal_event('item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+    signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
 );
 
 global_ids = l('speed', 'slowness', 'haste', 'mining_fatigue', 'strength', 'instant_health', 'instant_damage', 'jump_boost', 'nausea', 'regeneration', 'resistance', 'fire_resistance', 'water_breathing', 'invisibility', 'blindess', 'night_vision', 'hunger', 'weakness', 'poison', 'wither', 'health_boost', 'absorption', 'saturation', 'glowing', 'levitation', 'luck', 'unluck', 'slow_falling', 'conduit_power', 'dolphins_grace', 'bad_omen', 'hero_of_the_village');
@@ -475,7 +475,7 @@ __on_player_finishes_using_item(player, item_tuple, hand)->(
         );
     );
     
-    signal_event('item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+    signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
 );
 
 spawnWithItem(item, amt, player, persistant) -> (
