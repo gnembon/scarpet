@@ -3,8 +3,10 @@
 // saves player's position, motion, angles, effects and restores them on landing
 // saves player configs between saves
 // places spectating players without config in a safe places
-// and adds timeout for the player so they cannot switch instantly
-// change setting below to change that behaviour (0 to disable timeout)
+// and adds timeout for the player so they cannot switch instantly.
+// If you have a locked carpet.conf file, you must add commandScriptACE 2 to it
+// so dimension teleporting works.
+// Change setting below to change timeout behaviour (0 to disable timeout)
 global_survival_timeout = 3;
 
 // additional player checks are here. comment lines that you think are not needed
