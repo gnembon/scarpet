@@ -122,7 +122,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### pickup_hammer.sc:
 #### By rv3r
-	A combination of auto_pickup.sc and hammer.sc
+	A combination of gnembon's auto_pickup and hammer scripts
 
 ### prospectors_pick.sc:
 #### By gnembonmc
