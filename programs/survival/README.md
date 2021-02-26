@@ -120,6 +120,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
 
+### pickup_hammer.sc:
+#### By rv3r
+	A combination of auto_pickup.sc and hammer.sc
+
 ### prospectors_pick.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
