@@ -6,7 +6,7 @@ global_dims = l('overworld', 'the_nether', 'the_end');
 
 __config() ->  {
 	'scope' -> 'global'
-}
+};
 
 //displays all controller positions and detailed content of the closest storage
 __command() ->
