@@ -23,7 +23,7 @@ __command() ->
 	in_dimension( current_player,
 		loaded_controllers = sort_key(
 			filter(global_controllers:current_dimension(), loaded(_)), 
-			__euclidean_sq(_,player_pos)
+			_euclidean_sq(_,player_pos)
 		);
 		if (loaded_controllers,
 			closest_controller = loaded_controllers:0;
