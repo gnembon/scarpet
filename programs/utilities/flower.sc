@@ -20,9 +20,6 @@ __config() -> {
     '<pos> create <radius> only <flower>' -> 'filtered_flower_area'
   },
   'arguments' -> {
-    'pos' -> {
-      'type' -> 'pos'
-    },
     'radius' -> {
       'type' -> 'int',
       'min' -> 0,
@@ -77,18 +74,16 @@ _get_flower_id_at(position) -> (
   // makes sure output is between 0 and 0.9999
   val_clamped = min(max(val, 0), 0.9999);
   flower_id = floor(val_clamped * length(global_FLOWERS));
-
-  return(flower_id);
 );
 
 get_flower_at(position) -> (
   flower_id = _get_flower_id_at(position);
-  return(global_FLOWERS : flower_id);
+  global_FLOWERS : flower_id;
 );
 
 // check for flower forest biome
 _is_flower_forest(position) -> (
-  return(biome(position) == 'flower_forest');
+  biome(position) == 'flower_forest';
 );
 
 // fills an area with flowers
@@ -100,9 +95,12 @@ __flower_forest_fill(position) -> (
     // gets flower at position
     found_flower = get_flower_at(flower_pos);
     __set_flower_at(flower_pos, found_flower);
-    return(1);
-  );
-  return(0);
+    // return 1
+    1,
+  // else
+    // return 0
+    0
+  )
 );
 
 // fills an area with flower of given type
@@ -117,10 +115,16 @@ __filtered_flower_forest_fill(position, flower, flower_id) -> (
     // checks if flower is wanted type
     if(found_flower_id == flower_id,
       __set_flower_at(flower_pos, flower);
-      return(1);
-    );
-  );
-  return(0);
+      // return 1
+      1,
+    // else
+      // return 0
+      0
+    ),
+  // else
+    // return 0
+    0
+  )
 );
 
 // places flower at position
