@@ -18,6 +18,6 @@ item_consumed(...args) -> (
   );
 
   for (slots,
-    signal_event('compass:item_consumed', player, _);
+    signal_event('compass:item_consumed', null, l(player, _));
   );
 );

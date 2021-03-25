@@ -97,7 +97,7 @@ debug(...v) -> (
   if((type(v: 0) == 'entity' && v:0 ~ 'type' == 'player') || (type(v: 0) == 'list' && all(v: 0, type(_) == 'entity' && _ ~ 'type' == 'player') && length(v: 0) != 0),
       player = v: 0;
     ,
-      player = player('*');
+      player = entity_selector('@a');
   );
 
   allFormatted = '';

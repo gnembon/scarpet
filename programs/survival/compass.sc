@@ -1,7 +1,9 @@
-// If you want your script to work with the persist flag, signal the event 'compass:item_consumed' with the inventory slot before the item is removed
-// For example: signal_event('compass:item_consumed', player, player ~ 'selected_slot');
+// If you want your script to work with the persist flag, signal the relevant scarpet event
+// For example: signal_event('player_places_block', player, player, l('acacia_door', 16, null), 'mainhand', block(0, 0, 0));
+// You could also use the compass_persist library if you want to make it work with just this script
 
 __config()->{
+    'scope' -> 'global',
     'commands' -> {
         'giveCompass' -> _() -> giveCompass(player()),
         'track <player>' -> ['track'],
@@ -40,7 +42,7 @@ __config()->{
         'effect' -> {'type' -> 'effect'},
         'duration' -> {'type' -> 'int', 'min' -> 0, 'max' -> 1000000, 'suggest' -> [15, 60, 1000000]},
         'amplifier' -> {'type' -> 'int', 'min' -> 0, 'max' -> 255, 'suggest' -> [0, 1, 2, 3, 255]},
-        'dist' -> {'type' -> 'int', 'min' -> 16, 'max' -> 24000000, 'suggest' -> [8, 128, 7000, 24000000]},
+        'dist' -> {'type' -> 'int', 'min' -> 16, 'max' -> 24000000, 'suggest' -> [16, 128, 7000, 24000000]},
     }
 };
 
@@ -73,9 +75,6 @@ global_timeToTrack = parse_nbt(read_file('timeToTrack', 'nbt'));
 if (global_timeToTrack == 'null',
     global_timeToTrack = 10;
 );
-
-// Crappy fix for https://github.com/gnembon/fabric-carpet/issues/677
-system_variable_set('compass:timeToTrack', global_timeToTrack);
 
 global_maxCompasses = parse_nbt(read_file('maxCompasses', 'nbt'));
 
@@ -193,8 +192,6 @@ changeCompassPos() -> {
         );
     );
 
-    global_timeToTrack =system_variable_get('compass:timeToTrack');
-
     // If the timeToTrack is a number, point the compasses at the players after that interval
     if (global_timeToTrack != 'onUse',
         schedule(global_timeToTrack, 'changeCompassPos');
@@ -255,8 +252,6 @@ pointCompass(player, slot) -> (
             );
         );
 
-        global_timeToTrack =system_variable_get('compass:timeToTrack');
-
         // Give some feedback if timeToTrack is set to onUse
         if (global_timeToTrack == 'onUse',
             print(player, format('l Compass pointing to ', 'lb '+tracking));
@@ -292,7 +287,7 @@ __on_player_uses_item(player, item_tuple, hand)->(
 
     // Signal the item consumed event if the player used an item that can be consumed
     if (includes(['water_bucket', 'lava_bucket', 'fire_charge', 'item_frame', 'painting', 'pufferfish_bucket', 'salmon_bucket', 'cod_bucket', 'tropical_fish_bucket', 'axolotl_bucket', 'minecart', 'chest_minecart', 'furnace_minecart', 'hopper_minecart', 'bonemeal', 'ender_pearl', 'eye_of_ender', 'firework_rocket', 'tnt_minecart', 'armor_stand', 'name_tag', 'end_crystal', 'splash_potion', 'lingering_potion', 'spruce_boat', 'birch_boat', 'jungle_boat', 'acacia_boat', 'dark_oak_boat'], item_tuple: 0),
-        signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+        item_consumed(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
     );
 );
 
@@ -434,8 +429,8 @@ giveCompass(player) -> (
     );
 );
 
-item_consumed(slot) -> (
-    item_tuple = inventory_get(player(), slot);
+item_consumed(player, slot) -> (
+    item_tuple = inventory_get(player, slot);
     // Find any items that need to be replenished
     items = filter(global_toKeep, 
         item_tuple: 0 == _: 0 && _: 4
@@ -450,10 +445,12 @@ item_consumed(slot) -> (
     );
 );
 
-handle_event('compass:item_consumed', 'item_consumed');
+handle_event('compass:item_consumed', _(data) -> (
+    item_consumed(data: 0, data: 1);
+));
 
 __on_player_places_block(player, item_tuple, hand, block)->(
-    signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+    item_consumed(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
 );
 
 global_ids = l('speed', 'slowness', 'haste', 'mining_fatigue', 'strength', 'instant_health', 'instant_damage', 'jump_boost', 'nausea', 'regeneration', 'resistance', 'fire_resistance', 'water_breathing', 'invisibility', 'blindess', 'night_vision', 'hunger', 'weakness', 'poison', 'wither', 'health_boost', 'absorption', 'saturation', 'glowing', 'levitation', 'luck', 'unluck', 'slow_falling', 'conduit_power', 'dolphins_grace', 'bad_omen', 'hero_of_the_village');
@@ -467,7 +464,8 @@ __on_player_finishes_using_item(player, item_tuple, hand)->(
                     name = global_ids: (_: 'Id' - 1);
 
                     if (_: 'Duration' > 32767 && includes(map(global_toKeepEffect, _: 0), name),
-                        modify(player(), 'effect', name, _: 'Duration', abs(_: 'Amplifier'), _: 'ShowParticles', _: 'ShowIcon');
+                        amplifier = _: 'Amplifier';
+                        modify(player(), 'effect', name, _: 'Duration', if (amplifier < 0, 256 + amplifier, amplifier), _: 'ShowParticles', _: 'ShowIcon');
                     );
                 );
             );
@@ -475,7 +473,7 @@ __on_player_finishes_using_item(player, item_tuple, hand)->(
         );
     );
     
-    signal_event('compass:item_consumed', player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+    item_consumed(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
 );
 
 spawnWithItem(item, amt, player, persistant) -> (
@@ -540,8 +538,6 @@ timeToTrack(val) -> (
             );
             global_timeToTrack = round(val * 20);
         );
-
-        system_variable_set('compass:timeToTrack', global_timeToTrack);
 
         write_file('timeToTrack', 'nbt', encode_nbt(global_timeToTrack));
         print(player(), format('l Done'));
