@@ -161,8 +161,9 @@ Various scripts that modify various game elements, often replicating popular mod
 	
 ### villager_poi.sc:
 #### By gnembonmc
-	Keeps track of villager poi system?
-	(Please enter an explanation, as it quite unclear)
+	Keeps track of villager poi system
+	It allows the player to see which bed the villager is linked to by clicking the villager with an emerald.
+	It also shows what beds the villager could possibly link to as well as which beds it cannot.
 
 ### vortex_effect.sc:
 #### By gnembonmc
