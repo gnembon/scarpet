@@ -1,4 +1,4 @@
-__command() ->
+_command() ->
 (
    print('camera: scarpet app.');
    print('-------------------');
@@ -11,7 +11,7 @@ __command() ->
    print(' "/camera place_player - Move player to the selected point');
    print(' "/camera move" - Move the selected point to players location');
    print(' "/camera duration <X>" - Set new selected path duration');
-   print(' "/camera split_point>" - Split selected path in half.');
+   print(' "/camera split_point" - Split selected path in half.');
    print(' "/camera delete_point" - Remove current key point');
    print(' "/camera trim_path" - Remove all key points from selected up');
    print('');
@@ -49,9 +49,55 @@ __command() ->
    print(' "/camera show": Show current path particles');
    print('    color of particles used is different for different players');
    print(' "/camera hide": Hide path display');
+   print(' "/camera prefer_smooth_play": ');
+   print('    Eat CPU spikes and continue as usual');
+   print(' "/camera prefer_synced_play": ');
+   print('    After CPU spikes jump to where you should be');
+
    print('');
-   ''
+   null
 );
+__config() ->{
+    'commands'->{
+        ''->'_command',
+        '<command>'->'_call',
+        'add <seconds>'->'add',
+        'prepend <seconds>'->'prepend',
+        'duration <seconds>',
+        'save_as <name>'->'save_as',
+        'load <name>'->'load',
+        'interpolation <interpolation>'->['__interpolation',true],
+        'interpolation gauss'->['__interpolation','gauss',true],
+        'interpolation gauss <float>'->_(float)->(__interpolation('gauss_'+str(float),true)),
+        'repeat <seconds> <last_delay>'->'repeat',
+        'stretch <factor>'->'stretch'
+    },
+    'arguments'->{
+        'seconds'->{'type'->'int','suggest'->[]},
+        'last_delay'->{'type'->'int','suggest'->[]},
+        'name'->{'type'->'string','suggest'->[]},
+        'interpolation'->{'type'->'term','options'->['linear','catmull_rom']}
+        'factor'->{'type'->'int','min'->25,'max'->'400'},
+        'command'->{'type'->'term','options'->[
+            'start',
+            'clear',
+            'select',
+            'place_player',
+            'move',
+            'split_point',
+            'delete_point',
+            'trim_path',
+            'transpose',
+            'play',
+            'show',
+            'hide',
+            'prefer_smooth_play',
+            'prefer_synced_play'
+        ]}
+    }
+};
+
+_call(command)->call(command);
 
 global_points = null;
 global_dimension = null;
@@ -145,7 +191,6 @@ __assert_point_selected(validator) ->
 );
 
 //select a custom interpolation method
-interpolation(method) -> __interpolation(method, true);
 __interpolation(method, verbose) ->
 (
    __prepare_path_if_needed() -> __prepare_path_if_needed_generic();
@@ -154,7 +199,7 @@ __interpolation(method, verbose) ->
    // or optionally __prepare_path_if_needed, if path is inefficient to compute point by point
    global_interpolator = if (
        method == 'linear', '__interpolator_linear',
-       method == 'cr', '__interpolator_cr',
+       method == 'catmull_rom', '__interpolator_cr',
        method == 'gauss', _(s, p) -> __interpolator_gauB(s, p, 0),
        method ~ '^gauss_',
             (
@@ -162,8 +207,7 @@ __interpolation(method, verbose) ->
                 type = replace(type,'_','.');
                 variance = round(60*number(type));
                 _(s, p, outer(variance)) -> __interpolator_gauB(s, p, variance);
-            ),
-       exit('Choose one of the following methods: linear, gauss, gauss_<deviation>, cr')
+            )
    );
    __update();
    if(verbose, 'Interpolation changed to '+method, '');
@@ -211,9 +255,6 @@ repeat(times, last_section_delay) ->
 stretch(percentage) ->
 (
    if (err = __is_not_valid_for_motion(), exit(err));
-   if (percentage < 25 || percentage > 400,
-       exit('path speed can only be speed, or slowed down 4 times. Re-call command for larger changes')
-   );
    ratio = percentage/100;
    previous_path_length = global_points:(-1):1;
    for(global_points, _:1 = _:1*ratio );
@@ -236,7 +277,7 @@ move() ->
     );
     global_points:global_selected_point:0 = new_position;
     __update();
-    '';
+    null;
 );
 
 // chenges duration of the current selected segment to X seconds
@@ -326,7 +367,7 @@ select(num) ->
     );
     global_selected_point = if (global_selected_point == selected_point, null, selected_point);
     global_needs_updating = true;
-    // no need to _update since path is still valid
+
 );
 
 // player can also punch the mannequin to select/deselect it
@@ -453,6 +494,12 @@ show() ->
 
    task( _() -> (
        global_markers = __create_markers();
+       on_close = ( _() -> (
+          for(global_markers, modify(_,'remove'));
+          global_markers = null;
+          global_showing_path = false;
+       ));
+
        loop(7200,
            if(!global_showing_path, break());
            __get_player();
@@ -462,13 +509,11 @@ show() ->
                global_markers = __create_markers();
            );
            __show_path_tick();
-           sleep(100);
+           sleep(100, call(on_close));
        );
-       for(global_markers, modify(_,'remove'));
-       global_markers = null;
-       global_showing_path = false;
+       call(on_close);
    ));
-   '';
+   null;
 );
 
 // hides path display
@@ -477,12 +522,15 @@ hide() ->
    if (global_showing_path,
       global_showing_path = false;
       'Stopped showing path';
-   ,
-       ''
    );
 );
 
 // runs the player on the path
+global_prefer_sync = false;
+
+prefer_smooth_play() -> (global_prefer_sync = false; 'Smooth path play');
+prefer_synced_play() -> (global_prefer_sync = true; 'Synchronized path play');
+
 play() ->
 (
    if (err = __is_not_valid_for_motion(), exit(err));
@@ -491,7 +539,7 @@ play() ->
    task( _() -> (
        if (global_playing_path, // we don't want to join_task not to lock it just in case. No need to panic here
            global_playing_path = false; // cancel current path rendering
-           sleep(1500); // in case we interrupt previous playbacks
+           sleep(1500);
        );
        showing_path = global_showing_path;
        hide();
@@ -501,6 +549,7 @@ play() ->
        global_playing_path = true;
        mspt = 1000 / 60;
        start_time = time();
+       very_start = start_time;
        point = 0;
        p = __get_player();
        try (
@@ -514,9 +563,15 @@ play() ->
                    modify(p, 'location', v);
                    point += 1;
                    end_time = time();
-                   took = end_time - start_time;
-                   if (took < mspt, sleep(mspt-took));
-                   start_time = time()
+                   sleep();
+                   if (global_prefer_sync,
+                       should_be = very_start + mspt*point;
+                       if (end_time < should_be, sleep(should_be-end_time) )
+                   ,
+                       took = end_time - start_time;
+                       if (took < mspt, sleep(mspt-took));
+                       start_time = time()
+                   )
                )
            );
        );
@@ -524,7 +579,7 @@ play() ->
        global_playing_path = false;
        if (showing_path, show());
    ));
-   '';
+   null;
 );
 
 // moves player to a selected camera position
@@ -619,14 +674,14 @@ save_as(file) ->
         //otherwise mojang will interpret 0.0d as 0i and fail to insert
         put(path_nbt:'points', point_nbt, _i);
     );
-    store_app_data(path_nbt, file);
+    write_file(file, 'nbt', path_nbt);
     'stored path as '+file;
 );
 
 // loads path under the local file that
 load(file) ->
 (
-    path_nbt = load_app_data(file);
+    path_nbt = read_file(file, 'nbt');
     if (!path_nbt, exit('No path to load: '+file));
     new_points = map(get(path_nbt, 'points[]'), l(_:'pos[]', _:'duration', _:'type'));
     if (!new_points || first(new_points, length(_:0) != 5),

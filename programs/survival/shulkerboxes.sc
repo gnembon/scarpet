@@ -20,13 +20,14 @@ Current vacuum mode:'+global_vacuum+'
 use /shulkerboxes toggle_vacuum to change it
    
 Any shulkerbox with \'swap\' or \'restock\'
-followed with \'keep\', \'same\', \'first\',
+followed with \'same\', \'keep\', \'first\',
 \'next\' or \'random\'
 will restock player inventory
  - swap: will swap a hotbar stack every time it changes
  - restock: will replace fully used up stacks
  
  - same: will return only matching items
+ - keep: as same but will keep 1 item in the shulkerbox
  - first: will always return first item from a box
  - next: will return items in sequence
  - random: will draw a random stack
@@ -72,9 +73,7 @@ __on_player_collides_with_entity(player, entity) -> if (global_vacuum == 'collis
                entity_event(entity, 'on_tick', '__item_animation', max_age, player);
             ,
                actual_left = __add_item_to_vacuum_sboxes(player, item, count, tag, true);
-               if (actual_left != 0, exit()); // this never happens, we just mock added them. Magic
-               modify(entity, 'nbt_merge', '{Item:{Count:0b}}');
-               modify(entity, 'remove')
+               modify(entity, 'nbt_merge', '{Item:{Count:'+actual_left+'b}}');
             )
          );
       );

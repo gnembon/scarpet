@@ -1,6 +1,6 @@
 
 // world_map app by gnembon
-// requires scarpet 1.7 (carpet 1.4)
+// requires carpet 1.4.20
 
 __command() -> ' 
 use:
@@ -9,13 +9,10 @@ use:
  - /world_map tp
 ';
 
-__config() -> 
-(
-	m(
-		l('stay_loaded', true),
-		l('scope', 'global')
-	)
-);
+__config() -> {
+	//'stay_loaded' -> true,
+	'scope' -> 'global'
+};
 
 global_map_view_distance = 0;
 
@@ -58,7 +55,7 @@ global_decorations = {
 
 __decorate(decor_list, extras) ->
 (
-   decor = l();
+   decor = [];
    for(decor_list, for(global_decorations:_, decor+=_));
    for(decor_list, for(extras, decor+=_));
    decor
@@ -76,6 +73,56 @@ __basic_biome_template(block, replaces, decorations) ->
 __simple_biome(block, decorations) -> __basic_biome_template(block, {}, decorations);
 __grassy_biome(decorations) -> __basic_biome_template('grass_block', {'dirt'}, decorations);
 __leaf(x) -> x+'_leaves[persistent=true]';
+
+
+global_features = {
+   'spring_lava_double' -> [0.90, 0, 'lava'],
+   'brown_mushroom_nether' -> [0.95, 1, 'brown_mushroom'],
+   'red_mushroom_nether' -> [0.95, 1, 'red_mushroom'],
+};
+
+__create_custom_biome(biome) ->
+(
+   scale =  biome(biome, 'scale'); 
+   cat = biome(biome, 'category');
+   if (scale > 0.25,
+      if (scale > 0.4,
+         cat += '_mountains'
+      ,
+         cat += '_hills'
+      )
+   );
+   if (biome(biome, 'depth') < -0.2, cat = 'deep_ocean');
+   if (global_debug, print('Biome '+biome+' is modded, used '+cat+' as a base'));
+   
+   config = copy(global_biome_data:cat);
+   previous_main_block = config:'block';
+   main_block = str(biome(biome, 'top_material'));
+   under_block = str(biome(biome, 'under_material'));
+   if (!has(config, 'decoration'), config:'decoration' = []);
+   config:'block' = main_block;
+   config:'replaces' += under_block;
+   if (previous_main_block != main_block,
+      for(config:'decoration', decor = _;
+         for (range(2, length(decor)),
+            if(decor:_ == previous_main_block, decor:_ = main_block)
+   )));
+   
+   put(config:'decoration':0, [0.8, 0, under_block], 'insert');
+   //put(config:'decoration':0, [0.95, 1, main_block], 'insert');
+   
+   //if (scale > 0.25,
+   //   put(config:'decoration':0, [0.8, 1, main_block], 'insert');
+   //   if (scale > 0.4, put(config:'decoration':0, [0.8, 1, under_block, main_block], 'insert'))
+   //);
+   
+   for (biome(biome, 'features'), for(filter(_, has(global_features:_)),
+      put(config:'decoration':0, global_features:_, 'insert');
+   ));
+   
+   global_biome_data:biome = config;
+   config
+);
 
 // all biomes information
 
@@ -162,12 +209,11 @@ global_biome_data = {
          [0.1, 1, 'snow']
    ]),
    'stone_shore' -> __simple_biome('stone', null),
-   'frozen_ocean' -> __simple_biome('blue_stained_glass',
-      l(
-         l(0.9, 1, 'packed_ice', 'snow_block'),
-         l(0.8, 1, 'blue_ice', 'snow'),
-         l(0.7, 1, 'packed_ice'),
-      )
+   'frozen_ocean' -> __simple_biome('blue_stained_glass', [
+         [0.9, 1, 'packed_ice', 'snow_block'],
+         [0.8, 1, 'blue_ice', 'snow'],
+         [0.7, 1, 'packed_ice'],
+      ]
    ),
    'cold_ocean' -> __simple_biome('blue_stained_glass', null),
    'ocean' -> __simple_biome('cyan_stained_glass', null),
@@ -258,7 +304,7 @@ global_biome_data = {
    },
    'snowy_tundra' -> {
       'block' -> 'snow_block',
-      'replaces' -> m('dirt'),
+      'replaces' -> {'dirt'},
       'decoration' -> __decorate( ['camp'], [
          [0.9335, 1, 'spruce_log', __leaf('spruce')],
          [0.85, 0, 'grass_block', 'grass'],
@@ -442,9 +488,9 @@ global_biome_data = {
       ]
    },
    'taiga_hills' -> __grassy_biome( [
-         l(0.70, 1, 'dirt', 'spruce_log', __leaf('spruce')),
-         l(0.85, 1, 'spruce_log', __leaf('spruce')),
-         l(0.3, 1, 'grass_block' )
+         [0.70, 1, 'dirt', 'spruce_log', __leaf('spruce')],
+         [0.85, 1, 'spruce_log', __leaf('spruce')],
+         [0.3, 1, 'grass_block' ]
    ]),
    'taiga_mountains' -> __grassy_biome([
          [0.70, 1, 'dirt', 'spruce_log', __leaf('spruce')],
@@ -551,6 +597,87 @@ global_biome_data:'modified_jungle_edge' = global_biome_data:'plains';
 global_biome_data:'modified_wooded_badlands_plateau' = global_biome_data:'wooded_badlands_plateau';
 global_biome_data:'mountain_edge' = global_biome_data:'mountains';
 
+// fundamental biomes (categories):
+global_biome_data:'none' = __simple_biome('glass', null);
+global_biome_data:'none_hills' = __simple_biome('glass', null);
+global_biome_data:'none_mountains' = __simple_biome('glass', null);
+// taiga (covered - all three)
+
+global_biome_data:'extreme_hills' = global_biome_data:'mountain_edge';
+global_biome_data:'extreme_hills' = global_biome_data:'mountains';
+global_biome_data:'extreme_hills' = global_biome_data:'mountains';
+// jungle
+global_biome_data:'jungle_mountains' = global_biome_data:'modified_jungle';
+
+global_biome_data:'mesa' = global_biome_data:'badlands';
+global_biome_data:'mesa_hills' = global_biome_data:'modified_badlands_plateau';
+global_biome_data:'mesa_mountains' = global_biome_data:'badlands_plateau';
+// plains (covered)
+global_biome_data:'plains_hills' = __grassy_biome( [
+         [0.98, 1, 'grass_block','campfire'],
+         [0.5, 1, 'grass_block'],
+   ]);
+   
+global_biome_data:'plains_mountains' =  __grassy_biome( [
+         [0.98, 1, 'dirt', 'grass_block','campfire'],
+         [0.7, 1, 'dirt', 'grass_block', 'grass'],
+         [0.6, 1, 'grass_block', 'grass'],
+         [0.6, 1, 'grass_block', 'grass'],
+         [0.3, 1, 'grass_block'],
+   ]);
+// savanna (covered)
+global_biome_data:'savanna_hills' = global_biome_data:'savanna_plateau';
+global_biome_data:'savanna_mountains' = global_biome_data:'savanna_plateau';
+
+global_biome_data:'icy' = global_biome_data:'snowy_tundra';
+global_biome_data:'icy_hills' = global_biome_data:'snowy_mountains';
+global_biome_data:'icy_mountains' = global_biome_data:'snowy_mountains';
+// the_end (covered)
+global_biome_data:'the_end_hills' = global_biome_data:'end_midlands';
+global_biome_data:'the_end_mountains' = global_biome_data:'end_highlands';
+// beach (covered)
+global_biome_data:'beach_hills' = global_biome_data:'beach';
+global_biome_data:'beach_mountains' = global_biome_data:'beach';
+
+// forest (covered)
+global_biome_data:'forest_hills' = global_biome_data:'wooded_hills';
+global_biome_data:'forest_mountains' = global_biome_data:'wooded_mountains';
+// ocean (covered)
+global_biome_data:'ocean_hills' = global_biome_data:'deep_ocean';
+global_biome_data:'ocean_mountains' = global_biome_data:'deep_ocean';
+// desert (covered)
+global_biome_data:'desert_mountains' = __simple_biome('sand', [
+   [0.7, 1, 'sand', 'sand'], 
+   [0.7, 1, 'sand']
+]);
+// river (covered)
+global_biome_data:'river_hills' = global_biome_data:'river';
+global_biome_data:'river_mountains' = global_biome_data:'river';
+// swamp (covered)
+global_biome_data:'swamp_mountains' = global_biome_data:'swamp_hills';
+
+global_biome_data:'mushroom' = global_biome_data:'mushroom_fields_shore';
+global_biome_data:'mushroom_hills' = global_biome_data:'mushroom_fields';
+global_biome_data:'mushroom_mountains' = global_biome_data:'mushroom_fields';
+
+global_biome_data:'nether' = global_biome_data:'nether_wastes';
+global_biome_data:'nether_hills' = __simple_biome('netherrack',
+   [
+      [0.8, 1, 'netherrack', 'netherrack'],
+      [0.7, 1, 'netherrack'],
+      [0.9, 0, 'lava']
+   ]
+);
+
+global_biome_data:'nether_mountains' = __simple_biome('netherrack',
+   [
+      [0.9, 1, 'netherrack', 'netherrack', 'netherrack'],
+      [0.8, 1, 'netherrack', 'netherrack'],
+      [0.7, 1, 'netherrack'],
+      [0.9, 0, 'lava']
+   ]
+);
+
 
 // structures
 global_structure_data = 
@@ -564,8 +691,8 @@ global_structure_data =
    'ruined_portal'    -> { 'main' -> [ 'crying_obsidian', 1, 'gold_block', 'crying_obsidian'] },
    'treasure'         -> { 'main' -> ['air', 1, 'sandstone_wall', 'chest'] },
    'monument'         -> { 'main' -> ['prismarine_brick_slab', 1, 'sea_lantern', 'prismarine_brick_stairs'] },
-   'desert_temple'    -> { 'main' -> [ 'cut_sandstone', 1, 'chiseled_red_sandstone', 'smooth_red_sandstone_stairs'] },
-   'jungle_temple'    -> { 'main' -> [ 'mossy_cobblestone', 1, 
+   'desert_pyramid'    -> { 'main' -> [ 'cut_sandstone', 1, 'chiseled_red_sandstone', 'smooth_red_sandstone_stairs'] },
+   'jungle_pyramid'    -> { 'main' -> [ 'mossy_cobblestone', 1, 
          'mossy_cobblestone', 'mossy_cobblestone', 'mossy_cobblestone_stairs'] },
    'mansion'          -> { 'main' -> [ 'dark_oak_planks', 1, 
          'dark_oak_planks', 'dark_oak_wood', 'cobblestone', 'dark_oak_stairs'] },
@@ -676,6 +803,9 @@ global_structure_data =
 };
 // for pre 1.16.2 compatibility
 global_structure_data:'end_city' = global_structure_data:'endcity';
+global_structure_data:'jungle_temple' = global_structure_data:'jungle_pyramid';
+global_structure_data:'desert_temple' = global_structure_data:'desert_pyramid';
+global_structure_data:'swamp_hut' = global_structure_data:'witch_hut';
 
 
 // chunk states / statuses
@@ -735,7 +865,9 @@ global_chunk_statuses = [
 // nether has 3d biomes while other dimensions 2d
 __required_biome_change_elevation(map_level, dim) -> if ( dim == 'the_nether', ([range(8)]-1)+map_level, [0]);
 
-__main_biome_block(biome) -> (global_biome_data:biome:'block' || 'glass');
+
+
+__main_biome_block(biome) -> (global_biome_data:biome:'block' || __create_custom_biome(biome):'block' );
 
 __to_chunk_coords(pos, dim) -> [floor(pos:0/16), floor(pos:2/16), dim];
 
@@ -1226,7 +1358,7 @@ __apply_biome_changes(world_chunk, block_setter, biome_setter) ->
    blockset = [];
    volume(16*chunk_x, map_level, 16*chunk_z, 16*chunk_x+15, map_level, 16*chunk_z+15,
       print_pos = pos(_);
-      sampling_pos = call(world_mapper, print_pos)+l(8,0,8);
+      sampling_pos = call(world_mapper, print_pos)+[8,0,8];
       biome = biome(sampling_pos);
       blockset += [biome, print_pos];
    );
@@ -1292,7 +1424,7 @@ __apply_structure_changes(world_chunk, area_visitor, structure_start_visitor) ->
          loop(chunk_size, cdz = _;
             str_pos = sampling_pos+[16*cdx, 0, 16*cdz];
             starts = call(structure_fetcher, str_pos);
-            for (pairs(starts), point_structures += [_:0, _:1, str_pos]);
+            for (filter(pairs(starts), _:1), point_structures += [_:0, _:1, str_pos]);
          )
       );
       for (point_structures, [structure, data, str_pos] = _;
@@ -1647,7 +1779,7 @@ __on_player_uses_item(player, item, hand) ->
       
       center_world = call(global_data:'overworld':'world_mapper', center_map);
       map_mapper = global_data:'overworld':'map_mapper';
-      center_world = l(floor(center_world:0/16)*16+8, 0, floor(center_world:2/16)*16+8);
+      center_world = [floor(center_world:0/16)*16+8, 0, floor(center_world:2/16)*16+8];
       scan(0, 0, 0, radius, 0, radius,
          world_pos = center_world + [_x*16, 0, _z*16];
          if (in_slime_chunk(world_pos),

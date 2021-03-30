@@ -34,6 +34,15 @@ Various scripts that modify various game elements, often replicating popular mod
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
     app nbt's for future use. The whole shabang.
     
+### carried_totem.sc
+#### By KingOfTheClouds
+	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
+
+### destructive_lightning.sc:
+#### By Mdaff386
+    Once you start it any lightning that strikes, either natural, summoned or a channeling trident, 
+    a tnt and fireball will be summoned to create a small crater where the lightning strikes.
+
 ### drop_heads.sc:
 #### By RubberDuck55
 	When a player is killed there is a 33% chance of a head to be dropped
@@ -44,6 +53,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
+	
+### eyeremover.sc
+#### By rv3r
+	Shift right-click on a filled end portal frame to empty it and receive the eye of ender. Note that any 
+	existing portal will break.
+	
+	Only really useful in peaceful.
 
 ### hammer.sc:
 #### By gnembonmc
@@ -59,7 +75,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Right clicking with fire charge enchanted with any level of power will shoot it, causing blocks to blow up and fly back as
 	falling block entities.
 	The higher the power, the further back the blocks go.
-	
+
+### horse_stats.sc:
+#### By KingOfTheClouds
+	The command /horse_stats prints the health, speed and jump attributes of the horse/donkey/mule the player is looking at.
+
 ### inventory_refill.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -79,6 +99,27 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
 	(Please input more detailed explanation)
 	
+### milkable_sheeps.sc:
+#### By Gnottero
+	Allows the player to milk sheeps using a bucket.
+	
+### nether_poi.sc:
+#### By Firigion
+	When holding an ender eye, all nether portal points of interest will be shown with a marker.
+	Useful when slicing portals, update supressing and debugging stuff.
+	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
+	
+### nopickup.sc:
+#### By KonaeAkira
+	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
+	/nopickup add <item> will add <item> to the blacklist
+	/nopickup setlimit <item> <count> sets the maximum allowed number of <item>s in inventory.
+	/nopickup remove <item> will remove <item> from the blacklist
+	/nopickup list will list all blacklisted items for current player
+	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
+	Blacklists are player-bound and are saved even between server restarts
+	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+
 ### prospectors_pick.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -109,6 +150,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	The coral will be reset to normal, meaning that it will die again if you don't mine it.
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm.
 	
+### rope_ladders.sc:
+#### By BisUmTo
+	Right clicking on a ladder with an other one, will extend the existing one down.
+	https://youtu.be/Mgz6XEIcpgc
+
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
@@ -126,6 +172,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
 	Useful for placing water/lava flows if you make a lot of them. Looking at you, SciCraft server.
 	
+### silk_blockstates.sc:
+#### By BisUmTo
+	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
+	It doesn't apply to containers and blacklisted blocks.
+	
 ### silk_spawners.sc:
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Silk Spawners mod in scarpet 1.5.
@@ -133,6 +184,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
 	
+### simply_harvest.sc:
+#### By Gnottero
+	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
+
 ### sleep_ignore_fake_players.sc:
 #### By Sanluli36li
 	Skip the night and no longer required fake players to sleep.
@@ -161,6 +216,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	https://www.youtube.com/watch?v=g7Ku73ElDBs
 	Cos im too lazy to write all the shit down.
 	
+### updater.sc
+#### By Firigion
+	Once loaded, right clicking an obsrever or budded block with a pice of bamboo will trigger or update it. 
+	Useful to replace some lost functionality of flint and steal or fireball, without creating a fire block.
+
 ### vacuum.sc
 #### By rv3r
 	Puts inventory items into inventory shulker boxes as long as the item is already present.
@@ -175,14 +235,25 @@ Various scripts that modify various game elements, often replicating popular mod
 	
 ### very_basic_overworld_wither_cage_finder.sc:
 #### By gnembonmc
-	There is a video on his channel about this.
+	There is a video on his channel about this.any trade
 	It will search in the given radius of blocks for a 3*3 of bedrock, and nothing else.
 	It's very basic, hence it's name.
-	
+
+### villager_auto_trader.sc
+#### By Ghoulboy
+	When enabled, zombie villagers which can pick up loot, will change any emeralds in their hand for their first villager trade.
+	This only works for trades which take only emeralds as a first item, and nothing for the second.
+	NB: Zombie villagers will still be hostile and can despawn, so proper care is stilll required.
+	Trades happen every 6 seconds, as with piglin bartering.
+
 ### villager_poi.sc:
 #### By gnembonmc
 	Keeps track of villager poi system?
 	(Please enter an explanation, as it quite unclear)
+
+### vines_instant_mine.sc:
+#### By BisUmTo
+	Shears will instant-mine vines
 
 ### vortex_effect.sc:
 #### By gnembon
@@ -201,9 +272,15 @@ Various scripts that modify various game elements, often replicating popular mod
 	Pegasus Epsilon
 	Aplet123
 	Ghoulboy
+	Gnottero
 	indoorjetpacks
 	rv3r
 	Sanluli36li
 	RubberDuck55
+	Mdaff386
+	BisUmTo
 	TheCatSaber
+	MeeniMc
+	KonaeAkira
+	KingOfTheClouds
 	(Many more hopefully!)

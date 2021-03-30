@@ -1,19 +1,12 @@
+import('math', '_euclidean_sq');
+
 global_controllers = null;
 global_banned_blocks = m('hopper', 'dropper', 'dispenser');
 global_dims = l('overworld', 'the_nether', 'the_end');
 
-// must turn
-// /carpet setDefault scriptsAutoload true
-// for the scripts to start with the world automatically
-__config() -> 
-(
-	m(
-		l('stay_loaded', true),
-		l('scope', 'global')
-	)
-);
-
-__distance_sq(v1, v2) -> reduce(v1-v2,_*_+_a,0);
+__config() ->  {
+	'scope' -> 'global'
+};
 
 //displays all controller positions and detailed content of the closest storage
 __command() ->
@@ -30,7 +23,7 @@ __command() ->
 	in_dimension( current_player,
 		loaded_controllers = sort_key(
 			filter(global_controllers:current_dimension(), loaded(_)), 
-			__distance_sq(_,player_pos)
+			_euclidean_sq(_,player_pos)
 		);
 		if (loaded_controllers,
 			closest_controller = loaded_controllers:0;
@@ -132,8 +125,6 @@ __load_controllers(tag) ->
 	)
 );
 
-__on_start();
-
 __add_controller(dimension, position) ->
 (
 	if (!has(global_controllers:dimension), exit());
@@ -152,9 +143,11 @@ __remove_controller(dimension, position) ->
 	__store_controllers()
 );
 
-__on_tick() -> __tick_drawers();
-__on_tick_nether() -> __tick_drawers();
-__on_tick_ender() -> __tick_drawers();
+__on_tick() -> (
+	for(global_dims,
+		in_dimension(_, __tick_drawers());
+	);
+);
 
 __tick_drawers() ->
 (
