@@ -262,6 +262,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	Vortex 1 is a useful magnet, and Vortex 3 is a crazy random tornado which no-one wants except for a prank or messing around
 	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon
 	
+### waypoints.sc:
+#### by Firigion and boyenn
+	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player creates. Permissions to
+	teleport are highly customizable (see [here](https://youtu.be/OF_hY1sTRYY)). It also features the ability to render a line in 
+	the direction of a waypoint (see [here](https://youtu.be/0N2qVahMD7s)).
+	
 ### world_map.sc:
 #### By gnembon
 	https://www.youtube.com/watch?v=TqgyvnjEAn4
@@ -283,4 +289,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	MeeniMc
 	KonaeAkira
 	KingOfTheClouds
+	Firigion
+	boyenn
 	(Many more hopefully!)
