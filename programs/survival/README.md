@@ -264,9 +264,9 @@ Various scripts that modify various game elements, often replicating popular mod
 	
 ### waypoints.sc:
 #### by Firigion and boyenn
-	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player creates. Permissions to
-	teleport are highly customizable (see [here](https://youtu.be/OF_hY1sTRYY)). It also features the ability to render a line in 
-	the direction of a waypoint (see [here](https://youtu.be/0N2qVahMD7s)).
+	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player
+	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also 
+	features the ability to render a line in direction of a waypoint (see https://youtu.be/0N2qVahMD7s).
 	
 ### world_map.sc:
 #### By gnembon
