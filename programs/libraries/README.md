@@ -17,11 +17,11 @@ The other arguments are the slots you removing from.
 A slot can be a number, 'mainhand', or 'offhand'. You can specify as many slots as you want.
 ```
 
-### debug.sc:
+### pretty_print.sc:
 #### By Xendergo
 ```
-Adds a debug() function which is equivalent to print(), but color codes things by type. Helpful for distinguishing between null & 'null', or maps, nbts, and stringified nbts
-debug() can take as many arguments as you want and it will print all of them seperated by spaces
+Adds a pretty_print() function which is equivalent to print(), but color codes things by type. Helpful for distinguishing between null & 'null', or maps, nbts, and stringified nbts
+pretty_print() can take as many arguments as you want and it will print all of them seperated by spaces
 If the first argument is a player or list of players, it will print only to the players specified
 
 The colors used are:
