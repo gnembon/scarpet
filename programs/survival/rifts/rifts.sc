@@ -168,7 +168,7 @@ drill_vortex(center) ->
             pb = protected_blocks:0;
             size = 20-_;
             move_entities(ray, 8, 0.086, 0.3);
-            if(!rand(3), schedule(rand(6), _(outer(ray)) -> sound(rand(global_splashing_sounds), ray)) );
+            if(!rand(3), schedule(rand(6), _(outer(ray)) -> sound(rand(global_splashing_sounds), ray, 1.0, 0.5)) );
             for(diamond(ray, size/8, size/2),
                if(!has(pb, pos(_)) && (liquid(_) || has(ices, str(_))), 
                   particle('warped_spore',_, 5, 1, 0);
@@ -207,7 +207,7 @@ drill_crevasse(center) ->
             pb = protected_blocks:0;
             size = 24-_;
             move_entities(ray, 8, 0.6, 0);
-            loop(10, schedule(rand(4), _(outer(ray)) -> sound(rand(global_breaking_sounds), ray)));
+            loop(10, schedule(rand(4), _(outer(ray)) -> sound(rand(global_breaking_sounds), ray, 1.0, 0.5)));
             for(diamond(ray, size/4, depth*size+rand(10, seed)), 
                if(!has(pb, pos(_)), 
                   if (!rand(20), particle('block '+_, _, 2, 0.5 ));
