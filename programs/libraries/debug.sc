@@ -1,4 +1,4 @@
-// Adds a debug function which is equivalent to the print function, but prints stuff different colors depending on type. Avoids confusion between null and 'null' and between maps, strings, and nbts
+// Adds a pretty_print function which is equivalent to the print function, but prints stuff different colors depending on type. Avoids confusion between null and 'null' and between maps, strings, and nbts
 
 // Types & colors
 // null - purple
@@ -93,7 +93,7 @@ formatType(v) -> (
   return(c);
 );
 
-debug(...v) -> (
+pretty_print(...v) -> (
   if((type(v: 0) == 'entity' && v:0 ~ 'type' == 'player') || (type(v: 0) == 'list' && all(v: 0, type(_) == 'entity' && _ ~ 'type' == 'player') && length(v: 0) != 0),
       player = v: 0;
     ,
