@@ -1,6 +1,5 @@
 // If you want your script to work with the persist flag, signal the relevant scarpet event
 // For example: signal_event('player_places_block', player, player, l('acacia_door', 16, null), 'mainhand', block(0, 0, 0));
-// You could also use the compass_persist library if you want to make it work with just this script
 
 __config()->{
     'scope' -> 'global',
@@ -444,10 +443,6 @@ item_consumed(player, slot) -> (
         ));
     );
 );
-
-handle_event('compass:item_consumed', _(data) -> (
-    item_consumed(data: 0, data: 1);
-));
 
 __on_player_places_block(player, item_tuple, hand, block)->(
     item_consumed(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
