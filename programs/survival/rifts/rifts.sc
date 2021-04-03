@@ -513,7 +513,7 @@ chunk_coords_from_pos(pos) -> [ floor(pos:0/16), floor(pos:2/16) ];
 get_world_seed(pos) ->
 (
    [chx, chz] = chunk_coords_from_pos(pos);
-   system_info('world_seed')+2147483648*chx+chz
+   system_info('world_seed')+1304011369*chx+2782775717*chz
 );
 
 get_world_name(pos) ->
