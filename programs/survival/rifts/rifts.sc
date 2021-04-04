@@ -14,8 +14,9 @@ __config() ->
          [x, foo, z] = name_to_center(_);
          print(format('w '+slice(_, 5)+': ', 'wb ['+x+',~,'+z+']', '!/tp '+x+' ~ '+z)); 
       ),
-      'explain' -> ['explain', true, null],
-      'explain <pos>' -> _(p) -> explain(true, p),
+      'explain' -> ['explain', true, null, null],
+      'explain <pos>' -> _(p) -> explain(true, p, null),
+      'explain <pos> <word>' -> _(p, key) -> explain(true, p, key),
       'locate' -> 'locate',
       'chance' -> _() -> print(global_rarity),
       'chance <chance>' -> _(prob) -> (print('Rift spawn chance set to '+prob); global_rarity = prob; save_settings()),
@@ -26,6 +27,8 @@ __config() ->
       'chance' -> { 'type' -> 'float', 'min' -> 0, 'max' -> 1, 'suggest' -> [0.05, 0.15, 0.5] },
    }
 };
+
+global_version = '1.1';
 
 global_rarity = 0.15;
 
@@ -58,7 +61,7 @@ vanilla_options(path) ->
 
 global_has_wg_data = bool(vanilla_options('dimension'));
 
-explain(command, pos) ->
+explain(command, pos, dimkey) ->
 (
    if (!pos, 
       pos = if (current_dimension()~'rift:',
@@ -71,9 +74,12 @@ explain(command, pos) ->
    if( pos,
       portal_location = in_dimension('overworld', find_portal_around(pos, false));
       if (portal_location,
-         [data, explain] = create_dimension_data(portal_location);
+         previous_dimkey = in_dimension('overworld', get_custom_seed(portal_location));
+         if (previous_dimkey, dimkey = previous_dimkey);
+         [data, explain] = create_dimension_data(portal_location, dimkey);
          if (command, 
             print('');
+            print('Rifts ver. '+global_version);
             if (current_dimension() == 'overworld', 
                print('Rift features around '+portal_location+':'),
                print('Current rift features:')
@@ -363,11 +369,11 @@ global_creation_mutex = true;
 
 
 
-
-__on_player_right_clicks_block(player, item, hand, block, face, hitvec) ->
+__on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 (
    if (block == 'end_gateway' && hand == 'mainhand' && poi(block):0 == 'unemployed',
-      if( item:0 == 'emerald' && current_dimension() == 'overworld',
+      dimkey = parse_nbt(item_tuple:2:'display.Name'):'text';
+      if( item_tuple:0 == 'emerald' && current_dimension() == 'overworld',
       (
          center = pos(block);
          assert_portal_not_used(center);
@@ -379,15 +385,15 @@ __on_player_right_clicks_block(player, item, hand, block, face, hitvec) ->
          if(player~'gamemode_id'%2,
             modify(player, 'swing')
          , // else
-            inventory_set(player, player~'selected_slot', item:1-1),
+            inventory_set(player, player~'selected_slot', item_tuple:1-1),
          );
          
          if (first_run, // this will lock it for a second so would be better to do that before we start animating
             global_creation_mutex = false;
             schedule(110, _() -> global_creation_mutex = true);
-            create_dimension(center)
-         );
-         if (first_run,
+            if (dimkey, set_custom_seed(center, dimkey));
+            create_dimension(center, dimkey);
+
             if(altair_is_aquatic(center),
                drill_vortex(center);
                schedule(100, 'add_vines', center);
@@ -399,13 +405,13 @@ __on_player_right_clicks_block(player, item, hand, block, face, hitvec) ->
          );
          global_transportals += [center, current_dimension(), 0];
       )
-      ,  item:0 == 'gold_nugget' && current_dimension() == 'overworld',
+      ,  item_tuple:0 == 'gold_nugget' && current_dimension() == 'overworld',
       (
          if(player~'gamemode_id'%2==0, 
-            inventory_set(player, player~'selected_slot', item:1-1),
+            inventory_set(player, player~'selected_slot', item_tuple:1-1),
             modify(player, 'swing')
          );
-         explain(false, pos(block));
+         explain(false, pos(block), dimkey);
       )
       ,  current_is_rift() ,
       (
@@ -414,6 +420,23 @@ __on_player_right_clicks_block(player, item, hand, block, face, hitvec) ->
          global_transportals += [pos(block), current_dimension(), 0];
       ));
    )
+);
+
+set_custom_seed(center, dimkey) ->
+(
+   seedstore = pos_offset(center,'down',2);
+   set(seedstore, 'chest');
+   tag = nbt('{}');
+   tag:'seed' = dimkey;
+   inventory_set(seedstore, 13, 1, 'paper', tag);
+);
+
+get_custom_seed(center) ->
+(
+    seedstore = pos_offset(center,'down',2);
+    if (block(seedstore) == 'chest',
+        inventory_get(seedstore, 13):2:'seed';
+    )
 );
 
 assert_portal_not_used(center) -> if (first(global_transportals, _:0 == center && _:1 == current_dimension()),
@@ -527,10 +550,10 @@ vanilla_noid(id) -> if (slice(id, 0, 10)=='minecraft:', slice(id, 10), id);
 is_rift(id) -> ( slice(id, 0, 5) == 'rift:' );
 current_is_rift() -> is_rift(current_dimension());
 
-create_dimension(pos) ->
+create_dimension(pos, dimkey) ->
 (
    name = get_world_name(pos);
-   [pack_data, explain] = create_dimension_data(pos);
+   [pack_data, explain] = create_dimension_data(pos, dimkey);
    rift_scale = values(pack_data:'data':'rift':'dimension'):0:'rift_scale';
    particle('happy_villager', pos+[0,1,0], 20, 1, 0); // indicator before we lag
    sound('entity.bee.pollinate', pos, 1, 0.5);
@@ -566,22 +589,24 @@ find_central_altair_position(from, to) ->
    [0, 80, 0];
 );
 
-create_dimension_data(pos) ->
+create_dimension_data(pos, dimkey) ->
 (
    name = get_world_name(pos);
-   seed = get_world_seed(pos);
-   reset_seed(seed);
+   seed = if (dimkey, if(str(dimkey)==str(number(dimkey)), number(dimkey), hash_code(dimkey)) ,get_world_seed(pos));
    global_has_wg_data = bool(vanilla_options('dimension'));
-   [base_type_data, data_id] = random_by_weight(global_world_types, seed);
+   [base_type_data, data_id] = random_by_weight(global_world_types, salt(seed,1514098039));
    explain = [base_type_data:'lore', str(seed)];
    data = call(base_type_data:'base', name, seed);
-   for (base_type_data:'modifiers', explain += call(_, data, seed) );
+   for (base_type_data:'modifiers', explain += call(_, data, salt(seed,947867849)) );
+   quirk_seed = salt(seed, 192641249);
    if (base_type_data:'quirk_count',
       quirks = copy(base_type_data:'quirks');
-      qcount = base_type_data:'min_quirk_count' + floor(rand(base_type_data:'quirk_count'-base_type_data:'min_quirk_count', seed));
+      qcount = base_type_data:'min_quirk_count' + floor(rand(base_type_data:'quirk_count'-base_type_data:'min_quirk_count', quirk_seed));
+      qorder = {};
       loop(qcount,
-         [quirk, qid] = random_by_weight(quirks, seed);
-         exp = call(quirk:'op', data, seed);
+         [quirk, qid] = random_by_weight(quirks, quirk_seed);
+         exp = call(quirk:'op', data, salt(seed, qorder:(quirk:'salt')*947867849+quirk:'salt'));
+         qorder:(quirk:'salt') += 1;
          if(exp != null, 
             explain += exp;
             // used up quirk
@@ -673,6 +698,7 @@ funkify_params(data, seed) ->
 
 global_config_commons = {
    'random_world_type' -> _(data, seed) -> (
+      seed = salt(seed, 3183259837);
       values(data:'data':'rift':'dimension'):0:'type' = if (global_has_wg_data,
          wtype = rand(vanilla_options('dimension_type'), seed);
          //wtype = 'overworld';
@@ -689,6 +715,7 @@ global_config_commons = {
       extra = '';
       dim = values(data:'data':'rift':'dimension'):0;
       dim:'rift_scale' = [0, 256]; // default
+      seed = salt(seed, 491231297);
       dim:'generator':'settings' = if(global_has_wg_data,
          options = filter(vanilla_options('worldgen/noise_settings'), !has(exclude, _));
          generator = rand(options, seed);
@@ -697,9 +724,7 @@ global_config_commons = {
          
          if (system_info('game_major_target') < 17,
             gen_data:'noise':'height' = 256;
-            gen_data:'bedrock_roof_position' = -10;
             dim:'type':'logical_height' == 256;
-            //if(dim:'type':'logical_height' == 256, dim:'type':'logical_height' = 240);
             gen_data:'bedrock_roof_position' = -10;// cause I don't like it
          ,
             bottom = -16*floor(rand(9, seed));
@@ -711,13 +736,17 @@ global_config_commons = {
             dim:'type':'min_y' = bottom;
             dim:'type':'height' = height;
             dim:'rift_scale' = [bottom, top];
-            dim:'type':'logical_height' = if(generator == 'caves', height-32, generator == 'nether', 128, height);
+            dim:'type':'logical_height' = height;
             gen_data:'bedrock_roof_position' = -2147483648;// cause I don't like it
+         );
+         if (generator == 'caves' || generator == 'nether', // igloo by-pass
+            gen_data:'noise':'height' += -16; // making sure there is place for a bed from broken igloos
+            dim:'type':'logical_height' += -16;
          );
          gen_data
       ,  // else strings only
-         if (system_info('game_major_target') < 17,
-            generator = rand(['amplified', 'caves', 'end', 'floating_islands', 'nether', 'overworld'], seed)
+         if (system_info('game_major_target') < 17, //  'nether', 'caves', // cause they can cause igloos to spawn above build limit
+            generator = rand(['amplified',  'end', 'floating_islands', 'overworld'], seed)
          ,
             // in 1.17 have to match
             wtype = vanilla_noid(dim:'type');
@@ -734,6 +763,7 @@ global_config_commons = {
       if (extra, [extra, titlecase(generator)+' Layout'], titlecase(generator)+' Layout');
    ),
    'frequent_structures' -> _(data, seed) -> (
+      seed = salt(seed, 1413917753);
       structure_map = values(data:'data':'rift':'dimension'):0:'generator':'settings':'structures':'structures';
       value = rand(keys(structure_map), seed);
       data = structure_map:value;
@@ -750,8 +780,11 @@ global_config_commons = {
       );
    ),
    'random_default_block' -> _(data, seed) -> (
+      seed = salt(seed, 3663866621);
       gen = values(data:'data':'rift':'dimension'):0:'generator':'settings';
       value = __random_block_data(seed, 10);
+      // so it doesn't lag the client that much
+      if (value:'Name' == 'minecraft:slime_block', value:'Name' = 'minecraft:emerald_block');
       gen:'default_block' = value;
       titlecase(vanilla_noid(value:'Name'));
    )
@@ -769,8 +802,9 @@ _valid_normal_block(b) -> (!(has(global_banned_blocks, b)) && !(b~'shulker') && 
 
 //shortcuts
 
-__mod_setting(weight, field, value_function) ->{
+__mod_setting(weight, field, salt, value_function) ->{
    'weight' -> weight,
+   'salt' -> salt,
    'single_use' -> true,
    'op' -> _(data, seed, outer(field), outer(value_function)) -> (
       value = call(value_function, seed);
@@ -814,8 +848,10 @@ assert_compatibility(feature, ... fields) -> loop(length(fields)/2,
 // and scramble it.
 // for snapshots, assert the value you replace to ensure compatibility. 
 // Features that do not have expected fields will be ignored from world generation
+// all add to 1000
+// preserving that makes sure seeds don't change between adding different extra features.
 global_custom_features = [
-   {'weight' -> 4, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 300, 'salt' -> 4021098647, 'gen' -> _(gen, seed, snapshot) -> (
       data = vanilla_data('worldgen/configured_feature/forest_rock') || throw('Freckles');
       rblock = __random_block_data(seed, 10);
       if (snapshot, 
@@ -844,7 +880,7 @@ global_custom_features = [
       
       [data, 'Freckles of '+titlecase(vanilla_noid(rblock:'Name'))];
    )},
-   {'weight' -> 2, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 100, 'salt' -> 4174618733, 'gen' -> _(gen, seed, snapshot) -> (
       data = vanilla_data('worldgen/configured_feature/basalt_blobs') || throw('Diamonds');
       rblock = __random_block_data(seed, 10);
       inner = data:'config':'feature':'config':'feature':'config':'feature':'config';
@@ -870,7 +906,7 @@ global_custom_features = [
       data:'config':'decorator':'config':'count'= floor(2^rand(2, seed));
       [data, 'Diamonds of '+titlecase(vanilla_noid(rblock:'Name'))];
    )},
-   {'weight' -> 4, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 300, 'salt' -> 274534769, 'gen' -> _(gen, seed, snapshot) -> (
       data = vanilla_data('worldgen/configured_feature/crimson_fungi') || throw('Columns');
       rblock = __random_block_data(seed, 10);
       surface_block = values(gen:'data':'rift':'worldgen':'biome'):0:'surface_builder':'config':'top_material';
@@ -897,7 +933,7 @@ global_custom_features = [
       );
       [data, 'Columns of '+titlecase(vanilla_noid(stem:'Name')) + if(decor,' with '+titlecase(vanilla_noid(decor:'Name')), '']);
    )},
-   {'weight' -> 4, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 300, 'salt' -> 463650907, 'gen' -> _(gen, seed, snapshot) -> (
       data = vanilla_data('worldgen/configured_feature/ore_coal'+if(snapshot,'_upper','')) || throw('Freckles');
       rblock = __random_block_data(seed, 10);
       inner = data:'config':'feature':'config':'feature':'config':'feature':'config';
@@ -931,10 +967,17 @@ global_custom_features = [
    )},
 ];
 
-random_feature(data, seed) -> call(random_by_weight(global_custom_features, seed):0:'gen', data, seed, system_info('game_major_target') > 16);
-
 global_fid = 0;
 
+salt(base_seed, amount) ->
+(
+    reset_seed(seed = base_seed+amount*5370548977925065747); // shifting
+    rand(1, seed); // scrambling
+    seed
+);
+// add to 100 without wg files, and 200 with wg files.
+// quirks add to 1000
+// quirks may add to something else, which is fine, since random weight selection will preserve the random
 global_world_types = [
    {  
       'lore' -> 'Single biome world', // maybe limit generator settings to exclude caves, end and nether
@@ -958,23 +1001,23 @@ global_world_types = [
          global_config_commons:'random_world_type',
          call(global_config_commons:'random_generator_settings', {}),
          _(data, seed) -> (
-            biome = rand(filter(sort(biome()), !is_rift(_)), seed);
+            biome = rand(filter(sort(biome()), !is_rift(_)), salt(seed, 3377526371));
             values(data:'data':'rift':'dimension'):0:'generator':'biome_source':'biome' = vanilla_id(biome);
             titlecase(biome);
          )
       ],
       'quirk_count' -> 6, // upper bound
       'min_quirk_count' -> 0, // lower bound
-      'quirks' -> [
+      'quirks' -> [ // 1000 total
          // type quirks
-         __mod_setting(30, 'ambient_light', _(seed) -> rand(0.5, seed)),
-         __mod_setting(30, 'ultrawarm', _(seed) -> rand([true, false], seed)),
+         __mod_setting(120, 'ambient_light', 2281543507, _(seed) -> rand(0.5, seed)),
+         __mod_setting(120, 'ultrawarm', 698692859, _(seed) -> rand([true, false], seed)),
          // gen settings quirks
-         __mod_setting(30, 'sea_level', _(seed) -> floor(rand(128, seed))),
+         __mod_setting(120, 'sea_level', 2749567357, _(seed) -> floor(rand(128, seed))),
          
          // increase chances for structures // may not have effect if structure won't spawn
-         {'weight' -> 100, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
-         {'weight' -> 60, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
+         {'weight' -> 400, 'salt' -> 4201505393, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
+         {'weight' -> 240, 'salt' -> 4288127323, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
       ]
    },
    {
@@ -1000,6 +1043,7 @@ global_world_types = [
          global_config_commons:'random_world_type',
          call(global_config_commons:'random_generator_settings', {}),
          _(data, seed) -> (
+            seed = salt(seed, 716687603);
             biomes = filter(sort(biome()), !is_rift(_));
             count = floor(2+rand(10, seed)*rand(10, seed)*rand(10, seed)/100);
             selection = map(range(count), rand(biomes, seed));
@@ -1007,6 +1051,7 @@ global_world_types = [
             map(selection,titlecase(_)+', one of '+count);
          ),
          _(data, seed) -> (
+            seed = salt(seed, 3364034519);
             scale = floor(rand(4, seed));
             values(data:'data':'rift':'dimension'):0:'generator':'biome_source':'scale' = scale;
             (2^scale)+' Chunks Checker Size';
@@ -1014,16 +1059,16 @@ global_world_types = [
       ],
       'quirk_count' -> 8, // upper bound
       'min_quirk_count' -> 0, // lower bound
-      'quirks' -> [
+      'quirks' -> [ // 1000 total
          // type quirks
-         __mod_setting(30, 'ambient_light', _(seed) -> rand(0.5, seed)),
-         __mod_setting(30, 'ultrawarm', _(seed) -> rand([true, false], seed)),
+         __mod_setting(120, 'ambient_light', 41744821,  _(seed) -> rand(0.5, seed)),
+         __mod_setting(120, 'ultrawarm', 3911651509, _(seed) -> rand([true, false], seed)),
          // gen settings quirks
-         __mod_setting(30, 'sea_level', _(seed) -> floor(rand(128, seed))),
+         __mod_setting(120, 'sea_level', 1485487669, _(seed) -> floor(rand(128, seed))),
          
          // increase chances for structures // may not have effect if structure won't spawn
-         {'weight' -> 150, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
-         {'weight' -> 60, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
+         {'weight' -> 400, 'salt' -> 2261218079, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
+         {'weight' -> 240, 'salt' -> 2479136227, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
       ]
    },
    {
@@ -1040,8 +1085,6 @@ global_world_types = [
                   'altitude_noise' -> { 'firstOctave' -> -7, 'amplitudes' -> [ 1.0, 1.0 ] },
                   'weirdness_noise' -> { 'firstOctave' -> -7, 'amplitudes' -> [ 1.0, 1.0 ] },
                   'temperature_noise' -> { 'firstOctave' -> -7, 'amplitudes' -> [ 1.0, 1.0 ] },
-                  'type' -> 'minecraft:multi_noise',
-                  'seed' -> seed,
                   'biomes' -> [ tbd ]
                },
                'seed' -> seed,
@@ -1054,12 +1097,14 @@ global_world_types = [
          global_config_commons:'random_world_type',
          call(global_config_commons:'random_generator_settings', {}),
          _(data, seed) -> (
+            seed = salt(seed, 967651673);
             biome_size = 1+floor(rand(7, seed));// 1 - super small biomes, 7 - original vanilla size
             source = values(data:'data':'rift':'dimension'):0:'generator':'biome_source';
             for (filter(keys(source), _~'_noise'), source:_:'firstOctave' = -biome_size);
             'Biome Scale '+biome_size+'/7';
          ),
          _(data, seed) -> (
+            seed = salt(seed, 4294597297);
             biomes = filter(sort(biome()), !is_rift(_));
             count = floor(5+rand(16, seed)); //5-20 biomes
             selection = map(range(count), rand(biomes, seed));
@@ -1080,16 +1125,16 @@ global_world_types = [
       ],
       'quirk_count' -> 8, // upper bound
       'min_quirk_count' -> 0, // lower bound
-      'quirks' -> [
+      'quirks' -> [ // 1000 total
          // type quirks
-         __mod_setting(10, 'ambient_light', _(seed) -> rand(0.5, seed)),
-         __mod_setting(10, 'ultrawarm', _(seed) -> rand([true, false], seed)),
+         __mod_setting(40, 'ambient_light', 3056598049, _(seed) -> rand(0.5, seed)),
+         __mod_setting(40, 'ultrawarm', 141833633, _(seed) -> rand([true, false], seed)),
          // gen settings quirks
-         __mod_setting(50, 'sea_level', _(seed) -> floor(rand(128, seed))),
+         __mod_setting(210, 'sea_level', 1012719889, _(seed) -> floor(rand(128, seed))),
          
          // increase chances for structures // may not have effect if structure won't spawn
-         {'weight' -> 150, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
-         {'weight' -> 60, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
+         {'weight' -> 500, 'salt' -> 2168633813, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
+         {'weight' -> 210, 'salt' ->3858771079, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
       ]
    },
    {
@@ -1115,6 +1160,7 @@ global_world_types = [
          global_config_commons:'random_world_type',
          call(global_config_commons:'random_generator_settings', {'nether','caves'}),
          _(data, seed) -> (
+            seed = salt(seed, 3248756387);
             biome = rand(vanilla_options('worldgen/biome'), seed);
             dim = values(data:'data':'rift':'dimension'):0;
             name = dim:'rift';
@@ -1127,41 +1173,50 @@ global_world_types = [
       ],
       'quirk_count' -> 25, // upper bound
       'min_quirk_count' -> 15, // lower bound
-      'quirks' -> [
+      'quirks' -> [ // whatever total - just make sure not to change the totals
          // type quirks
-         __mod_setting(30, 'ambient_light', _(seed) -> rand(0.5, seed)),
-         __mod_setting(30, 'ultrawarm', _(seed) -> rand([true, false], seed)),
+         __mod_setting(30, 'ambient_light', 3984616477, _(seed) -> rand(0.5, seed)),
+         __mod_setting(30, 'ultrawarm', 376299761, _(seed) -> rand([true, false], seed)),
          // gen settings quirks
-         __mod_setting(60, 'sea_level', _(seed) -> floor(rand(128, seed))),
+         __mod_setting(60, 'sea_level', 2549333291, _(seed) -> floor(rand(128, seed))),
          
          // increase chances for structures // may not have effect if structure won't spawn
-         {'weight' -> 100, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
-         {'weight' -> 60, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
+         {'weight' -> 100, 'salt' -> 3923374541, 'single_use' -> false, 'op' -> global_config_commons:'frequent_structures'},
+         {'weight' -> 60, 'salt' -> 2309673617, 'single_use' -> true, 'op' -> global_config_commons:'random_default_block'},
          // biome quirks
-         {'weight' -> 60, 'single_use' -> true, 'op' -> _(data, seed) -> ( // custom underblock
+         {'weight' -> 60, 'salt' -> 3092630759, 'single_use' -> true, 'op' -> _(data, seed) -> ( // custom underblock
             surface = values(data:'data':'rift':'worldgen':'biome'):0:'surface_builder':'config';
             value = __random_block_data(seed, 10);
             surface:'under_material' = value;
             titlecase(vanilla_noid(value:'Name'));
          )},
-         {'weight' -> 60, 'single_use' -> true, 'op' -> _(data, seed) -> ( // custom water block
+         {'weight' -> 60, 'salt' -> 2061670003, 'single_use' -> true, 'op' -> _(data, seed) -> ( // custom water block
             surface = values(data:'data':'rift':'worldgen':'biome'):0:'surface_builder':'config';
             value = __random_block_data(seed, 10);
             surface:'underwater_material' = value;
             titlecase(vanilla_noid(value:'Name'))+' Under Water';
          )},
-         __mod_setting(40, 'scale', _(seed) -> if(rand([true, false], seed), rand(2.0, seed), -0.11+rand(0.05, seed))),
-         __mod_setting(40, 'depth', _(seed) -> (rand(2, seed)-1)),
-         __mod_setting(40, 'water_color', _(seed) -> floor(rand(256*256*256, seed))),
-         __mod_setting(40, 'water_fog_color', _(seed) -> floor(rand(256*256*256, seed))),
-         __mod_setting(40, 'sky_color', _(seed) -> floor(rand(256*256*256, seed))),
-         __mod_setting(40, 'fog_color', _(seed) -> floor(rand(256*256*256, seed))),
-         __mod_setting(40, 'foliage_color', _(seed) -> floor(rand(256*256*256, seed))),
-         __mod_setting(40, 'grass_color', _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'scale', 3719444363, _(seed) -> if(rand([true, false], seed), rand(2.0, seed), -0.11+rand(0.05, seed))),
+         __mod_setting(40, 'depth', 115834853, _(seed) -> (rand(2, seed)-1)),
+         __mod_setting(40, 'water_color', 2487248693, _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'water_fog_color', 668136061, _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'sky_color', 3091033151, _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'fog_color', 3695161069, _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'foliage_color', 2273525869, _(seed) -> floor(rand(256*256*256, seed))),
+         __mod_setting(40, 'grass_color', 850509467, _(seed) -> floor(rand(256*256*256, seed))),
          // potentially add particles to effects (see soul_sand_valley)
          // ptentially grass_color_modifier (swamp or dark_forest)
-         
-         {'weight' -> 40, 'single_use' -> false, 'op' -> _(data, seed) -> (  // replace vanilla feature - acts more like removeal
+
+         {'weight' -> 150, 'salt' ->2237345459, 'single_use' -> false, 'op' -> _(data, seed) -> (  //  - these typically don't match, so trying more of it.
+            features = values(data:'data':'rift':'worldgen':'biome'):0:'features';
+            if (!features, return(null));
+            stage_id = floor(rand(length(features), seed));
+            new_name = rand(vanilla_options('worldgen/configured_feature'), seed);
+            features:stage_id += vanilla_id(new_name);
+            'Chances of '+titlecase(new_name);
+         )},
+         // either replace / or funkify
+         {'weight' -> if (global_experimental_features, 0, 100), 'salt' ->3285030817, 'single_use' -> false, 'op' -> _(data, seed) -> (  // replace vanilla feature - acts more like removeal
             features = values(data:'data':'rift':'worldgen':'biome'):0:'features';
             if (!features, return(null));
             stage_id = floor(rand(length(features), seed));
@@ -1174,15 +1229,7 @@ global_world_types = [
                   features:stage_id:feat_id = vanilla_id(new_name);
                   titlecase(old_name)+' replaced with '+titlecase(new_name)
          )))},
-         {'weight' -> 150, 'single_use' -> false, 'op' -> _(data, seed) -> (  //  - these typically don't match, so trying more of it.
-            features = values(data:'data':'rift':'worldgen':'biome'):0:'features';
-            if (!features, return(null));
-            stage_id = floor(rand(length(features), seed));
-            new_name = rand(vanilla_options('worldgen/configured_feature'), seed);
-            features:stage_id += vanilla_id(new_name);
-            'Chances of '+titlecase(new_name);
-         )},
-         {'weight' -> if (global_experimental_features, 100, 0), 'single_use' -> false, 'op' -> _(data, seed) -> (  // tweak params of existing feature. // very restricted and can crash
+         {'weight' -> if (global_experimental_features, 100, 0), 'salt' ->862665967, 'single_use' -> false, 'op' -> _(data, seed) -> (  // tweak params of existing feature. // very restricted and can crash
             features = values(data:'data':'rift':'worldgen':'biome'):0:'features';
             if (!features, return(null));
             stage_id = floor(rand(length(features), seed));
@@ -1201,8 +1248,8 @@ global_world_types = [
                      features:stage_id:feat_id = 'rift:'+feature_name;
                      'Funky '+titlecase(feature_name);
          ))))},
-         // add structures
-         {'weight' -> 200, 'single_use' -> false, 'op' -> _(data, seed) -> (
+         // add structures // most will not place anyways, so just adding a chance
+         {'weight' -> 200, 'salt' ->2046057037, 'single_use' -> false, 'op' -> _(data, seed) -> (
             biome_data = values(data:'data':'rift':'worldgen':'biome'):0;
             value = rand(plop():'configured_structures', seed);
             value_namespaced = vanilla_id(value);
@@ -1212,7 +1259,7 @@ global_world_types = [
             )
          )},
          // add mobs
-         {'weight' -> 150, 'single_use' -> false, 'op' -> _(data, seed) -> (
+         {'weight' -> 150, 'salt' ->3370101577, 'single_use' -> false, 'op' -> _(data, seed) -> (
             spawn_data = values(data:'data':'rift':'worldgen':'biome'):0:'spawners';
             spawn_type = rand(['ambient', 'creature', 'monster', 'water_ambient', 'water_creature'], seed);
             current_list = spawn_data:spawn_type;
@@ -1229,14 +1276,12 @@ global_world_types = [
             titlecase(mob);
          )},
          // add custom features- version specific
-         {'weight' -> 100, 'single_use' -> false, 'op' -> _(data, seed) -> (
+         {'weight' -> 100, 'salt' ->2907701207, 'single_use' -> false, 'op' -> _(data, seed) -> (
             name = values(data:'data':'rift':'dimension'):0:'rift'+'_'+global_fid;
             global_fid += 1;
             try(
-               [feature_data, feature_desc] = call(
-                  random_by_weight(global_custom_features, seed):0:'gen', 
-                  data, seed, system_info('game_major_target') > 16
-               );
+               [feature, fid] = random_by_weight(global_custom_features, seed);
+               [feature_data, feature_desc] = call(feature:'gen', data, salt(seed, feature:'salt'), system_info('game_major_target') > 16);
             ,
                error = 'Error generating '+_+'. Seems like the world gen changed for it in this version.';
                if (global_verbose, print(player(), error), logger(error));
