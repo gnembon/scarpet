@@ -9,6 +9,8 @@ all its dimensions can still be used in vanilla and without the app.
 
 [Basic showcase how to use basic Rifts commands](https://youtu.be/MsgCy8tFfRw)
 
+[General information on how to install scarpet apps](https://github.com/gnembon/fabric-carpet/wiki/Installing-carpet-scripts-in-your-world)
+
 Extra features that were added after the release of these videos:
 
 (v1.1)
