@@ -1,0 +1,4 @@
+contact_links:
+  - name: Scarpet language bug or feature request
+    url: https://github.com/gnembon/fabric-carpet/issues
+    about: "Please submit Scarpet bugs and feature requests to the main Carpet repo."

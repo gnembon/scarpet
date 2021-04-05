@@ -119,6 +119,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
 	(Please input more detailed explanation)
 	
+### milkable_sheeps.sc:
+#### By Gnottero
+	Allows the player to milk sheeps using a bucket.
+	
 ### nether_poi.sc:
 #### By Firigion
 	When holding an ender eye, all nether portal points of interest will be shown with a marker.
@@ -206,6 +210,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
 	
+### simply_harvest.sc:
+#### By Gnottero
+	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
+
 ### sleep_ignore_fake_players.sc:
 #### By Sanluli36li
 	Skip the night and no longer required fake players to sleep.
@@ -280,6 +288,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	Vortex 1 is a useful magnet, and Vortex 3 is a crazy random tornado which no-one wants except for a prank or messing around
 	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon
 	
+### waypoints.sc:
+#### By Firigion and boyenn
+	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player
+	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also 
+	features the ability to render a line in direction of a waypoint (see https://youtu.be/0N2qVahMD7s).
+	
 ### world_map.sc:
 #### By gnembon
 	https://www.youtube.com/watch?v=TqgyvnjEAn4
@@ -290,6 +304,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Pegasus Epsilon
 	Aplet123
 	Ghoulboy
+	Gnottero
 	indoorjetpacks
 	rv3r
 	Sanluli36li
@@ -300,5 +315,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	MeeniMc
 	KonaeAkira
 	KingOfTheClouds
+	Firigion
+	boyenn
 	Xendergo
 	(Many more hopefully!)
