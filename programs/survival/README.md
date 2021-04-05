@@ -235,16 +235,16 @@ Various scripts that modify various game elements, often replicating popular mod
 	
 ### very_basic_overworld_wither_cage_finder.sc:
 #### By gnembonmc
-	There is a video on his channel about this.any trade
+	There is a video on his channel about this.
 	It will search in the given radius of blocks for a 3*3 of bedrock, and nothing else.
 	It's very basic, hence it's name.
 
 ### villager_auto_trader.sc
 #### By Ghoulboy
-	When enabled, zombie villagers which can pick up loot, will change any emeralds in their hand for their first villager trade.
-	This only works for trades which take only emeralds as a first item, and nothing for the second.
-	NB: Zombie villagers will still be hostile and can despawn, so proper care is stilll required.
-	Trades happen every 6 seconds, as with piglin bartering.
+	When enabled, zombie villagers which can pick up loot and had villager trades before converting, will change any emeralds in their hand for their first trade which takes emeralds as a first item, and nothing for the second.
+	This was done as it was otherwise considered too OP.
+	NB: Zombie villagers will still be hostile, so proper care is still required, but note that they can't despawn. Also, you will have to manually infect the villagers you want to automatically trade with.
+	Trades happen every 6 seconds, as with piglin bartering, to keep it fair and give a manageable time for trading.
 
 ### villager_poi.sc:
 #### By gnembonmc

@@ -1,7 +1,9 @@
-//Zombie villagers will trade whatever trades they have (cos they keep them now).
+//For gnembon
+//Basically, this app allows you to trade with zombie villagers that a) had trades before convertingg and b) can hold items
+//This only allows for trades which take emeralds and spit out something else, as it was OP enough already.
 //By: Ghoulboy
 
-__config()->{'scope'->'global','stay_loaded'->true};
+__config()->{'scope'->'global'};
 
 global_trade_speed=120;//Trade every 120 ticks, so u have time to retrieve item. Same as piglin bartering, so seemed fair
 
