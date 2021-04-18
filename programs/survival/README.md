@@ -97,7 +97,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	There is a video on his channel about this.
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
-	Its basically like an automated glass sliding door but insteading of sliding the door disappears.
+	It's like an automated glass sliding door but insteading of sliding the door disappears and allows players to walk through for a short period.
 	
 ### milkable_sheeps.sc:
 #### By Gnottero
@@ -139,8 +139,9 @@ Various scripts that modify various game elements, often replicating popular mod
 ### replace_inventory.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
-	Allows a players inventory slots to be filled when they run out with same blocks from a shulker box in the players inventory which makes it useful for
-	large scale building, or afk sand placing around a monument.
+	Allows a players inventory slots to be refilled when they run out with same blocks/items first from the other slots in the players inventory,
+	and then from shulker boxes containing them.
+	This makes it useful for large scale building, or afk sand placing around a monument.
 	I guess its just like a better version of replace_hotbar.sc
 	
 ### revive_coral.sc:
@@ -247,10 +248,9 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### villager_poi.sc:
 #### By gnembonmc
-	Keeps track of villager poi system
-	It allows the player to see which bed the villager is linked to by clicking the villager with an emerald.
-	It also shows what beds the villager could possibly link to as well as which beds it cannot.
-
+	Keeps track of villager poi system?
+	(Please enter an explanation, as it quite unclear)
+	
 ### vines_instant_mine.sc:
 #### By BisUmTo
 	Shears will instant-mine vines
