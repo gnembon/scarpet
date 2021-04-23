@@ -100,7 +100,7 @@ test_bucket_used(player, hand, item_tuple, slot) ->
 (
 	l(item,count,nbt) = item_tuple;
 	//trigger only if bucket was used
-  if(query(player,'holds',hand):0 == 'bucket' || item~'milk',
+  if(inventory_get(player,slot):0 == 'bucket' || item~'milk',
     if(count == 1,
 			//do nothing if it was the last bucket in the stack
 			return();
