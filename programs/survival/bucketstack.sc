@@ -73,12 +73,12 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack) ->
 
 __on_player_right_clicks_block(player,item_tuple,hand,block,face,hitvec) ->
 (
-  if(hand == 'mainhand',
+	if(hand == 'mainhand',
 		slot = player~'selected_slot',
 		//-1 is offhand
 		slot = -1;
 	);
-  if(item_tuple:0~'_bucket' && !item_tuple:0~'milk',
+	if(item_tuple:0~'_bucket' && !item_tuple:0~'milk',
 		schedule(0,'test_bucket_used',player,hand,item_tuple,slot);
 	);
 );
@@ -91,7 +91,7 @@ __on_player_finishes_using_item(player,item_tuple,hand) ->
 		//-1 is offhand
 		slot = -1;
 	);
-  if(item_tuple:0~'_bucket' && item_tuple:0~'milk',
+  	if(item_tuple:0~'_bucket' && item_tuple:0~'milk',
 		schedule(0,'test_bucket_used',player,hand,item_tuple,slot);
 	);
 );
@@ -100,13 +100,13 @@ test_bucket_used(player, hand, item_tuple, slot) ->
 (
 	l(item,count,nbt) = item_tuple;
 	//trigger only if bucket was used
-  if(inventory_get(player,slot):0 == 'bucket' || item~'milk',
-    if(count == 1,
+ 	if(inventory_get(player,slot):0 == 'bucket' || item~'milk',
+		if(count == 1,
 			//do nothing if it was the last bucket in the stack
 			return();
 		);
 		//otherwise, they should have the same bucket, just one less than before
-    inventory_set(player, slot,count - 1,item,nbt);
+    		inventory_set(player, slot,count - 1,item,nbt);
 		//if all possible stacks are full, find as many empty slots as necessary
 		//bucket_slot < 36 and inventory_size(player)-5 unless you want to wear the buckets
 		bucket_slot = -1;
