@@ -100,30 +100,29 @@ test_bucket_used(player, hand, item_tuple, slot) ->
 (
 	l(item,count,nbt) = item_tuple;
 	//trigger only if bucket was used
- 	if(inventory_get(player,slot):0 == 'bucket' || item~'milk',
-		if(count == 1,
-			//do nothing if it was the last bucket in the stack
-			return();
-		);
-		//otherwise, they should have the same bucket, just one less than before
-    		inventory_set(player, slot,count - 1,item,nbt);
-		//if all possible stacks are full, find as many empty slots as necessary
-		//bucket_slot < 36 and inventory_size(player)-5 unless you want to wear the buckets
-		bucket_slot = -1;
-		while((bucket_slot = inventory_find(player,'bucket',bucket_slot+1)) != null && bucket_slot < 36,inventory_size(player)-5,
-			slot_count = inventory_get(player,bucket_slot):1;
-			//dont want to overfill a slot or overwrite the original slot
-			if(slot_count < stack_limit('bucket') && bucket_slot != slot,
-				inventory_set(player,bucket_slot,slot_count + 1,'bucket');
+	if(inventory_get(player,slot):0 == 'bucket' || item~'milk',
+		//do nothing if it was the last bucket in the stack
+		if(count != 1,
+			//otherwise, they should have the same bucket, just one less than before
+			inventory_set(player, slot,count - 1,item,nbt);
+			//if all possible stacks are full, find as many empty slots as necessary
+			//bucket_slot < 36 and inventory_size(player)-5 unless you want to wear the buckets
+			bucket_slot = -1;
+			while((bucket_slot = inventory_find(player,'bucket',bucket_slot+1)) != null && bucket_slot < 36,inventory_size(player)-5,
+				slot_count = inventory_get(player,bucket_slot):1;
+				//dont want to overfill a slot or overwrite the original slot
+				if(slot_count < stack_limit('bucket') && bucket_slot != slot,
+					inventory_set(player,bucket_slot,slot_count + 1,'bucket');
+					return();
+				);
+			);
+			//hm better search for an empty slot if the above code didnt find anything
+			while((bucket_slot = inventory_find(player,null)) != null && bucket_slot < 36,inventory_size(player)-5,
+				inventory_set(player,bucket_slot,1,'bucket');
 				return();
 			);
+			//if there were absolutely no places to put the bucket, just spawn a bucket item
+			spawn('item',pos(player)+l(0,((player~'eye_height')/2),0),nbt(m(l('Item',m(l('id','"minecraft:bucket"'),l('Count','1b'))),l('PickupDelay',0))));
 		);
-		//hm better search for an empty slot if the above code didnt find anything
-		while((bucket_slot = inventory_find(player,null)) != null && bucket_slot < 36,inventory_size(player)-5,
-			inventory_set(player,bucket_slot,1,'bucket');
-			return();
-		);
-		//if there were absolutely no places to put the bucket, just spawn a bucket item
-		spawn('item',pos(player)+l(0,((player~'eye_height')/2),0),nbt(m(l('Item',m(l('id','"minecraft:bucket"'),l('Count','1b'))),l('PickupDelay',0))));
-  );
+	);
 );
