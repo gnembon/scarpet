@@ -29,6 +29,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere.
 	
+### bucketstack.sc:
+#### By rv3r and Firigion
+	Buckets act like water/honey bottles.
+	Set custom stack sizes for any bucket type and the items will when picked up by a player in a player inventory.
+	Receive an empty bucket and continue using the stack as usual, just like water/honey bottles.
+	Incompatible with Tweakeroo's tweakHandRestock.
+	
 ### cam.sc:
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
