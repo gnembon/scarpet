@@ -57,15 +57,20 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack) ->
 	//figure out how many items to move
 	//and move them
 	move = min(max_stack - slot_count,count);
-	inventory_set(player,slot,slot_count + move,item);
-	count = count - move;
 	//if all possible slots are full, leave whatever is left on the ground
-	//modified line 90 of gnembon's shulkerboxes.sc to change the number of items in the item entity
-	modify(entity,'nbt_merge','{Item:{Count:' + count + 'b}}');
-	//line 68 of gnembon's shulkerboxes.sc to play the item pickup sound
+	count = count - move;
+	
 	if(move,
+		//lines 85,95, and 68 of gnembon's shulkerboxes.sc for particles, item acceleration, and item pickup sound
+		particle('portal', pos(entity)-[0,0.3,0], 10, 0.1, 0);
+		modify(entity, 'accelerate', (pos(player)-pos(entity))/5);
 		sound('entity.item.pickup',pos(player),0.2,(rand(1)-rand(1))*1.4+2.0, 'player');
 	);
+	
+	//modified line 90 of gnembon's shulkerboxes.sc to change the number of items in the item entity
+	modify(entity,'nbt_merge','{Item:{Count:' + count + 'b}}');
+	//always set player inventory after removing items from world to prevent duping
+	inventory_set(player,slot,slot_count + move,item);
 	return(count);
 );
 
