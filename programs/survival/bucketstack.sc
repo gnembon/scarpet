@@ -91,7 +91,7 @@ __on_player_finishes_using_item(player,item_tuple,hand) ->
 		//-1 is offhand
 		slot = -1;
 	);
-  	if(item_tuple:0~'_bucket' && item_tuple:0~'milk',
+  	if(item_tuple:0 == 'milk_bucket',
 		schedule(0,'test_bucket_used',player,hand,item_tuple,slot);
 	);
 );
