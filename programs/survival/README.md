@@ -34,7 +34,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	Buckets act like water/honey bottles.
 	Set custom stack sizes for any bucket type and the items will when picked up by a player in a player inventory.
 	Receive an empty bucket and continue using the stack as usual, just like water/honey bottles.
-	Incompatible with Tweakeroo's tweakHandRestock.
 	
 ### cam.sc:
 #### By Gnembon
