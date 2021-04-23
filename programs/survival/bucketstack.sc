@@ -61,9 +61,9 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack) ->
 	count = count - move;
 	
 	if(move,
-		//lines 85,95, and 68 of gnembon's shulkerboxes.sc for particles, item acceleration, and item pickup sound
+		//lines 85,95, and 68 of gnembon's shulkerboxes.sc for particles, item pickup animation, and item pickup sound
 		particle('portal', pos(entity)-[0,0.3,0], 10, 0.1, 0);
-		modify(entity, 'accelerate', (pos(player)-pos(entity))/5);
+		modify(entity, 'pickup_delay', 1);
 		sound('entity.item.pickup',pos(player),0.2,(rand(1)-rand(1))*1.4+2.0, 'player');
 	);
 	
