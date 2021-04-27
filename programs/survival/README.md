@@ -139,8 +139,8 @@ Various scripts that modify various game elements, often replicating popular mod
 ### replace_inventory.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
-	Allows a players inventory slots to be refilled when they run out with same blocks/items first from the other slots in the players inventory,
-	and then from shulker boxes containing them.
+	Allows a players inventory slots to be refilled when they run out with same blocks/items. First from the other slots in the players inventory,
+	and then from shulker boxes containing them, if any in inventory.
 	This makes it useful for large scale building, or afk sand placing around a monument.
 	I guess its just like a better version of replace_hotbar.sc
 	
