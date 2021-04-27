@@ -97,7 +97,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	There is a video on his channel about this.
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
-	It's like an automated glass sliding door but insteading of sliding the door disappears and allows players to walk through for a short period.
+	It's an automated glass sliding door but instead of sliding, the door disappears and allows players to walk through for a short period, and then reappears.
 	
 ### milkable_sheeps.sc:
 #### By Gnottero
