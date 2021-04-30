@@ -6,7 +6,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### angel_block.sc: 
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4.
-	Angel Block allows players to place a block in the middle of the air or water without having to place any support blocks which is especially helpful when 	trying to build in mid air or water.
+	Angel Block allows players to place a block in the middle of the air or water without having to place any support blocks which is especially helpful when trying to build in mid air or water.
 	
 ### auto_lighter.sc
 #### By gnembon
@@ -250,7 +250,6 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	Keeps track of villager poi system?
 	(Please enter an explanation, as it quite unclear)
-	
 ### vines_instant_mine.sc:
 #### By BisUmTo
 	Shears will instant-mine vines
