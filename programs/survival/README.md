@@ -6,7 +6,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### angel_block.sc: 
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4.
-	(Please enter an explanation here)
+	Angel Block allows players to place a block in the middle of the air or water without having to place any support blocks which is especially helpful when trying to build in mid air or water.
 	
 ### auto_lighter.sc
 #### By gnembon
@@ -97,7 +97,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	There is a video on his channel about this.
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
-	(Please input more detailed explanation)
+	It's an automated glass sliding door but instead of sliding, the door disappears and allows players to walk through for a short period, and then reappears.
 	
 ### milkable_sheeps.sc:
 #### By Gnottero
@@ -139,10 +139,10 @@ Various scripts that modify various game elements, often replicating popular mod
 ### replace_inventory.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
-	If you run out of an item for any reason, it will be refilled from the inventory, then shulker boxes.
-	Useful for large scale building, or afk sand placing around a monument.
+	Allows a players inventory slots to be refilled when they run out with same blocks/items. First from the other slots in the players inventory,
+	and then from shulker boxes containing them, if any in inventory.
+	This makes it useful for large scale building, or afk sand placing around a monument.
 	I guess its just like a better version of replace_hotbar.sc
-	(Please explain better someone!)
 	
 ### revive_coral.sc:
 #### By Ghoulboy
@@ -158,7 +158,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
 ### shulkerboxes.sc:
