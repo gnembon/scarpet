@@ -3,8 +3,6 @@
 //This may be temporary in case gnembon adds matrices into scarpet as a built in data structure, but nothing is certain so far.
 //By: Ghoulboy
 
-sum(...args)->reduce(args, _a+_, 0);//todo add to maths library cos for some reason it's not a thing yet?
-
 create_matrix(width, height)->(//creates an empty matrix (so all 0 values)
     matrix = [];
     loop(height,
@@ -51,7 +49,7 @@ is_matrix(matrix)->(//returns boolean, true if given value is a matrix and false
 
             throw()
         ),
-        return(false)// todo decide whether or not to give more detailed error, i.e what exactly went wrong
+        return(false)
     );
     true
 );
@@ -60,7 +58,7 @@ is_vector(vector)->//checking like this so the first check fails without having 
     !(type(vector)!='list' || length(vector)==0 || first(vector, type(_)!='number'));
 
 check_matrix(matrix)->( //checks if given value is a matrix, and if not throws an error
-    if(!is_matrix(matrix),
+    if(!is_matrix(matrix),// todo decide whether or not to give more detailed error, i.e what exactly went wrong
         exit(print('Operation is invalid, "' + matrix + '" is not a matrix'))
     )
 );
@@ -167,7 +165,7 @@ matrix_multiply(a, b) ->(
             if(is_vector(b), //matrix * vector = vector
                 
             ),
-            exit(print('e?'))
+            exit(print(a + ' is not a valid vector or matrix'))
         ),
         exit(print(if(is_matrix(b),
             'Cannot multiply a scalar by a matrix in that order (try the other way around)',
