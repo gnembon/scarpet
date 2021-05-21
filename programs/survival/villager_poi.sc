@@ -106,7 +106,7 @@ spawn_tracker(entity, pos, dimension, settings) ->
 		//then
 		to_block = block(pos);
 		target_block = str(to_block);
-		if(facing = property(to_block, 'facing'),
+		if(facing = block_state(to_block, 'facing'),
 			target_yaw += if( 
 				facing == 'north', 180,
 				facing == 'south', 0,
