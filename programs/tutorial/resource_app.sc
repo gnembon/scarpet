@@ -17,7 +17,7 @@ __config() -> {
             'shared' -> true,
         },
         {
-            'source' -> 'https://api.github.com/repos/slicedlime/examples/vanilla_worldgen.zip',
+            'source' -> 'https://api.github.com/repos/slicedlime/examples/contents/vanilla_worldgen.zip',
             'type' -> 'url',
             'target' -> 'vanilla_worldgen_17.zip',
             'shared' -> true,
