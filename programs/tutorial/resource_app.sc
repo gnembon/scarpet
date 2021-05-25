@@ -17,6 +17,12 @@ __config() -> {
             'shared' -> true,
         },
         {
+            'source' -> 'https://api.github.com/repos/slicedlime/examples/vanilla_worldgen.zip',
+            'type' -> 'url',
+            'target' -> 'vanilla_worldgen_17.zip',
+            'shared' -> true,
+        },
+        {
             'source' -> 'survival/README.md',
             'type' -> 'store',
             'target' -> 'survival_readme.md',
