@@ -3,7 +3,7 @@ __config() -> {
         {
             'source' -> 'https://raw.githubusercontent.com/gnembon/fabric-carpet/master/src/main/resources/assets/carpet/icon.png',
             'type' -> 'url',
-            'target' -> 'foo/photos.zip/cm.png',
+            'target' -> 'foo/photos.zip/foo/cm.png',
         },
         {
             'source' -> 'survival/README.md',
