@@ -11,7 +11,6 @@ __config()->{
 __change_persistence() -> (
     for ( entity_list('monster'),
         if (_ ~ 'persistence' && _ ~ 'holds' && ! _ ~ 'custom_name',
-            print(_);
             modify(_, 'persistence', false);
         )
     )
