@@ -17,5 +17,5 @@ __change_persistence() -> (
 );
 
 __on_tick()->(
-    if (tick_time() % 20,  schedule(0, '__change_persistence'));
+    if (! tick_time() % 20,  schedule(0, '__change_persistence'));
 );
