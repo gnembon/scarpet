@@ -16,9 +16,6 @@ __change_persistence() -> (
     )
 );
 
-global_counter = 0;
-
 __on_tick()->(
-    if (global_counter == 0,  schedule(0, '__change_persistence'));
-    global_counter = (global_counter + 1) % 20;
+    if (tick_time() % 20,  schedule(0, '__change_persistence'));
 );
