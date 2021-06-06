@@ -8,70 +8,64 @@ global_carpet_crash_fix = false;
 // change this global_radius to improve fps if you on a potato. 4 works decently
 global_radius = 4;
 
-// change the font size to your liking
-global_font_size = 6;
-
 __config() -> {
     'stay_loaded'->true,
-    'scope' -> 'global',
     'commands' -> {
         '' -> _() -> print(format('r Missing arguments. Correct syntax /showbiome <toggle>')),
-        '<toggle>' -> ['__toggle_markings'],
+        '<toggle>' -> '__toggle_markings',
+        'set radius <radius>' -> _(radius) -> global_radius = radius
     },
     'arguments' -> {
         'toggle' -> {'type' -> 'text', 'options' -> ['on', 'off']},
+        'radius' -> {'type' -> 'int', 'min' -> 1, 'max' -> 8, 'suggest' -> [2, 4, 8]}
     }
 };
 
-global_players = {};
+global_player = {};
 global_dimension_map = {'overworld' -> 'foliage_color', 'the_nether' -> 'fog_color', 'the_end' -> 'sky_color'};
 
-__make_markers(player) -> (
-    [posx, posy, posz]  = pos(player);
+__make_markers() -> (
+    [posx, posy, posz]  = pos(player());
     scan(posx, posy, posz, -global_radius, 0, global_radius,
         [x, y, z] = pos(_);
         draw_shape(
             'box', 
             2,
             'color', 0x00000000,
-            'fill', if(global_carpet_crash_fix, 0x808080FF, biome(_, global_players:player:'dim_color')) - 0x0000009F, 
+            'fill', if(global_carpet_crash_fix, 0x808080FF, biome(_, global_player:'dim_color')) - 0x0000009F, 
             'from', [x, y + 0.05, z], 
             'to', [x + 1, y - 0.05, z + 1],
         );
 
         draw_shape(
-            'label', 
+            'label',  
             2,
             'color', 0xFFFFFFFF,
             'text', biome(_),
             'pos', [x + 0.5, y, z + 0.5],
-            'size', global_font_size,
+            'size', 6
         );
     );
 );
 
 __add_player(player) -> (
-    global_players = global_players + {player -> {'dim_color' -> global_dimension_map:(player ~ 'dimension'), 'toggle' -> false}};
+    global_radius = 4;
+    global_player = {'dim_color' -> global_dimension_map:(player ~ 'dimension'), 'toggle' -> false};
 );
 
 __toggle_markings(toggle) -> (
-    p = player();
-    if(!global_players:p, __add_player(p));
-    global_players:p:'toggle' = toggle == 'on';
-);
-
-__on_player_connects(player) -> (
-    __add_player(player);
+    if(!global_player, __add_player(player()));
+    global_player:'toggle' = toggle == 'on';
 );
 
 __on_player_disconnects(player, reason) -> (
-    delete(global_players:player);
+    delete(global_player);
 );
 
 __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimension) -> (
-    if (global_players:player, global_players:player:'dim_color' = global_dimension_map:to_dimension);
+    if (global_player, global_player:'dim_color' = global_dimension_map:to_dimension);
 );
 
 __on_tick() -> (
-    for(global_players, if (global_players:_:'toggle', schedule(0, '__make_markers', _)));
+    if (global_player:'toggle', schedule(0, '__make_markers'));
 );

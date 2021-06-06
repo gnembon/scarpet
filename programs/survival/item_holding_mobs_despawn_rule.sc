@@ -3,17 +3,16 @@
 // mobs can only be made despawnable when they are given a custom name using nametags
 
 __config() -> {
-    'stay_loaded' -> true;
+    'stay_loaded' -> true,
+    'scope' -> 'global'
 };
- 
-__change_persistence() -> (
-    for ( entity_list('monster'),
-        if (_ ~ 'persistence' && _ ~ 'holds' && ! _ ~ 'custom_name',
-            modify(_, 'persistence', false);
+
+entity_load_handler('monster', 
+    _(e) -> entity_event(e, 'on_tick', 
+        _(e) -> ( 
+            if(e ~ 'persistence' && e ~ 'holds' && ! e ~ 'custom_name', 
+                modify(e, 'persistence', false)
+            )
         )
     )
-);
-
-__on_tick() -> (
-    if (! tick_time() % 200,  schedule(0, '__change_persistence'));
 );
