@@ -5,7 +5,7 @@
 __config() -> {
     'stay_loaded' -> true;
 };
-
+ 
 __change_persistence() -> (
     for ( entity_list('monster'),
         if (_ ~ 'persistence' && _ ~ 'holds' && ! _ ~ 'custom_name',
