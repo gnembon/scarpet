@@ -1,8 +1,10 @@
 //For gnembon
 //Basically, this app allows you to trade with zombie villagers that a) had trades before converting and b) can hold items
 //This only allows for trades which take emeralds and spit out something else, as it was OP enough already.
-//It also launches items at closest player within 5m radius, provided of line of sight
+//It also launches items at closest player within 5m radius, regardless of line of sight
 //By: Ghoulboy
+
+import('math', '_euclidean_sq');
 
 __config()->{'scope'->'global'};
 
@@ -26,7 +28,27 @@ _trade(zombie_villager, trade)->(
 
         modify(zombie_villager,'nbt_merge',str('{HandItems:[{id:"minecraft:emerald",Count:%sb}]}',hand_count-cost));
 
-        spawn('item',pos(zombie_villager),str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));//todo add velocity towards player
+        item = null;
+        in_dimension(zombie_villager,
+            item = spawn('item',pos(zombie_villager),str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));//todo add velocity towards player
+        );
+
+        item_pos = pos(item);
+
+        nearest_player = null;
+        distance_sq_to_nearest_player=25;
+
+        for(entity_area('player', item_pos, 5),
+            distance_sq = _euclidean_sq(item_pos, pos(_));
+            if(distance_sq<distance_sq_to_nearest_player,
+                nearest_player = _
+                distance_sq_to_nearest_player = distance_sq
+            )
+        );
+
+        if(nearest_player!=null,
+            
+        )
     );
 
     schedule(global_trade_speed, '_trade', zombie_villager, trade)

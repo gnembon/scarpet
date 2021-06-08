@@ -329,7 +329,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Ghoulboy
 	When enabled, zombie villagers which can pick up loot and had villager trades before converting, will change any emeralds in their hand for their first trade which takes emeralds as a first item, and nothing for the second.
 	This was done as it was otherwise considered too OP.
-	It also launches items at closest player within 5m radius, provided of line of sight, allowing for more ease of collection.
+	It also launches items at closest player within 5m radius, regardless of line of sight, allowing for more ease of collection.
 	NB: Zombie villagers will still be hostile, so proper care is still required, but note that they can't despawn. Also, you will have to manually infect the villagers you want to automatically trade with.
 	Trades happen every 6 seconds, as with piglin bartering, to keep it fair and give a manageable time for trading.
 
