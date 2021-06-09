@@ -13,7 +13,7 @@ __config() -> {
     'commands' -> {
         '' -> _() -> print(format('r Missing arguments. Correct syntax /showbiome <toggle>')),
         '<toggle>' -> '__toggle_markings',
-        'set radius <radius>' -> _(radius) -> global_radius = radius
+        'radius <radius>' -> _(radius) -> global_radius = radius
     },
     'arguments' -> {
         'toggle' -> {'type' -> 'text', 'options' -> ['on', 'off']},
@@ -46,6 +46,7 @@ __make_markers() -> (
             'size', 6
         );
     );
+    __check_and_render();
 );
 
 __add_player(player) -> (
@@ -53,9 +54,14 @@ __add_player(player) -> (
     global_player = {'dim_color' -> global_dimension_map:(player ~ 'dimension'), 'toggle' -> false};
 );
 
+__check_and_render() -> (
+    if (global_player:'toggle', schedule(0, '__make_markers'));
+);
+
 __toggle_markings(toggle) -> (
     if(!global_player, __add_player(player()));
     global_player:'toggle' = toggle == 'on';
+    __check_and_render();
 );
 
 __on_player_disconnects(player, reason) -> (
@@ -64,8 +70,4 @@ __on_player_disconnects(player, reason) -> (
 
 __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimension) -> (
     if (global_player, global_player:'dim_color' = global_dimension_map:to_dimension);
-);
-
-__on_tick() -> (
-    if (global_player:'toggle', schedule(0, '__make_markers'));
 );
