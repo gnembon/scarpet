@@ -50,8 +50,10 @@ __make_markers() -> (
 );
 
 __add_player(player) -> (
-    global_radius = 4;
-    global_player = {'dim_color' -> global_dimension_map:(player ~ 'dimension'), 'toggle' -> false};
+    global_player = {
+        'dim_color' -> global_dimension_map:(player ~ 'dimension'), 
+        'toggle' -> false
+    };
 );
 
 __check_and_render() -> (
@@ -62,10 +64,6 @@ __toggle_markings(toggle) -> (
     if(!global_player, __add_player(player()));
     global_player:'toggle' = toggle == 'on';
     __check_and_render();
-);
-
-__on_player_disconnects(player, reason) -> (
-    delete(global_player);
 );
 
 __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimension) -> (
