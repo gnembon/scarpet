@@ -273,6 +273,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	https://www.youtube.com/watch?v=TqgyvnjEAn4
 	Cos gnembon was too lazy to wait for amidst to update.
 
+### lava_sponge.sc:
+#### By _GieR
+    Make sponge work on lava like water.
+
+
 ### Current content creators:
 	gnembonmc(obviously)
 	Pegasus Epsilon
@@ -291,4 +296,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	KingOfTheClouds
 	Firigion
 	boyenn
+	_GieR
 	(Many more hopefully!)
