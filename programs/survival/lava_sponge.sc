@@ -33,7 +33,9 @@ sponge(coord_list, recursion, count)->(
     if(lava!={} && recursion<=7 && count<=65,
         for(lava, 
             set(_, 'air');
-            for(neighbours(_), update(pos(_)))
+            for(neighbours(_),
+                if(_ == 'lava', update(pos(_)))
+            )
         );
         recursion += 1;
         sponge(lava, recursion, count);       
