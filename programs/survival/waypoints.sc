@@ -7,7 +7,7 @@ global_waypoint_config = {
     // 4 : ALWAYS
     'allow_tp' -> 2
 };
-print(player());
+
 _can_player_tp() -> (
     global_waypoint_config:'allow_tp' == 4 ||
     ( global_waypoint_config:'allow_tp' == 3 && player()~'permission_level' > 1) || 
