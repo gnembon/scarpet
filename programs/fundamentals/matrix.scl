@@ -116,16 +116,16 @@ matrix_subtract(a, b) ->( //returns a new matrix whose values are the difference
         exit(print('Cannot subtract uneven matrices'))
     );
 
-    sum = [];
+    dif = [];
 
     loop(length(a),
         width = _;
-        sum:width=[];
+        dif:width=[];
         loop(length(a:0),
-            sum:width:_ = a:width:_ - b:width:_
+            dif:width:_ = a:width:_ - b:width:_
         )
     );
-    sum
+    dif
 );
 
 //This is complicated, because you can do many things here, depending if input is scalar, vector or matrix:
