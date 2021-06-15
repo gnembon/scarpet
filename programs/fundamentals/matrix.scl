@@ -3,7 +3,7 @@
 //This may be temporary in case gnembon adds matrices into scarpet as a built in data structure, but nothing is certain so far.
 //By: Ghoulboy
 
-create_matrix(width, height)->(//creates an empty matrix (so all 0 values)
+zero_matrix(width, height)->(//creates an zero matrix (so all 0 values)
     matrix = [];
     loop(height,
         matrix: _= [];
