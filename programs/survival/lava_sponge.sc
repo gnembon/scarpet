@@ -22,8 +22,8 @@ sponge(coord_list, recursion, count)->(
     for(coord_list,
         coord = _;
         for(neighbours(coord), 
-            if(_ == 'lava' && recursion<=7 && count<=64,
-                if(!has(lava, pos(_)),
+            if(!has(lava, pos(_)) && recursion<=7 && count<=64,
+                if(_ == 'lava',
                     lava += pos(_);
                     count +=1;
                 )
