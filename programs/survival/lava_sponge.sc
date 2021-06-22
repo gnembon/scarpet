@@ -19,7 +19,7 @@ __on_player_places_block(player, item_tuple, hand, block)->(
 
 sponge(coord_list, recursion, count)->(
     lava = {};
-    if(recursion <= 7 && count < 65,
+    if(recursion < 7 && count < 65,
         for(coord_list,
             if(count == 65, break());
             for(neighbours(_), 
