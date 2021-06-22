@@ -9,28 +9,13 @@ __config() -> {'stay_loaded' -> true, 'scope' -> 'global'};
 //  - player is holding a silk touch diamond or netherite pickaxe
 //  - block is a budding_amethyst
 __silk_budding_amethyst (player, block) -> (
-    if(
-        block == 'budding_amethyst',
-        (
-            holds = player ~ 'holds';;
-            if(
-                holds,
-                [tool, count, nbt] = holds;
-                if(
-                    (
-                        tool ~ 'diamond_pickaxe' ||
-                        tool ~ 'netherite_pickaxe'
-                    ) &&
-                    nbt ~ 'minecraft:silk_touch',
-                    (
-                        return(true);
-                    )
-                )
-            )
-        ),
-        return(false);
-    )
+    [tool, count, nbt] = player ~ 'holds';
+    block=='budding_amethyst' &&
+    tool ~ ['diamond_pickaxe', 'netherite_pickaxe'] &&
+    nbt ~ 'silk_touch';
 );
+
+
 
 __on_player_breaks_block (player, block) -> (
     if (
@@ -38,6 +23,6 @@ __on_player_breaks_block (player, block) -> (
         (
             item_nbt = nbt('{Item:{id:"minecraft:budding_amethyst",Count:1b,PickupDelay:10}}');
             budding_amethyst_item = spawn('item', pos(block) + [0.5,0.5,0.5], item_nbt);
-        ),
-        return());
+        )
+    )
 );
