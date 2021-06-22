@@ -19,18 +19,19 @@ __on_player_places_block(player, item_tuple, hand, block)->(
 
 sponge(coord_list, recursion, count)->(
     lava = {};
-    for(coord_list,
-        coord = _;
-        for(neighbours(coord), 
-            if(!has(lava, pos(_)) && recursion<=7 && count<=64,
-                if(_ == 'lava',
+    if(recursion <= 7 && count < 65,
+        for(coord_list,
+            if(count == 65, break());
+            for(neighbours(_), 
+                if(count == 65, break());
+                if(_ == 'lava' && !has(lava, pos(_)),
                     lava += pos(_);
                     count +=1;
-                )
-            )      
+                )      
+            )
         )
-    );     
-    if(lava!={} && recursion<=7 && count<=65,
+    );           
+    if(length(lava)!=0,
         for(lava, 
             set(_, 'air');
             for(neighbours(_),
