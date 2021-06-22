@@ -33,8 +33,11 @@ __silk_budding_amethyst (player, block) -> (
 );
 
 __on_player_breaks_block (player, block) -> (
-        if (!__silk_budding_amethyst(player, block), return());
-        data = block_data(pos(block));
-		item_nbt = nbt('{Item:{id:"minecraft:budding_amethyst",Count:1b,PickupDelay:10}}');
-		budding_amethyst_item = spawn('item', pos(block) + [0.5,0.5,0.5], item_nbt);
+    if (
+        __silk_budding_amethyst(player, block),
+        (
+            item_nbt = nbt('{Item:{id:"minecraft:budding_amethyst",Count:1b,PickupDelay:10}}');
+            budding_amethyst_item = spawn('item', pos(block) + [0.5,0.5,0.5], item_nbt);
+        ),
+        return());
 );
