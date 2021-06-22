@@ -9,16 +9,11 @@ __config() -> {'stay_loaded' -> true, 'scope' -> 'global'};
 //  - player is holding a silk touch diamond or netherite pickaxe
 //  - block is a budding_amethyst
 __silk_budding_amethyst (player, block) -> (
-    holds = player ~ 'holds';
-    if (
-        holds,
-        (
-            [tool, count, nbt] = holds;
-            block=='budding_amethyst' &&
-            tool ~ ['diamond_pickaxe', 'netherite_pickaxe'] &&
-            nbt ~ 'silk_touch';
-        )
-    )
+    [tool, count, nbt] = player ~ 'holds' || ['None', 0, null];
+
+    block=='budding_amethyst' &&
+    tool ~ ['diamond_pickaxe', 'netherite_pickaxe'] &&
+    nbt ~ 'silk_touch';
 );
 
 
