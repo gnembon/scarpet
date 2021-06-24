@@ -20,7 +20,12 @@ __silk_budding_amethyst (player, block) -> (
 __on_player_breaks_block (player, block) -> (
     __silk_budding_amethyst(player, block) &&
     (
-        item_nbt = nbt('{Item:{id:"minecraft:budding_amethyst",Count:1b,PickupDelay:10}}');
-        budding_amethyst_item = spawn('item', pos(block) + [0.5,0.5,0.5], item_nbt);
+        budding_amethyst_item = spawn(
+            'item',
+            pos(block) + [0.5,0.5,0.5],
+            str('{Item:{id:"minecraft:budding_amethyst",Count:1b},PickupDelay:10,Motion:[%.1f,%.1f,%.1f]}',
+                map(range(3), str('%.1f',rand(0.1)))
+                )
+            );
     )
 );
