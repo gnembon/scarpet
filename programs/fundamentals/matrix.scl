@@ -1,5 +1,5 @@
-//A library of functions to create and manipulate matrices. These are as of now just lists of lists of numbers, but with these functions can act as matrices
-//This is of course an abstract library, which will no doubt be replaces by a better native scarpet implementation in the future, but it will do for now.
+//A library of functions to create and manipulate matrices. These are as of now just lists of lists of numbers, but with these functions they can act as matrices
+//This is of course an abstract library, which will no doubt be replaced by a better native scarpet implementation in the future, but it will do for now.
 //This may be temporary in case gnembon adds matrices into scarpet as a built in data structure, but nothing is certain so far.
 //By: Ghoulboy
 
