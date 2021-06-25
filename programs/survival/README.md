@@ -132,8 +132,10 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### renewable_elytra_trade.sc:
 #### By Firigion
-	Renewable elytra through adding a trade to the otherwise useless leatherworker. Trade and behaviour is customizable: trade itself can be customized in lines 5-13. Chances of the reade appearing (line 18), whether the villager needs to be in the end, minimum level of the villager for the trade to appear and whether the player needs to hold an elytra or not to activate the trade the first time can be toggled (lines 24-26).
-	
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. Trade and behaviour is customizable:
+	trade itself can be customized in lines 5-13. Chances of the reade appearing (line 18), whether the villager needs 
+	to be in the end, minimum level of the villager for the trade to appear and whether the player needs to hold an elytra
+	or not to activate the trade the first time can be toggled (lines 24-26).
 
 ### replace_hotbar.sc:
 #### By gnembonmc
@@ -163,7 +165,8 @@ Various scripts that modify various game elements, often replicating popular mod
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you 
+	will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
 ### shulkerboxes.sc:
