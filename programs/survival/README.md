@@ -130,6 +130,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Fortune 1 shows only iron, coal and redstone.
 	Fortune 3 shows diamond, lapis,gold, redstone and emerald, not iron and coal
 
+### renewable_elytra_trade.sc:
+#### By Firigion
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. Trade and behaviour is customizable: trade itself can be customized in lines 5-13. Chances of the reade appearing (line 18), whether the villager needs to be in the end, minimum level of the villager for the trade to appear and whether the player needs to hold an elytra or not to activate the trade the first time can be toggled (lines 24-26).
+	
+
 ### replace_hotbar.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
