@@ -35,6 +35,8 @@ Various scripts that modify various game elements, often replicating popular mod
 	Set custom stack sizes for any bucket type and the items will when picked up by a player in a player inventory.
 	Receive an empty bucket and continue using the stack as usual, just like water/honey bottles.
 	
+	Can't work in creative mode.
+	
 ### cam.sc:
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
