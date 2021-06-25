@@ -3,7 +3,7 @@ __config() ->
 	//change these number to whatever you want the maximum stack size to be
 	//note that the max scarpet can inventory_set() is 2^31 - 1
 	global_buckets = m(
-		l('water',20),
+		l('water',1),
 		l('lava',1),
 		l('milk',1),
 		l('pufferfish',1),
@@ -25,11 +25,7 @@ __on_player_collides_with_entity(player,entity) ->
 		if(item~'_bucket',
 			//if it's an item we're picking up that is a non-empty bucket
 			//first determine the max stack size
-			type = null;
-			while(type == null,length(global_buckets),
-				type = item~(keys(global_buckets):_);
-			);
-			max_stack = global_buckets:type;
+			max_stack = global_buckets:item;
 			//then find a non-full slot to put it in
 			//modified lines 103 and 104 of gnembon's shulkerboxes.sc to find a non-full slot
 			slot = -1;
