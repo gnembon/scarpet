@@ -25,25 +25,22 @@ __on_player_collides_with_entity(player,entity) ->
 		if(item~'_bucket',
 			//if it's an item we're picking up that is a non-empty bucket
 			//first determine the max stack size
-			max_stack = global_buckets:item || 1;
+			max_stack = global_buckets:(item - '_bucket') || 1;
 			//then find a non-full slot to put it in
 			//modified lines 103 and 104 of gnembon's shulkerboxes.sc to find a non-full slot
-			slot = -1;
-			while(count && (slot = inventory_find(player,item,slot+1)) != null && slot < 36,inventory_size(player)-5,
-				//using copy() because script kept throwing errors here
-				l(slot_item,slot_count,slot_nbt) = copy(inventory_get(player,slot));
-				if(slot_count < max_stack,
-					//attempt to pick up items
-					count = __pickup(player,entity,item,slot,count,slot_count,max_stack);
-				);
-			);
-			//if all possible stacks are full, find as many empty slots as necessary
-			//slot < 36 and inventory_size(player)-5 unless you want to wear the buckets
-			while(count && (slot = inventory_find(player,null)) != null && slot < 36,inventory_size(player)-5,
-				count = __pickup(player,entity,item,slot,count,0,max_stack);
-			);
-		);
-	);
+			for(l(item,null),
+				slot = -1;
+				while(count && (slot = inventory_find(player,item,slot+1)) != null && (slot < 36 || slot == 40),inventory_size(player)-4,
+					//using copy() because script kept throwing errors here
+					l(slot_item,slot_count,slot_nbt) = copy(inventory_get(player,slot));
+					if(slot_count < max_stack,
+						//attempt to pick up items
+						count = __pickup(player,entity,item,slot,count,slot_count,max_stack);
+					)
+				)
+			)
+		)
+	)
 );
 
 __pickup(player,entity,item,slot,count,slot_count,max_stack) ->
@@ -107,19 +104,20 @@ test_bucket_used(player, hand, item_tuple, slot) ->
 			//now we have to give them an empty bucket
 			//first try to put it in a non-full stack, then look for empty slots
 			for(l('bucket',null),
+				item = _;
 				bucket_slot = -1;
-				//bucket_slot < 36 and inventory_size(player)-5 unless you want to wear the buckets
-				while((bucket_slot = inventory_find(player,_,bucket_slot+1)) != null && bucket_slot < 36,inventory_size(player)-5,
+				//bucket_slot < 36 || bucket_slot == 40 and inventory_size(player)-4 unless you want to wear the buckets
+				while((bucket_slot = inventory_find(player,item,bucket_slot+1)) != null && (bucket_slot < 36 || bucket_slot == 40),inventory_size(player)-4,
 					slot_count = inventory_get(player,bucket_slot):1;
 					//dont want to overfill a slot or overwrite the original slot
 					if(slot_count < stack_limit('bucket') && bucket_slot != slot,
 						inventory_set(player,bucket_slot,slot_count + 1,'bucket');
 						return();
-					);
-				);
+					)
+				)
 			);
 			//if there were absolutely no places to put the bucket, just spawn a bucket item
 			spawn('item',pos(player)+l(0,((player~'eye_height')/2),0),'{Item:{Count:1b,id:"minecraft:bucket"},PickupDelay:0}');
-		);
-	);
+		)
+	)
 );
