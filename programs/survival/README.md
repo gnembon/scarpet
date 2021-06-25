@@ -3,17 +3,17 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ## Survival scarpet apps in alphabetical order with creator:
 
-### angel_block.sc: 
+### angel_block.sc:
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4.
-	(Please enter an explanation here)
-	
+	Angel Block allows players to place a block in the middle of the air or water without having to place any support blocks which is especially helpful when trying to build in mid air or water.
+
 ### auto_lighter.sc
 #### By gnembon
 	When the player right clicks with a torch looking into the air and not on a block, this will start to send
-	out torches and light up the caves in the 128 block sphere around the player. If the player is in 
-    survival, it will yeet the torches from its inventory. 
-	
+	out torches and light up the caves in the 128 block sphere around the player. If the player is in
+    survival, it will yeet the torches from its inventory.
+
 	App is multiplayer compatible.
 
 ### auto_pickup.sc:
@@ -36,37 +36,37 @@ Various scripts that modify various game elements, often replicating popular mod
 	Receive an empty bucket and continue using the stack as usual, just like honey bottles.
 	
 	Can't work in creative mode.
-	
+
 ### cam.sc:
 #### By Gnembon
-    As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in 
+    As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in
     app nbt's for future use. The whole shabang.
-    
+
 ### carried_totem.sc
 #### By KingOfTheClouds
 	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
 
 ### destructive_lightning.sc:
 #### By Mdaff386
-    Once you start it any lightning that strikes, either natural, summoned or a channeling trident, 
+    Once you start it any lightning that strikes, either natural, summoned or a channeling trident,
     a tnt and fireball will be summoned to create a small crater where the lightning strikes.
 
 ### drop_heads.sc:
 #### By RubberDuck55
 	When a player is killed there is a 33% chance of a head to be dropped
-	
+
 ### easier_renweable_sponge.sc:
 #### By Ghoulboy
 	If you kill one of each type of fish(Pufferfish, tropical fish, salmon, cod)
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
-	
+
 ### eyeremover.sc
 #### By rv3r
-	Shift right-click on a filled end portal frame to empty it and receive the eye of ender. Note that any 
+	Shift right-click on a filled end portal frame to empty it and receive the eye of ender. Note that any
 	existing portal will break.
-	
+
 	Only really useful in peaceful.
 
 ### hammer.sc:
@@ -75,7 +75,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you have a stone pick, right click on block to set the area of effect of the hammer(1x1,3x3,5x5).
 	Then you can break multiple blocks at the same time, honouring enchantments like fortune or silk touch.
 	Useful for hollowing out large areas.
-	
+
 ### holy_hand_grenades.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -105,18 +105,18 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By gnembonmc
 	There is a video on his channel about this.
 	If you right click with an empty hand on a bunch of stained glass, it will disappear for a moment and then reappear.
-	(Please input more detailed explanation)
-	
+	It's an automated glass sliding door but instead of sliding, the door disappears and allows players to walk through for a short period, and then reappears.
+
 ### milkable_sheeps.sc:
 #### By Gnottero
 	Allows the player to milk sheeps using a bucket.
-	
+
 ### nether_poi.sc:
 #### By Firigion
 	When holding an ender eye, all nether portal points of interest will be shown with a marker.
 	Useful when slicing portals, update supressing and debugging stuff.
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
-	
+
 ### nopickup.sc:
 #### By KonaeAkira
 	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
@@ -143,21 +143,21 @@ Various scripts that modify various game elements, often replicating popular mod
 	There is a video on his channel about this.
 	If you run out of an item for any reason, it will be refilled from the hotbar, then shulker boxes in the hotbar.
 	Useful for large scale building, or afk sand placing around a monument.
-	
+
 ### replace_inventory.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
-	If you run out of an item for any reason, it will be refilled from the inventory, then shulker boxes.
-	Useful for large scale building, or afk sand placing around a monument.
+	Allows a players inventory slots to be refilled when they run out with same blocks/items. First from the other slots in the players inventory,
+	and then from shulker boxes containing them, if any in inventory.
+	This makes it useful for large scale building, or afk sand placing around a monument.
 	I guess its just like a better version of replace_hotbar.sc
-	(Please explain better someone!)
-	
+
 ### revive_coral.sc:
 #### By Ghoulboy
 	You can right click on a dead coral block with a water bottle to revive it, consuming the water.
 	The coral will be reset to normal, meaning that it will die again if you don't mine it.
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm.
-	
+
 ### rope_ladders.sc:
 #### By BisUmTo
 	Right clicking on a ladder with an other one, will extend the existing one down.
@@ -166,7 +166,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### shear_corals.sc:
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
 ### shulkerboxes.sc:
@@ -179,19 +179,24 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By indoorjetpacks
 	Hold any bucket in your offhand while placing signs will place the sign without getting the 'Edit sign message' prompt.
 	Useful for placing water/lava flows if you make a lot of them. Looking at you, SciCraft server.
-	
+
 ### silk_blockstates.sc:
 #### By BisUmTo
 	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
 	It doesn't apply to containers and blacklisted blocks.
-	
+
+### silk_budding_amethyst.sc:
+#### By "Scott Gudeman" (DragonCcrafted87)
+	Conversion of silk_spawners.sc
+	Allows to silk touch mine budding_amethyst if holding a diamond or netherite pick with silk touch.
+
 ### silk_spawners.sc:
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Silk Spawners mod in scarpet 1.5.
 	Allows to silk touch mine spawners if holding a diamond or netherite pick with silk touch.
 	Keep entity that you are spawning when you place back down.
 	Useful to make a crazy n-tuple spider farm or something like that.
-	
+
 ### simply_harvest.sc:
 #### By Gnottero
 	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
@@ -223,24 +228,24 @@ Various scripts that modify various game elements, often replicating popular mod
 	There is a video on his channel about this.
 	https://www.youtube.com/watch?v=g7Ku73ElDBs
 	Cos im too lazy to write all the shit down.
-	
+
 ### updater.sc
 #### By Firigion
-	Once loaded, right clicking an obsrever or budded block with a pice of bamboo will trigger or update it. 
+	Once loaded, right clicking an obsrever or budded block with a pice of bamboo will trigger or update it.
 	Useful to replace some lost functionality of flint and steal or fireball, without creating a fire block.
 
 ### vacuum.sc
 #### By rv3r
 	Puts inventory items into inventory shulker boxes as long as the item is already present.
 	Idea first shown by Xisumavoid https://youtu.be/FMu8T8KriQY
-	
+
 ### veinminer.sc:
 #### By gnembonmc
 	There is a video on his channel about this.
 	The more the sharpness, the more the veinminer, and it doesn't consume hunger.
 	Requires player to be sneaking.
 	It's as simple as that.
-	
+
 ### very_basic_overworld_wither_cage_finder.sc:
 #### By gnembonmc
 	There is a video on his channel about this.any trade
@@ -269,17 +274,22 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you hold an ax with Sharpness, stuff will start flying around you at faster and faster speeds
 	Vortex 1 is a useful magnet, and Vortex 3 is a crazy random tornado which no-one wants except for a prank or messing around
 	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon
-	
+
 ### waypoints.sc:
 #### By Firigion and boyenn
 	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player
-	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also 
+	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also
 	features the ability to render a line in direction of a waypoint (see https://youtu.be/0N2qVahMD7s).
-	
+
 ### world_map.sc:
 #### By gnembon
 	https://www.youtube.com/watch?v=TqgyvnjEAn4
 	Cos gnembon was too lazy to wait for amidst to update.
+
+### lava_sponge.sc:
+#### By _GieR
+    Make sponge work on lava like water.
+
 
 ### Current content creators:
 	gnembonmc(obviously)
@@ -299,4 +309,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	KingOfTheClouds
 	Firigion
 	boyenn
+	_GieR
 	(Many more hopefully!)

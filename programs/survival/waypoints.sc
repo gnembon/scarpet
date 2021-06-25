@@ -18,7 +18,7 @@ _is_tp_allowed() -> global_waypoint_config:'allow_tp'; // anything but 0 will gi
 
 waypoints_file = read_file('waypoints','JSON');
 saveSystem() -> (
-    write_file('waypoints', 'JSON',global_waypoints);
+    write_file('waypoints', 'JSON', global_waypoints);
 );
 global_authors = {};
 global_dimensions = {'overworld'}; // so we only show waypoints in dimensions that have any; shoud also support custom ones
@@ -31,8 +31,10 @@ if(waypoints_file == null,
     );
 );
 
-global_settings = read_file('settings', 'JSON');
-if(global_settings==null, global_settings = {});
+global_settings=read_file('settings', 'JSON');
+if(global_settings==null, global_settings={});
+
+global_track = {};
 
 _get_list_item(name, data, tp_allowed, player) -> (
     desc = if(data:1, '^g ' + data:1);
@@ -43,8 +45,7 @@ _get_list_item(name, data, tp_allowed, player) -> (
         sel_hover = str('^g Click to stop tracking'),
         sel_action = str('!/%s track %s', system_info('app_name'), name);
         sel_hover = str('^g Click to start tracking')
-    ):
-    print(type(sel_action));
+    );
     item = ['w [', selected, sel_hover, sel_action, 'w ]  ', 'by '+name , desc, str('w : %s %s %s ', map(data:0, round(_)))];
     if(tp_allowed, 
         item += str('!/%s tp %s', system_info('app_name'), name);
@@ -80,13 +81,48 @@ list(author) -> (
     )
 );
 
+del_prompt(name) -> (
+	global_to_delete = name;
+	print(player(), format(
+		'y Are you sure you want to delete ',
+		'yb '+name,
+		'y ? ',
+		'lb [YES] ',
+		str('!/%s confirm_del', system_info('app_name')),
+		'rb [NO]',
+		str('!/%s cancel_del', system_info('app_name')),
+	))
+);
+confirm_del() -> (
+	if(global_to_delete,
+		del(global_to_delete);
+		global_to_delete = null,
+		_error('No deletion to confirm')
+	)
+);
+cancel_del() -> (
+	if(global_to_delete,
+		print(player(), str('Deletion of %s was cancelled', global_to_delete));
+		global_to_delete = null,
+		_error('No deletion to confirm')
+	)
+);
+
 del(name) -> (
-    if(delete(global_waypoints,name),print('Waypoint ' + name + ' deleted.'), _error('Waypoint ' + name + ' does not exist'));
+    if(delete(global_waypoints,name),
+    	global_track:player() = null;
+    	print(player(), 'Waypoint ' + name + ' deleted.'),
+    	//else, failed
+    	_error('Waypoint ' + name + ' does not exist'));
     saveSystem();
 );
 
 add(name, poi_pos, description) -> (
-    if(has(global_waypoints, name), 
+    if(
+        name=='disable',
+        _error('That name is not available, it has a special funciton'),
+
+        has(global_waypoints, name), 
         _error('You are trying to overwrite an existing waypoint. Delete it first.'),
         // else, add new one
         player = player();
@@ -118,7 +154,6 @@ tp(name) -> (
     run(str('execute in %s run tp %s %s %s %s', dim, player(), loc:0, loc:1, loc:2));
 );
 
-global_track = {};
 track(name) -> (
     player = player();
     if(
@@ -142,35 +177,52 @@ _track_tick(player) -> (
         exit();
     );
     
-    ppos = player~'pos';
-    from = ppos + [0,1,0];
-    destination = global_waypoints:(global_track:player):0;
-    distance = sqrt(reduce(from-destination, _*_+_a, 0));
-    to = (destination-from);
-    if(!global_settings:splayer:'vector', to = to * 2/distance);
-    voffset = player~'eye_height'*0.6;
+    if( (dim = global_waypoints:(global_track:player):3) == player~'dimension',
+	    ppos = player~'pos';
+	    voffset = player~'eye_height'*0.6;
 
-    if( global_settings:splayer:'particles',
-        particle_line('item spectral_arrow 0.8 0.1 1 4', ppos + player~'motion' + [0,voffset,0], ppos + to, 2, player),
-        draw_shape('line', 1, 'from', player~'motion' + [0,voffset,0], 'to', to, 'follow', player(), 'player', player)
-    );
+        width = if(!has(global_settings:splayer, 'width'), 2, global_settings:splayer:'width');
+        length = if(!has(global_settings:splayer, 'length'), 2, global_settings:splayer:'length');
 
-    if(global_settings:splayer:'distance', display_title(player, 'actionbar', str('Distance to %s: %.0fm', global_track:player, distance)));
-    if( (d = global_settings:splayer:'autodisable')!=null && distance <= d, 
-        print(player, format('g You reached your destinaton!')); 
-        global_track:player = null
-    );
+        voff = [0,voffset,0];
+	    from = ppos + voff;
+	    destination = global_waypoints:(global_track:player):0;
+
+        to = destination-from; // vector joining form with destination
+	    distance = sqrt(reduce(to, _*_+_a, 0));
+        length = min(length, distance);
+        if(length==-1, length=distance);
+
+	    to = to * length/distance;
+        if(global_settings:splayer:'flat', to = to * [1, 0, 1] + voff);
+
+	    //create direction marker
+	    if( global_settings:splayer:'particles',
+	        particle_line('item spectral_arrow 0.8 0.1 1 4', ppos + player~'motion', ppos + to, 2, player),
+	        draw_shape('line', 1, 'from', player~'motion' + voff, 'to', to, 'follow', player(), 'player', player, 'line', width)
+	    );
+
+	    // show distance and handkle auto turn off
+	    if(global_settings:splayer:'distance', display_title(player, 'actionbar', str('Distance to %s: %.0fm', global_track:player, distance)));
+	    if( (d = global_settings:splayer:'autodisable')!=-1 && distance <= d, 
+	        print(player, format('g You reached your destinaton!')); 
+	        global_track:player = null
+	    ),
+	    // else, print bad dimension
+	    display_title(player, 'actionbar', str('Tracking %s in %s', global_track:player, dim) )
+	)
 );
 
 help() -> (
     player = player();
-    print(player, format('by ==Help for the Waypoints app=='));
-    print(player, format(str('g the following commands are available with /%s', system_info('app_name')) ));
-    print(player, format('b \ \ add <name> [pos] [description]', 'w : add a new waypoint at given position with given description'));
-    print(player, format('b \ \ del <waypoint>', 'w : delete existing waypoint'));
-    print(player, format('b \ \ edit <waypoint> <description>', 'w : edit the description of an existing waypoint'));
-    print(player, format('b \ \ list [author]', 'w : list all existing waypoints, optionally filtering by author'));
-    if(_is_tp_allowed(),  print(player, format('b \ \ tp <waypoint>', 'w : teleport to given waypoint')));  
+    print(player, format('bd ==Help for the Waypoints app=='));
+    print(player, format(str('f the following commands are available with /%s', system_info('app_name')) ));
+    print(player, format('q \ \ add <name> [<pos>] [<description>]', 'fb \ | ', 'g add a new waypoint at given position with given description'));
+    print(player, format('q \ \ del <waypoint>', 'fb \ | ', 'g delete existing waypoint'));
+    print(player, format('q \ \ edit <waypoint> <description>', 'fb \ | ', 'g edit the description of an existing waypoint'));
+    print(player, format('q \ \ list [<author>]', 'fb \ | ', 'g list all existing waypoints, optionally filtering by author'));
+    print(player, format('q \ \ settings track [<what> <value>]', 'fb \ | ', 'g sets strack options'));
+    if(_is_tp_allowed(),  print(player, format('q \ \ tp <waypoint>', 'fb \ | ', 'g teleport to given waypoint')));  
 );
 
 _error(msg)->(
@@ -179,16 +231,58 @@ _error(msg)->(
 );
 
 _settings(key, value) -> (
-    player = str(player());
-    if(!has(global_settings, player), global_settings:player = {});
-    global_settings:player:key = value;
+    splayer = str(player());
+    if(!has(global_settings, splayer), global_settings:splayer = {});
+    global_settings:splayer:key = value;
     write_file('settings', 'JSON', global_settings);
+);
+global_default_settings = {
+    'type' -> {'name'->'particles', 'defaults'->['render', 'particle']},
+    'distance' -> {'name'->'distance', 'defaults'->['off', 'on']},
+    'autodisable' -> 'off',
+    'length' -> 2,
+    'width' -> 2,
+    'flat' -> {'name'->'flat', 'defaults'->['false', 'true']},
+};
+
+show_settings() -> (
+    splayer = str(player());
+    print(splayer, format('b Your current settings are:'));
+    for(keys(global_default_settings),
+        name = _;
+        if(has(global_default_settings:name, 'name'),   //to grab the true name of a display name if they are different
+            key = global_default_settings:name:'name';
+            default = global_default_settings:name:'defaults',
+            
+            key = name;
+            default = global_default_settings:name
+        );
+        
+        is_default = !has(global_settings:splayer, key);
+        value = if(type(default)=='list',
+                    default:(global_settings:splayer:key),
+                    if(is_default, default, global_settings:splayer:key)
+        );
+        if(name=='autodisable'&&value==-1, value=default);
+        if(name=='length'&&value==-1, value='inf');
+
+        modify_cmd = str('?/%s settings track %s ', system_info('app_name'), name);
+        modify_tlt = '^g Click me to modify!';
+        print(splayer, format(
+            'bd\ \ '+name, modify_tlt, modify_cmd,
+            'f \ \ »  ', modify_tlt, modify_cmd,
+            'q '+value,  modify_tlt, modify_cmd,
+            if(is_default, 'g \ (Unmodified value)')
+        ))
+    );
 );
 
 _get_commands() -> (
     base_commands = {
       '' -> 'help',
-      'del <waypoint>' -> 'del',
+      'del <waypoint>' -> 'del_prompt',
+      'confirm_del' -> 'confirm_del',
+      'cancel_del' -> 'cancel_del',
       'add <name>' -> ['add', null, null],
       'add <name> <pos>' -> ['add', null],
       'add <name> <pos> <description>' -> 'add',
@@ -197,14 +291,19 @@ _get_commands() -> (
       'list <author>' -> 'list',
       'track <waypoint>' -> 'track',
       'track disable' -> ['track', null],
-      'settings track line vector' -> _() -> _settings('vector', true),
-      'settings track line direction' -> _() -> _settings('vector', false),
-      'settings track type particle' -> _() -> _settings('particles',true),
-      'settings track type render' -> _() -> _settings('particles',false),
-      'settings track distance on' -> _() -> _settings('distance',true),
-      'settings track distance off' -> _() -> _settings('distance',false),
-      'settings track autodisable off' -> _() -> _settings('autodisable', null),
-      'settings track autodisable <distance>' -> _(d) -> _settings('autodisable', d),
+      //'settings track line vector' ->             _()  -> _settings('vector', true),
+      //'settings track line direction' ->          _()  -> _settings('vector', false),
+      'settings track' -> 'show_settings',
+      'settings track type particle' ->           _()  -> _settings('particles',true),
+      'settings track type render' ->             _()  -> _settings('particles',false),
+      'settings track distance on' ->             _()  -> _settings('distance',true),
+      'settings track distance off' ->            _()  -> _settings('distance',false),
+      'settings track autodisable off' ->         _()  -> _settings('autodisable', -1),
+      'settings track autodisable <distance>' ->  _(d) -> _settings('autodisable', d),
+      'settings track width <width>' ->           _(w) -> _settings('width', w),
+      'settings track length <length>' ->         _(l) -> _settings('length', l),
+      'settings track length inf' ->              _()  -> _settings('length', -1),
+      'settings track flat <bool>' ->             _(b) -> _settings('flat', b), 
     };
    if(_is_tp_allowed(), put(base_commands, 'tp <waypoint>', 'tp'));
    base_commands;
@@ -236,6 +335,15 @@ __config() -> {
             'suggest' -> [5, 10],
             'min' -> 0
       },
+      'width' -> {
+            'type' -> 'int',
+            'suggest' -> [5, 10],
+            'min' -> 0
+      },
+      'length' -> {
+            'type' -> 'int',
+            'suggest' -> [5, 10],
+            'min' -> 0
+      },
    }
-   
 };
