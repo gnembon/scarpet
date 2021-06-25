@@ -28,7 +28,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Also comes with useful funcs, __set_nbt_in_slot(player, slot, tag_name, tag_value)
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere.
-	
+
 ### bucketstack.sc:
 #### By rv3r and Firigion
 	Buckets act like honey bottles.
