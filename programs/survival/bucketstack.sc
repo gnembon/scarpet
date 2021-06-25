@@ -123,7 +123,7 @@ test_bucket_used(player, hand, item_tuple, slot) ->
 				);
 			);
 			//if there were absolutely no places to put the bucket, just spawn a bucket item
-			spawn('item',pos(player)+l(0,((player~'eye_height')/2),0),nbt(m(l('Item',m(l('id','"minecraft:bucket"'),l('Count','1b'))),l('PickupDelay',0))));
+			spawn('item',pos(player)+l(0,((player~'eye_height')/2),0),'{Item:{Count:1b,id:"minecraft:bucket"},PickupDelay:0}');
 		);
 	);
 );
