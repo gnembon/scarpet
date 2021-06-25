@@ -3,7 +3,7 @@ __config() ->
 	//change these number to whatever you want the maximum stack size to be
 	//note that the max scarpet can inventory_set() is 2^31 - 1
 	global_buckets = m(
-		l('water',1),
+		l('water',20),
 		l('lava',1),
 		l('milk',1),
 		l('pufferfish',1),
@@ -12,12 +12,10 @@ __config() ->
 		l('tropical_fish',1),
 		l('axolotl',1)
 	);
-	return(
-		m(
-			l('scope','player'),
-			l('stay_loaded',true)
-		)
-	);
+	m(
+		l('scope','player'),
+		l('stay_loaded',true)
+	)
 );
 
 __on_player_collides_with_entity(player,entity) ->
