@@ -82,7 +82,10 @@ report(verbose)->(
     total_count=0;
     total_lifetime=0;
     ticks = tick_time()-global_start_time;
-    print(str('Average lifetimes for mobs (in ticks) over %s ticks (%s mins %s s):', ticks, floor(ticks/1200), round(ticks/20) % 60));
+    print(str('Average lifetimes for mobs (in ticks) over %s ticks (%s mins %s s)%s:', 
+        ticks, floor(ticks/1200), round(ticks/20) % 60),
+        if(global_positions!=[null, null], str(' between %s and %s', global_positions:0, global_positions:1), '')
+    );
     if(verbose,
         for(global_mob_lifetimes,
             count = global_mob_lifetimes:_:0;
