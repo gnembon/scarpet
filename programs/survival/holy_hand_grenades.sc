@@ -83,7 +83,7 @@ __cascade_smash(center_pos, ttl, bias, position) ->
 		properties
 	);
 	block_name = str(block);
-	hardness = hardness(pos(block));
+	hardness = hardness(pos(block))+0.1;
 	set(position, if(property(block,'waterlogged')=='true','water','air'));
 	l(x, y, z) = position;
 	l(cx, cy, cz) = center_pos;

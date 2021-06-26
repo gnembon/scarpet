@@ -934,7 +934,7 @@ global_custom_features = [
       [data, 'Columns of '+titlecase(vanilla_noid(stem:'Name')) + if(decor,' with '+titlecase(vanilla_noid(decor:'Name')), '']);
    )},
    {'weight' -> 300, 'salt' -> 463650907, 'gen' -> _(gen, seed, snapshot) -> (
-      data = vanilla_data('worldgen/configured_feature/ore_coal'+if(snapshot,'_upper','')) || throw('Freckles');
+      data = vanilla_data('worldgen/configured_feature/'+if(snapshot,'prototype_ore_coal_upper','ore_coal')) || throw('Freckles');
       rblock = __random_block_data(seed, 10);
       inner = data:'config':'feature':'config':'feature':'config':'feature':'config';
       if (snapshot, assert_compatibility('Blob',

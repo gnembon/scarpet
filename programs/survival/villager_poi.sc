@@ -66,8 +66,8 @@ spawn_trackers_for_villager(entity) ->
 (
 	enbt = entity ~ 'nbt';
 	for(global_poi_settings, poi = _;
-		if (bed_pos = get(enbt, 'Brain.memories.minecraft:'+poi+'.pos[]'),
-			spawn_tracker(entity, bed_pos, get(enbt,'Brain.memories.minecraft:'+poi+'.dimension'), global_poi_settings:poi)
+		if (bed_pos = get(enbt, 'Brain.memories.minecraft:'+poi+'.value.pos[]'),
+			spawn_tracker(entity, bed_pos, get(enbt,'Brain.memories.minecraft:'+poi+'.value.dimension'), global_poi_settings:poi)
 		, //else
 			spawn_tracker(entity, pos(entity), null, global_poi_settings:poi)
 		)
@@ -106,7 +106,7 @@ spawn_tracker(entity, pos, dimension, settings) ->
 		//then
 		to_block = block(pos);
 		target_block = str(to_block);
-		if(facing = property(to_block, 'facing'),
+		if(facing = block_state(to_block, 'facing'),
 			target_yaw += if( 
 				facing == 'north', 180,
 				facing == 'south', 0,
