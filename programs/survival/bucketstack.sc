@@ -28,6 +28,15 @@ __on_player_collides_with_entity(player,entity) ->
 	);
 );
 
+__on_player_uses_item(player, item_tuple, hand) ->
+(
+	l(item,count,nbt) = item_tuple;
+	if(item == 'bucket',
+		bucket_item = query(player,'trace',4.5,'liquids') + '_bucket';
+		schedule(0,'__get_bucket_entity',player,bucket_item)
+	)
+);
+
 __on_player_interacts_with_entity(player, entity, hand) ->
 (
 	//only check everything else after we know that the player has no empty slots
@@ -45,7 +54,6 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 		);
 		//lower because entity names are capitalized, bucket names are lowercase
 		//replace for tropical fish
-		//water mobs also have health and potential variants that will require us to get the nbt
 		if(item == 'water_bucket' && keys(global_buckets) ~ bucket_prefix,
 			product_item = bucket_prefix + '_bucket'
 		);
@@ -81,7 +89,7 @@ __pickup_bucket_entity(player,entity) ->
 			while(count && (slot = inventory_find(player,item,slot+1)) != null && (slot < 36 || slot == 40),inventory_size(player)-4,
 				//using copy() because script kept throwing errors here
 				l(slot_item,slot_count,slot_nbt) = copy(inventory_get(player,slot));
-			      	//stack must have room and nbt must match
+				//stack must have room and nbt must match
 				if(slot_count < max_stack && slot_nbt == nbt,
 					//attempt to pick up items
 					count = __pickup(player,entity,item,slot,count,slot_count,max_stack,nbt),
@@ -105,6 +113,7 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack,nbt) ->
 		modify(entity, 'pickup_delay', 1);
 		sound('entity.item.pickup',pos(player),0.2,(rand(1)-rand(1))*1.4+2.0, 'player')
 	);
+	
 	//modified line 90 of gnembon's shulkerboxes.sc to change the number of items in the item entity
 	modify(entity,'nbt_merge','{Item:{Count:' + count + 'b}}');
 	//always set player inventory after removing items from world to prevent duping
