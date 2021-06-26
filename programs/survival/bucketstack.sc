@@ -1,21 +1,34 @@
 __config() ->
 (
-	//change these number to whatever you want the maximum stack size to be
-	//note that the max scarpet can inventory_set() is 2^31 - 1
-	global_buckets = m(
-		l('water',1),
-		l('lava',1),
-		l('milk',1),
-		l('pufferfish',1),
-		l('salmon',1),
-		l('cod',1),
-		l('tropical_fish',1),
-		l('axolotl',1),
-		l('powder_snow',1)
-	);
 	m(
 		l('scope','player'),
-		l('stay_loaded',true)
+		l('stay_loaded',true),
+
+		l('commands',
+			m(
+				l('<bucket>','__print'),
+				l('<bucket> <stack>','__change')
+			)
+		),
+
+		l('arguments',
+			m(
+				l('bucket',
+					m(
+						l('type','term'),
+						l('options',filter(item_list(),_ ~ '_bucket') - '_bucket'),
+						l('suggest',filter(item_list(),_ ~ '_bucket') - '_bucket')
+					)
+				),
+				l('stack',
+					m(
+						l('type','int'),
+						l('min',1),
+						l('max',2^31-1)
+					)
+				)
+			)
+		)
 	)
 );
 
@@ -54,7 +67,7 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 		);
 		//lower because entity names are capitalized, bucket names are lowercase
 		//replace for tropical fish
-		if(item == 'water_bucket' && keys(global_buckets) ~ bucket_prefix,
+		if(item == 'water_bucket' && keys(load_app_data()) ~ bucket_prefix,
 			product_item = bucket_prefix + '_bucket'
 		);
 		//use schedule() because item entity doesn't exist until end of tick
@@ -64,9 +77,41 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 	)
 );
 
+__initialize() ->
+(
+	if(!load_app_data(),
+		buckets = m(
+			l('water',1),
+			l('lava',1),
+			l('milk',1),
+			l('pufferfish',1),
+			l('salmon',1),
+			l('cod',1),
+			l('tropical_fish',1),
+			l('axolotl',1),
+			l('powder_snow',1)
+		);
+		store_app_data(buckets);
+	)
+);
+
+__print(bucket) ->
+(
+	title = title(replace(bucket,'_',' '));
+	stack = load_app_data():bucket;
+	print(player(),title + ' has a max stack size of ' + stack + ' bucket' + bool(stack - 1) * 's');
+);
+
+__change(bucket,stack) ->
+(
+	buckets = load_app_data();
+	buckets:bucket = stack;
+	store_app_data(buckets);
+);
+
 __get_bucket_entity(player,item) ->
 (
-	//get item entities with low age and matching name that are exactly at player's eyes
+	//get item entity with low age and matching name that is exactly at player's eyes
 	entity_list = filter(entity_area('item',player~'pos',l(0,player~'eye_height',0)),_ ~ 'age' < 3 && _ ~ 'item':0 == item);
 	if(entity_list,
 		//no need for fireworks if we are just injecting the item into the inventory
@@ -81,7 +126,7 @@ __pickup_bucket_entity(player,entity) ->
 	if(item~'_bucket',
 		//if it's an item we're picking up that is a non-empty bucket
 		//first determine the max stack size
-		max_stack = global_buckets:(item - '_bucket') || 1;
+		max_stack = load_app_data():(item - '_bucket') || 1;
 		//then find a non-full slot to put it in
 		//modified lines 103 and 104 of gnembon's shulkerboxes.sc to find a non-full slot
 		for(l(item,null),
@@ -113,7 +158,7 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack,nbt) ->
 		modify(entity, 'pickup_delay', 1);
 		sound('entity.item.pickup',pos(player),0.2,(rand(1)-rand(1))*1.4+2.0, 'player')
 	);
-	
+
 	//modified line 90 of gnembon's shulkerboxes.sc to change the number of items in the item entity
 	modify(entity,'nbt_merge','{Item:{Count:' + count + 'b}}');
 	//always set player inventory after removing items from world to prevent duping
@@ -177,3 +222,5 @@ __test_bucket_used(player, hand, item_tuple, slot) ->
 		)
 	)
 );
+
+__initialize();
