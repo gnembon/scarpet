@@ -2,8 +2,6 @@
 global_experimental_features = false; 
 // when true, outputs failed assertions for the snapshot feature content jsons, otherwise only logs it.
 global_verbose = false;
-// wether custom biomes are allowed on snapshots
-global_allow_custom_biomes = false;
 
 // end of togglable features
 __config() -> 
@@ -851,10 +849,10 @@ assert_compatibility(feature, ... fields) -> loop(length(fields)/2,
 // all add to 1000
 // preserving that makes sure seeds don't change between adding different extra features.
 global_custom_features = [
-   {'weight' -> 300, 'salt' -> 4021098647, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 300, 'salt' -> 4021098647, 'gen' -> _(gen, seed, major) -> (
       data = vanilla_data('worldgen/configured_feature/forest_rock') || throw('Freckles');
       rblock = __random_block_data(seed, 10);
-      if (snapshot, 
+      if (major > 16,
          assert_compatibility('Freckles',
             data:'config':'feature':'config':'decorator':'config':'inner':'config':'heightmap', 'MOTION_BLOCKING',
             data:'config':'feature':'config':'feature':'config':'state':'Name', 'minecraft:mossy_cobblestone',
@@ -866,7 +864,7 @@ global_custom_features = [
       b = floor(2^rand(3, seed));
       s = floor(2^rand(6, seed));
       cdata = data:'config':'decorator':'config':'count';
-      if (snapshot,
+      if (major > 16,
          assert_compatibility('Freckles',
             cdata:'value':'min_inclusive', 0,
             cdata:'value':'max_inclusive', 2,
@@ -880,11 +878,11 @@ global_custom_features = [
       
       [data, 'Freckles of '+titlecase(vanilla_noid(rblock:'Name'))];
    )},
-   {'weight' -> 100, 'salt' -> 4174618733, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 100, 'salt' -> 4174618733, 'gen' -> _(gen, seed, major) -> (
       data = vanilla_data('worldgen/configured_feature/basalt_blobs') || throw('Diamonds');
       rblock = __random_block_data(seed, 10);
       inner = data:'config':'feature':'config':'feature':'config':'feature':'config';
-      if (snapshot, assert_compatibility('Diamonds',
+      if (major > 16, assert_compatibility('Diamonds',
             inner:'state':'Name', 'minecraft:basalt',
             inner:'target':'Name', 'minecraft:netherrack',
             inner:'radius':'value':'min_inclusive', 3,
@@ -895,18 +893,18 @@ global_custom_features = [
       inner:'target' = {'Name' -> 'minecraft:air'};
       b = 2;
       s = floor(2^rand(3, seed));
-      if (snapshot,
+      if (major > 16,
          inner:'radius':'value':'min_inclusive' = b;
          inner:'radius':'value':'max_inclusive' = b+s;
       ,
          inner:'radius':'base' = b;
          inner:'radius':'spread' = s;
       );
-      if (!snapshot, data:'config':'feature':'config':'feature':'config':'decorator':'config':'maximum' = 256);
+      if (major == 16, data:'config':'feature':'config':'feature':'config':'decorator':'config':'maximum' = 256);
       data:'config':'decorator':'config':'count'= floor(2^rand(2, seed));
       [data, 'Diamonds of '+titlecase(vanilla_noid(rblock:'Name'))];
    )},
-   {'weight' -> 300, 'salt' -> 274534769, 'gen' -> _(gen, seed, snapshot) -> (
+   {'weight' -> 300, 'salt' -> 274534769, 'gen' -> _(gen, seed, major) -> (
       data = vanilla_data('worldgen/configured_feature/crimson_fungi') || throw('Columns');
       rblock = __random_block_data(seed, 10);
       surface_block = values(gen:'data':'rift':'worldgen':'biome'):0:'surface_builder':'config':'top_material';
@@ -933,32 +931,32 @@ global_custom_features = [
       );
       [data, 'Columns of '+titlecase(vanilla_noid(stem:'Name')) + if(decor,' with '+titlecase(vanilla_noid(decor:'Name')), '']);
    )},
-   {'weight' -> 300, 'salt' -> 463650907, 'gen' -> _(gen, seed, snapshot) -> (
-      data = vanilla_data('worldgen/configured_feature/'+if(snapshot,'prototype_ore_coal_upper','ore_coal')) || throw('Freckles');
+   {'weight' -> 300, 'salt' -> 463650907, 'gen' -> _(gen, seed, major) -> (
+      data = vanilla_data('worldgen/configured_feature/'+if(major > 16,'prototype_ore_coal_upper','ore_coal')) || throw('Blob');
       rblock = __random_block_data(seed, 10);
       inner = data:'config':'feature':'config':'feature':'config':'feature':'config';
-      if (snapshot, assert_compatibility('Blob',
-         inner:'targets':0:'target':'tag', 'minecraft:base_stone_overworld',
+      if (major > 16, assert_compatibility('Blob',
+         inner:'targets':0:'target':'tag', 'minecraft:stone_ore_replaceables',
          inner:'targets':0:'target':'predicate_type', 'minecraft:tag_match',
          inner:'targets':0:'state':'Name', 'minecraft:coal_ore',
          inner:'size', 17,
-         data:'config':'feature':'config':'feature':'config':'decorator':'config':'bottom_inclusive':'absolute', 136,
+         data:'config':'feature':'config':'feature':'config':'decorator':'config':'height':'min_inclusive':'absolute', 136,
          data:'config':'decorator':'config':'count', 30,
       ));
-      if(snapshot,inner:'targets':0:'target',inner:'target') = {
+      if(major > 16,inner:'targets':0:'target',inner:'target') = {
           'block' -> 'minecraft:air',
           'predicate_type' -> 'minecraft:block_match'
       };
-      if(snapshot,inner:'targets':0:'state',inner:'state') = rblock;
+      if(major > 16,inner:'targets':0:'state',inner:'state') = rblock;
       inner:'size' = floor(2^rand(6, seed));
-      if (snapshot,
-         data:'config':'feature':'config':'feature':'config':'decorator':'config':'bottom_inclusive' = {
+      if (major > 16,
+         data:'config':'feature':'config':'feature':'config':'decorator':'config':'min_inclusive' = {
             'above_bottom' -> 0
          }
       ,
          data:'config':'feature':'config':'feature':'config':'decorator':'config':'maximum' = 256;
       );
-      if (snapshot,
+      if (major > 16,
          data:'config':'decorator':'config':'count' =10+floor(2^rand(4, seed));
       ,
          data:'config':'decorator':'config':'count' = {'base' -> 2, 'spread' -> floor(2^rand(3, seed))}
@@ -1139,7 +1137,7 @@ global_world_types = [
    },
    {
       'lore' -> 'Funky biome',
-      'weight' -> if (global_has_wg_data && (global_allow_custom_biomes || system_info('game_major_target')==16), 100, 0), // only if worldgen data is present and 1.16
+      'weight' -> if (global_has_wg_data, 100, 0), // only if worldgen data is present and 1.16
       'base' -> _(name, seed) -> {
          'data' -> { 'rift' -> { 'dimension' -> { name+'.json' -> {
             'type' -> 'minecraft:overworld',
@@ -1281,7 +1279,7 @@ global_world_types = [
             global_fid += 1;
             try(
                [feature, fid] = random_by_weight(global_custom_features, seed);
-               [feature_data, feature_desc] = call(feature:'gen', data, salt(seed, feature:'salt'), system_info('game_major_target') > 16);
+               [feature_data, feature_desc] = call(feature:'gen', data, salt(seed, feature:'salt'), system_info('game_major_target'));
             ,
                error = 'Error generating '+_+'. Seems like the world gen changed for it in this version.';
                if (global_verbose, print(player(), error), logger(error));
