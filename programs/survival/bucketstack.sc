@@ -98,9 +98,12 @@ __print(bucket) ->
 
 __change(bucket,stack) ->
 (
-	buckets = load_app_data();
-	buckets:bucket = stack;
-	store_app_data(buckets);
+	if(player() ~ 'permission_level' > 1,
+		buckets = load_app_data();
+		buckets:bucket = stack;
+		store_app_data(buckets),
+		print(player(),format('r You do not have permission to change bucket stack sizes.'));
+	)
 );
 
 __get_bucket_entity(player,item) ->
