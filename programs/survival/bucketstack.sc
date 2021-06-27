@@ -80,16 +80,9 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 __initialize() ->
 (
 	if(!load_app_data(),
-		buckets = m(
-			l('water',1),
-			l('lava',1),
-			l('milk',1),
-			l('pufferfish',1),
-			l('salmon',1),
-			l('cod',1),
-			l('tropical_fish',1),
-			l('axolotl',1),
-			l('powder_snow',1)
+		buckets = m();
+		for(filter(item_list(),_ ~ '_bucket') - '_bucket',
+			buckets:_ = 1;
 		);
 		store_app_data(buckets);
 	)
