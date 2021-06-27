@@ -32,8 +32,9 @@ Various scripts that modify various game elements, often replicating popular mod
 ### bucketstack.sc:
 #### By rv3r and Firigion
 	Buckets act like honey bottles.
-	Set custom stack sizes for any bucket type and the items will stack when picked up by a player in a player inventory.
-	Receive an empty bucket and continue using the stack as usual, just like honey bottles.
+	Set custom stack sizes for any bucket type with /bucketstack <bucket> <stacksize> and the buckets will stack when filled or picked up by a player.
+	Stacking requires identical nbt data for buckets of water mobs.
+	When using a stack of buckets, receive an empty bucket and continue using the stack as usual, just like honey bottles.
 	
 	Can't work in creative mode.
 
