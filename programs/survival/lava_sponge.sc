@@ -10,7 +10,7 @@ __config() -> (
 
 
 __on_player_places_block(player, item_tuple, hand, block)->(
-    if(hand == 'mainhand' || item_tuple:0 == 'sponge' || all(neighbours(pos(block)),_=='lava'),
+    if(hand == 'mainhand' && item_tuple:0 == 'sponge' && neighbours(pos(block))~'lava' != null,
         set(pos(block),'wet_sponge');
         count = 0;
         recursion = 0;
