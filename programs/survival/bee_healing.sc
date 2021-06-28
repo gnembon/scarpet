@@ -5,7 +5,7 @@ global_incrementer = 0;
 global_bees = {};
 
 add_entity_event(bee) -> (
-    entity_event(bee, 'on_removed', _(entity, i) -> (
+    entity_event(bee, 'on_removed', _(entity, isNew, i) -> (
         delete(global_bees, i);
     ), copy(global_incrementer));
 );
@@ -29,7 +29,7 @@ begin()->(
     schedule(800, 'begin');
 );
 
-entity_load_handler('bee', _(bee) -> (
+entity_load_handler('bee', _(bee, isNew) -> (
     put(global_bees, global_incrementer, bee);
     
     add_entity_event(bee);

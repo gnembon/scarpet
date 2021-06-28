@@ -14,7 +14,7 @@
 // nbt - cyan
 // text - Unchanged, usually formatted already
 
-formatType(v) -> (
+format_type(v) -> (
   t = type(v);
   c = l();
   if (t == 'null',
@@ -29,7 +29,7 @@ formatType(v) -> (
       if (_i != 0,
         put(c, null, 'y , ');
       );
-      c = concat(c, formatType(_))
+      c = concat(c, format_type(_))
     );
     put(c, null, 'y ]');
 
@@ -40,9 +40,9 @@ formatType(v) -> (
       if (_i != 0,
         put(c, null, 'r , ');
       );
-      c = concat(c, formatType(_: 0));
+      c = concat(c, format_type(_: 0));
       put(c, null, 'r : ');
-      c = concat(c, formatType(_: 1));
+      c = concat(c, format_type(_: 1));
     );
     put(c, null, 'r }');
 
@@ -58,7 +58,7 @@ formatType(v) -> (
           put(c, null, '#00cccc , ');
         );
         put(c, null, '#00cccc '+_: 0+': ');
-        c = concat(c, formatType(_: 1));
+        c = concat(c, format_type(_: 1));
       );
       put(c, null, '#00cccc }');
     , t2 == 'list',
@@ -68,7 +68,7 @@ formatType(v) -> (
         if (_i != 0,
           put(c, null, '#00cccc , ');
         );
-        c = concat(c, formatType(_))
+        c = concat(c, format_type(_))
       );
       put(c, null, '#00cccc ]');
     ,
@@ -102,7 +102,7 @@ pretty_print(...v) -> (
 
   allFormatted = '';
   for (v,
-    formatted = formatType(_);
+    formatted = format_type(_);
     actuallyFormatted = '';
     for (formatted,
       if (type(_) != 'text',
