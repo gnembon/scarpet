@@ -80,13 +80,16 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 
 __initialize() ->
 (
-	if(!load_app_data(),
+	buckets = load_app_data();
+	if(!buckets,
 		buckets = m();
-		for(filter(item_list(),_ ~ '_bucket') - '_bucket',
+	);
+	for(filter(item_list(),_ ~ '_bucket') - '_bucket',
+		if(buckets:_ == null,
 			buckets:_ = 1;
 		);
-		store_app_data(buckets);
-	)
+	);
+	store_app_data(buckets);
 );
 
 __print(bucket) ->
