@@ -16,8 +16,8 @@ __config() ->
 				l('bucket',
 					m(
 						l('type','term'),
-						l('options',filter(item_list(),_ ~ '_bucket') - '_bucket'),
-						l('suggest',filter(item_list(),_ ~ '_bucket') - '_bucket')
+						l('options',l('all',...(filter(item_list(),_ ~ '_bucket') - '_bucket'))),
+						l('suggest',l('all',...(filter(item_list(),_ ~ '_bucket') - '_bucket')))
 					)
 				),
 				l('stack',
@@ -102,8 +102,13 @@ __print(bucket) ->
 __change(bucket,stack) ->
 (
 	if(player() ~ 'permission_level' > 1,
-		buckets = load_app_data();
-		buckets:bucket = stack;
+		buckets = parse_nbt(load_app_data());
+		if(bucket != 'all',
+			buckets:bucket = stack,
+			for(keys(buckets),
+				buckets:_ = stack;
+			);
+		);
 		store_app_data(buckets),
 		print(player(),format('r You do not have permission to change bucket stack sizes.'));
 	)
