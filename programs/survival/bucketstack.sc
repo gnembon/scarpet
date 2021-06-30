@@ -68,7 +68,7 @@ __on_player_interacts_with_entity(player, entity, hand) ->
 		);
 		//lower because entity names are capitalized, bucket names are lowercase
 		//replace for tropical fish
-		if(item == 'water_bucket' && keys(load_app_data()) ~ bucket_prefix,
+		if(item == 'water_bucket' || keys(load_app_data()) ~ bucket_prefix,
 			product_item = bucket_prefix + '_bucket'
 		);
 		//use schedule() because item entity doesn't exist until end of tick
