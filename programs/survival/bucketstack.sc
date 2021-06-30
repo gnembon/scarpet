@@ -123,8 +123,8 @@ __change(bucket,stack) ->
 
 __get_bucket_entity(player,item) ->
 (
-	//get item entity with low age and matching name that is exactly at player's eyes
-	entity_list = filter(entity_area('item',player~'pos',l(0,player~'eye_height',0)),_ ~ 'age' < 3 && _ ~ 'item':0 == item);
+	//get item entity with low age and matching name that is around 0.3 blocks below player's eyes
+	entity_list = filter(entity_area('item',player~'pos' + l(0,player~'eye_height' - 0.3,0),l(0.25,0.25,0.25)),_ ~ 'age' < 3 && _ ~ 'item':0 == item);
 	if(entity_list,
 		//no need for fireworks if we are just injecting the item into the inventory
 		global_particle_bool = false;
