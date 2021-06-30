@@ -94,9 +94,16 @@ __initialize() ->
 
 __print(bucket) ->
 (
-	title = title(replace(bucket,'_',' '));
-	stack = load_app_data():bucket;
-	print(player(),title + ' has a max stack size of ' + stack + ' bucket' + bool(stack - 1) * 's');
+	data = parse_nbt(load_app_data());
+	if(bucket != 'all',
+		buckets = l(bucket),
+		buckets = sort(keys(data));
+	);
+	for(buckets,
+		title = title(replace(_,'_',' '));
+		stack = data:_;
+		print(player(),title + ' has a max stack size of ' + stack + ' bucket' + bool(stack - 1) * 's')
+	)
 );
 
 __change(bucket,stack) ->
