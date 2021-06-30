@@ -22,12 +22,11 @@ __config() -> {
             'source' -> '/survival/README.md',
             'target' -> 'survival_readme.md',
             'shared' -> true,
-        },
+        }
+    ],
+    'libraries' -> [
         {
-            'source' -> 'carpets.sc',
-            'type' -> 'app',
-            'target' -> 'flying_carpets.sc',
-            'shared' -> true,
-        },
+            'source' -> 'carpets.sc'
+        }
     ]
 }
