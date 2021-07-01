@@ -33,6 +33,7 @@ __config() ->
 	)
 );
 
+//used when a player encounters a bucket item
 __on_player_collides_with_entity(player,entity) ->
 (
 	if(entity ~ 'pickup_delay' == 0,
@@ -42,42 +43,51 @@ __on_player_collides_with_entity(player,entity) ->
 	);
 );
 
+//used when a player fills a bucket with a liquid
 __on_player_uses_item(player, item_tuple, hand) ->
 (
 	l(item,count,nbt) = item_tuple;
 	if(item == 'bucket',
 		bucket_item = query(player,'trace',4.5,'liquids') + '_bucket';
-		schedule(0,'__get_bucket_entity',player,bucket_item)
-	)
-);
-
-__on_player_interacts_with_entity(player, entity, hand) ->
-(
-	//only check everything else after we know that the player has no empty slots
-	//otherwise the vanilla behavior will do the hard work for us
-	if(inventory_find(player,null) > 35,
-		if(hand == 'mainhand',
-			slot = player~'selected_slot',
-			//-1 is offhand
-			slot = -1
-		);
-		item = inventory_get(player,slot):0;
-		bucket_prefix = lower(replace(entity,' ','_'));
-		if(item == 'bucket' && (entity == 'Cow' || entity == 'Goat'),
-			product_item = 'milk_bucket'
-		);
-		//lower because entity names are capitalized, bucket names are lowercase
-		//replace for tropical fish
-		if(item == 'water_bucket' || keys(load_app_data()) ~ bucket_prefix,
-			product_item = bucket_prefix + '_bucket'
-		);
-		//use schedule() because item entity doesn't exist until end of tick
-		if(product_item,
-			schedule(0,'__get_bucket_entity',player,product_item)
+		if(inventory_find(player,null) > 35,
+			schedule(0,'__get_bucket_entity',player,bucket_item),
+			empty_slot = inventory_find(player,null);
+			//call this here and not on_player_picks_up because we won't know where the item went
+			schedule(0,'__move_bucket_item',player,empty_slot)
 		)
 	)
 );
 
+//used when a player right-clicks on an entity for a milk bucket or water mob bucket
+__on_player_interacts_with_entity(player, entity, hand) ->
+(
+	//figure out what the filled bucket is
+	if(hand == 'mainhand',
+		slot = player~'selected_slot',
+		//-1 is offhand
+		slot = -1
+	);
+	item = inventory_get(player,slot):0;
+	//lower because entity names are capitalized, bucket names are lowercase
+	//replace for tropical fish
+	bucket_prefix = lower(replace(entity,' ','_'));
+	if(item == 'bucket' && (entity == 'Cow' || entity == 'Goat'),
+		product_item = 'milk_bucket',
+		item == 'water_bucket' || keys(load_app_data()) ~ bucket_prefix,
+		product_item = bucket_prefix + '_bucket'
+	);
+	if(product_item,
+		if(inventory_find(player,null) > 35,
+			//use schedule() because item doesn't exist until end of tick
+			schedule(0,'__get_bucket_entity',player,product_item),
+			empty_slot = inventory_find(player,null);
+			//call this here and not on_player_picks_up because we won't know where the item went
+			schedule(0,'__move_bucket_item',player,empty_slot)
+		)
+	)
+);
+
+//sets up app data with default stack sizes of 1
 __initialize() ->
 (
 	buckets = load_app_data();
@@ -92,6 +102,7 @@ __initialize() ->
 	store_app_data(buckets);
 );
 
+//prints bucket stack size(s) to the player
 __print(bucket) ->
 (
 	data = parse_nbt(load_app_data());
@@ -106,6 +117,7 @@ __print(bucket) ->
 	)
 );
 
+//changes max stack size of particular bucket
 __change(bucket,stack) ->
 (
 	if(player() ~ 'permission_level' > 1,
@@ -121,6 +133,40 @@ __change(bucket,stack) ->
 	)
 );
 
+//stacks buckets when player generates them
+__move_bucket_item(player,empty_slot) ->
+(
+	empty_tuple = inventory_get(player,empty_slot);
+	//make sure the bucket actually went to a different slot
+	if(empty_tuple,
+		l(item,count,nbt) = empty_tuple;
+		player_list = l(range(empty_slot));
+		max_stack = load_app_data():(item - '_bucket') || 1;
+		//loop until we find a spot for the bucket
+		//unless you picked up a stack of buckets, this should only run once
+		while(count,length(playerlist),
+			//find where the bucket should have been stacked
+			//don't check slot 35 since it's the last slot
+			slot_index = first(player_list,
+				slot_tuple = inventory_get(player,_);
+				//we're expecting a particular item with less items than the max stack size and identical nbt
+				slot_tuple:0 == item && slot_tuple:1 < max_stack && slot_tuple:2 == nbt
+			);
+			//check > -1 because it could stack in slot 0
+			if(slot_index > -1,
+				//move as many items as possible
+				move = max(max_stack - (slot_tuple:1 + count),1);
+				//reduce value to reflect how many buckets got moved
+				count = count - move;
+				//always remove before adding to prevent duping
+				inventory_set(player,empty_slot,count,item,nbt);
+				inventory_set(player,slot_index,slot_tuple:1 + move,item,nbt)
+			)
+		)
+	)
+);
+
+//gets the bucket item entity that was created when a player with a full inventory filled a bucket
 __get_bucket_entity(player,item) ->
 (
 	//get item entity with low age and matching name that is around 0.3 blocks below player's eyes
@@ -132,6 +178,7 @@ __get_bucket_entity(player,item) ->
 	)
 );
 
+//determines if entity was actually a bucket and can potentially stack in the player's inventory
 __pickup_bucket_entity(player,entity) ->
 (
 	l(item,count,nbt) = entity~'item';
@@ -156,6 +203,7 @@ __pickup_bucket_entity(player,entity) ->
 	)
 );
 
+//attempts to stack item in a player's inventory at slot
 __pickup(player,entity,item,slot,count,slot_count,max_stack,nbt) ->
 (
 	//figure out how many items to move
@@ -180,6 +228,7 @@ __pickup(player,entity,item,slot,count,slot_count,max_stack,nbt) ->
 
 //WRITTEN BY FIRIGION
 
+//used when a player places a liquid
 __on_player_right_clicks_block(player,item_tuple,hand,block,face,hitvec) ->
 (
 	if(hand == 'mainhand',
@@ -205,6 +254,7 @@ __on_player_finishes_using_item(player,item_tuple,hand) ->
 	)
 );
 
+//tests that the bucket that placed the liquid actually got used
 __test_bucket_used(player, hand, item_tuple, slot) ->
 (
 	l(item,count,nbt) = item_tuple;
@@ -235,4 +285,5 @@ __test_bucket_used(player, hand, item_tuple, slot) ->
 	)
 );
 
+//attempts to initialize app data on every load
 __initialize();
