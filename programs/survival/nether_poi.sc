@@ -69,12 +69,10 @@ __do_on_tick(dim) -> (
 );
 
 __on_tick() -> (
-	__do_on_tick('overworld');
+	in_dimension('overworld',__do_on_tick('overworld'));
+	in_dimension('nether',__do_on_tick('the_nether'));
 );
 
-__on_tick_nether() -> (
-	__do_on_tick('the_nether')
-);
 
 // turn on for players that connect for the first time
 __on_player_connects(player) -> (
