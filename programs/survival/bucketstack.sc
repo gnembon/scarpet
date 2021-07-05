@@ -134,6 +134,7 @@ __change(bucket,stack) ->
 );
 
 //stacks buckets when player generates them
+//stacks buckets when player generates them
 __move_bucket_item(player,empty_slot) ->
 (
 	empty_tuple = inventory_get(player,empty_slot);
@@ -153,9 +154,9 @@ __move_bucket_item(player,empty_slot) ->
 				slot_tuple:0 == item && slot_tuple:1 < max_stack && slot_tuple:2 == nbt
 			);
 			//check > -1 because it could stack in slot 0
-			if(slot_index > -1,
+			if(slot_index > -1 && slot_index != empty_slot,
 				//move as many items as possible
-				move = max(max_stack - (slot_tuple:1 + count),1);
+				move = min(max_stack - slot_tuple:1,count);
 				//reduce value to reflect how many buckets got moved
 				count = count - move;
 				//always remove before adding to prevent duping
