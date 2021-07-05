@@ -136,10 +136,10 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [renewable_elytra_trade.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/renewable_elytra_trade.sc):
 #### By Firigion
-	Renewable elytra through adding a trade to the otherwise useless leatherworker. Trade and behaviour is customizable:
-	trade itself can be customized in lines 5-13. Chances of the reade appearing (line 18), whether the villager needs 
-	to be in the end, minimum level of the villager for the trade to appear and whether the player needs to hold an elytra
-	or not to activate the trade the first time can be toggled (lines 24-26).
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
+	with a letherworker and all conditions for it to appear are met. Said conditions can be totally customizable in the
+	app, including the vilalger being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
+	level of the villager and chances of the trade to fail.
 
 ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
 #### By gnembonmc
