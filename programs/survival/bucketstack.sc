@@ -140,11 +140,11 @@ __move_bucket_item(player,empty_slot) ->
 	//make sure the bucket actually went to a different slot
 	if(empty_tuple,
 		l(item,count,nbt) = empty_tuple;
-		player_list = l(range(empty_slot));
+		player_list = l(range(inventory_size(player) - 6));
 		max_stack = load_app_data():(item - '_bucket') || 1;
 		//loop until we find a spot for the bucket
 		//unless you picked up a stack of buckets, this should only run once
-		while(count,length(playerlist),
+		while(count > 0,inventory_size(player) - 6,
 			//find where the bucket should have been stacked
 			//don't check slot 35 since it's the last slot
 			slot_index = first(player_list,
