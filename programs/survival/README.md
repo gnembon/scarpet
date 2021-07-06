@@ -29,6 +29,15 @@ Various scripts that modify various game elements, often replicating popular mod
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere.
 
+### [bucketstack.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bucketstack.sc):
+#### By rv3r and Firigion
+	Buckets act like honey bottles.
+	Set custom stack sizes for any bucket type with /bucketstack <bucket> <stacksize> and the buckets will stack when filled or picked up by a player.
+	Stacking requires identical nbt data for buckets of water mobs.
+	When using a stack of buckets, receive an empty bucket and continue using the stack as usual, just like honey bottles.
+	
+	Can't work in creative mode.
+
 ### [cam.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cam.sc):
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in
