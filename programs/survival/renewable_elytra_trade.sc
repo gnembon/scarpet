@@ -33,8 +33,7 @@ global_trade = encode_nbt(
 //////////
 
 // Customize the conditions
-_add_trade(e, p, ) -> (
-	nbt = e~'nbt';
+_add_trade(e, p, nbt) -> (
 	if(
 		parse_nbt(nbt:'Tags')~'HasRenewableElytraTrade' == null && //already has trade
 		(!global_in_the_end || e~'dimension'=='the_end') && //villager needs to be in the end
@@ -61,5 +60,8 @@ _add_trade(e, p, ) -> (
 );
 
 __on_player_interacts_with_entity(player, entity, hand) -> (
-	if(entity=='Leatherworker', _add_trade(entity, player));
+	if(entity~'type'=='villager',
+		nbt = entity~'nbt';
+		if(nbt:'VillagerData':'profession'=='minecraft:leatherworker', _add_trade(entity, player, nbt));
+	)
 );
