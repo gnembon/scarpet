@@ -1,27 +1,24 @@
 __config() ->
 (
-	return(
-		m(
-			l('scope','player'),
-			l('stay_loaded',true),
-			
-			l('commands',
-				m(
-					l('<mode>','__change')
-				)
-			),
-
-			l('arguments',
-				m(
-					l('mode',
-						m(
-							l('type','term'),
-							l('options',
-								l('off','air','solid')
-							),
-							l('suggest',
-								l('off','air','solid')
-							)
+	m(
+		l('scope','player'),
+		l('stay_loaded',true),
+		
+		l('commands',
+			m(
+				l('<mode>','__change')
+			)
+		),
+		l('arguments',
+			m(
+				l('mode',
+					m(
+						l('type','term'),
+						l('options',
+							l('off','air','solid')
+						),
+						l('suggest',
+							l('off','air','solid')
 						)
 					)
 				)
@@ -152,6 +149,7 @@ __corners(center,offset) ->
 		if(direction != l(0,0,0),
 			//length(check) - check ~ edge to prevent checking too many blocks
 			edges = map(l(range(length(check) - check ~ edge)),block(_ * listdirection * direction + pos)),
+		   	//if we're already at the corner after the first check, we only need one block
 			edges = l(block(pos));
 		);
 
