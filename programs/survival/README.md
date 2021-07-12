@@ -133,6 +133,14 @@ Various scripts that modify various game elements, often replicating popular mod
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
 
+### [portalorient.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/portalorient.sc):
+#### By rv3r
+	Reorients a player after going through a Nether portal. App settings are per-player and default to not affecting player.
+	/portalorient off   - does not change player orientation
+	/portalorient air   - makes player face toward side with more air blocks
+	/portalorient solid - makes player face toward side with fewer solid blocks
+	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
+
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
