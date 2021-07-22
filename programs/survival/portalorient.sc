@@ -156,7 +156,7 @@ __corners(center,offset) ->
 		//find which blocks along the edges are actually the corners
 		corners:_ = __lastportal(edges,null,null);
 	);
-	return(corners);
+	corners
 );
 
 //find last portal block before non portal block from a list of blocks
