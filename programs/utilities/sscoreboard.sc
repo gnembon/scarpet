@@ -22,17 +22,17 @@ __config() -> {
 	}
 };
 
-entity_load_handler('player',_assign(p,new) -> (
+__on_player_connects(p)->(
 	if(!global_filter_bot||p~'player_type'!=fake,
 		scoreboard('_ss_core',p~'name',statistic(p~'name',global_category,global_entry)) //player needs to login to update scoreboard values
 	)
-););
+);
 
 help() -> (
-	print('/sscoreboard <stat> <[<bot included>]');
+	print('/sscoreboard <stat> [<bot included>]');
 	print('/sscoreboard clear');
-	print('Supported stat format: \'<global_category>.<global_entry>\' or \'<global_entry>\', in which case the global_category is cosidered as custom.');
-	print('global_category included:');
+	print('Supported stat format: \'<global_category>.<global_entry>\' or \'<global_entry>\', in which case the global_category is considerded as custom.');
+	print('global_category includes:');
 	print(' - mined(m);');
 	print(' - crafted(c);');
 	print(' - used(u);');
@@ -50,28 +50,32 @@ create(stat,name,slot,includeBots) ->(
 	if(	stat~'\\.', [global_category,tmp,global_entry] = stat~'(.*)(\\.)(.*)',
 		[global_category,global_entry] = ['custom',stat]
 	);
-	if(	
-		global_category=='m'||global_category=='mined',	[global_category,criterion]=['mined','minecraft.mined:'+global_entry],
-		global_category=='c'||global_category=='crafted',	[global_category,criterion]=['crafted','minecraft.crafted:'+global_entry],
-		global_category=='u'||global_category=='used',	[global_category,criterion]=['used','minecraft.used:'+global_entry],
-		global_category=='b'||global_category=='broken',	[global_category,criterion]=['broken','minecraft.broken:'+global_entry],
-		global_category=='p'||global_category=='picked_up',	[global_category,criterion]=['picked_up','minecraft.picked_up:'+global_entry],
-		global_category=='d'||global_category=='dropped',	[global_category,criterion]=['dropped','minecraft.dropped:'+global_entry],
-		global_category=='k'||global_category=='killed',	[global_category,criterion]=['killed','minecraft.killed:'+global_entry],
-		global_category=='kb'||global_category=='killed_by',	[global_category,criterion]=['killed_by','minecraft.killed_by:'+global_entry],
-		global_category=='cu'||global_category=='custom',	[global_category,criterion]=['custom','minecraft.custom:'+global_entry],
-		(print(format('rbu Error:','r Unknown global_category. Please check again.')),return())
+	
+	category_map = {
+		'm'->'mined', 'mined'->'mined',
+		'c'->'crafted', 'crafted'->'crafted',
+		'u'->'used', 'used'->'used',
+		'b'->'broken', 'broken'->'broken',
+		'p'->'picked_up', 'picked_up'->'picked_up',
+		'd'->'dropped', 'dropped'->'dropped',
+		'k'->'killed', 'killed'->'killed',
+		'kb'->'killed_by', 'killed_by'->'killed_by',
+		'cu'->'custom', 'custom'->'custom'
+	};
+	if(category_map~global_category,
+		[global_category,criterion]=[category_map:global_category,'minecraft.'+category_map:global_category+':'+global_entry],
+		exit(print(format('rbu Error:','r Unknown global_category. Please check again.')))
 	);
 	try(
 		scoreboard_add('_ss_core',criterion);
 		'exception',
-		(print(format('rbu Error:','r Unknown criterion. Please check again.')),return())
+		exit(print(format('rbu Error:','r Unknown criterion. Please check again.')))
 	);
 	scoreboard_property('_ss_core','display_name',name);
 	scoreboard_property('_ss_core','display_slot',slot);
 	
-	//cannot access to offline players' statistics since there is no map bwtween uuids and usernames
-	for(player('*'), scoreboard('_ss_core',_,statistic(_,global_category,global_entry))) 
+	//cannot access to offline players' statistics since there is no map between uuids and usernames
+	for(player('all'), scoreboard('_ss_core',_,statistic(_,global_category,global_entry))) 
 );
 
 clear() -> (
@@ -81,6 +85,6 @@ clear() -> (
 
 __on_tick() -> (
 	if(global_filter_bot,
-		for(player('*'),if (_~'player_type'=='fake',scoreboard('_ss_core',_~'name',null)))
+		for(player('all'),if (_~'player_type'=='fake',scoreboard('_ss_core',_~'name',null)))
 	);
 )
