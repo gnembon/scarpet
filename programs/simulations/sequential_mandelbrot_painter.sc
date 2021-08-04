@@ -1,8 +1,7 @@
-
 mandelbrot_whole(x1,y1,z1,size) -> mandelbrot_segment(x1,y1,z1,size, 0, 0, 2, true);
 
 mandelbrot_segment(x1, y1, z1, size, center_x, center_z, radius, do_log) -> 
- mandelbrot_segment_offset(x1, y1, z1,size, center_x, center_z, radius, do_log, 2*radius+1, 0);
+ mandelbrot_segment_offset(x1, y1, z1,size, center_x, center_z, radius, do_log, 2*size+1, 0);
 
 mandelbrot_segment_offset(x1,y1,z1, size, center_x, center_z, radius, do_log, xsteps, xstart) ->
 (
