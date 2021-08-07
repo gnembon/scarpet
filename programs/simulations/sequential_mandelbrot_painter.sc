@@ -1,7 +1,7 @@
 mandelbrot_whole(x1,y1,z1,size) -> mandelbrot_segment(x1,y1,z1,size, 0, 0, 2, true);
 
 mandelbrot_segment(x1, y1, z1, size, center_x, center_z, radius, do_log) -> 
- mandelbrot_segment_offset(x1, y1, z1,size, center_x, center_z, radius, do_log, 2*size+1, 0);
+ mandelbrot_segment_offset(x1, y1, z1,size, center_x, center_z, radius, do_log, 2*size, 0);
 
 mandelbrot_segment_offset(x1,y1,z1, size, center_x, center_z, radius, do_log, xsteps, xstart) ->
 (
@@ -23,7 +23,7 @@ mandelbrot_segment_offset(x1,y1,z1, size, center_x, center_z, radius, do_log, xs
    loop( xsteps,
        game_tick();
        iter = _ + xstart;
-       print(iter+'/'+xsize);
+       print(number(iter+1)+'/'+xsize);
        xpos = iter + minx;
        if(xpos >= maxx ,  
            print('job done already!'); 
