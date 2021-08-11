@@ -31,7 +31,8 @@ __on_player_connects(p)->(
 help() -> (
 	print('/sscoreboard <stat> [<bot included>]');
 	print('/sscoreboard clear');
-	print('Supported stat format: \'<global_category>.<global_entry>\' or \'<global_entry>\', in which case the global_category is considerded as custom.');
+	print('Supported stat format: \'<global_category>.<global_entry>\' or \'<global_entry>\',\n in the second case the global_category is considerded as custom.');
+	run('tellraw @s [{"text":"If you don\'t know what the entry should be, check "},{"text":"Minecraft Wiki","clickEvent":{"action":"open_url","value":"https://minecraft.fandom.com/wiki/Statistics#Namespaced_ID"},"underlined":true},{"text":" for more information."}]');
 	print('global_category includes:');
 	print(' - mined(m);');
 	print(' - crafted(c);');
@@ -44,7 +45,7 @@ help() -> (
 	print(' - custom(cu).');
 );
 
-create(stat,name,slot,includeBots) ->(
+create(stat,name,slot,includeBots) -> (
 	scoreboard_remove('_ss_core');
 	global_filter_bot=!includeBots;
 	if(	stat~'\\.', [global_category,tmp,global_entry] = stat~'(.*)(\\.)(.*)',
@@ -77,6 +78,7 @@ create(stat,name,slot,includeBots) ->(
 	//cannot access to offline players' statistics since there is no map between uuids and usernames
 	for(player('all'), scoreboard('_ss_core',_,statistic(_,global_category,global_entry))) 
 );
+
 
 clear() -> (
 	scoreboard_remove('_ss_core');
