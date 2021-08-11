@@ -90,7 +90,7 @@ format_type(v) -> (
     c: 0 = v;
   );
 
-  return(c);
+  c
 );
 
 pretty_print(...v) -> (
@@ -125,5 +125,5 @@ concat(a, b) -> (
     put(ret, null, _);
   );
 
-  return(ret);
+  ret
 );
