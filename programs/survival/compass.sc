@@ -4,33 +4,33 @@
 __config()->{
     'scope' -> 'global',
     'commands' -> {
-        'giveCompass' -> _() -> giveCompass(player()),
+        'giveCompass' -> _() -> give_compass(player()),
         'track <player>' -> ['track'],
-        'spawnWith item <item> <amt>' -> ['spawnWithItem', 'âny', false],
-        'spawnWith item <item> <amt> <player>' -> ['spawnWithItem', false],
-        'spawnWith item <item> <amt> persist' -> ['spawnWithItem', 'âny', true],
-        'spawnWith item <item> <amt> <player> persist' -> ['spawnWithItem', true],
-        'spawnWith effect <effect> <duration> <amplifier>' -> ['spawnWithEffect', 'âny'],
-        'spawnWith effect <effect> <duration> <amplifier> <player>' -> ['spawnWithEffect'],
-        'dontSpawnWith item <item>' -> ['dontSpawnWithItem', 'âny'],
-        'dontSpawnWith item <item> <player>' -> ['dontSpawnWithItem'],
-        'dontSpawnWith effect <effect>' -> ['dontSpawnWithEffect', 'âny'],
-        'dontSpawnWith effect <effect> <player>' -> ['dontSpawnWithEffect'],
-        'timeToTrack <time>' -> ['timeToTrack'],
-        'timeToTrack onUse' -> ['timeToTrack', 'onUse'],
-        'logOnTrack <enabled>' -> ['logOnTrack'],
-        'maxCompasses <amt>' -> ['maxCompasses'],
-        'maxCompasses infinity' -> ['maxCompasses', 'infinity'],
-        'noPortalBreaking <enabled>' -> ['noPortalBreaking'],
-        'maxNetherTravel <dist>' -> ['maxNetherTravel'],
-        'timeToTrack' -> _() -> print(player(), format('l How often the compasses update player positions in seconds: ', 'lb '+(global_timeToTrack/20))),
+        'spawnWith item <item> <amt>' -> ['spawn_with_item', 'âny', false],
+        'spawnWith item <item> <amt> <player>' -> ['spawn_with_item', false],
+        'spawnWith item <item> <amt> persist' -> ['spawn_with_item', 'âny', true],
+        'spawnWith item <item> <amt> <player> persist' -> ['spawn_with_item', true],
+        'spawnWith effect <effect> <duration> <amplifier>' -> ['spawn_with_effect', 'âny'],
+        'spawnWith effect <effect> <duration> <amplifier> <player>' -> ['spawn_with_effect'],
+        'dontSpawnWith item <item>' -> ['dont_spawn_with_item', 'âny'],
+        'dontSpawnWith item <item> <player>' -> ['dont_spawn_with_item'],
+        'dontSpawnWith effect <effect>' -> ['dont_spawn_with_effect', 'âny'],
+        'dontSpawnWith effect <effect> <player>' -> ['dont_spawn_with_effect'],
+        'timeToTrack <time>' -> ['time_to_track'],
+        'timeToTrack onUse' -> ['time_to_track', 'onUse'],
+        'logOnTrack <enabled>' -> ['log_on_track'],
+        'maxCompasses <amt>' -> ['max_compasses'],
+        'maxCompasses infinity' -> ['max_compasses', 'infinity'],
+        'noPortalBreaking <enabled>' -> ['no_portal_breaking'],
+        'maxNetherTravel <dist>' -> ['max_nether_travel'],
+        'timeToTrack' -> _() -> print(player(), format('l How often the compasses update player positions in seconds: ', 'lb '+(global_time_to_track/20))),
         'track' -> _() -> print(player(), format('l Make the compass you\'re holding track a player')),
         'spawnWith' -> _() -> print(player(), format('l Spawn with a particular item or effect when anyone or a specified player dies')),
         'dontSpawnWith' -> _() -> print(player(), format('l Stop spawning with a particular item or effect')),
-        'logOnTrack' -> _() -> print(player(), format('l Send a message when someone tracks you: ', 'lb '+if(global_logOnTrack, 'true', 'false'))),
-        'maxCompasses' -> _() -> print(player(), format('l The maximum amount of compasses one can give themselves: ', 'lb '+global_maxCompasses)),
-        'noPortalBreaking' -> _() -> print(player(), format('l Whether to allow breaking portals: ', 'lb '+if(global_noPortalBreaking, 'true', 'false'))),
-        'maxNetherTravel' -> _() -> print(player(), format('l The maximum distance players can travel in the overworld thorugh the nether: ', 'lb '+(global_maxNetherTravel*8))),
+        'logOnTrack' -> _() -> print(player(), format('l Send a message when someone tracks you: ', 'lb '+if(global_log_on_track, 'true', 'false'))),
+        'maxCompasses' -> _() -> print(player(), format('l The maximum amount of compasses one can give themselves: ', 'lb '+global_max_compasses)),
+        'noPortalBreaking' -> _() -> print(player(), format('l Whether to allow breaking portals: ', 'lb '+if(global_no_portal_breaking, 'true', 'false'))),
+        'maxNetherTravel' -> _() -> print(player(), format('l The maximum distance players can travel in the overworld thorugh the nether: ', 'lb '+(global_max_nether_travel*8))),
     },
     'arguments' -> {
         'player' -> {'type' -> 'string', 'suggester' -> _(args) -> entity_selector('@a'), 'case_sensitive' -> false},
@@ -45,52 +45,52 @@ __config()->{
     }
 };
 
-toKeep = parse_nbt(read_file('toKeep', 'nbt'));
+to_keep = parse_nbt(read_file('to_keep', 'nbt'));
 
-if (toKeep == 'null',
-    toKeep = l();
+if (to_keep == 'null',
+    to_keep = l();
 );
 
-global_toKeep = map(toKeep, l(_: 0, number(_: 1), if(_: 2 == '', null, nbt(_: 2)), _: 3, number(_: 4)));
+global_to_keep = map(to_keep, l(_: 0, number(_: 1), if(_: 2 == '', null, nbt(_: 2)), _: 3, number(_: 4)));
 
-toKeepEffect = parse_nbt(read_file('toKeepEffect', 'nbt'));
+to_keep_effect = parse_nbt(read_file('to_keep_effect', 'nbt'));
 
-if (toKeepEffect == 'null',
-    toKeepEffect = l();
+if (to_keep_effect == 'null',
+    to_keep_effect = l();
 );
 
-global_toKeepEffect = map(toKeepEffect, l(_: 0, number(_: 1), number(_: 2), _: 3));
+global_to_keep_effect = map(to_keep_effect, l(_: 0, number(_: 1), number(_: 2), _: 3));
 
-global_logOnTrack = parse_nbt(read_file('logOnTrack', 'nbt'));
+global_log_on_track = parse_nbt(read_file('log_on_track', 'nbt'));
 
-if (global_logOnTrack == 'null',
-    global_logOnTrack = false;
+if (global_log_on_track == 'null',
+    global_log_on_track = false;
 );
 
-global_inventoryData = {};
+global_inventory_data = {};
 
-global_timeToTrack = parse_nbt(read_file('timeToTrack', 'nbt'));
+global_time_to_track = parse_nbt(read_file('time_to_track', 'nbt'));
 
-if (global_timeToTrack == 'null',
-    global_timeToTrack = 10;
+if (global_time_to_track == 'null',
+    global_time_to_track = 10;
 );
 
-global_maxCompasses = parse_nbt(read_file('maxCompasses', 'nbt'));
+global_max_compasses = parse_nbt(read_file('max_compasses', 'nbt'));
 
-if (global_maxCompasses == 'null',
-    global_maxCompasses = 'infinity';
+if (global_max_compasses == 'null',
+    global_max_compasses = 'infinity';
 );
 
-global_noPortalBreaking = parse_nbt(read_file('noPortalBreaking', 'nbt'));
+global_no_portal_breaking = parse_nbt(read_file('no_portal_breaking', 'nbt'));
 
-if (global_noPortalBreaking == 'null',
-    global_noPortalBreaking = false;
+if (global_no_portal_breaking == 'null',
+    global_no_portal_breaking = false;
 );
 
-global_maxNetherTravel = parse_nbt(read_file('maxNetherTravel', 'nbt'));
+global_max_nether_travel = parse_nbt(read_file('max_nether_travel', 'nbt'));
 
-if (global_maxNetherTravel == 'null',
-    global_maxNetherTravel = 3000000;
+if (global_max_nether_travel == 'null',
+    global_max_nether_travel = 3000000;
 );
 
 __on_player_dies(player) -> (
@@ -108,10 +108,10 @@ __on_player_dies(player) -> (
         slot = inventory_find(player, 'compass', slot+1);
     );
 
-    bySlotNum = map(slots, _: 3); // All the inventory slots that are taken
+    by_slot_num = map(slots, _: 3); // All the inventory slots that are taken
 
     // Find all the slots where the player has items that they respawn with
-    for (global_toKeep,
+    for (global_to_keep,
         if (_: 3 == 'âny' || _: 3 == lower(player ~ 'name'), // It's impossible to use the character ̂  in a player name
             // Find the first slot with the item
             slot = inventory_find(player, _: 0);
@@ -124,7 +124,7 @@ __on_player_dies(player) -> (
                 triple = inventory_get(player, slot);
                 put(slots, null, l(triple: 0, copy(_: 1), copy(_: 2), slot));
                 inventory_set(player, slot, 0);
-                put(bySlotNum, null, slot);
+                put(by_slot_num, null, slot);
             );
         );
     );
@@ -133,23 +133,23 @@ __on_player_dies(player) -> (
     // For all the items that aren't in the player's inventory when they die, pick the first spot that isn't taken
     for (slots,
         if (_: 3 == 'findLater',
-            testSlot = 0;
+            test_slot = 0;
 
-            while (includes(bySlotNum, testSlot), 41, testSlot = testSlot+1);
+            while (includes(by_slot_num, test_slot), 41, test_slot = test_slot+1);
 
-            _: 3 = testSlot;
-            put(bySlotNum, null, testSlot);
+            _: 3 = test_slot;
+            put(by_slot_num, null, test_slot);
         );
     );
 
     // Save the slots in a variable for when they respawn
-    put(global_inventoryData, player ~ 'name', slots);
+    put(global_inventory_data, player ~ 'name', slots);
 );
 
 __on_player_respawns(playerOof)->(
     schedule(0, _(outer(playerOof)) -> (
         player = player(playerOof ~ 'name');
-        slots = global_inventoryData: (player ~ 'name');
+        slots = global_inventory_data: (player ~ 'name');
 
         // When the player respawns, give them the items that are saved in the inventory spots they were when the player died, essentially keepInventory but for certain items
         for (slots,
@@ -157,7 +157,7 @@ __on_player_respawns(playerOof)->(
         );
 
         // Apply effects
-        for (global_toKeepEffect,
+        for (global_to_keep_effect,
             if (_: 3 == 'âny' || lower(_: 3) == player ~ 'name',
                 modify(player, 'effect', _: 0, _: 1, _: 2, false);
             );
@@ -187,13 +187,13 @@ changeCompassPos() -> {
         );
         
         for(slots,
-            pointCompass(player, _);
+            point_compass(player, _);
         );
     );
 
-    // If the timeToTrack is a number, point the compasses at the players after that interval
-    if (global_timeToTrack != 'onUse',
-        schedule(global_timeToTrack, 'changeCompassPos');
+    // If the time_to_track is a number, point the compasses at the players after that interval
+    if (global_time_to_track != 'onUse',
+        schedule(global_time_to_track, 'changeCompassPos');
     );
 };
 
@@ -211,7 +211,7 @@ updatePlayerPosition() -> (
     );
 );
 
-pointCompass(player, slot) -> (
+point_compass(player, slot) -> (
     compass = inventory_get(player, slot);
 
     // Check if the compass is a tracking compass and not just a regular compass
@@ -251,8 +251,8 @@ pointCompass(player, slot) -> (
             );
         );
 
-        // Give some feedback if timeToTrack is set to onUse
-        if (global_timeToTrack == 'onUse',
+        // Give some feedback if time_to_track is set to onUse
+        if (global_time_to_track == 'onUse',
             print(player, format('l Compass pointing to ', 'lb '+tracking));
         );
 
@@ -262,13 +262,13 @@ pointCompass(player, slot) -> (
 );
 
 __on_player_uses_item(player, item_tuple, hand)->(
-    // If the player uses a compass when timeToTrack is set to onUse, update the player positions and point the compass at the player
-    if (global_timeToTrack == 'onUse' && item_tuple: 0 == 'compass',
+    // If the player uses a compass when time_to_track is set to onUse, update the player positions and point the compass at the player
+    if (global_time_to_track == 'onUse' && item_tuple: 0 == 'compass',
         updatePlayerPosition();
-        pointCompass(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
+        point_compass(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
     );
 
-    if (global_noPortalBreaking && includes(l('water_bucket', 'lava_bucket', 'pufferfish_bucket', 'salmon_bucket', 'cod_bucket', 'tropical_fish_bucket', 'axolotl_bucket'), item_tuple: 0),
+    if (global_no_portal_breaking && includes(l('water_bucket', 'lava_bucket', 'pufferfish_bucket', 'salmon_bucket', 'cod_bucket', 'tropical_fish_bucket', 'axolotl_bucket'), item_tuple: 0),
         pos = query(player, 'trace', 4.5, 'exact') - (player ~ 'look')*0.01;
         // Replace the portal blocks with stone then replace it back so the player can't place water in the portal block
         without_updates(
@@ -291,7 +291,7 @@ __on_player_uses_item(player, item_tuple, hand)->(
 );
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) -> (
-    if (global_noPortalBreaking && item_tuple: 0 == 'bone_meal' && (block == 'brown_mushroom' || block == 'red_mushroom'),
+    if (global_no_portal_breaking && item_tuple: 0 == 'bone_meal' && (block == 'brown_mushroom' || block == 'red_mushroom'),
         blocks = rect(pos(block), l(3, 3, 3));
 
         // Replace end portal and frame blocks with stone so mushrooms can't overwrite them, then put them back
@@ -312,16 +312,16 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
     );
 );
 
-global_netherEnter = parse_nbt(read_file('netherEnter', 'nbt'));
+global_nether_enter = parse_nbt(read_file('netherEnter', 'nbt'));
 
-if (global_netherEnter == 'null',
-    global_netherEnter = {};
+if (global_nether_enter == 'null',
+    global_nether_enter = {};
 );
 
-noPortal4U(player) -> (
+no_portal_4_u(player) -> (
     pos = player ~ 'pos';
 
-    if (distance(pos, global_netherEnter: (player ~ 'name')) > global_maxNetherTravel,
+    if (distance(pos, global_nether_enter: (player ~ 'name')) > global_max_nether_travel,
         blocks = neighbours(pos);
 
         for (blocks,
@@ -331,22 +331,22 @@ noPortal4U(player) -> (
         );
     );
 
-    schedule(5, 'noPortal4U', player);
+    schedule(5, 'no_portal_4_u', player);
 );
 
 __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimension) -> (
     if (to_dimension == 'the_nether',
-        put(global_netherEnter, player ~ 'name', to_pos);
+        put(global_nether_enter, player ~ 'name', to_pos);
 
-        if (global_maxNetherTravel < 3000000,
-            noPortal4U(player);
+        if (global_max_nether_travel < 3000000,
+            no_portal_4_u(player);
         );
-        write_file('netherEnter', 'nbt', encode_nbt(global_netherEnter));
+        write_file('netherEnter', 'nbt', encode_nbt(global_nether_enter));
     );
 );
 
 __on_player_breaks_block(player, block) -> (
-    if (global_noPortalBreaking,
+    if (global_no_portal_breaking,
         if (block == 'obsidian',
             pos = pos(block);
 
@@ -362,10 +362,10 @@ __on_player_breaks_block(player, block) -> (
     );
 );
 
-track(toTrack) -> (
+track(to_track) -> (
     player = player();
 
-    slotNum = player ~ 'selected_slot';
+    slot_num = player ~ 'selected_slot';
 
     slot = player ~ 'holds';
 
@@ -377,24 +377,24 @@ track(toTrack) -> (
             // If the compass is a regular compass, say so
             print(player, format('l This is just a regular compass... ', 'c [Get another compass]', '! /compass giveCompass'));
         ,
-            // If logOnTrack is true, tell the player who's being tracked that they're being tracked
-            if (global_logOnTrack,
-                print(player(toTrack), format('lb '+player, 'l  is tracking you!'));
+            // If log_on_track is true, tell the player who's being tracked that they're being tracked
+            if (global_log_on_track,
+                print(player(to_track), format('lb '+player, 'l  is tracking you!'));
             );
 
             // Change the player that the compass is tracking
-            slot: 2: 'Tracking' = toTrack;  
-            inventory_set(player, slotNum, slot: 1, slot: 0, slot: 2);
-            print(format('l Tracking ', 'lb '+toTrack));
+            slot: 2: 'Tracking' = to_track;  
+            inventory_set(player, slot_num, slot: 1, slot: 0, slot: 2);
+            print(format('l Tracking ', 'lb '+to_track));
         );
     );
 );
 
-giveCompass(player) -> (
-    canGive = global_maxCompasses == 'infinity';
+give_compass(player) -> (
+    can_give = global_max_compasses == 'infinity';
 
-    if (!canGive,
-        // If maxCompasses is a number, find the amount of compasses the player has and check if it's less than the maximum amount
+    if (!can_give,
+        // If max_compasses is a number, find the amount of compasses the player has and check if it's less than the maximum amount
         slot = inventory_find(player, 'compass');
         slots = 0;
         while (slot != null, 41,
@@ -402,23 +402,23 @@ giveCompass(player) -> (
             slot = inventory_find(player, 'compass', slot+1);
         );
 
-        canGive = slots < global_maxCompasses;
+        can_give = slots < global_max_compasses;
     );
 
-    if (canGive,
+    if (can_give,
         // Find all the players that aren't the player receiving the compass
         players = filter(entity_selector('@a'),
             _ != player;
         );
 
         if (length(players) > 0, 
-            if (global_logOnTrack,
+            if (global_log_on_track,
                 print(player(players: 0), format('lb '+player, 'l  is tracking you!'));
             );
 
-            nbtData = '{Tracking:"'+lower(players: 0 ~ 'name')+'",LodestoneTracked:false,LodestonePos:{X:0,Y:0,Z:0},LodestoneDimension:"overworld",display:{Name:\'{"text":"'+players: if(i, i, 0) ~ 'name'+'"}\'}}';
+            nbt_data = '{Tracking:"'+lower(players: 0 ~ 'name')+'",LodestoneTracked:false,LodestonePos:{X:0,Y:0,Z:0},LodestoneDimension:"overworld",display:{Name:\'{"text":"'+players: if(i, i, 0) ~ 'name'+'"}\'}}';
             
-            run('give '+player ~ 'name'+' minecraft:compass'+nbtData+' 1');
+            run('give '+player ~ 'name'+' minecraft:compass'+nbt_data+' 1');
         ,
             // If there are no other players online, say so
             print(player, format('l There are no players online'));
@@ -431,7 +431,7 @@ giveCompass(player) -> (
 item_consumed(player, slot) -> (
     item_tuple = inventory_get(player, slot);
     // Find any items that need to be replenished
-    items = filter(global_toKeep, 
+    items = filter(global_to_keep, 
         item_tuple: 0 == _: 0 && _: 4
     );
 
@@ -451,14 +451,14 @@ __on_player_places_block(player, item_tuple, hand, block)->(
 global_ids = l('speed', 'slowness', 'haste', 'mining_fatigue', 'strength', 'instant_health', 'instant_damage', 'jump_boost', 'nausea', 'regeneration', 'resistance', 'fire_resistance', 'water_breathing', 'invisibility', 'blindess', 'night_vision', 'hunger', 'weakness', 'poison', 'wither', 'health_boost', 'absorption', 'saturation', 'glowing', 'levitation', 'luck', 'unluck', 'slow_falling', 'conduit_power', 'dolphins_grace', 'bad_omen', 'hero_of_the_village');
 
 __on_player_finishes_using_item(player, item_tuple, hand)->(
-    if (item_tuple: 0 == 'milk_bucket' && length(global_toKeepEffect) > 0,
+    if (item_tuple: 0 == 'milk_bucket' && length(global_to_keep_effect) > 0,
         effects = parse_nbt(query(player, 'nbt', 'ActiveEffects'));
         if (effects != 'null',
             schedule(0, _(outer(effects)) -> (
                 for (effects,
                     name = global_ids: (_: 'Id' - 1);
 
-                    if (_: 'Duration' > 32767 && includes(map(global_toKeepEffect, _: 0), name),
+                    if (_: 'Duration' > 32767 && includes(map(global_to_keep_effect, _: 0), name),
                         amplifier = _: 'Amplifier';
                         modify(player(), 'effect', name, _: 'Duration', if (amplifier < 0, 256 + amplifier, amplifier), _: 'ShowParticles', _: 'ShowIcon');
                     );
@@ -471,114 +471,114 @@ __on_player_finishes_using_item(player, item_tuple, hand)->(
     item_consumed(player, if(hand == 'offhand', -1, player ~ 'selected_slot'));
 );
 
-spawnWithItem(item, amt, player, persistant) -> (
+spawn_with_item(item, amt, player, persistant) -> (
     if (player() ~ 'permission_level' > 1,
-        put(global_toKeep, null, l(item: 0, amt, item: 2, player, persistant));
-        toKeep = map(global_toKeep, l(_: 0, str(_: 1), if(_: 2, str(_: 2), ''), _: 3, str(_: 4)));
-        delete_file('toKeep', 'nbt');
-        write_file('toKeep', 'nbt', encode_nbt(toKeep));
+        put(global_to_keep, null, l(item: 0, amt, item: 2, player, persistant));
+        to_keep = map(global_to_keep, l(_: 0, str(_: 1), if(_: 2, str(_: 2), ''), _: 3, str(_: 4)));
+        delete_file('to_keep', 'nbt');
+        write_file('to_keep', 'nbt', encode_nbt(to_keep));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-spawnWithEffect(name, duration, amplifier, player) -> (
+spawn_with_effect(name, duration, amplifier, player) -> (
     if (player() ~ 'permission_level' > 1,
-        put(global_toKeepEffect, null, l(name, duration*20, amplifier, player));
-        toKeepEffect = map(global_toKeepEffect, l(_: 0, str(_: 1), str(_: 2), _: 3));
-        delete_file('toKeepEffect', 'nbt');
-        write_file('toKeepEffect', 'nbt', encode_nbt(toKeepEffect));
+        put(global_to_keep_effect, null, l(name, duration*20, amplifier, player));
+        to_keep_effect = map(global_to_keep_effect, l(_: 0, str(_: 1), str(_: 2), _: 3));
+        delete_file('to_keep_effect', 'nbt');
+        write_file('to_keep_effect', 'nbt', encode_nbt(to_keep_effect));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-dontSpawnWithItem(item, player) -> (
+dont_spawn_with_item(item, player) -> (
     if (player() ~ 'permission_level' > 1,
-        global_toKeep = filter(global_toKeep,
+        global_to_keep = filter(global_to_keep,
             _: 0 != item: 0 || _: 3 != player;
         );
-        toKeep = map(global_toKeep, l(_: 0, str(_: 1), if(_: 2, str(_: 2), ''), _: 3));
-        delete_file('toKeep', 'nbt');
-        write_file('toKeep', 'nbt', encode_nbt(toKeep));
+        to_keep = map(global_to_keep, l(_: 0, str(_: 1), if(_: 2, str(_: 2), ''), _: 3));
+        delete_file('to_keep', 'nbt');
+        write_file('to_keep', 'nbt', encode_nbt(to_keep));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-dontSpawnWithEffect(name, player) -> (
+dont_spawn_with_effect(name, player) -> (
     if (player() ~ 'permission_level' > 1,
-        global_toKeepEffect = filter(global_toKeepEffect,
+        global_to_keep_effect = filter(global_to_keep_effect,
             _: 0 != name || _: 3 != player;
         );
-        toKeepEffect = map(global_toKeepEffect, l(_: 0, str(_: 1), str(_: 2), _: 3));
-        delete_file('toKeepEffect', 'nbt');
-        write_file('toKeepEffect', 'nbt', encode_nbt(toKeepEffect));
+        to_keep_effect = map(global_to_keep_effect, l(_: 0, str(_: 1), str(_: 2), _: 3));
+        delete_file('to_keep_effect', 'nbt');
+        write_file('to_keep_effect', 'nbt', encode_nbt(to_keep_effect));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-timeToTrack(val) -> (
+time_to_track(val) -> (
     if (player() ~ 'permission_level' > 1,
         if (type(val) == 'string',
-            global_timeToTrack = val;
+            global_time_to_track = val;
         ,
-            if (global_timeToTrack == 'onUse',
+            if (global_time_to_track == 'onUse',
                 schedule(0, 'changeCompassPos');
             );
-            global_timeToTrack = round(val * 20);
+            global_time_to_track = round(val * 20);
         );
 
-        write_file('timeToTrack', 'nbt', encode_nbt(global_timeToTrack));
+        write_file('time_to_track', 'nbt', encode_nbt(global_time_to_track));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-logOnTrack(val) -> (
+log_on_track(val) -> (
     if (player() ~ 'permission_level' > 1,
-        global_logOnTrack = val;
+        global_log_on_track = val;
 
-        write_file('logOnTrack', 'nbt', encode_nbt(global_logOnTrack));
+        write_file('log_on_track', 'nbt', encode_nbt(global_log_on_track));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-maxCompasses(val) -> (
+max_compasses(val) -> (
     if (player() ~ 'permission_level' > 1,
-        global_maxCompasses = val;
+        global_max_compasses = val;
 
-        write_file('maxCompasses', 'nbt', encode_nbt(global_maxCompasses));
+        write_file('max_compasses', 'nbt', encode_nbt(global_max_compasses));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-noPortalBreaking(val) -> (
+no_portal_breaking(val) -> (
     if (player() ~ 'permission_level' > 1,
-        global_noPortalBreaking = val;
-        delete_file('noPortalBreaking', 'nbt');
-        write_file('noPortalBreaking', 'nbt', encode_nbt(global_noPortalBreaking));
+        global_no_portal_breaking = val;
+        delete_file('no_portal_breaking', 'nbt');
+        write_file('no_portal_breaking', 'nbt', encode_nbt(global_no_portal_breaking));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
     );
 );
 
-maxNetherTravel(val) -> (
+max_nether_travel(val) -> (
     if (player() ~ 'permission_level' > 1,
-        global_maxNetherTravel = floor(val/8);
+        global_max_nether_travel = floor(val/8);
 
-        write_file('maxNetherTravel', 'nbt', encode_nbt(global_maxNetherTravel));
+        write_file('max_nether_travel', 'nbt', encode_nbt(global_max_nether_travel));
         print(player(), format('l Done'));
     ,
         print(player(), format('l Insufficient permissions', 'ei   Requires at least permission level 2'));
@@ -599,6 +599,6 @@ distance(v1, v2) -> (
     sqrt(reduce(v1 - v2, _a + _*_, 0));
 );
 
-if (global_timeToTrack != 'onUse',
+if (global_time_to_track != 'onUse',
     changeCompassPos();
 );
