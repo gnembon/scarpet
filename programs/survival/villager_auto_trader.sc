@@ -10,7 +10,7 @@ __config()->{'scope'->'global'};
 
 global_trade_speed=120;//Trade every 120 ticks, so u have time to retrieve item. Same as piglin bartering, so seemed fair
 
-entity_load_handler('zombie_villager', '_trade', null);
+entity_load_handler('zombie_villager', _(e, new) -> _trade(zombie_villager, null));
 
 
 _trade(zombie_villager, trade)->(
@@ -19,7 +19,7 @@ _trade(zombie_villager, trade)->(
         trade=first(trade_list,
             _:'buy':'id'=='minecraft:emerald' &&//only emerald trades
             _:'buyB':'id'=='minecraft:air' &&//don't want second trade item
-            _:'maxUses'!=0 &&//Cos if not it's cheaty, dont work rn
+            _:'maxUses'!=0 //Cos if not it's cheaty, dont work rn
         );
         if(!trade, return())//again, this is a cheap call and only called once
     );
@@ -30,26 +30,28 @@ _trade(zombie_villager, trade)->(
 
         item = null;
         in_dimension(zombie_villager,
-            item = spawn('item',pos(zombie_villager),str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));//todo add velocity towards player
+            item_pos = pos(zombie_villager)+[0, zombie_villager~'eye_height'-0.3, 0]; 
+            item = spawn('item',item_pos,str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));//todo add velocity towards player
         );
-
-        item_pos = pos(item);
 
         nearest_player = null;
         distance_sq_to_nearest_player=25;
 
-        for(entity_area('player', item_pos, 5),
+        for(entity_area('player', item_pos, [5,5,5]),
             distance_sq = _euclidean_sq(item_pos, pos(_));
             if(distance_sq<distance_sq_to_nearest_player,
-                nearest_player = _
+                nearest_player = _;
                 distance_sq_to_nearest_player = distance_sq
             )
         );
 
         if(nearest_player!=null,
-            
+            item_motion = (pos(nearest_player)-item_pos)*0.3;
+            modify(item, 'motion', item_motion)
         )
     );
 
     schedule(global_trade_speed, '_trade', zombie_villager, trade)
 );
+
+for(entity_list('zombie_villager'), _trade(_, null));
