@@ -138,7 +138,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Firigion
 	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
 	with a letherworker and all conditions for it to appear are met. Said conditions can be totally customizable in the
-	app, including the vilalger being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
+	app, including the villager being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
 	level of the villager and chances of the trade to fail.
 
 ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
