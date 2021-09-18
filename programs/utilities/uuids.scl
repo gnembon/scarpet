@@ -1,10 +1,10 @@
 // Returns a new UUID int array
 generate_uuid() -> (
     uuid = map(range(4), floor(rand(2^32)));
-    uuid:1 = _and_bitwise(uuid:1, 0xffff0fff); // clear version
-    uuid:1 = _or_bitwise(uuid:1, 0x00004000);  // set to version 4
-    uuid:2 = _and_bitwise(uuid:2, 0x3fffffff); // clear variant
-    uuid:2 = _or_bitwise(uuid:2, 0x80000000);  // set to IETF variant
+    uuid:1 = bitwise_and(uuid:1, 0xffff0fff); // clear version
+    uuid:1 = bitwise_or(uuid:1, 0x00004000);  // set to version 4
+    uuid:2 = bitwise_and(uuid:2, 0x3fffffff); // clear variant
+    uuid:2 = bitwise_or(uuid:2, 0x80000000);  // set to IETF variant
     uuid
 );
 
@@ -52,31 +52,6 @@ _hex_to_number(string) -> (
         t = global_hex ~ _;
         if(t == null, exit('Invalid hexadecimal character \'' + _ + '\' in string: ' + string));
         c += t
-    );
-    c
-);
-
-// BITWISE OPERATORS
-_or_bitwise(a, b) -> (
-    loop(32,
-        c += c;
-        if(a >= 2^31 || b >= 2^31, c += 1);
-        a += a;
-        b += b;
-        a = a % 2^32;
-        b = b % 2^32;
-    );
-    c
-);
-
-_and_bitwise(a, b) -> (
-    loop(32,
-        c += c;
-        if(a >= 2^31 && b >= 2^31, c += 1);
-        a += a;
-        b += b;
-        a = a % 2^32;
-        b = b % 2^32;
     );
     c
 );
