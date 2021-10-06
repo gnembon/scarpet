@@ -214,6 +214,13 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Gnottero
 	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
 
+### [skip_night.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/skip_night.sc):
+#### By Firigion
+	Allows the player to automatically skip the night witout the use of a bed bot. Can be used in bed
+	mode or in command mode (toggeled inside the app, default: bed mode). Bed mode will skip the night
+	as long as there's a bed in the overworld with the work "skip" in its name. Local difficulty is not
+	reset when skipping the night. See this video for a full showcase: https://youtu.be/FY0PwGE0g68.
+
 ### [sleep_ignore_fake_players.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/sleep_ignore_fake_players.sc):
 #### By Sanluli36li
 	Skip the night and no longer required fake players to sleep.
