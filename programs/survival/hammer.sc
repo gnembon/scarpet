@@ -1,11 +1,9 @@
 //!scarpet v1.5
 
 // stay loaded
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
+__config() -> {
+	'stay_loaded'->true
+};
 
 __get_block_range(position, face) -> 
 (
@@ -35,10 +33,8 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 	)
 );
 
-__on_player_clicks_block(player, block, face) ->
-(
+__on_player_clicks_block(player, block, face) -> if (global_radius,
 	global_breakrange = null;
-	if (!global_radius, return());
 	item_mainhand = player ~ 'holds';
 	if (!item_mainhand || !(item_mainhand:0 == 'stone_pickaxe'), return());
 	global_breakrange = __get_block_range(pos(block), face);
@@ -52,11 +48,5 @@ __on_player_breaks_block(player, block) ->
 	if (!global_radius || !block_range, return());
 	item_mainhand = player ~ 'holds';
 	if(!item_mainhand || !(item_mainhand:0 == 'stone_pickaxe'), return());
-	for(block_range, harvest(player, _))
+	for(block_range, harvest(player, _); signal_event('player_breaks_block', player, player, _))
 )
-
-
-
-
-
-
