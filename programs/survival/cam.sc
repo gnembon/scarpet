@@ -63,7 +63,7 @@ __command() ->
          __turn_to_camera_mode(p);
       )
    );
-   ''
+   null
 );
 
 
