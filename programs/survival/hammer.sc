@@ -1,10 +1,5 @@
 //!scarpet v1.5
 
-// stay loaded
-__config() -> {
-	'stay_loaded'->true
-};
-
 __get_block_range(position, face) -> 
 (
 	l(x,y,z) = position;
