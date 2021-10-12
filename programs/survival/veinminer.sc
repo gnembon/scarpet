@@ -1,8 +1,3 @@
-// stay loaded
-__config() -> {
-	'stay_loaded'->true
-};
-
 __holds(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));
