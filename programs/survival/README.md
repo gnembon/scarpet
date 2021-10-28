@@ -132,6 +132,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+	
+### [playerme.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/playerme.sc):
+#### by BisUmTo
+	A wrapper around the /player carpet command. It will only allow the caller to affect themselves
+	with the player command. This allows for afking, shadowing and such, but not bots, which a lot of
+	servers find useful.
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
