@@ -132,6 +132,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+	
+### [playerme.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/playerme.sc):
+#### by BisUmTo
+	A wrapper around the /player carpet command. It will only allow the caller to affect themselves
+	with the player command. This allows for afking, shadowing and such, but not bots, which a lot of
+	servers find useful.
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
@@ -142,6 +148,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	Makes branch mining more interesting for sure.
 	Fortune 1 shows only iron, coal and redstone.
 	Fortune 3 shows diamond, lapis,gold, redstone and emerald, not iron and coal
+
+### [renewable_elytra_trade.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/renewable_elytra_trade.sc):
+#### By Firigion
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
+	with a letherworker and all conditions for it to appear are met. Said conditions can be totally customizable in the
+	app, including the villager being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
+	level of the villager and chances of the trade to fail.
 
 ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
 #### By gnembonmc
@@ -171,7 +184,8 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you 
+	will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
 ### [shulkerboxes.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shulkerboxes.sc):
