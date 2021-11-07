@@ -43,7 +43,6 @@ __try_repair(player,item_name,item_nbt,damage) ->
 	total_xp = __xp_from_level(p_level)+ __xp_from_progress(p_level,p_xp_progress);
 	
 	
-	
 	if(total_xp != 0, 
 		if(cost > total_xp,
 			cost = cost - total_xp;
@@ -100,31 +99,28 @@ __xp_from_progress(level,progress) ->
 
 __get_level_from_xp(xp) ->
 (
-	if(xp <= 1005,
+
+	if(xp <= 352,
 		return(floor(sqrt(xp+9)-3));
 	);
-	if(xp >= 1006 && xp <= 1627,
-		return(floor((sqrt(40*xp-14319)+9)/10));
+	if(xp >= 353 && xp <= 1507,
+		return(floor(8.1+sqrt(0.4*(xp-195.975))));
 	);
-	if(xp >= 1628,
-		return(floor((sqrt(72*xp-54215)+325)/18));
+	if(xp>=1508,
+		return(floor(sqrt(18*xp-13553.75)/9+325/18));
 	);
+	
 );
 
 __get_progress_from_xp(level,xp) ->
 (
-	if(xp <= 1005,
+	if(xp <= 352,
 		return((xp-(level^2+6*level))/(2*level+7));
 	);
-	if(xp >= 1006 && xp <= 1627,
+	if(xp >= 353 && xp <= 1507,
 		return((xp-(2.5*level^2-40.5*level+360))/(5*level-38));
 	);
-	if(xp >= 1628,
+	if(xp >= 1508,
 		return((xp-(4.5*level^2-162.5*level+2220))/(9*level-158));
 	);
 );
-
-
-
-
-
