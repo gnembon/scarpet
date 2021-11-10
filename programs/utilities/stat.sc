@@ -176,7 +176,7 @@ __on_statistic(player, category, event, value) -> (
     if(global_stat == 'bedrockRemoved', exit());
     if(global_stat == 'digs' && category == 'used' && global_tools~event != null, exit(schedule(0, 'updateDigs')));
     if(global_stat == 'level', exit(schedule(0, 'updatelevels')));
-    if([category, event] == global_stat, schedule(0, 'updatelevels'));
+    if([category, event] == global_stat, schedule(0, 'updateStat'));
 );
 
 __on_player_places_block(player, item_tuple, hand, block) -> (
