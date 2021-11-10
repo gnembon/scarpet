@@ -158,7 +158,7 @@ __on_player_respawns(playerOof)->(
 
         // Apply effects
         for (global_to_keep_effect,
-            if (_: 3 == 'âny' || lower(_: 3) == player ~ 'name',
+            if (_: 3 == 'âny' || lower(_: 3) == lower(player ~ 'name'),
                 modify(player, 'effect', _: 0, _: 1, _: 2, false);
             );
         );
