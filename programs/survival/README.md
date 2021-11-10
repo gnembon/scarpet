@@ -44,7 +44,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
 #### By Xendergo
-	https://youtu.be/dG6V_zYTKq0
+	https://youtu.be/q1muVOFOM-k
 	Adds a whole bunch of features helpful for Dream style minecraft challenges
 
   Commands:
