@@ -1,6 +1,6 @@
 // this addon adds potion trades to journyman clerics
 // credit goes to Firigion and the renewable_elytra_trade.sc script
-// credit also goes to _Taser_Monkey_ who provided the nbt data for eash custom potion.
+// credit also goes to _Taser_Monkey_ who provided the nbt data for each custom potion.
 
 // Nbt data for each avalible trade.
 global_potion_trades = [
