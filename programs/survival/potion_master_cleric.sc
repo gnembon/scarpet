@@ -1,7 +1,7 @@
 // this addon adds potion trades to journyman clerics
 
 
-// ALl the avalible trades
+// All the avalible trades
 global_potion_trades = [
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
