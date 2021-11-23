@@ -1,8 +1,10 @@
 // this addon adds potion trades to journyman clerics
+// credit goes to Firigion and the renewable_elytra_trade.sc script
+// credit also goes to _Taser_Monkey_ who provided the nbt data for eash custom potion.
 
-
-// All the avalible trades
+// Nbt data for each avalible trade.
 global_potion_trades = [
+	// Dolphins Grace
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:9600, Id: 30, Amplifier: 3}], 
@@ -16,7 +18,9 @@ global_potion_trades = [
 		specialPrice: 0,
 		rewardExp: 1,
 		xp: 1
-	}','{
+	}',
+	// Haste
+	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:9600, Id: 3, Amplifier: 1}], 
 			CustomPotionColor: 16755200, display: {Name:\'{ "text":"Potion of Haste"}\'}}
@@ -29,7 +33,9 @@ global_potion_trades = [
 		specialPrice: 0,
 		rewardExp: 1,
 		xp: 1
-	}','{
+	}',
+	// Levitation
+	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:300, Id: 25, Amplifier: 3}], 
 			CustomPotionColor: 16777215, display: {Name:\'{ "text":"Potion of Levitation"}\'}}
@@ -42,7 +48,9 @@ global_potion_trades = [
 		specialPrice: 0,
 		rewardExp: 1,
 		xp: 1
-	}','{
+	}',
+	// Wither
+	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:170, Id: 20, Amplifier: 3}], 
 			CustomPotionColor: 0, display: {Name:\'{ "text":"Potion of Wither"}\'}}
@@ -55,7 +63,9 @@ global_potion_trades = [
 		specialPrice: 0,
 		rewardExp: 1,
 		xp: 1
-	}','{
+	}',
+	// Mining Fatigue
+	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:2800, Id: 4, Amplifier: 0}], 
 			CustomPotionColor: 5592405, display: {Name:\'{ "text":"Potion of Mining Fatigue"}\'}}
@@ -68,7 +78,9 @@ global_potion_trades = [
 		specialPrice: 0,
 		rewardExp: 1,
 		xp: 1
-	}','{
+	}',
+	// Blindness
+	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
 			CustomPotionEffects:[{Duration:330, Id: 15, Amplifier: 0}], 
 			CustomPotionColor: 70000, display: {Name:\'{ "text":"Potion of Blindness"}\'}}
@@ -89,7 +101,6 @@ global_potion_types = ['splash_potion','lingering_potion','potion'];
 global_potion_emerald_cost = [4,8];
 
 
-// Add The Potion Trade
 _add_trades(cleric, p) -> (
 	// add 0-3 potion trades
 	loop(rand(4),
@@ -106,7 +117,7 @@ _add_trades(cleric, p) -> (
 		run(str('/data modify entity %s Offers.Recipes append value %s', cleric~'command_name', trade));
 	);
 
-	// Dont add more potions to a potion master
+	// Dont add any more potions to a potion master
 	modify(cleric, 'tag', 'IsPotionMaster'); 
 
 );
@@ -114,7 +125,7 @@ _add_trades(cleric, p) -> (
 __on_player_interacts_with_entity(player, entity, hand) -> (
 	if(entity~'type'=='villager',
 		nbt = entity~'nbt';
-		// Villager is a cleric and is a journyman and not a potion master
+		// If Villager is a cleric and is a journyman and not already a potion master
 		if(nbt:'VillagerData':'profession'=='minecraft:cleric' && 
 			nbt:'VillagerData':'level' > 2 &&
 			parse_nbt(nbt:'Tags')~'IsPotionMaster' == null
@@ -123,3 +134,5 @@ __on_player_interacts_with_entity(player, entity, hand) -> (
 		);
 	)
 );
+
+

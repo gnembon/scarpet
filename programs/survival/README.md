@@ -140,10 +140,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	servers find useful.
 
 
-### [potion_master_cleric](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
+### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
 #### By Opsaaaaa
-	Adds 6 randomized potion Trades to Clerics. 
-	It adds potions for Haste, Dolphins Grace, Levitation, Blindness, Mining Fatigue.
+	Adds 6 randomized potion trades to the Cleric. 
+	It adds potions for Haste, Dolphins Grace, Levitation, Wither, Blindness, and Mining Fatigue.
 	Each effect can appear as a regular, splash, or lingering potion. 
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
