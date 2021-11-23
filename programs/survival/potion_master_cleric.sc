@@ -1,17 +1,26 @@
-// this addon adds potion trades to journyman clerics
+// This addon adds 6 randomized potion trades to the Cleric. 
+// It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, 
+// and Mining Fatigue available in survival as potions.
+// Each effect can appear as a regular, splash, or lingering potion.
+// Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
+
 // credit goes to Firigion and the renewable_elytra_trade.sc script
 // credit also goes to _Taser_Monkey_ who provided the nbt data for each custom potion.
 
 
 // Radomly Choose Between these Potion types.
 global_potion_types = ['splash_potion','lingering_potion','potion'];
+
+// Pick a Price Between 4 and 8 emeralds
 global_potion_emerald_cost = [4,8];
+
 // Give each cleric 0-3 new potion trades.
 global_max_potion_trades = 3;
+
 // The level a cleric must be inorder to develop potion trades.
 // levels go from 1-5 novice though Master
-// I do not recommend setting this to 1, 
-// It prevent cycled clerics from developing trades
+// I do not recommend setting this to 1, because 
+// this code does not handle cycling villager trades. 
 global_potion_master_level = 3;
 
 // Nbt data for each avalible trade.
@@ -109,25 +118,24 @@ global_potion_trades = [
 	
 ];
 
-
-
-_add_trades(cleric, p) -> (
-	// add 0-3 potion trades
+_add_trades(cleric, p, nbt) -> (
+	// add 0-max number of potion trades
 	loop(rand(1 + global_max_potion_trades),
 
-		trade = nbt('{Offers: Recipes:['+str(
+		trade = nbt(str(
 			// select a random trade from the list above
 			global_potion_trades:rand(length(global_potion_trades)),
 			// Randomize the potion type 
 			global_potion_types:rand(length(global_potion_types)),
 			// randomize the cost of each trade
-			(global_potion_emerald_cost:0) + rand(global_potion_emerald_cost:1)
-		)+']}');
-		
-		modify(cleric, 'nbt_merge', trade);
-		// run(str('/data modify entity %s Offers.Recipes append value %s', cleric~'command_name', trade));
-	);
+			rand((global_potion_emerald_cost:1) - global_potion_emerald_cost:0) + global_potion_emerald_cost:0
+		));
 
+		// add the new potion trade to the end of the clerics trades
+    	put(nbt, 'Offers.Recipes', trade, -1 );
+	);
+	
+	modify(cleric, 'nbt_merge', nbt);
 	// Dont add any more potions to a potion master
 	modify(cleric, 'tag', 'IsPotionMaster'); 
 
@@ -136,12 +144,12 @@ _add_trades(cleric, p) -> (
 __on_player_interacts_with_entity(player, entity, hand) -> (
 	if(entity~'type'=='villager',
 		nbt = entity~'nbt';
-		// If Villager is a cleric and is a journyman and not already a potion master
+		// If Villager is a cleric has a high enough level and is not already a potion master
 		if(nbt:'VillagerData':'profession'=='minecraft:cleric' && 
 			nbt:'VillagerData':'level' >= global_potion_master_level &&
 			parse_nbt(nbt:'Tags')~'IsPotionMaster' == null
 			, 
-			_add_trades(entity, player)
+			_add_trades(entity, player, nbt)
 		);
 	)
 );
