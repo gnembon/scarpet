@@ -2,6 +2,18 @@
 // credit goes to Firigion and the renewable_elytra_trade.sc script
 // credit also goes to _Taser_Monkey_ who provided the nbt data for each custom potion.
 
+
+// Radomly Choose Between these Potion types.
+global_potion_types = ['splash_potion','lingering_potion','potion'];
+global_potion_emerald_cost = [4,8];
+// Give each cleric 0-3 new potion trades.
+global_max_potion_trades = 3;
+// The level a cleric must be inorder to develop potion trades.
+// levels go from 1-5 novice though Master
+// I do not recommend setting this to 1, 
+// It prevent cycled clerics from developing trades
+global_potion_master_level = 3
+
 // Nbt data for each avalible trade.
 global_potion_trades = [
 	// Dolphins Grace
@@ -97,24 +109,23 @@ global_potion_trades = [
 	
 ];
 
-global_potion_types = ['splash_potion','lingering_potion','potion'];
-global_potion_emerald_cost = [4,8];
 
 
 _add_trades(cleric, p) -> (
 	// add 0-3 potion trades
-	loop(rand(4),
+	loop(rand(1 + global_max_potion_trades),
 
-		trade = nbt(str(
+		trade = nbt('{Offers: Recipes:['+str(
 			// select a random trade from the list above
 			global_potion_trades:rand(length(global_potion_trades)),
 			// Randomize the potion type 
 			global_potion_types:rand(length(global_potion_types)),
 			// randomize the cost of each trade
 			(global_potion_emerald_cost:0) + rand(global_potion_emerald_cost:1)
-		));
+		)+']}');
 		
-		run(str('/data modify entity %s Offers.Recipes append value %s', cleric~'command_name', trade));
+		modify(cleric, 'nbt_merge', trade)
+		// run(str('/data modify entity %s Offers.Recipes append value %s', cleric~'command_name', trade));
 	);
 
 	// Dont add any more potions to a potion master
@@ -127,7 +138,7 @@ __on_player_interacts_with_entity(player, entity, hand) -> (
 		nbt = entity~'nbt';
 		// If Villager is a cleric and is a journyman and not already a potion master
 		if(nbt:'VillagerData':'profession'=='minecraft:cleric' && 
-			nbt:'VillagerData':'level' > 2 &&
+			nbt:'VillagerData':'level' >= global_potion_master_level &&
 			parse_nbt(nbt:'Tags')~'IsPotionMaster' == null
 			, 
 			_add_trades(entity, player)
