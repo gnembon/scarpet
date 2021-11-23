@@ -154,13 +154,11 @@ _run_fill_area(pos1, pos2, flower_filter) -> (
 
   // check for OP
   if(p ~ 'permission_level' < 2,
-    __print_error('You must be OP to fill blocks');
-    exit();
+    __error('You must be OP to fill blocks');
   );
   // check if glass_mode is not enabled and height of volume is more than 1
   if(!global_setting_glass_mode && floor(pos1 : 1) != floor(pos2 : 1),
-    __print_error('You must have glass_mode setting enabled to fill an area with a height greater than 1');
-    exit();
+    __error('You must have glass_mode setting enabled to fill an area with a height greater than 1');
   );
 
   // if flower is being filtered, get id of filter
@@ -170,8 +168,7 @@ _run_fill_area(pos1, pos2, flower_filter) -> (
 
     // checks if given filter is a flower
     if(filter_flower_id == null,
-      __print_error('Not a valid flower: ' + flower_filter);
-      exit();
+      __error('Not a valid flower: ' + flower_filter);
     ),
   //else:
     filter_flower_id = null;
@@ -262,8 +259,8 @@ __get_volume_size(pos1, pos2) -> (
   dx * dy * dz; // return volume size
 );
 
-__print_error(message) -> (
-  print(player(), format('r ' + message))
+__error(message) -> (
+  exit(print(player(), format('r ' + message)));
 );
 
 __print_setting(setting) -> (
