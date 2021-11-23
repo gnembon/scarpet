@@ -12,7 +12,7 @@ global_max_potion_trades = 3;
 // levels go from 1-5 novice though Master
 // I do not recommend setting this to 1, 
 // It prevent cycled clerics from developing trades
-global_potion_master_level = 3
+global_potion_master_level = 3;
 
 // Nbt data for each avalible trade.
 global_potion_trades = [
@@ -124,7 +124,7 @@ _add_trades(cleric, p) -> (
 			(global_potion_emerald_cost:0) + rand(global_potion_emerald_cost:1)
 		)+']}');
 		
-		modify(cleric, 'nbt_merge', trade)
+		modify(cleric, 'nbt_merge', trade);
 		// run(str('/data modify entity %s Offers.Recipes append value %s', cleric~'command_name', trade));
 	);
 
