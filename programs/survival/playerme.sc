@@ -40,7 +40,7 @@ __config() -> {
     },
     'arguments' -> {
         'ticks' -> {'type' -> 'int', 'min' -> 1, 'max' -> 72000, 'suggest' -> [20]},
-        'hotbarslot' -> {'type' -> 'int', 'min' -> 0, 'max' -> 8, 'suggest' -> [1,2,3,4,5,6,7,8,9]},
+        'hotbarslot' -> {'type' -> 'int', 'min' -> 1, 'max' -> 9, 'suggest' -> [1,2,3,4,5,6,7,8,9]},
     }
 };
 
