@@ -1,11 +1,5 @@
 // Print the stats of the horse the player is looking at
 
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
-
 __command() -> (
 	target = query(player(), 'trace', 4.5, 'entities');
 	if (has({'horse', 'donkey', 'mule'}, target~'type'),
