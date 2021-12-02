@@ -330,5 +330,4 @@ Various scripts that modify various game elements, often replicating popular mod
 	Firigion
 	boyenn
 	_GieR
-	WerLunar
 	(Many more hopefully!)
