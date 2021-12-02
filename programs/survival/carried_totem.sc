@@ -12,7 +12,7 @@ __on_player_takes_damage(player, amount, source, source_entity) -> (
 	&& source != 'outOfWorld'
 	&& player~'holds':0 != totem
 	&& query(player, 'holds', 'offhand'):0 != totem
-	&& inventory_find(player, totem),
+	&& inventory_find(player, totem) != null,
 		// when nothing in offhand
 		if(inventory_get(player, -1) == null,
 			inventory_set(player, -1, 1, totem);
