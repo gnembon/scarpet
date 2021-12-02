@@ -47,12 +47,6 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By KingOfTheClouds
 	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
 
-### [cave_cleaner.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cave_cleaner.sc):
-#### By WerLunar
-	Kill zombies holding naturally dropped items within 50 blocks of the player.
-	Reimplementing cave cleaner from Hermitcraft Season 8 since it's not public.
-	Only effective on spectator player.
-
 ### [destructive_lightning.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/destructive_lightning.sc):
 #### By Mdaff386
     Once you start it any lightning that strikes, either natural, summoned or a channeling trident,
