@@ -40,6 +40,18 @@ global_potion_trades = [
 		rewardExp: 1,
 		xp: 1
 	}',
+	// Luck
+	'{
+		sell: {id: "minecraft:%s", Count:1, tag:{Potion: "minecraft:luck"}},
+		buy: {id: "minecraft:emerald", Count: %d},
+		buyB: {id: "minecraft:glow_berries", Count: 1},
+		uses: 0,
+		demand: -20,
+		priceMutiplier: 0.0,
+		specialPrice: 0,
+		rewardExp: 1,
+		xp: 1
+	}',
 	// Haste
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
