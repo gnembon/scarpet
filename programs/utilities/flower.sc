@@ -62,7 +62,9 @@ __config() -> {
     'count <from> <to>' -> '_run_count_area',
     'fill <from> <to>' -> ['_run_fill_area', null],
     'fill <from> <to> filter <flower>' -> '_run_fill_area',
-    'print <pos> ' -> '__print_flower_at',
+    'glasstypes' -> '__print_glass_types_list',
+    'print <pos>' -> '__print_flower_at',
+    'settings' -> '__print_settings_help',
     'settings <setting>' -> '__print_setting',
     'settings <setting> <bool>' -> '__change_setting'
   },
@@ -98,15 +100,13 @@ __print_help() -> (
     '/flower print <pos> - prints the flower at a position',
     '/flower settings <setting> - prints setting value',
     '/flower settings <setting> <true/false> - set setting',
-    '',
-    format('b Settings:'),
-    format('y ignore_biome') + ' - checking for flower forest biome before counting/filling will be skipped',
-    format('y glass_mode') + ' - similarly colored glass blocks will be placed instead of flower blocks. Required if height of area is more than 1',
-    format('y place_air_above') + ' - air will be filled above flowers (only when glass_mode is false)',
+    ''
   ];
 
   p = player();
   for(help_lines, print(p, _));
+
+  __print_settings_help();
 );
 
 count_area(pos1, pos2) -> (
@@ -185,11 +185,9 @@ __print_flower_at(position) -> (
   print(player(), str('Flower at %s: %s', join(', ', position), global_flower_list : _get_flower_id_at(position)));
 );
 
+// position must only be integers
 _get_flower_id_at(position) -> (
-  x = floor(position : 0);
-  y = floor(position : 1);
-  z = floor(position : 2);
-
+  [x, y, z] = position;
   if(global_use_legacy_noise,
     // gets simplex noise for given coordinate with seed 2345 (from vanilla code)
     val = simplex(x / 24, z / 24, null, 2345),
@@ -261,6 +259,26 @@ __get_volume_size(pos1, pos2) -> (
 
 __error(message) -> (
   exit(print(player(), format('r ' + message)));
+);
+
+__print_glass_types_list() -> (
+  p = player();
+  print(p, format('b Glass Types:'));
+  for(global_flower_list,
+    print(p, str('%s - %s', _, global_glass_list : _i));
+  );
+);
+
+__print_settings_help() -> (
+  help_lines = [
+    format('b Settings:'),
+    format('y ignore_biome') + ' - checking for flower forest biome before counting/filling will be skipped',
+    format('y glass_mode') + ' - similarly colored glass blocks will be placed instead of flower blocks. Required if height of area is more than 1',
+    format('y place_air_above') + ' - air will be filled above flowers (only when glass_mode is false)'
+  ];
+
+  p = player();
+  for(help_lines, print(p, _));
 );
 
 __print_setting(setting) -> (
