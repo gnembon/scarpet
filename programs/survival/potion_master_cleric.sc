@@ -1,5 +1,5 @@
-// This addon adds 6 randomized potion trades to the Cleric. 
-// It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, 
+// This addon adds 7 randomized potion trades to the Cleric. 
+// It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, 
 // and Mining Fatigue available in survival as potions.
 // Each effect can appear as a regular, splash, or lingering potion.
 // Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
