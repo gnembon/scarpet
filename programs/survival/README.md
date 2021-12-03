@@ -143,8 +143,9 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
 #### By Opsaaaaa
 	Adds 6 randomized potion trades to the Cleric. 
-	It adds potions for Haste, Dolphins Grace, Levitation, Wither, Blindness, and Mining Fatigue.
-	Each effect can appear as a regular, splash, or lingering potion. 
+	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, and Mining Fatigue available in survival as potions.
+	Each effect can appear as a regular, splash, or lingering potion.
+	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
