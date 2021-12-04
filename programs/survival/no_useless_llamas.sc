@@ -1,4 +1,5 @@
-// Any Llama Clicked with a chest will have a full sized Inventory
+// Have you ever thought "hay i could use llamas" then you find a llama with only 3 slots.
+// This app makes every llama have a full sized inventory. Simply click on the llama with a chest.
 
 
 // Max out the inventory size of the lama 
