@@ -86,16 +86,19 @@ __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimen
 
 		//compare the two sides to determine which direction the player should face
 		if(sidelist:0 > sidelist:1,
-			yaw = -45 * axis + 180,
+			yaw = -45 * axis + 180;
+			body_yaw = yaw,
 			sidelist:1 > sidelist:0,
-			yaw = -45 * axis,
+			yaw = -45 * axis;
+			body_yaw = yaw,
 			//if the two sides had matching numbers of valid blocks, don't change anything
-			yaw = p ~ 'yaw'
+			yaw = p ~ 'yaw';
+			body_yaw = p ~ 'body_yaw'
 		);
 
 		//modify the player's head and body yaw
 		modify(p,'yaw',yaw);
-		modify(p,'body_yaw',yaw);
+		modify(p,'body_yaw',body_yaw);
 	)
 );
 
