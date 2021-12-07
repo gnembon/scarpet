@@ -6,6 +6,7 @@ __config() ->
 		
 		['commands',
 			{
+				['','__guide'],
 				['<mode>','__change']
 			}
 		],
@@ -33,7 +34,22 @@ __config() ->
 __on_start() ->
 (
 	if(!load_app_data(),
-		store_app_data(m());
+		store_app_data({});
+	)
+);
+
+//prints script explanation when command is called with no arguments
+__guide() ->
+(
+	print(player(),
+		join('\n',
+			[
+				'Reorients player when travelling through a nether portal',
+				' /portalorient off   - does not change player orientation',
+				' /portalorient air   - face side with more air blocks',
+				' /portalorient solid - face side with fewer solid blocks'
+			]
+		)
 	)
 );
 
