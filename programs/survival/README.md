@@ -159,14 +159,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	with the player command. This allows for afking, shadowing and such, but not bots, which a lot of
 	servers find useful.
 
-
-### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
-#### By Opsaaaaa
-	Adds 7 randomized potion trades to the Cleric. 
-	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, and Mining Fatigue available in survival as potions.
-	Each effect can appear as a regular, splash, or lingering potion.
-	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
-
 ### [portalorient.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/portalorient.sc):
 #### By rv3r
 	Reorients a player after going through a Nether portal. App settings are per-player and default to not affecting player.
@@ -174,6 +166,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	/portalorient air   - makes player face toward side with more air blocks
 	/portalorient solid - makes player face toward side with fewer solid blocks
 	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
+
+### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
+#### By Opsaaaaa
+	Adds 7 randomized potion trades to the Cleric. 
+	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, and Mining Fatigue available in survival as potions.
+	Each effect can appear as a regular, splash, or lingering potion.
+	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
