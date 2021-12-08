@@ -33,6 +33,15 @@ Various scripts that modify various game elements, often replicating popular mod
 	and __get_nbt_value_in_slot(player, slot, tag_name)
 	which can be very useful anywhere.
 
+### [bucketstack.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bucketstack.sc):
+#### By rv3r and Firigion
+	Buckets act like honey bottles.
+	Set custom stack sizes for any bucket type with /bucketstack <bucket> <stacksize> and the buckets will stack when filled or picked up by a player.
+	Stacking requires identical nbt data for buckets of water mobs.
+	When using a stack of buckets, receive an empty bucket and continue using the stack as usual, just like honey bottles.
+	
+	Can't work in creative mode.
+
 ### [cam.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cam.sc):
 #### By Gnembon
     As /c /s used to be in the olden 1.15- days, just configurable, safe with anti-cheat mechanisms, saving player landing location in
@@ -143,6 +152,28 @@ Various scripts that modify various game elements, often replicating popular mod
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+	
+### [playerme.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/playerme.sc):
+#### by BisUmTo
+	A wrapper around the /player carpet command. It will only allow the caller to affect themselves
+	with the player command. This allows for afking, shadowing and such, but not bots, which a lot of
+	servers find useful.
+
+
+### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
+#### By Opsaaaaa
+	Adds 7 randomized potion trades to the Cleric. 
+	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, and Mining Fatigue available in survival as potions.
+	Each effect can appear as a regular, splash, or lingering potion.
+	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
+
+### [portalorient.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/portalorient.sc):
+#### By rv3r
+	Reorients a player after going through a Nether portal. App settings are per-player and default to not affecting player.
+	/portalorient off   - does not change player orientation
+	/portalorient air   - makes player face toward side with more air blocks
+	/portalorient solid - makes player face toward side with fewer solid blocks
+	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
@@ -153,6 +184,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	Makes branch mining more interesting for sure.
 	Fortune 1 shows only iron, coal and redstone.
 	Fortune 3 shows diamond, lapis,gold, redstone and emerald, not iron and coal
+
+### [renewable_elytra_trade.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/renewable_elytra_trade.sc):
+#### By Firigion
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
+	with a letherworker and all conditions for it to appear are met. Said conditions can be totally customizable in the
+	app, including the villager being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
+	level of the villager and chances of the trade to fail.
 
 ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
 #### By gnembonmc
@@ -182,7 +220,8 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you 
+	will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
 ### [shoot_fireball.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shoot_fireball.sc)
@@ -222,6 +261,13 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [simply_harvest.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/simply_harvest.sc):
 #### By Gnottero
 	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
+
+### [skip_night.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/skip_night.sc):
+#### By Firigion
+	Allows the player to automatically skip the night witout the use of a bed bot. Can be used in bed
+	mode or in command mode (toggeled inside the app, default: bed mode). Bed mode will skip the night
+	as long as there's a bed in the overworld with the work "skip" in its name. Local difficulty is not
+	reset when skipping the night. See this video for a full showcase: https://youtu.be/FY0PwGE0g68.
 
 ### [sleep_ignore_fake_players.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/sleep_ignore_fake_players.sc):
 #### By Sanluli36li
@@ -327,5 +373,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	Firigion
 	boyenn
 	_GieR
+	Opsaaaaa
 	Xendergo
 	(Many more hopefully!)
