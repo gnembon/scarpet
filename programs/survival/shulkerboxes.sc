@@ -291,9 +291,11 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
             if (type(shulker_stacks)=='nbt', shulker_stacks = [shulker_stacks]);
             sb_item_count = length(shulker_stacks);
             for( shulker_stacks,
-               if( _:'id' == item_fqdn,
+					// item matches and not a potion or matching potion effect as well as same and keep
+               if( _:'id' == item_fqdn && ( !(previous_item ~ 'potion$') || ( (idx_choice == 'same' || idx_choice == 'keep') && ( _:'tag':'Potion' == tag:'Potion' ) ) ),
                   replacement_index = if (
-                     idx_choice == 'same' || idx_choice == 'keep',
+							// either not a potion or matches potion effect
+                     (idx_choice == 'same' || idx_choice == 'keep') && ( !(previous_item ~ 'potion$') || _:'tag':'Potion' == tag:'Potion' ),
                         _i,
                      idx_choice == 'random', 
                         floor(rand(sb_item_count)),
