@@ -124,9 +124,8 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
 ### By Opsaaaaa
-	Have you ever thought "hay i could use llamas" then you find a llama with only 3 slots.
+	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
 	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
-
 
 
 ### [nopickup.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/nopickup.sc):
