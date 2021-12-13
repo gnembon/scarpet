@@ -50,7 +50,7 @@ _report(verbose)->(
     total_time=0;
 	total_mobs=0;
 	minutes = round((tick_time()-global_start_time)/12)/100; //2 d.p
-    print('Average lifetimes for mobs (in ticks) over '+minutes+' minutes:');
+    print('Average lifetimes for mobs (in seconds) over '+minutes+' minutes:');
 	map_to_iterate_over = if(verbose, global_lifetimes, global_lifetimes_categories);
     for(map_to_iterate_over,
 		entry = map_to_iterate_over:_;
@@ -59,7 +59,7 @@ _report(verbose)->(
         total_time+=entry:0;
 		total_mobs+=entry:1;
     );
-    print('Total average lifetime for all mobs is: '+round(total_time/total_mobs*100)/100+' seconds');
+    print('Total average lifetime for all mobs is: '+round(total_time/total_mobs*5)/100+' seconds');
 	null
 );
 
