@@ -8,6 +8,9 @@ __config() ->
       '<from_pos> <to_pos>' -> 'count_blocks',
       '<from_pos> <to_pos> <filter>' -> 'count_blocks_filter',
       '<from_pos> <to_pos> <blockpredicate>' -> 'count_blocks_predicate',
+      'save' -> ['save_scan', null],
+      'save <name>' -> 'save_scan',
+      'autosave <bool>' -> 'autosave',
    },
    'allow_command_conflicts' -> true
 };
@@ -61,6 +64,12 @@ tally(stats, grand_total) ->
       print(format('gi Total tally: '+total));
       print(format('gi Scanned area: '+grand_total));
    );
+
+   //for saving purposes
+   global_stats = stats;
+   global_stats:'total' = grand_total;
+
+   if(global_autosave, save_scan(null));
 );
 
 dpad(num, wid) ->
@@ -68,5 +77,22 @@ dpad(num, wid) ->
    strn = str(num);
    if (length(strn) < wid, strn = '...'*(wid-length(strn))+strn);
    strn;
-)
+);
 
+global_stats = {};
+save_scan(name) -> (
+   if(global_stats=={}, print(format('r Need to run a scan first.')); exit());
+
+   if(name==null,
+      count = length(list_files('', 'json'));
+      name = count+1;
+   );
+   write_file(name, 'json', global_stats);
+   print(format('gi Saved results of the last scan to ' + name + '.json'));
+);
+
+global_autosave = false;
+autosave(bool) -> (
+   global_autosave = bool;
+   print(format('gi Set autosave to ' + bool));
+);
