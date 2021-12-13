@@ -13,9 +13,18 @@ __config() ->
       'save <name>' -> 'save_scan',
       'autosave <bool>' -> 'autosave',
       'vertical_scan <bool>' -> 'vertical_scan', // I'm keeping this as an option because doing the vertically spearated scans is 30% to 100% slower
+      'histogram <block>' -> 'histogram',
+      'tally_level <int>' -> 'tally_level',
+      'last' -> 'last_report',
+      'book' -> 'get_book_report',
    },
    'allow_command_conflicts' -> true
 };
+
+
+/////////////////////////////
+///// Scans
+/////////////////////////////
 
 count_blocks(from_pos, to_pos) ->
 (
@@ -29,16 +38,12 @@ count_blocks(from_pos, to_pos) ->
          stats:(minpos+floor(total/area)):str(_) += 1; //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      for(pairs(stats),
-         [y, level_stats] = _;
-         print(format('yb Results for y='+str(y)));
-         tally(level_stats, area);
-      );
-      global_stats = stats,
+      vertical_report(stats, area),
       // do a regular scan
       volume(from_pos, to_pos, stats:str(_) += 1 );
       total = sum(... values(stats));
       tally(stats, total);
+      global_last_blocks_report = {};
     );
 
     if(global_autosave, save_scan(null));
@@ -56,16 +61,11 @@ count_blocks_filter(from_pos, to_pos, filtr) ->
          if (_~filtr, stats:(minpos+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      for(pairs(stats),
-         [y, level_stats] = _;
-         if(level_stats=={}, continue());
-         print(format('yb Results for y='+str(y)));
-         tally(level_stats, area);
-      );
-      global_stats = stats,
+      vertical_report(stats, area),
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (_~filtr, stats:str(_) += 1 ) );
       tally(stats, total);
+      global_last_blocks_report = {};
     );
 
     if(global_autosave, save_scan(null));
@@ -83,16 +83,11 @@ count_blocks_tag(from_pos, to_pos, tag) ->
          if (block_tags(_, tag), stats:(minpos+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      for(pairs(stats),
-         [y, level_stats] = _;
-         if(level_stats=={}, continue());
-         print(format('yb Results for y='+str(y)));
-         tally(level_stats, area);
-      );
-      global_stats = stats,
+      vertical_report(stats, area),
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (block_tags(_, tag), stats:str(_) += 1 ) );
       tally(stats, total);
+      global_last_blocks_report = {};
     );
 
     if(global_autosave, save_scan(null));
@@ -106,6 +101,11 @@ count_blocks_predicate(from_pos, to_pos, predicate) ->
       count_blocks_filter(from_pos, to_pos, filtr)
     )
 );
+
+
+/////////////////////////////
+///// Reports
+/////////////////////////////
 
 tally(stats, grand_total) ->
 (
@@ -140,9 +140,98 @@ dpad(num, wid) ->
    strn;
 );
 
+hpad(num, wid) ->
+(
+   strn = str(num);
+   if (length(strn) < wid, strn = strn+'-'*(wid-length(strn)));
+   strn;
+);
+
+
+global_last_blocks_report = {};
+vertical_report(stats, area) -> (
+   //generate a map of the y level that contains each block
+   blocks = {};
+   for(pairs(stats),
+      [y, level_stats] = _;
+      for(keys(level_stats),
+         if(blocks:_==null,
+            blocks:_ = [y],
+            blocks:_ += y
+         )
+      )
+   );
+   print(format(make_clickable(blocks, 'histogram', 'y')));
+   print(format(make_clickable(stats, 'tally_level', 'c')));
+   print(format('m [Get book report]', str('!/%s book', system_info('app_name')) ));
+
+   global_stats = stats;
+   global_last_blocks_report = blocks;
+   global_last_area = area;
+);
+
+make_clickable(input_map, fun, color) -> (
+   output = [];
+   for(sort(keys(input_map)),
+      if(input_map:_=={}, continue());
+      line = [
+         str('%s [%s] ', color, _), 
+         '^g Click to display results for '+_,
+         str('!/%s %s %s', system_info('app_name'), fun, _)
+      ];
+      put(output, null, line, 'extend');
+   );
+   output
+);
+
+histogram(block) -> (
+   block = str(block);   
+   if(global_last_blocks_report:block==null, _error(block + ' not available from last scan.'));
+   maxcount = 0;
+   values = map(global_last_blocks_report:block,
+      y = _;
+      count = global_stats:y:block;
+      maxcount = max(maxcount, count);
+      [y, count];
+   );
+   divisor = ceil(maxcount/100);
+   print('');
+   print(format('y Results for ', 'yb '+block));
+   for(values, 
+      [y, count] = _;
+      print(str('%s %s', hpad(y, 4), '|'*(count/divisor) ))
+   );
+);
+
+tally_level(y) -> (
+   stats = global_stats; //to save for later
+   if(stats:y==null, _error(y + ' not available from last scan.'));
+   print('');
+   print(format('yb Results for y='+str(y)));
+   tally(stats:y,global_last_area);
+   global_stats = stats;//because tally overwrites it
+);
+
+last_report() -> (
+   if(
+      global_last_blocks_report, 
+         vertical_report(global_stats, global_last_area),
+      global_stats,
+         tally(global_stats, global_stats:'total'),
+      //else
+         _error('You need to make a scan first')
+   )
+);
+
+get_book_report() -> print(format('g This option is not yet implemented'));
+
+/////////////////////////////
+///// Others
+/////////////////////////////
+
 global_stats = {};
 save_scan(name) -> (
-   if(global_stats=={}, print(format('r Need to run a scan first.')); exit());
+   if(global_stats=={}, _error('Need to run a scan first.'));
 
    if(name==null,
       count = length(list_files('', 'json'));
@@ -174,3 +263,5 @@ get_flat_area(from_pos, to_pos) -> (
    [dx, dy, dz] = map(from_pos - to_pos, abs(_)+1);
    dx*dz;
 );
+
+_error(msg) -> (print(format('r '+msg)); exit());
