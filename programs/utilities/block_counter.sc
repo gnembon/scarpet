@@ -58,7 +58,7 @@ count_blocks_filter(from_pos, to_pos, filtr) ->
       );
       for(pairs(stats),
          [y, level_stats] = _;
-         if(level_stats=={}, coninue());
+         if(level_stats=={}, continue());
          print(format('yb Results for y='+str(y)));
          tally(level_stats, area);
       );
@@ -85,7 +85,7 @@ count_blocks_tag(from_pos, to_pos, tag) ->
       );
       for(pairs(stats),
          [y, level_stats] = _;
-         if(level_stats=={}, coninue());
+         if(level_stats=={}, continue());
          print(format('yb Results for y='+str(y)));
          tally(level_stats, area);
       );
