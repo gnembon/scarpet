@@ -1,4 +1,5 @@
 // A wrapper over carpet /player command that will only work if you target yourself as the player
+// By BisUmTo & DukeEdivad05
 
 __config() -> {
     'stay_loaded' -> true,
