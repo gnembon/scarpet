@@ -6,17 +6,18 @@
 __config() ->
 {
    'commands' -> {
+      '' -> 'help',
       '<from_pos> <to_pos>' -> 'count_blocks',
       '<from_pos> <to_pos> <filter>' -> 'count_blocks_filter',
       '<from_pos> <to_pos> <blockpredicate>' -> 'count_blocks_predicate',
       'save' -> ['save_scan', null],
       'save <name>' -> 'save_scan',
       'autosave <bool>' -> 'autosave',
-      'vertical_scan <bool>' -> 'vertical_scan', // I'm keeping this as an option because doing the vertically spearated scans is 30% to 100% slower
+      'layered_scan <bool>' -> 'vertical_scan', // I'm keeping this as an option because doing the vertically spearated scans is 30% to 100% slower
       'histogram <block>' -> 'histogram',
       'tally_level <int>' -> 'tally_level',
-      'last' -> 'last_report',
       'book' -> 'get_book_report',
+      'last' -> 'last_report',
    },
    'allow_command_conflicts' -> true
 };
@@ -266,3 +267,22 @@ get_flat_area(from_pos, to_pos) -> (
 );
 
 _error(msg) -> (print(format('r '+msg)); exit());
+
+help() -> (
+   p = player();
+   appname = system_info('app_name');
+   print(p, format('yb ==== Block Counter ===='));
+   print(p, format('w The following commands are available:'));
+   print(p, format(str('c /%s <pos1> <pos2> [filter]', appname), 'g \ : Count blocks of each type in the selected volume. ',
+      'g [filter] can be a block tag, a block name or any string (like "ore")'));
+   print(p, format(str('c /%s save [name]', appname), 'g \ : Save the last scan into a JSON file'));
+   print(p, format(str('c /%s autosave <bool>', appname), 'g \ : Every scan will automatically save into a file once it\'s done. ',
+   print(p, format(str('c /%s layered_scan <bool>', appname), 'g \ : The scan results are separated by y levels'));
+      'g Click the block names or y values to display results. This mdoe is slightly slower than the regular mode.'));
+   print(p, format(str('c /%s last', appname), 'g \ : Display the results of the last scan'));
+   print(p, format(str('c /%s histogram', appname), 'g \ : Ignore it- it\'s used internally'));
+   print(p, format(str('c /%s tally_level', appname), 'g \ : Ignore it- it\'s used internally'));
+   print(p, format(str('c /%s book', appname), 'g \ : Ignore it- it\'s used internally'));
+   print(p, '');
+   print(p, format('f by gnembon and Firigion'))
+);
