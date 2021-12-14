@@ -143,7 +143,7 @@ dpad(num, wid) ->
 hpad(num, wid) ->
 (
    strn = str(num);
-   if (length(strn) < wid, strn = strn+'-'*(wid-length(strn)));
+   if (length(strn) < wid, strn = strn+'...'*(wid-length(strn)));
    strn;
 );
 
@@ -152,8 +152,8 @@ global_last_blocks_report = {};
 vertical_report(stats, area) -> (
    //generate a map of the y level that contains each block
    blocks = {};
-   for(pairs(stats),
-      [y, level_stats] = _;
+   for(sort(keys(stats)),
+      y =  _; level_stats = stats:y;
       for(keys(level_stats),
          if(blocks:_==null,
             blocks:_ = [y],
@@ -161,6 +161,7 @@ vertical_report(stats, area) -> (
          )
       )
    );
+   //print block names and y levels as clickable things to display tallys and histograms
    print(format(make_clickable(blocks, 'histogram', 'y')));
    print(format(make_clickable(stats, 'tally_level', 'c')));
    print(format('m [Get book report]', str('!/%s book', system_info('app_name')) ));
@@ -194,12 +195,12 @@ histogram(block) -> (
       maxcount = max(maxcount, count);
       [y, count];
    );
-   divisor = ceil(maxcount/100);
+   divisor = ceil(maxcount/100); //to make sure the histogram bar is not longer than the chat box
    print('');
    print(format('y Results for ', 'yb '+block));
    for(values, 
       [y, count] = _;
-      print(str('%s %s', hpad(y, 4), '|'*(count/divisor) ))
+      print(format(str('w %s %s', hpad(y, 4), '|'*(count/divisor) ), '^g count: '+count) )
    );
 );
 
