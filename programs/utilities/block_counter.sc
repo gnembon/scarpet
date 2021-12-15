@@ -29,22 +29,24 @@ __config() ->
 
 count_blocks(from_pos, to_pos) ->
 (
-    stats = {}; total = 0;
+    global_data = make_data_stuct(from_pos, to_pos, null); //make global empty data structure
+    stats = global_data:'stats'; //save reference for easier access
+
     if(global_vertscan,
       // do a scan separating results by y value
-      area = get_flat_area(from_pos, to_pos);
-      [minpos, maxpos] = get_minmax_pos(from_pos, to_pos);
-      for(range(minpos, maxpos+1), stats:_ = {});
+      area = global_data:'area';
+      [miny, maxy] = get_minmax_pos(from_pos, to_pos);
+      total = 0;
+
       volume(from_pos, to_pos, 
-         stats:(minpos+floor(total/area)):str(_) += 1; //very slightly faster than calling pos(_):1
+         stats:(miny+floor(total/area)):str(_) += 1; //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      vertical_report(stats, area),
+      vertical_report(),
+
       // do a regular scan
       volume(from_pos, to_pos, stats:str(_) += 1 );
-      total = sum(... values(stats));
-      tally(stats, total);
-      global_last_blocks_report = {};
+      tally(global_data:'stats', global_data:'volume');
     );
 
     if(global_autosave, save_scan(null));
@@ -52,43 +54,71 @@ count_blocks(from_pos, to_pos) ->
 
 count_blocks_filter(from_pos, to_pos, filtr) ->
 (
-    stats = {}; total = 0;
+    global_data = make_data_stuct(from_pos, to_pos, filtr); //make global empty data structure
+    stats = global_data:'stats'; //save reference for easier access
+
     if(global_vertscan,
       // do a scan separating results by y value
-      area = get_flat_area(from_pos, to_pos);
-      [minpos, maxpos] = get_minmax_pos(from_pos, to_pos);
-      for(range(minpos, maxpos+1), stats:_ = {});
+      area = global_data:'area';
+      [miny, maxy] = get_minmax_pos(from_pos, to_pos);
+      total = 0;
+
       volume(from_pos, to_pos, 
-         if (_~filtr, stats:(minpos+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
+         if (_~filtr, stats:(miny+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      vertical_report(stats, area),
+      vertical_report(),
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (_~filtr, stats:str(_) += 1 ) );
-      tally(stats, total);
-      global_last_blocks_report = {};
+      tally(global_data:'stats', global_data:'volume');
     );
 
     if(global_autosave, save_scan(null));
 );
 
 count_blocks_tag(from_pos, to_pos, tag) ->
-(
-    stats = {}; total = 0;
+(   
+    global_data = make_data_stuct(from_pos, to_pos,'#'+tag); //make global empty data structure
+    stats = global_data:'stats'; //save reference for easier access
+
     if(global_vertscan,
       // do a scan separating results by y value
-      area = get_flat_area(from_pos, to_pos);
-      [minpos, maxpos] = get_minmax_pos(from_pos, to_pos);
-      for(range(minpos, maxpos+1), stats:_ = {});
+      area = global_data:'area';
+      [miny, maxy] = get_minmax_pos(from_pos, to_pos);
+      total = 0;
+
       volume(from_pos, to_pos, 
-         if (block_tags(_, tag), stats:(minpos+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
+         if (block_tags(_, tag), stats:(miny+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
          total += 1; 
       );
-      vertical_report(stats, area),
+      vertical_report(),
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (block_tags(_, tag), stats:str(_) += 1 ) );
-      tally(stats, total);
-      global_last_blocks_report = {};
+      tally(global_data:'stats', global_data:'volume');
+    );
+
+    if(global_autosave, save_scan(null));
+);
+
+count_blocks_block(from_pos, to_pos, block) ->
+(   
+    global_data = make_data_stuct(from_pos, to_pos,'minecraft:'+block); //make global empty data structure
+    stats = global_data:'stats'; //save reference for easier access
+
+    if(global_vertscan,
+      // do a scan separating results by y value
+      area = global_data:'area';
+      [miny, maxy] = get_minmax_pos(from_pos, to_pos);
+      total = 0;
+
+      volume(from_pos, to_pos, 
+         if (_==block, stats:(miny+floor(total/area)):str(_) += 1); //very slightly faster than calling pos(_):1
+         total += 1; 
+      );
+      vertical_report(),
+      // do a regular scan
+      volume(from_pos, to_pos, total += 1; if (block_tags(_, tag), stats:str(_) += 1 ) );
+      tally(global_data:'stats', global_data:'volume');
     );
 
     if(global_autosave, save_scan(null));
@@ -99,7 +129,7 @@ count_blocks_predicate(from_pos, to_pos, predicate) ->
     [block, tag, trash, trash] = predicate;
     if(block==null, 
       count_blocks_tag(from_pos, to_pos, tag),
-      count_blocks_filter(from_pos, to_pos, filtr)
+      count_blocks_block(from_pos, to_pos, block)
     )
 );
 
@@ -127,11 +157,6 @@ tally(stats, grand_total) ->
       print(format('gi Total tally: '+total));
       print(format('gi Scanned area: '+grand_total));
    );
-
-   //for saving purposes
-   global_stats = stats;
-   global_stats:'total' = grand_total;
-
 );
 
 dpad(num, wid) ->
@@ -148,17 +173,20 @@ hpad(num, wid) ->
    strn;
 );
 
-
-global_last_blocks_report = {};
-vertical_report(stats, area) -> (
+vertical_report() -> (
    //generate a map of the y level that contains each block
-   blocks = {};
-   for(reverse(sort(keys(stats))),
-      y =  _; level_stats = stats:y;
-      for(keys(level_stats),
-         if(blocks:_==null,
-            blocks:_ = [y],
-            blocks:_ += y
+   stats = global_data:'stats';
+   area = global_data:'area';
+   blocks = global_data:'blocks';
+
+   if(blocks=={},
+      for(reverse(sort(keys(stats))),
+         y =  _; level_stats = stats:y;
+         for(keys(level_stats),
+            if(blocks:_==null,
+               blocks:_ = [y],
+               blocks:_ += y
+            )
          )
       )
    );
@@ -166,10 +194,6 @@ vertical_report(stats, area) -> (
    print(format(make_clickable(blocks, 'histogram', 'y')));
    print(format(make_clickable(stats, 'tally_level', 'c')));
    print(format('m [Get book report]', str('!/%s book', system_info('app_name')) ));
-
-   global_stats = stats;
-   global_last_blocks_report = blocks;
-   global_last_area = area;
 );
 
 make_clickable(input_map, fun, color) -> (
@@ -187,12 +211,13 @@ make_clickable(input_map, fun, color) -> (
 );
 
 histogram(block) -> (
-   block = str(block);   
-   if(global_last_blocks_report:block==null, _error(block + ' not available from last scan.'));
+   block = str(block);
+   blocks = global_data:'blocks';
+   if(blocks:block==null, _error(block + ' not available from last scan.'));
    maxcount = 0;
-   values = map(global_last_blocks_report:block,
+   values = map(blocks:block,
       y = _;
-      count = global_stats:y:block;
+      count = global_data:'stats':y:block;
       maxcount = max(maxcount, count);
       [y, count];
    );
@@ -206,20 +231,21 @@ histogram(block) -> (
 );
 
 tally_level(y) -> (
-   stats = global_stats; //to save for later
+   stats = global_data:'stats';
+   area = global_data:'area';
+
    if(stats:y==null, _error(y + ' not available from last scan.'));
    print('');
    print(format('yb Results for y='+str(y)));
-   tally(stats:y,global_last_area);
-   global_stats = stats;//because tally overwrites it
+   tally(stats:y, area);
 );
 
 last_report() -> (
    if(
-      global_last_blocks_report, 
-         vertical_report(global_stats, global_last_area),
-      global_stats,
-         tally(global_stats, global_stats:'total'),
+      global_data:'blocks', 
+         vertical_report(),
+      global_data,
+         tally(global_data:'stats', global_data:'volume'),
       //else
          _error('You need to make a scan first')
    )
@@ -231,15 +257,35 @@ get_book_report() -> print(format('g This option is not yet implemented'));
 ///// Others
 /////////////////////////////
 
+global_data = {};
+make_data_stuct(from, to, filter) -> (
+   area = get_flat_area(from, to);
+   [miny, maxy] = get_minmax_pos(from, to);
+   volume = area * (maxy - miny + 1);
+   
+   stats = {};
+   if(global_vertscan, for(range(miny, maxy+1), stats:_ = {}));
+   {
+      'corners' -> [from, to],
+      'area' -> area,
+      'volume' -> volume,
+      'filter' -> filter,
+      'stats' -> stats,
+      'blocks' -> {},
+   }
+);
+
 global_stats = {};
 save_scan(name) -> (
-   if(global_stats=={}, _error('Need to run a scan first.'));
+   if(global_data=={}, _error('Need to run a scan first.'));
 
    if(name==null,
       count = length(list_files('', 'json'));
       name = count+1;
    );
-   write_file(name, 'json', global_stats);
+   save_data = copy(global_data);
+   delete(save_data, 'blocks');
+   write_file(name, 'json', save_data);
    print(format('gi Saved results of the last scan to ' + name + '.json'));
 );
 
