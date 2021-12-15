@@ -153,7 +153,7 @@ global_last_blocks_report = {};
 vertical_report(stats, area) -> (
    //generate a map of the y level that contains each block
    blocks = {};
-   for(sort(keys(stats)),
+   for(reverse(sort(keys(stats))),
       y =  _; level_stats = stats:y;
       for(keys(level_stats),
          if(blocks:_==null,
@@ -267,6 +267,8 @@ get_flat_area(from_pos, to_pos) -> (
 );
 
 _error(msg) -> (print(format('r '+msg)); exit());
+
+reverse(list) ->  map(range(length(list)-1, -1, -1), list:_ );
 
 help() -> (
    p = player();
