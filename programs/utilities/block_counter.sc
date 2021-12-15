@@ -141,6 +141,7 @@ count_blocks_predicate(from_pos, to_pos, predicate) ->
 tally(stats, grand_total) ->
 (
    total = sum(... values(stats));
+   if(total==null, nothing_found());
    if (total == grand_total,
       print(format('wb    Count  |%Area | Block'));
       print('.---------+------+---------------');
@@ -190,6 +191,8 @@ vertical_report() -> (
          )
       )
    );
+   if(blocks=={}, nothing_found());
+
    //print block names and y levels as clickable things to display tallys and histograms
    print(format(make_clickable(blocks, 'histogram', 'y')));
    print(format(make_clickable(stats, 'tally_level', 'c')));
@@ -242,7 +245,7 @@ tally_level(y) -> (
 
 last_report() -> (
    if(
-      global_data:'blocks', 
+      type(global_data:'stats':(global_data:'corners':0:1))=='map', //a convoluted way to see if scan was layered 
          vertical_report(),
       global_data,
          tally(global_data:'stats', global_data:'volume'),
@@ -252,6 +255,11 @@ last_report() -> (
 );
 
 get_book_report() -> print(format('g This option is not yet implemented'));
+
+nothing_found() -> (
+   print(format('gi No blocks were found with requested filter ' + global_data:'filter'));
+   exit();
+);
 
 /////////////////////////////
 ///// Others
