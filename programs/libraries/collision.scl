@@ -1156,8 +1156,8 @@ __draw_bounds(block,...colors) ->
 );
 
 //returns list of all unique collision boxes for sorting or other analysis
-//very expensive (~ 230ms)
-__all_collision_blocks() ->
+//very expensive (~ 657ms)
+// __all_collision_boxes() ->
 (
 	list = block_list();
 	//delete everything but the first value that matches a key
@@ -1191,7 +1191,12 @@ __all_collision_blocks() ->
 			complex_map:__bounds(_) = _
 		)
 	);
-	sort_key(map(values(complex_map),block(_)),[str(_),__bounds(_)])
+	global_all_boxes = sort_key(map(values(complex_map),block(_)),[str(_),__bounds(_)]);
+);
+
+box_list() ->
+(
+	global_all_boxes
 );
 
 //turns bounds(list of prisms) into triple of lists of x-values, y-values, z-values
