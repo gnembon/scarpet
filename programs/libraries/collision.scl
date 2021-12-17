@@ -290,7 +290,7 @@ global_box_map = {
 			[[0.1875,0,0.1875],[0.8125,0.4375,0.8125]]
 		]
 	],
-	['lantern$',
+	['(?<!sea_)lantern$',
 		[
 			[[0.3125,0,0.3125],[0.6875,0.4375,0.6875]],
 			[[0.375,0.4375,0.375],[0.625,0.5625,0.625]]
@@ -688,7 +688,7 @@ bounds(block) ->
 			bounds = __rotatenumber(bounds,'x',loops),
 
 			//lanterns can hang from blocks
-			key == 'lantern$',
+			key == '(?<!sea_)lantern$',
 			if(bool(state:'hanging'),
 				bounds = __translate(
 					bounds,
