@@ -1156,7 +1156,7 @@ draw_bounds(block,...colors) ->
 );
 
 //returns list of all unique collision boxes for sorting or other analysis
-//very expensive (~ 657ms)
+//very expensive (~ 345ms)
 // __all_collision_boxes() ->
 (
 	list = block_list();
@@ -1180,18 +1180,23 @@ draw_bounds(block,...colors) ->
 			)
 		)
 	);
-	complex_list = [];
+	block_list = [];
 	for(list,
-		complex_list += __blockcombinations(str(_));
+		block_list += __blockcombinations(str(_));
 	);
 	//make a map so duplicate collision boxes get overridden
-	complex_map = {};
+	bounds_map = {};
 	for([range(length(complex_list) - 1,-1,-1)],
 		for(complex_list:_,
-			complex_map:bounds(_) = _
+			bounds_map:__bounds(_) = _
 		)
 	);
-	global_all_boxes = sort_key(map(values(complex_map),block(_)),[str(_),bounds(_)]);
+	//simple map reversal, don't worry the values won't have duplicates
+	block_map = {};
+	for(keys(bounds_map),
+		block_map:(bounds_map:_) = _;
+	);
+	global_all_boxes = map(sort_key(keys(block_map),[_,block_map:_]),block(_));
 );
 
 box_list() ->
