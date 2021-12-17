@@ -492,7 +492,7 @@ global_tilt = ['none','partial','full'];
 //returns list of paired triples of corners of rectangular prisms that comprise collision box
 //measured relative to lower southwest corner of block aka negative direction of every axis
 //cheap once (~ 0.08ms), gets called in loops in other functions
-__bounds(block) ->
+bounds(block) ->
 (
 	//recast as block to allow for most argument types
 	block = block(block);
@@ -862,14 +862,14 @@ __inside(bounds,point) ->
 );
 
 //checks to see if a point is within the collision box of a block
-__insideblock(point) ->
+insideblock(point) ->
 (
 	point_mod = map(point, _ % 1);
 	zeros = for(point_mod, _ == 0);
 
 	if(zeros == 0,
 		//if not on face, edge, or vertex, block will likely contain point
-		__inside(__bounds(block(point)),point_mod),
+		__inside(bounds(block(point)),point_mod),
 
 		//else we need to check multiple sides of a point
 
@@ -894,7 +894,7 @@ __insideblock(point) ->
 		);
 
 		for(pointlist,
-			__inside(__bounds(block(point + _)),map(_, _ % 1))
+			__inside(bounds(block(point + _)),map(_, _ % 1))
 		) > 0
 	
 	)
@@ -1147,10 +1147,10 @@ __blockcombinations(blockstring) ->
 );
 
 //draws bounds of a block
-__draw_bounds(block,...colors) ->
+draw_bounds(block,...colors) ->
 (
 	block = block(block);
-	for(__bounds(block),
+	for(bounds(block),
 		draw_shape('box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033)
 	)
 );
@@ -1188,10 +1188,10 @@ __draw_bounds(block,...colors) ->
 	complex_map = {};
 	for([range(length(complex_list) - 1,-1,-1)],
 		for(complex_list:_,
-			complex_map:__bounds(_) = _
+			complex_map:bounds(_) = _
 		)
 	);
-	global_all_boxes = sort_key(map(values(complex_map),block(_)),[str(_),__bounds(_)]);
+	global_all_boxes = sort_key(map(values(complex_map),block(_)),[str(_),bounds(_)]);
 );
 
 box_list() ->
@@ -1245,8 +1245,8 @@ __max_bounds(condensed_bounds,axis) ->
 
 
 //returns list of blocks sorted by direction along axis including only include or excluding only exclude
-//very expensive (~ 170ms)
-__filter_sort_direction(blocks,axis,direction,...values) ->
+//depends on how many blocks you have
+filter_sort_direction(blocks,axis,direction,...values) ->
 (
 	blockmap = {};
 	axis_options = split(
@@ -1277,9 +1277,9 @@ __filter_sort_direction(blocks,axis,direction,...values) ->
 				blockmap:str(_) = {};
 			);
 			if(direction == 'max',
-				value = __max_bounds(__condense_bounds(__bounds(_)),axis_name),
+				value = __max_bounds(__condense_bounds(bounds(_)),axis_name),
 				direction == 'min',
-				value = __min_bounds(__condense_bounds(__bounds(_)),axis_name)
+				value = __min_bounds(__condense_bounds(bounds(_)),axis_name)
 			);
 			if( ( include ) == (values ~ value != null),
 				blockmap:str(_):str(block_state(_)) = value
@@ -1314,7 +1314,7 @@ __prism_in_prism(prism1,prism2) ->
 
 //returns all blocks the entity is currently colliding with
 //somewhat cheap (~ 1.25ms)
-__entity_block_collision(e) ->
+entity_block_collision(e) ->
 (
 	pos = e ~ 'pos';
 	width = e ~ 'width';
@@ -1336,7 +1336,7 @@ __prism_block_collision(pos,width,height) ->
 		//get position of block
 		pos_block = [_x,_y,_z];
 		//get bounds of block
-		bounds = __bounds(_);
+		bounds = bounds(_);
 		//move bounds to position
 		for(bounds,
 			prism = _;
