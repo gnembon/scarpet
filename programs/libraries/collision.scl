@@ -1136,7 +1136,7 @@ __blockcombinations(blockstring) ->
 				all(output,
 					block_state(block(_)) != block_state(block)
 				),
-				output += block
+				output += fullstring
 			),
 			'unknown_block',
 			// nonsense line to make try() function and not return anything
