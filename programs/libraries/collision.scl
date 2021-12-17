@@ -1160,6 +1160,7 @@ __draw_bounds(block,...colors) ->
 __all_collision_blocks() ->
 (
 	list = block_list();
+	//delete everything but the first value that matches a key
 	for(keys(global_box_map),
 		key = _;
 		first = first(list,str(_) ~ key != null);
@@ -1169,6 +1170,7 @@ __all_collision_blocks() ->
 			)
 		)
 	);
+	//delete things with no collision box
 	for([range(length(list) - 1,-1,-1)],
 		index = _;
 		tag = for(block_tags(list:index),
@@ -1178,29 +1180,18 @@ __all_collision_blocks() ->
 			)
 		)
 	);
-	for([range(length(list) - 1,-1,-1)],
-		index = _;
-		if(
-				(
-					list:_ ~ 'shulker_box$' != null || 
-					for(
-						__concatenate(
-							global_full_transparent,
-							['glass_pane$','ender_chest','^potted_','_wall_head$','(?<!(?:_wall)|(?:piston))_head$']
-						),
-						str(list:index) ~ _ != null
-					) != 0 || 
-					solid(block(list:_)) || 
-					for(global_no_box_blocks,str(list:index) ~ _ != null) != 0
-				) && list:_ != 'stone',
-			delete(list,_);
-		)
-	);
 	complex_list = [];
 	for(list,
 		complex_list += __blockcombinations(str(_));
 	);
-	map(__concatenate(...complex_list),block(_))
+	//make a map so duplicate collision boxes get overridden
+	complex_map = {};
+	for([range(length(complex_list) - 1,-1,-1)],
+		for(complex_list:_,
+			complex_map:__bounds(_) = _
+		)
+	);
+	sort_key(map(values(complex_map),block(_)),[str(_),__bounds(_)])
 );
 
 //turns bounds(list of prisms) into triple of lists of x-values, y-values, z-values
