@@ -1186,8 +1186,8 @@ draw_bounds(block,...colors) ->
 	);
 	//make a map so duplicate collision boxes get overridden
 	bounds_map = {};
-	for([range(length(complex_list) - 1,-1,-1)],
-		for(complex_list:_,
+	for([range(length(block_list) - 1,-1,-1)],
+		for(block_list:_,
 			bounds_map:__bounds(_) = _
 		)
 	);
