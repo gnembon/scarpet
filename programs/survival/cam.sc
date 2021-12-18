@@ -175,13 +175,19 @@ __restrict_flight(player) ->
 (
    if(global_max_flight_range > 0, 
       config = __get_player_stored_takeoff_params(player~'name');
-      if(!config, config = player~'pos'); // gotta restrict it somehow if no config was saved
-      start_pos = config:'pos';
-      __restrict_flight_tick(player, start_pos)
+      if(!config,  // gotta restrict it somehow if no config was saved
+         start_pos = player~'pos';
+         start_dim = player~'dimension',
+
+         start_pos = config:'pos'; 
+         start_dim = config:'dimension'
+      );
+      
+      __restrict_flight_tick(player, start_pos, start_dim)
    )
 );
 
-__restrict_flight_tick(player, start_pos) -> 
+__restrict_flight_tick(player, start_pos, start_dim) -> 
 (
    if(player~'gamemode' != 'spectator', exit());
 
@@ -192,8 +198,12 @@ __restrict_flight_tick(player, start_pos) ->
       new_pos = direction * global_max_flight_range + start_pos;
       modify( player, 'pos', new_pos)
    );
+   if(player~'dimension' != start_dim,
+      run('execute in minecraft:'+ start_dim +' run tp @s ~ ~ ~');
+      modify( player, 'pos', start_pos);
+   );
 
-   schedule(1, '__restrict_flight_tick', player, start_pos);
+   schedule(1, '__restrict_flight_tick', player, start_pos, start_dim);
 );
 
 __on_player_connects(player) -> 
