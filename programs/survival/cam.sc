@@ -5,7 +5,11 @@
 // places spectating players without config in a safe places
 // and adds timeout for the player so they cannot switch instantly
 // change setting below to change that behaviour (0 to disable timeout)
-global_survival_timeout = 3;
+global_survival_timeout = 0;
+
+// optionally, you can restrict a player from flying too far from their original 
+// position (null or any non positive number to disable)
+global_max_flight_range = 10;
 
 // additional player checks are here. comment lines that you think are not needed
 __assert_player_can_cam_out(player) ->
@@ -20,6 +24,7 @@ __assert_player_can_cam_out(player) ->
 
 
 
+import('math', '_euclidean', '_vec_length');
 
 __config() -> {
     'stay_loaded' -> 'true'
@@ -146,6 +151,7 @@ __turn_to_camera_mode(player) ->
    modify(player, 'effect', 'night_vision', 999999, 0, false, false);
    modify(player, 'effect', 'conduit_power', 999999, 0, false, false);
    modify(player, 'gamemode', 'spectator');
+   __restrict_flight(player);
 );
 
 __survival_defaults(player) ->
@@ -163,4 +169,36 @@ __survival_defaults(player) ->
    );
    print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
+);
+
+__restrict_flight(player) -> 
+(
+   if(global_max_flight_range > 0, 
+      config = __get_player_stored_takeoff_params(player~'name');
+      if(!config, config = player~'pos'); // gotta restrict it somehow if no config was saved
+      start_pos = config:'pos';
+      __restrict_flight_tick(player, start_pos)
+   )
+);
+
+__restrict_flight_tick(player, start_pos) -> 
+(
+   if(player~'gamemode' != 'spectator', exit());
+
+   pp = player~'pos';
+   if(_euclidean(pp, start_pos)>global_max_flight_range,
+      direction = pp-start_pos;
+      direction = direction/_vec_length(direction);
+      new_pos = direction * global_max_flight_range + start_pos;
+      modify( player, 'pos', new_pos)
+   );
+
+   schedule(1, '__restrict_flight_tick', player, start_pos);
+);
+
+__on_player_connects(player) -> 
+(
+   if(player~'gamemode'=='spectator' &&  __get_player_stored_takeoff_params(player~'name');,
+      __restrict_flight(player)
+   )
 );
