@@ -165,4 +165,7 @@ __survival_defaults(player) ->
    false;
 );
 
+// This fixes the case where the server has force-gamemode on, in which case the player would be put
+// into survival in the location they logged out in camera mode, bypassing the sign-off actions of the app.
+// __get_player_stored_takeoff_params evaluates true-y when player was in cam mode before logging out
 __on_player_connects(player) -> if( __get_player_stored_takeoff_params(player~'name'), modify(player, 'gamemode' , 'spectator' ));
