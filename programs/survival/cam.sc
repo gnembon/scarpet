@@ -164,3 +164,5 @@ __survival_defaults(player) ->
    print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
 );
+
+__on_player_connects(player) -> if( __get_player_stored_takeoff_params(player~'name'), modify(player, 'gamemode' , 'spectator' ));
