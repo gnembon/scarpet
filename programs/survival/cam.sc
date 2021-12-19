@@ -206,9 +206,14 @@ __restrict_flight_tick(player, start_pos, start_dim) ->
    schedule(1, '__restrict_flight_tick', player, start_pos, start_dim);
 );
 
+// This fixes the case where the server has force-gamemode on, in which case the player would be put
+// into survival in the location they logged out in camera mode, bypassing the sign-off actions of the app.
+// __get_player_stored_takeoff_params evaluates true-y when player was in cam mode before logging out
 __on_player_connects(player) -> 
 (
-   if(player~'gamemode'=='spectator' &&  __get_player_stored_takeoff_params(player~'name');,
-      __restrict_flight(player)
-   )
+  if( __get_player_stored_takeoff_params(player~'name'), 
+     modify(player, 'gamemode' , 'spectator' );
+     __restrict_flight(player)
+    );
 );
+
