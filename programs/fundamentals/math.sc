@@ -1,6 +1,8 @@
 
 sum(list) -> reduce(list, _a+_, 0);
 
+sign(num) -> if (num < 0, -1, 1);
+
 int(num) -> if (num < 0, ceil(num), floor(num));
 
 //Only integer is accepted, and max is 32 binary digits
