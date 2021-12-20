@@ -5,11 +5,14 @@
 // places spectating players without config in a safe places
 // and adds timeout for the player so they cannot switch instantly
 // change setting below to change that behaviour (0 to disable timeout)
-global_survival_timeout = 0;
+global_survival_timeout = 3;
 
 // optionally, you can restrict a player from flying too far from their original 
-// position (null or any non positive number to disable)
-global_max_flight_range = 10;
+// position (null or any non positive number to disable). The shape in which "too
+// far" is is calculated can be set below. Use 1 for "cylindrical", 2 for "spherical"
+// and 3 for "square" restriction shapes.
+global_max_flight_range = null;
+global_restriction_shape = 1; // 1, 2 or 3 for "cylindrical", "shperical" and "square", respectively
 
 // additional player checks are here. comment lines that you think are not needed
 __assert_player_can_cam_out(player) ->
@@ -137,7 +140,6 @@ __remove_player_config(player_name) ->
    store_app_data(tag);
 );
 
-
 __remove_camera_effects(player) ->
 (
    modify(player, 'effect', 'night_vision', null);
@@ -192,12 +194,19 @@ __restrict_flight_tick(player, start_pos, start_dim) ->
    if(player~'gamemode' != 'spectator', exit());
 
    pp = player~'pos';
-   if(_euclidean(pp, start_pos)>global_max_flight_range,
-      direction = pp-start_pos;
-      direction = direction/_vec_length(direction);
-      new_pos = direction * global_max_flight_range + start_pos;
-      modify( player, 'pos', new_pos)
+   distance = __get_distance(copy(pp), copy(start_pos));
+   
+   if(distance>global_max_flight_range,
+      if(distance>global_max_flight_range*1.5,
+         new_pos = __get_restriction_new_pos(pp, start_pos);
+         modify( player, 'pos', new_pos), //in case they TP to another player
+
+         new_motion = __get_restriction_new_motion(pp, start_pos, player~'motion');
+         modify( player, 'motion', new_motion),
+      )
+      
    );
+
    if(player~'dimension' != start_dim,
       run('execute in minecraft:'+ start_dim +' run tp @s ~ ~ ~');
       modify( player, 'pos', start_pos);
@@ -206,9 +215,55 @@ __restrict_flight_tick(player, start_pos, start_dim) ->
    schedule(1, '__restrict_flight_tick', player, start_pos, start_dim);
 );
 
-// This fixes the case where the server has force-gamemode on, in which case the player would be put
-// into survival in the location they logged out in camera mode, bypassing the sign-off actions of the app.
-// __get_player_stored_takeoff_params evaluates true-y when player was in cam mode before logging out
+__get_distance(pos1, pos2)->
+(
+   // messure flat distance for square and cylindrical
+   if (global_restriction_shape!=2,
+      pos1:1 = 0;
+      pos2:1 = 0;
+   );
+   if( global_restriction_shape<3,
+         _euclidean(pos1, pos2),
+      // else, square
+         max(map(pos1-pos2, abs(_)) ),
+   )
+);
+
+__get_restriction_new_pos(current, start) ->
+(
+   if (global_restriction_shape<3,
+         direction = current-start;
+         if (global_restriction_shape==1, direction:1 = 0); //have to do this separately for the normalization to work
+         direction = direction/_vec_length(direction);
+         new_pos = direction * global_max_flight_range + start;
+         if (global_restriction_shape==1, new_pos:1 = current:1);
+         new_pos,
+      //else, square
+         zeroed = current-start;
+         zeroed = map(zeroed, __sign(_) * min(abs(_), global_max_flight_range));
+         new_pos = start + zeroed;
+         new_pos:1 = current:1;
+         new_pos
+   )
+);
+
+
+__get_restriction_new_motion(current, start, motion) ->
+(
+   direction = current-start;
+   if (global_restriction_shape<3,
+         if (global_restriction_shape==1, direction:1 = 0);
+         -1 * direction / global_max_flight_range * (_vec_length(motion)+0.5),
+      //else, square
+         new_motion = copy(motion);
+         if(abs(direction:0) > global_max_flight_range, new_motion:0 = -motion:0 - __sign(direction:0) * 0.5);
+         if(abs(direction:2) > global_max_flight_range, new_motion:2 = -motion:2 - __sign(direction:2) * 0.5);
+         new_motion
+   )
+);
+
+__sign(num) -> if (num < 0, -1, 1);
+
 __on_player_connects(player) -> 
 (
   if( __get_player_stored_takeoff_params(player~'name'), 
@@ -216,4 +271,3 @@ __on_player_connects(player) ->
      __restrict_flight(player)
     );
 );
-
