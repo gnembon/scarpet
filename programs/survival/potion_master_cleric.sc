@@ -1,5 +1,5 @@
-// This addon adds 6 randomized potion trades to the Cleric. 
-// It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, 
+// This addon adds 7 randomized potion trades to the Cleric. 
+// It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, 
 // and Mining Fatigue available in survival as potions.
 // Each effect can appear as a regular, splash, or lingering potion.
 // Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
@@ -33,6 +33,18 @@ global_potion_trades = [
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
 		buyB: {id: "minecraft:tropical_fish", Count: 1},
+		uses: 0,
+		demand: -20,
+		priceMutiplier: 0.0,
+		specialPrice: 0,
+		rewardExp: 1,
+		xp: 1
+	}',
+	// Luck
+	'{
+		sell: {id: "minecraft:%s", Count:1, tag:{Potion: "minecraft:luck"}},
+		buy: {id: "minecraft:emerald", Count: %d},
+		buyB: {id: "minecraft:glow_berries", Count: 1},
 		uses: 0,
 		demand: -20,
 		priceMutiplier: 0.0,
@@ -137,21 +149,20 @@ _add_trades(cleric, p, nbt) -> (
 	
 	modify(cleric, 'nbt_merge', nbt);
 	// Dont add any more potions to a potion master
-	modify(cleric, 'tag', 'IsPotionMaster'); 
+	modify(cleric, 'tag', 'PotionMaster:IsPotionMaster'); 
 
 );
 
 __on_player_interacts_with_entity(player, entity, hand) -> (
 	if(entity~'type'=='villager',
 		nbt = entity~'nbt';
-		// If Villager is a cleric has a high enough level and is not already a potion master
+		// Check if the Villager is a cleric has a high enough level and is not already a potion master
 		if(nbt:'VillagerData':'profession'=='minecraft:cleric' && 
 			nbt:'VillagerData':'level' >= global_potion_master_level &&
-			parse_nbt(nbt:'Tags')~'IsPotionMaster' == null
+			parse_nbt(nbt:'Tags')~'PotionMaster:IsPotionMaster' == null
 			, 
 			_add_trades(entity, player, nbt)
 		);
 	)
 );
-
 

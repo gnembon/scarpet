@@ -43,7 +43,6 @@ __cascade_pick(player, ttl, block_name, position, break_block) ->
 		if (block != block_name, return());
 		//set(block, 'air')
 		harvest(player, block);
-		signal_event('player_breaks_block', player, player, block)
 	);
 	l(x,y,z) = position;
 	penalty = 0.5+rand(1);

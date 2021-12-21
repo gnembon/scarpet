@@ -10,8 +10,8 @@ global_survival_timeout = 3;
 // additional player checks are here. comment lines that you think are not needed
 __assert_player_can_cam_out(player) ->
 (
-   if(!query(player,'nbt','OnGround'), exit('You must be on firm ground.'));
-   if(query(player,'nbt','Air') < 300, exit('You must be in air, not suffocating nor in liquids.'));
+   if(!query(player, 'nbt', 'OnGround'), exit('You must be on firm ground.'));
+   if(query(player, 'nbt', 'Air') < 300, exit('You must be in air, not suffocating nor in liquids.'));
    if(player ~ 'is_burning', exit('You must not be on fire.'));
    null
 );
@@ -21,11 +21,9 @@ __assert_player_can_cam_out(player) ->
 
 
 
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
+__config() -> {
+    'stay_loaded' -> 'true'
+};
 
 __command() ->
 (
@@ -36,34 +34,33 @@ __command() ->
          __remove_camera_effects(p);
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
+         display_title(p, 'actionbar', format('y Exited camera mode'));
       ,
          if (__survival_defaults(p), 
-            __remove_camera_effects(p)
+            __remove_camera_effects(p);
+            display_title(p, 'actionbar', format('y Exited camera mode'));
          );
       );
    , current_gamemode == 'survival' && !global_is_in_switching, // else if survival - switch to spectator
       __assert_player_can_cam_out(p);
-      if (global_survival_timeout > 0,
-         global_is_in_switching = true;
-         for(range(global_survival_timeout, 0, -1), 
-            schedule((global_survival_timeout+1-_)*20, _(outer(_)) -> print(format('v camera mode in '+_+'...')))
-         );
-         player_name = p~'name';
-         player_dim = p~'dimension';
-         schedule((global_survival_timeout+1)*20, _(outer(player_name), outer(player_dim) )-> (
-            global_is_in_switching = false;
-            p = player(player_name);
-            if (p && p~'dimension' == player_dim,
-               __store_player_takeoff_params(p);
-               __turn_to_camera_mode(p);
-            )
-         ));
-      ,
-         __store_player_takeoff_params(p);
-         __turn_to_camera_mode(p);
-      )
+      
+      global_is_in_switching = true;
+      for(range(1, global_survival_timeout+1), 
+         schedule((global_survival_timeout - _) * 20, _(outer(_),outer(p)) -> display_title(p, 'actionbar', format('y Entering camera mode in '+_+'...')))
+      );
+      player_name = p~'name';
+      player_dim = p~'dimension';
+      schedule((global_survival_timeout)*20, _(outer(player_name), outer(player_dim)) -> (
+         global_is_in_switching = false;
+         p = player(player_name);
+         if (p && p~'dimension' == player_dim,
+            __store_player_takeoff_params(p);
+            __turn_to_camera_mode(p);
+            display_title(p, 'actionbar', format('y Entered camera mode'));
+         )
+      ));
    );
-   ''
+   null
 );
 
 
@@ -82,9 +79,6 @@ __get_player_stored_takeoff_params(player_name) ->
    config:'effects' = l();
    effects_tags = player_tag:'Effects.[]';
    if (effects_tags,
-      // fixing vanilla list parser
-      if (type(effects_tags)!='list',effects_tags = l(effects_tags));
-      
       for(effects_tags, etag = _;
          effect = m();
          effect:'name' = etag:'Name';
@@ -170,3 +164,8 @@ __survival_defaults(player) ->
    print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
 );
+
+// This fixes the case where the server has force-gamemode on, in which case the player would be put
+// into survival in the location they logged out in camera mode, bypassing the sign-off actions of the app.
+// __get_player_stored_takeoff_params evaluates true-y when player was in cam mode before logging out
+__on_player_connects(player) -> if( __get_player_stored_takeoff_params(player~'name'), modify(player, 'gamemode' , 'spectator' ));
