@@ -16,7 +16,7 @@ __config() ->
       'layered_scan <bool>' -> 'vertical_scan', // I'm keeping this as an option because doing the vertically spearated scans is 30% to 100% slower
       'histogram <block>' -> 'histogram',
       'tally_level <int>' -> 'tally_level',
-      'book' -> 'get_book_report',
+      //'book' -> 'get_book_report',
       'last' -> 'last_report',
    },
    'allow_command_conflicts' -> true
@@ -101,7 +101,7 @@ count_blocks_tag(from_pos, to_pos, tag) ->
 );
 
 count_blocks_block(from_pos, to_pos, block) ->
-(   
+(   print('running block');
     global_data = make_data_stuct(from_pos, to_pos,'minecraft:'+block); //make global empty data structure
     stats = global_data:'stats'; //save reference for easier access
 
@@ -117,7 +117,7 @@ count_blocks_block(from_pos, to_pos, block) ->
       );
       vertical_report(),
       // do a regular scan
-      volume(from_pos, to_pos, total += 1; if (block_tags(_, tag), stats:str(_) += 1 ) );
+      volume(from_pos, to_pos, total += 1; if (_==block, stats:str(_) += 1 ) );
       tally(global_data:'stats', global_data:'volume');
     );
 
@@ -139,7 +139,7 @@ count_blocks_predicate(from_pos, to_pos, predicate) ->
 /////////////////////////////
 
 tally(stats, grand_total) ->
-(
+(  print(stats);
    total = sum(... values(stats));
    if(total==null, nothing_found());
    if (total == grand_total,
@@ -196,7 +196,7 @@ vertical_report() -> (
    //print block names and y levels as clickable things to display tallys and histograms
    print(format(make_clickable(blocks, 'histogram', 'y')));
    print(format(make_clickable(stats, 'tally_level', 'c')));
-   print(format('m [Get book report]', str('!/%s book', system_info('app_name')) ));
+   //print(format('m [Get book report]', str('!/%s book', system_info('app_name')) ));
 );
 
 make_clickable(input_map, fun, color) -> (
@@ -254,7 +254,34 @@ last_report() -> (
    )
 );
 
-get_book_report() -> print(format('g This option is not yet implemented'));
+get_book_report() -> //print(format('g This option is not yet implemented')); //19 characters wide, 14 lines
+(
+   cover_page = [
+      {
+         'text' -> 'Available y levels',
+         'color' -> 'dark_purple',
+         'bold' -> true,
+         'underlined' -> true,
+      },
+      ...map( range(-55, -30),
+         {
+            'text' -> '[45]',
+            'color' -> 'gold',
+            'clickEvent' -> {'action'->'change_page', 'value' -> str(_i+2) }
+         }
+      )
+   ];
+   cover_page = encode_nbt(cover_page);
+   pages = map(range(99), encode_nbt({'text'->''}));
+
+   book_nbt = {
+      'title'-> 'Results [-56 to 40]',
+      'author' -> 'scan',
+      'pages' -> map([cover_page, ...pages], '\'_\''),
+   };
+   run(str('/give @p written_book{%s} 1', encode_nbt(book_nbt)) );
+);
+//title:"",author:"",pages:['[{"text":"Available y levels\\n","color":"dark_blue","bold":true,"underlined":true,"hoverEvent":{"action":"show_text","contents":[{"text":"count:123584"}]}},{"text":"[45]","color":"gold","clickEvent":{"action":"change_page","value":"2"}},{"text":"[55]","color":"gold","clickEvent":{"action":"change_page","value":"3"}},{"text":"[123]","color":"gold","clickEvent":{"action":"change_page","value":"4"}}]','{"text":""}','{"text":""}','{"text":"smth"}'
 
 nothing_found() -> (
    print(format('gi No blocks were found with requested filter ' + global_data:'filter'));
@@ -338,7 +365,7 @@ help() -> (
    print(p, format(str('c /%s last', appname), 'g \ : Display the results of the last scan'));
    print(p, format(str('c /%s histogram', appname), 'g \ : Ignore it- it\'s used internally'));
    print(p, format(str('c /%s tally_level', appname), 'g \ : Ignore it- it\'s used internally'));
-   print(p, format(str('c /%s book', appname), 'g \ : Ignore it- it\'s used internally'));
+   //print(p, format(str('c /%s book', appname), 'g \ : Ignore it- it\'s used internally'));
    print(p, '');
    print(p, format('f by gnembon and Firigion'))
 );
