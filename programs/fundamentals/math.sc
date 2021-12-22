@@ -50,7 +50,7 @@ normalize(vec) -> vec / sqrt(reduce(vec, _a + _*_, 0));
 
 cross(v, w) -> [v:1*w:2 - v:2*w:1, v:2*w:0 - v:0*w:2, v:0*w:1 - v:1*w:0];
 
-outer_prod(v, w) -> map(w, v*_);
+outer(v, w) -> map(w, v*_);
 
 corss_matrix(vec) -> (
 	[x, y, z] = vec;
