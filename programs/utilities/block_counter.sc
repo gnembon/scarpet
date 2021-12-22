@@ -47,6 +47,7 @@ count_blocks(from_pos, to_pos) ->
       // do a regular scan
       volume(from_pos, to_pos, stats:str(_) += 1 );
       tally(global_data:'stats', global_data:'volume');
+      global_data:'total' = sum(... values(global_data:'stats'));
     );
 
     if(global_autosave, save_scan(null));
@@ -71,6 +72,7 @@ count_blocks_filter(from_pos, to_pos, filtr) ->
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (_~filtr, stats:str(_) += 1 ) );
       tally(global_data:'stats', global_data:'volume');
+      global_data:'total' = sum(... values(global_data:'stats'));
     );
 
     if(global_autosave, save_scan(null));
@@ -95,13 +97,14 @@ count_blocks_tag(from_pos, to_pos, tag) ->
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (block_tags(_, tag), stats:str(_) += 1 ) );
       tally(global_data:'stats', global_data:'volume');
+      global_data:'total' = sum(... values(global_data:'stats'));
     );
 
     if(global_autosave, save_scan(null));
 );
 
 count_blocks_block(from_pos, to_pos, block) ->
-(   print('running block');
+(
     global_data = make_data_stuct(from_pos, to_pos,'minecraft:'+block); //make global empty data structure
     stats = global_data:'stats'; //save reference for easier access
 
@@ -119,6 +122,7 @@ count_blocks_block(from_pos, to_pos, block) ->
       // do a regular scan
       volume(from_pos, to_pos, total += 1; if (_==block, stats:str(_) += 1 ) );
       tally(global_data:'stats', global_data:'volume');
+      global_data:'total' = sum(... values(global_data:'stats'));
     );
 
     if(global_autosave, save_scan(null));
@@ -139,7 +143,7 @@ count_blocks_predicate(from_pos, to_pos, predicate) ->
 /////////////////////////////
 
 tally(stats, grand_total) ->
-(  print(stats);
+(  
    total = sum(... values(stats));
    if(total==null, nothing_found());
    if (total == grand_total,
@@ -187,7 +191,8 @@ vertical_report() -> (
             if(blocks:_==null,
                blocks:_ = [y],
                blocks:_ += y
-            )
+            );
+            global_data:'total' += level_stats:_;
          )
       )
    );
@@ -229,7 +234,15 @@ histogram(block) -> (
    print(format('y Results for ', 'yb '+block));
    for(values, 
       [y, count] = _;
+      total += count;
       print(format(str('w %s %s', hpad(y, 4), '|'*(count/divisor) ), '^g count: '+count) )
+   );
+
+   volume = global_data:'volume';
+   total_found = global_data:'total';
+   if(volume==total_found,
+      print(format(str('g Total: %s  |  %05.2f%% of the scanned volume', total, total/volume*100))),
+      print(format(str('g Total: %s  |  %05.2f%% of total volume  |  %05.2f%% of pool  ', total, total/volume*100, total/total_found*100))),
    );
 );
 
@@ -254,6 +267,7 @@ last_report() -> (
    )
 );
 
+// unused for now
 get_book_report() -> //print(format('g This option is not yet implemented')); //19 characters wide, 14 lines
 (
    cover_page = [
@@ -307,6 +321,7 @@ make_data_stuct(from, to, filter) -> (
       'filter' -> filter,
       'stats' -> stats,
       'blocks' -> {},
+      'total' -> 0,
    }
 );
 
