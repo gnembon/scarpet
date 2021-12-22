@@ -169,7 +169,8 @@ __survival_defaults(player) ->
          )
       )
    );
-   print(format('rb Cannot find a safe spot to land within 32 blocks.'));
+   display_title(player, 'actionbar', format('r Cannot find a safe spot to land within 32 blocks'));
+   //print(format('rb Cannot find a safe spot to land within 32 blocks.'));
    false;
 );
 
@@ -199,7 +200,9 @@ __restrict_flight_tick(player, start_pos, start_dim) ->
    if(distance>global_max_flight_range,
       if(distance>global_max_flight_range*1.5,
          new_pos = __get_restriction_new_pos(pp, start_pos);
-         modify( player, 'pos', new_pos), //in case they TP to another player
+         print(new_pos);
+         modify( player, 'pos', new_pos); //in case they TP to another player
+         display_title(player, 'actionbar', format('y You are not allowed to go that far')),
 
          new_motion = __get_restriction_new_motion(pp, start_pos, player~'motion');
          modify( player, 'motion', new_motion),
@@ -210,6 +213,7 @@ __restrict_flight_tick(player, start_pos, start_dim) ->
    if(player~'dimension' != start_dim,
       run('execute in minecraft:'+ start_dim +' run tp @s ~ ~ ~');
       modify( player, 'pos', start_pos);
+      display_title(player, 'actionbar', format('y You are not allowed to go that far'));
    );
 
    schedule(1, '__restrict_flight_tick', player, start_pos, start_dim);
