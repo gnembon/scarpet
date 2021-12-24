@@ -31,7 +31,7 @@ global_not_solid = [
 //list of tags of blocks with no collision box
 global_no_box_tags = [
 	'small_flowers',
-	'tall_flowers',
+	'replaceable_plants',
 	'banners',
 	'rails',
 	'buttons',
@@ -52,10 +52,8 @@ global_no_box_blocks = [
 	'^(?!potted_).*?(_mushroom)$',
 	'^nether_wart$',
 	'^tripwire',
-	'^(?!potted_).*?(fern)$',
 	'^lever$',
 	'^sugar_cane$',
-	'^glow_lichen$',
 	'grass$',
 	'^(?!potted_).*?(_fungus)$',
 	'^(?!potted_).*?(_roots)$',
@@ -63,7 +61,7 @@ global_no_box_blocks = [
 	'^nether_sprouts$',
 	'^spore_blossom$',
 	'^scaffolding$',
-	'^cobweb%',
+	'^cobweb$',
 	'^small_dripleaf$',
 	'^(?!potted_).*?(_sapling)$',
 	'vine',
