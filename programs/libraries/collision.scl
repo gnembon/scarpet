@@ -1,4 +1,4 @@
-//default direction for each block when placed with /setblock and no additional properties
+//map of default directions for each block when placed with /setblock and no additional properties
 global_default_direction = {
 	['piston$','north']
 	['^piston_head$','north'],
@@ -8,7 +8,7 @@ global_default_direction = {
 	['^amethyst_cluster$','up']
 };
 
-//blocks that are transparent but still have a full block collision box
+//list of blocks that are transparent but still have a full block collision box
 global_full_transparent = [
 	'leaves$',
 	'glass$',
@@ -23,7 +23,7 @@ global_full_transparent = [
 	'shulker_box$'
 ];
 
-//blocks that pass solid() but are not full blocks
+//list of blocks that pass solid() but are not full blocks
 global_not_solid = [
 	'soul_sand'
 ];
@@ -38,14 +38,12 @@ global_no_box_tags = [
 	'pressure_plates',
 	'signs',
 	'bee_growables',
-	'corals',
-	'wall_corals',
+	'fire',
 	//just gonna leave portals here for now unless someone needs them
 	'portals'
 ];
 
-//then we go to names of things with no collision box
-//makes the search a little bit faster
+//list of blocks with no collision box
 global_no_box_blocks = [
 	'air$',
 	'_stem$',
@@ -59,7 +57,6 @@ global_no_box_blocks = [
 	'sugar_cane',
 	'glow_lichen',
 	'grass$',
-	'fire$',
 	'^dead_',
 	'^(?!potted_).*?(_fungus)$',
 	'^(?!potted_).*?(_roots)$',
@@ -73,6 +70,7 @@ global_no_box_blocks = [
 	'vine',
 	'^light$',
 	'structure_void',
+	'_coral(?!_block)',
 
 	//for now, we'll set these liquids as null
 	'water$',
@@ -82,7 +80,6 @@ global_no_box_blocks = [
 ];
 
 //map of all weird collision boxes
-//then we do the basic, default collision box of everything else
 global_box_map = {
 	['_slab$',
 		[
