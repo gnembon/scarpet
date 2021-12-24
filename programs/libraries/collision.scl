@@ -13,13 +13,13 @@ global_full_transparent = [
 	'leaves$',
 	'glass$',
 	'ice$',
-	'glowstone',
-	'beacon',
-	'redstone_block',
-	'sea_lantern',
-	'observer',
-	'tnt',
-	'chorus_flower',
+	'^glowstone$',
+	'^beacon$',
+	'^redstone_block$',
+	'^sea_lantern$',
+	'^observer$',
+	'^tnt$',
+	'^chorus_flower$',
 	'shulker_box$'
 ];
 
