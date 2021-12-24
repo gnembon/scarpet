@@ -48,24 +48,23 @@ global_no_box_blocks = [
 	'air$',
 	'_stem$',
 	'torch$',
-	'redstone_wire',
+	'^redstone_wire$',
 	'^(?!potted_).*?(_mushroom)$',
-	'nether_wart',
+	'^nether_wart$',
 	'^tripwire',
 	'^(?!potted_).*?(fern)$',
-	'lever',
-	'sugar_cane',
-	'glow_lichen',
+	'^lever$',
+	'^sugar_cane$',
+	'^glow_lichen$',
 	'grass$',
-	'^dead_',
 	'^(?!potted_).*?(_fungus)$',
 	'^(?!potted_).*?(_roots)$',
 	'^kelp',
 	'^nether_sprouts$',
 	'^spore_blossom$',
 	'^scaffolding$',
-	'cobweb',
-	'small_dripleaf',
+	'^cobweb%',
+	'^small_dripleaf$',
 	'^(?!potted_).*?(_sapling)$',
 	'vine',
 	'^light$',
@@ -73,10 +72,10 @@ global_no_box_blocks = [
 	'_coral(?!_block)',
 
 	//for now, we'll set these liquids as null
-	'water$',
-	'lava$',
+	'^water$',
+	'^lava$',
 	'^bubble_column$',
-	'powder_snow$'
+	'^powder_snow$'
 ];
 
 //map of all weird collision boxes
