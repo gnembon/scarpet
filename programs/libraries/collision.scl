@@ -1157,7 +1157,7 @@ draw_bounds(block,...colors) ->
 
 //returns list of all unique collision boxes for sorting or other analysis
 //very expensive (~ 345ms)
-// __all_collision_boxes() ->
+__all_collision_boxes() ->
 (
 	list = block_list();
 	//delete everything but the first value that matches a key
@@ -1198,6 +1198,7 @@ draw_bounds(block,...colors) ->
 	);
 	global_all_boxes = map(sort_key(keys(block_map),[_,block_map:_]),block(_));
 );
+task('__all_collision_boxes');
 
 box_list() ->
 (
