@@ -25,7 +25,7 @@ global_full_transparent = [
 
 //list of blocks that pass solid() but are not full blocks
 global_not_solid = [
-	'soul_sand'
+	'^soul_sand$'
 ];
 
 //list of tags of blocks with no collision box
@@ -439,12 +439,12 @@ global_box_map = {
 	],
 	['^bamboo$',
 		[
-			[[0.0625,0,0.0625],[0.9375,1,0.9375]]
+			[[0.40625,0,0.40625],[0.59375,1,0.59375]]
 		]
 	],
 	['^pointed_dripstone$',
 		[
-			[[0.1875,0,0.1875],[0.8125,0.6875,0.8125]]
+			[[0.3125,0,0.3125],[0.6875,0.6875,0.6875]]
 		]
 	],
 	['^soul_sand$',
@@ -486,10 +486,10 @@ global_tilt = ['none','partial','full'];
 //returns list of paired triples of corners of rectangular prisms that comprise collision box
 //measured relative to lower southwest corner of block aka negative direction of every axis
 //cheap once (~ 0.08ms), gets called in loops in other functions
-bounds(block) ->
+bounds(arg) ->
 (
 	//recast as block to allow for most argument types
-	block = block(block);
+	block = block(arg);
 
 	if(
 		//first check if it's solid or a full block
@@ -796,14 +796,30 @@ bounds(block) ->
 				)
 			),
 
-			//dripstone can have different thicknesses
+			//dripstone can have different thicknesses and is not centered
 			key == '^pointed_dripstone$',
 			thickness = state:'thickness';
 			if(thickness == 'frustum',
-				bounds = [[[0.125,0,0.125],[0.875,1,0.875]]],
+				bounds = [[[0.25,0,0.25],[0.75,1,0.75]]],
 				thickness == 'base',
 				bounds = [[[0,0,0],[1,1,1]]];
-			)
+			);
+			if(type(arg) == 'block',
+				[x,y,z] = pos(arg),
+				type(arg) == 'list',
+				[x,y,z] = arg,
+				[x,z] = [0,0]
+			);
+			bounds = __offsetTranslate(bounds,x,z,-0.125,0.125),
+
+			key == '^bamboo$',
+			if(type(arg) == 'block',
+				[x,y,z] = pos(arg),
+				type(arg) == 'list',
+				[x,y,z] = arg,
+				[x,z] = [0,0]
+			);
+			bounds = __offsetTranslate(bounds,x,z,-0.25,0.25)
 		);
 
 		//now we have to check for rotation and flipping
@@ -829,13 +845,15 @@ bounds(block) ->
 		)
 	);
 
-	//sort bounds for easier comparison later
+	//rearrange values in vertices to all mins and all maxes for easier comparison later
 	for(bounds,
 		bounds:_i = [
 			[min(_:0:0,_:1:0),min(_:0:1,_:1:1),min(_:0:2,_:1:2)],
 			[max(_:0:0,_:1:0),max(_:0:1,_:1:1),max(_:0:2,_:1:2)]
 		]
 	);
+	//sort prisms by min vertex
+	bounds = sort_key(bounds || [],_:0) || null;
 
 	bounds
 );
@@ -1141,16 +1159,24 @@ __blockcombinations(blockstring) ->
 );
 
 //draws bounds of a block
-draw_bounds(block,...colors) ->
+draw_bounds(blocks,...colors) ->
 (
-	block = block(block);
-	for(bounds(block),
-		draw_shape('box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033)
-	)
+	shapelist = [];
+	//recast as list in case you forgot
+	if(type(blocks) != 'list',
+		blocks = [copy(blocks)];
+	);
+	for(blocks,
+		block = _;
+		for(__bounds(block),
+			shapelist += ['box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+		)
+	);
+	draw_shape(shapelist);
 );
 
 //returns list of all unique collision boxes for sorting or other analysis
-//very expensive (~ 345ms)
+//very expensive (~ 290ms)
 __all_collision_boxes() ->
 (
 	list = block_list();
@@ -1192,6 +1218,7 @@ __all_collision_boxes() ->
 	);
 	global_all_boxes = map(sort_key(keys(block_map),[_,block_map:_]),block(_));
 );
+//task this on start
 task('__all_collision_boxes');
 
 box_list() ->
@@ -1353,4 +1380,30 @@ __prism_block_collision(pos,width,height) ->
 		);
 	);
 	blocklist
+);
+
+__hashCode(x, z)->(
+	l = bitwise_xor(x * 3129871, z * 116129781);
+	l = l * l * 42317861 + l * 11;
+	l = bitwise_shift_right(l, 16);
+	[ ( bitwise_and( l, 15 ) / 15 - 0.5 ) * 0.5, ( bitwise_and( bitwise_shift_right( l, 8 ), 15 ) / 15 - 0.5 ) * 0.5 ]
+);
+
+__clamp(list, min, max) ->
+(
+	output = copy(list);
+	for(output,
+		if(_ > max,
+			output:_i = max,
+			_ < min,
+			output:_i = min
+		)
+	);
+	output
+);
+
+__offsetTranslate(bounds, x, z, min, max) ->
+(
+	offset = __clamp(__hashCode(x,z),min,max);
+	__translate(__translate(bounds,'x',offset:0),'z',offset:1)
 );
