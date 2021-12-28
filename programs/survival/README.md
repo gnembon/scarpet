@@ -142,6 +142,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	Useful when slicing portals, update supressing and debugging stuff.
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 
+### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
+### By Opsaaaaa
+	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
+	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
+
+
 ### [nopickup.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/nopickup.sc):
 #### By KonaeAkira
 	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
