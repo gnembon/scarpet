@@ -1,7 +1,7 @@
 //Counts blocks in a given region, optionally filtering by block type or tag. 
 //Prints the output into a chat or a file.
 //If vertical scan is set to true, it will return a separate report for each y value.
-//By gnembom and Firigion
+//By gnembon and Firigion
 
 __config() ->
 {
