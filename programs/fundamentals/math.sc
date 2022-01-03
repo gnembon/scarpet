@@ -52,7 +52,7 @@ cross(v, w) -> [v:1*w:2 - v:2*w:1, v:2*w:0 - v:0*w:2, v:0*w:1 - v:1*w:0];
 
 outer(v, w) -> map(w, v*_);
 
-corss_matrix(vec) -> (
+cross_matrix(vec) -> (
 	[x, y, z] = vec;
 	[[0, -z, y], [z, 0, -x], [-y, x, 0]]
 );
