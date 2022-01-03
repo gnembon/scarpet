@@ -59,7 +59,7 @@ _report(verbose)->(
         total_time+=entry:0;
 		total_mobs+=entry:1;
     );
-    print('Total average lifetime for all mobs is: '+round(total_time/total_mobs*5)/100+' seconds');
+    print('Total average lifetime over '+total_mobs+' mobs is: '+round(total_time/total_mobs*5)/100+' seconds');
 	null
 );
 
