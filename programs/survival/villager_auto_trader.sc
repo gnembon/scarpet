@@ -4,7 +4,7 @@
 //It also launches items at closest player within 5m radius, regardless of line of sight
 //By: Ghoulboy
 
-import('math', '_euclidean_sq');
+import('math', '_euclidean_sq', '_vec_length');
 
 __config()->{'scope'->'global'};
 
@@ -31,7 +31,7 @@ _trade(zombie_villager, trade)->(
         item = null;
         in_dimension(zombie_villager,
             item_pos = pos(zombie_villager)+[0, zombie_villager~'eye_height'-0.3, 0]; 
-            item = spawn('item',item_pos,str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));//todo add velocity towards player
+            item = spawn('item',item_pos,str('{Item:{id:"%s",Count:%db, PickupDelay:10}}',trade:'sell':'id',trade:'sell':'Count'));
         );
 
         nearest_player = null;
@@ -45,10 +45,11 @@ _trade(zombie_villager, trade)->(
             )
         );
 
-        if(nearest_player!=null,
-            item_motion = (pos(nearest_player)-item_pos)*0.3;
-            modify(item, 'motion', item_motion)
-        )
+        item_motion = if(nearest_player!=null,
+            (pos(nearest_player)-item_pos)/(_vec_length(pos(nearest_player)-item_pos)*10),
+            zombie_villager~'look'/10
+        );
+        modify(item, 'motion', item_motion)
     );
 
     schedule(global_trade_speed, '_trade', zombie_villager, trade)
