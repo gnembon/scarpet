@@ -71,7 +71,7 @@ mat_times_mat(mat1, mat2) -> (
 	)
 );
 
-transpose(mat) -> map(mat, i = _i; map(_, mat:_i:i) );
+transpose(m) -> map(m:0, i = _i; map(m, _:i) );
 
 highest_common_factor(num1,num2) -> (
 	q=1;
