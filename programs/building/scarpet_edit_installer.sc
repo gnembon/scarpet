@@ -7,7 +7,7 @@ printf(text) -> (
 );
 
 checkText = 'Check the Scarpet Edit license at https://github.com/Ghoulboy78/Scarpet-edit/blob/master/licence.txt';
-global_langs = ['es_la', 'it_it'];
+global_langs = ['es_la', 'it_it', 'zh_cn'];
 
 if (length(list_files('', 'text')) == 0,
     firstTime = true;
