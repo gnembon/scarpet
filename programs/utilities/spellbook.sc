@@ -26,30 +26,48 @@ global_spells_per_page = 6;
 
 global_shuffle_colors = [
   'dark_red',
-  'red',
   'gold',
-  'yellow',
   'dark_green',
-  'green',
-  'aqua',
   'dark_aqua',
   'dark_blue',
-  'blue',
-  'light_purple',
   'dark_purple'
 ];
 
+global_script_version = 3;
+
 // pages: strings/array/nbt, title, author
-global_book_template = '{pages:%s, title:"%s",author:"%s"}';
+global_book_template = '{pages:%s, title:"Nimda %s %s",author:"%s"}';
 
 global_base_book_data = {
   'vbook' -> 0,
-  'vscript' -> '0.1',
+  'vscript' -> global_script_version,
   'author' -> 'server',
   'subject' -> '',
   'title' -> '',
-  'spells' -> {}
+  'spells' -> {},
+  'render' -> {
+    'v' -> 'v0.0',
+    'nbt' -> ''
+  }
 };
+
+
+__on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
+  if(block == block('lectern'),
+
+    print(p, block);
+    // print(p, face);
+    // state = block_state(block, property)
+    // block_tags(block)
+    pos = pos(block);
+    nbt = block_data(pos);
+    print(p, pos);
+    print(p, nbt);
+    // print(p, hitvec);
+    // print(p,query(p, 'trace'));
+    //  block(x, y, z) 
+  );
+);
 
 
 _read_book(name) -> (
@@ -64,9 +82,14 @@ _read_book(name) -> (
   );
 );
 
-_write_book(name, book) -> (
+_write_book(book) -> (
+  book:'vscript' = global_script_version;
   book:'vbook' = book:'vbook' + 1;
-  write_file(name, 'json', book);
+  write_file(book:'title', 'json', book);
+);
+
+_write_render(book) -> (
+  write_file(book:'title', 'json', book);
 );
 
 display_book(book_name) -> (
@@ -89,7 +112,7 @@ give_book(name) -> (
 delete_command(book_name, title) -> (
   book = _read_book(book_name);
   delete(book:'spells':title);
-  _write_book(book_name, book);
+  _write_book(book);
 );
 
 
@@ -98,7 +121,7 @@ set_command(book_name, title, command) -> (
   book = _read_book(book_name);
   book:'spells':title = command;
   print(p, str('%s spell set: [ %s ]( %s ).', book_name, title, command));
-  _write_book(book_name, book);
+  _write_book(book);
 );
 
 _render_single_spell(title, command, color) -> (
@@ -124,8 +147,28 @@ _render_pages(spells) -> (
   ));
 );
 
-_render_book_nbt(book_data) -> (
-  return(str(global_book_template, _render_pages(pairs(book_data:'spells')), book_data:'title', book_data:'author'));
+_render_version(book) -> (
+  return(str('v%d.%d', book:'vscript', book:'vbook'));
+);
+
+_render_book_nbt(book) -> (
+  v = _render_version(book);
+  if(book:'render' && book:'render':'v' == v,
+    return( book:'render':'nbt' );
+  ,
+    book:'render' = {
+      'v' -> v,
+      'nbt' -> str(
+        global_book_template, 
+        _render_pages(pairs(book:'spells')), 
+        book:'title', 
+        v, 
+        book:'author'
+      )
+    };
+    _write_render(book)
+  );
+  return( book:'render':'nbt' );
 );
 
 _shuffle_color() -> (
@@ -142,5 +185,7 @@ A utiltiy used to create command books.
 /spellbook <book> set <page> <line> <"command">
   ');
 );
+
+
 
 
