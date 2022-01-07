@@ -21,6 +21,8 @@ __config()->{
 // title, color, command
 global_spell_template = '{"text":"[%s]","color":"%s","clickEvent":{"action":"run_command","value":"%s"}},{"text":"\\\\n","color":"reset"}';
 
+global_spells_per_page = 6;
+
 global_shuffle_colors = [
   'dark_red',
   'red',
@@ -101,11 +103,11 @@ _render_pages(spells) -> (
   l = length(spells);
   while(a<length(spells),50,
     page = [];
-    loop( min(14,l) ,
+    loop( min(global_spells_per_page,l) ,
       put(page, null, _render_single_spell(spells:a:0, spells:a:1, _shuffle_color()));
       a += 1;
     );
-    l = l - 14;
+    l = l - global_spells_per_page;
     put(pages, null, page);
     if( l < 1, break() );  
   );
@@ -124,8 +126,12 @@ _shuffle_color() -> (
 
 help() -> (
   print(player(), '
-  A command to utiltiy used to edit command books.\n
-  /spellbook command set <page> <line> <"command">
+A utiltiy used to create command books.
+
+/spellbook <book> command <title> <"command">
+/spellbook warps command "Spawn" "/tp @p 0 64 0"
+/spellbook warps command "Teleport to Spawn" "/tp @p 1173 28 0"
+/spellbook <book> set <page> <line> <"command">
   ');
 );
 
