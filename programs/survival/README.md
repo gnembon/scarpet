@@ -296,6 +296,21 @@ Various scripts that modify various game elements, often replicating popular mod
     It will display a number in the scoreboard. Divide said number by 100 to get actual speed.
     Speed toggle in minihud is obviously much better.
 
+
+### [spellbook.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/spellbook.sc):
+#### By opsaaaaa
+	A command utiltiy used to create command books (spellbooks)
+	Its helpful for admins on survival worlds.
+	I use it to spawn and kill player bot in standard locations at farms, but the its not limited to that usecase.
+	```
+		/spellbook <book> set <title> <"command">
+		/spellbook farms set "spawn slime farm bot" "/execute in overworld run player SlimeBot spawn at -50.50 82 24"
+		/spellbook farms set "kill slime farm bot" "/player SlimeBot kill"
+		/spellbook farms give
+	```
+	This will generate a book with clickible text that runs the above commands.
+	Spellbooks placed in lecterns will automaticly update to new versions of the spellbook when opened.
+
 ### [storage_drawers.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/storage_drawers.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
