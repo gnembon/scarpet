@@ -45,7 +45,6 @@ global_spells_per_page = 6;
 global_base_book_data = {
   'vbook' -> 0,
   'vscript' -> global_spellbook_version,
-  'subject' -> '',
   'title' -> '',
   'spells' -> {},
   'render' -> {
@@ -84,7 +83,6 @@ _read_book(name) -> (
   ,
     file = global_base_book_data;
     file:'title' = name;
-    file:'subject' = name;
     return(file);
   );
 );
