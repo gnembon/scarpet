@@ -14,11 +14,11 @@ __config()->{
   'arguments' -> {
     'command' -> {'type' -> 'string', 'suggest' -> ['"/bar"', '"/tp @p x y z"', '"/gamerule doFireTick true"']},
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
-    'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms']},
+    'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
   }
 };
 
-// spellbooks tack thier own book version and the script version, 
+// spellbooks tack their own book version and the script version, 
 // it updates a book when either of those versions no longer match.
 // increment this number when you make changes to spell book rendering.
 // Not all changes need to update this.
@@ -102,9 +102,9 @@ _write_render(book) -> (
 // Command Methods
 help() -> (
   print(player(), '
-A utiltiy used to create command books (spell books).
+A utility used to create command books (spell books).
 
-Add or overide a spell in a book.
+Add or override a spell in a book.
   /spellbook <book> set <title> <"command">
   /spellbook farms set "spawn slime farm bot" "/execute in overworld run player SlimeBot spawn at -50.50 82 24"
   /spellbook farms set "kill slime farm bot" "/player SlimeBot kill"
@@ -159,7 +159,7 @@ set_command(book_name, title, command) -> (
 
 
 
-// Book Rendering Functions
+// Book Rendering Functions 
 _render_single_spell(title, command, color) -> (
   return(str(global_spell_template,title,color,command));
 );

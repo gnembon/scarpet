@@ -299,7 +299,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [spellbook.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/spellbook.sc):
 #### By opsaaaaa
-	A command utiltiy used to create command books (spellbooks)
+	A command utility used to create command books (spellbooks)
 	Its helpful for admins on survival worlds.
 	I use it to spawn and kill player bot in standard locations at farms, but the its not limited to that usecase.
 	```
