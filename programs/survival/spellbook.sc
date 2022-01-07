@@ -12,8 +12,6 @@ __config()->{
     '<book> read' -> 'display_book'
   },
   'arguments' -> {
-    'page' -> {'type' -> 'int', 'min' -> 0, 'max' -> 100},
-    'line' -> {'type' -> 'int', 'min' -> 0, 'max' -> 14},
     'command' -> {'type' -> 'string', 'suggest' -> ['"/bar"', '"/tp @p x y z"', '"/gamerule doFireTick true"']},
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms']},
@@ -23,7 +21,7 @@ __config()->{
 // spellbooks tack thier own book version and the script version, 
 // it updates a book when either of those versions no longer match.
 // increment this number when you make changes to spell book rendering.
-// Not all changes need to the script do this.
+// Not all changes need to update this.
 global_spellbook_version = 3;
 
 // When you make changes to the templates you should increment the script version
