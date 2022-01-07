@@ -1,4 +1,4 @@
-// A utility for creating command books
+// A utility for creating and using command books (spellbooks)
 
 __config()->{
   'command_permission' -> 'ops', 
@@ -19,13 +19,18 @@ __config()->{
   }
 };
 
-global_script_version = 4;
-// title, color, command
+// spellbooks tack thier own book version and the script version, 
+// it updates a book when either of those versions no longer match.
+// increment this number when you make changes to spell book rendering.
+// Not all changes need to the script do this.
+global_spellbook_version = 3;
+
+// When you make changes to the templates you should increment the script version
 global_spell_template = '{"text":"[%s]","color":"%s","clickEvent":{"action":"run_command","value":"%s"}},{"text":"\\\\n"}';
-global_title_template = '{"text":"Nimda %s", "bold":true},{"text":".\\\\n"}';
+global_title_template = '{"text":"%s", "bold":true},{"text":".\\\\n"}';
+global_book_template = '{pages:%s, title:"%s",author:"nimda.spellbook.%s"}';
 
-global_spells_per_page = 6;
-
+// Pick a spell color at random.
 global_shuffle_colors = [
   'dark_red',
   'gold',
@@ -35,14 +40,12 @@ global_shuffle_colors = [
   'dark_purple'
 ];
 
+global_spells_per_page = 6;
 
-// pages: strings/array/nbt, title, author
-global_book_template = '{pages:%s, title:"Nimda %s %s",author:"%s"}';
-
+// Default Book Data
 global_base_book_data = {
   'vbook' -> 0,
-  'vscript' -> global_script_version,
-  'author' -> 'server',
+  'vscript' -> global_spellbook_version,
   'subject' -> '',
   'title' -> '',
   'spells' -> {},
@@ -53,24 +56,28 @@ global_base_book_data = {
 };
 
 
+// Automagically Update Spell Books in Lecterns  
 __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
   if(block == block('lectern'),
-
-    print(p, block);
-    // print(p, face);
-    // state = block_state(block, property)
-    // block_tags(block)
     pos = pos(block);
-    nbt = block_data(pos);
-    print(p, pos);
-    print(p, nbt);
-    // print(p, hitvec);
-    // print(p,query(p, 'trace'));
-    //  block(x, y, z) 
+    block_data = block_data(pos);
+    book_nbt = get(block_data, 'Book.tag');
+    if(book_nbt:'author'~'nimda\\.spellbook',    
+      book_save = _read_book(book_nbt:'title');
+      v = book_nbt:'author'~'v\\d+\\.\\d+';
+      if(v != _render_version(book_save),
+        put(block_data, 'Book.tag', nbt(_render_book_nbt(book_save)));
+        without_updates(
+          set(pos, block, {}, block_data);
+        );
+        print(p, str('Automagically Updated %s Spell Book from %s to %s.', book_nbt:'title', v, book_save:'render':'v'));
+      );
+    );
   );
 );
 
 
+// Standardize reading and writing functions
 _read_book(name) -> (
   file = read_file(name, 'json');
   if( file, 
@@ -84,13 +91,27 @@ _read_book(name) -> (
 );
 
 _write_book(book) -> (
-  book:'vscript' = global_script_version;
+  book:'vscript' = global_spellbook_version;
   book:'vbook' = book:'vbook' + 1;
   write_file(book:'title', 'json', book);
 );
 
 _write_render(book) -> (
   write_file(book:'title', 'json', book);
+);
+
+
+
+// Command Methods
+help() -> (
+  print(player(), '
+A utiltiy used to create command books.
+
+/spellbook <book> set <title> <"command">
+/spellbook warps set "Spawn" "/tp @p 0 64 0"
+/spellbook warps set "Teleport to Spawn" "/tp @p 1173 28 0"
+/spellbook <book> set <page> <line> <"command">
+  ');
 );
 
 display_book(book_name) -> (
@@ -105,18 +126,20 @@ display_book(book_name) -> (
 give_book(name) -> (
   book = _read_book(name);
   p = player();
-  print(p, str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book)));
   print(p, 
     run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1
   );
 );
 
-delete_command(book_name, title) -> (
+delete_command(book_name, spell) -> (
   book = _read_book(book_name);
-  delete(book:'spells':title);
-  _write_book(book);
+  if( delete(book:'spells':spell),
+    _write_book(book);
+    print(player(), str('Removed the [ %s ] spell.', spell))
+  ,
+    print(player(), str('Unknown spell [ %s ].', spell))
+  );
 );
-
 
 set_command(book_name, title, command) -> (
   p = player();
@@ -126,6 +149,10 @@ set_command(book_name, title, command) -> (
   _write_book(book);
 );
 
+
+
+
+// Book Rendering Functions
 _render_single_spell(title, command, color) -> (
   return(str(global_spell_template,title,color,command));
 );
@@ -153,15 +180,11 @@ _render_pages(book) -> (
 );
 
 _render_version(book) -> (
-  return(str('v%d.%d', global_script_version, book:'vbook'));
+  return(str('v%d.%d', global_spellbook_version, book:'vbook'));
 );
 
 _render_book_nbt(book) -> (
   v = _render_version(book);
-  print(player(), global_script_version);
-  print(player(), v);
-  print(player(), book:'render':'v');
-  print(player(), book:'render':'v' == v);
   if(book:'render' && book:'render':'v' == v,
     return( book:'render':'nbt' );
   ,
@@ -171,8 +194,7 @@ _render_book_nbt(book) -> (
         global_book_template, 
         _render_pages(book), 
         book:'title', 
-        v, 
-        book:'author'
+        v
       )
     };
     _write_render(book);
@@ -184,16 +206,9 @@ _shuffle_color() -> (
   return(global_shuffle_colors:rand(length(global_shuffle_colors) - 1));
 );
 
-help() -> (
-  print(player(), '
-A utiltiy used to create command books.
 
-/spellbook <book> command <title> <"command">
-/spellbook warps command "Spawn" "/tp @p 0 64 0"
-/spellbook warps command "Teleport to Spawn" "/tp @p 1173 28 0"
-/spellbook <book> set <page> <line> <"command">
-  ');
-);
+
+
 
 
 
