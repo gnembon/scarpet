@@ -4,6 +4,7 @@ __config()->{
   'command_permission' -> 'ops', 
   'commands' -> {
     '' -> 'help',
+    'help' -> 'help',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
     '<book> set <title> <command>' -> 'set_command',
@@ -15,7 +16,7 @@ __config()->{
     'line' -> {'type' -> 'int', 'min' -> 0, 'max' -> 14},
     'command' -> {'type' -> 'string', 'suggest' -> ['"/bar"', '"/tp @p x y z"', '"/gamerule doFireTick true"']},
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
-    'book' -> {'type' -> 'string', 'suggest' -> ['incantations', 'warps', 'zones']},
+    'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms']},
   }
 };
 
@@ -105,13 +106,23 @@ _write_render(book) -> (
 // Command Methods
 help() -> (
   print(player(), '
-A utiltiy used to create command books.
+A utiltiy used to create command books (spell books).
 
-/spellbook <book> set <title> <"command">
-/spellbook warps set "Spawn" "/tp @p 0 64 0"
-/spellbook warps set "Teleport to Spawn" "/tp @p 1173 28 0"
-/spellbook <book> set <page> <line> <"command">
-  ');
+Add or overide a spell in a book.
+  /spellbook <book> set <title> <"command">
+  /spellbook farms set "spawn slime farm bot" "/execute in overworld run player SlimeBot spawn at -50.50 82 24"
+  /spellbook farms set "kill slime farm bot" "/player SlimeBot kill"
+  /spellbook farms give
+
+Give the player a spellbook.
+  /spellbook <book> give
+
+Remove a spell.
+  /spellbook <book> remove <spell>
+
+List all spells in a book.
+  /spellbook <book> read
+');
 );
 
 display_book(book_name) -> (
