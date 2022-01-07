@@ -6,7 +6,8 @@ __config()->{
     '' -> 'help',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
-    '<book> command <title> <command>' -> 'set_command',
+    '<book> set <title> <command>' -> 'set_command',
+    '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
   'arguments' -> {
@@ -84,6 +85,13 @@ give_book(name) -> (
     run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1;
   );
 );
+
+delete_command(book_name, title) -> (
+  book = _read_book(book_name);
+  delete(book:'spells':title);
+  _write_book(book_name, book);
+);
+
 
 set_command(book_name, title, command) -> (
   p = player();
