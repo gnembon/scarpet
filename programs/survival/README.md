@@ -308,8 +308,8 @@ Various scripts that modify various game elements, often replicating popular mod
 		/spellbook farms set "kill slime farm bot" "/player SlimeBot kill"
 		/spellbook farms give
 	```
-	This will generate a book with clickible text that runs the above commands.
-	Spellbooks placed in lecterns will automaticly update to new versions of the spellbook when opened.
+	This will generate a book with clickable text that runs the above commands.
+	Spellbooks placed in lecterns will auto magically update to new versions of the spellbook when opened.
 
 ### [storage_drawers.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/storage_drawers.sc):
 #### By gnembonmc
