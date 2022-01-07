@@ -19,8 +19,10 @@ __config()->{
   }
 };
 
+global_script_version = 4;
 // title, color, command
-global_spell_template = '{"text":"[%s]","color":"%s","clickEvent":{"action":"run_command","value":"%s"}},{"text":"\\\\n","color":"reset"}';
+global_spell_template = '{"text":"[%s]","color":"%s","clickEvent":{"action":"run_command","value":"%s"}},{"text":"\\\\n"}';
+global_title_template = '{"text":"Nimda %s", "bold":true},{"text":".\\\\n"}';
 
 global_spells_per_page = 6;
 
@@ -33,7 +35,6 @@ global_shuffle_colors = [
   'dark_purple'
 ];
 
-global_script_version = 3;
 
 // pages: strings/array/nbt, title, author
 global_book_template = '{pages:%s, title:"Nimda %s %s",author:"%s"}';
@@ -104,8 +105,9 @@ display_book(book_name) -> (
 give_book(name) -> (
   book = _read_book(name);
   p = player();
+  print(p, str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book)));
   print(p, 
-    run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1;
+    run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1
   );
 );
 
@@ -128,12 +130,13 @@ _render_single_spell(title, command, color) -> (
   return(str(global_spell_template,title,color,command));
 );
 
-_render_pages(spells) -> (
+_render_pages(book) -> (
+  spells = pairs(book:'spells');
   pages = [];
   a = 0;
   l = length(spells);
   while(a<length(spells),50,
-    page = [];
+    page = [str(global_title_template, book:'title')];
     loop( min(global_spells_per_page,l) ,
       put(page, null, _render_single_spell(spells:a:0, spells:a:1, _shuffle_color()));
       a += 1;
@@ -141,6 +144,8 @@ _render_pages(spells) -> (
     l = l - global_spells_per_page;
     put(pages, null, page);
     if( l < 1, break() );  
+    
+
   );
   return(str('[%s]',
     str('\'[%s]\'', join(']\',\'[', pages)) 
@@ -148,11 +153,15 @@ _render_pages(spells) -> (
 );
 
 _render_version(book) -> (
-  return(str('v%d.%d', book:'vscript', book:'vbook'));
+  return(str('v%d.%d', global_script_version, book:'vbook'));
 );
 
 _render_book_nbt(book) -> (
   v = _render_version(book);
+  print(player(), global_script_version);
+  print(player(), v);
+  print(player(), book:'render':'v');
+  print(player(), book:'render':'v' == v);
   if(book:'render' && book:'render':'v' == v,
     return( book:'render':'nbt' );
   ,
@@ -160,15 +169,15 @@ _render_book_nbt(book) -> (
       'v' -> v,
       'nbt' -> str(
         global_book_template, 
-        _render_pages(pairs(book:'spells')), 
+        _render_pages(book), 
         book:'title', 
         v, 
         book:'author'
       )
     };
-    _write_render(book)
+    _write_render(book);
+    return( book:'render':'nbt' );
   );
-  return( book:'render':'nbt' );
 );
 
 _shuffle_color() -> (
