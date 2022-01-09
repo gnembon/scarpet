@@ -1171,12 +1171,27 @@ draw_bounds(blocks,...colors) ->
 	for(blocks,
 		if(type(_) != 'string',
 			block = block(_);
+			pos = pos(block);
 			for(__bounds(block),
-				shapelist += ['box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+				shapelist += ['box',100,'from',pos + _:0,'to',pos + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
 			)
 		)
 	);
 	draw_shape(shapelist);
+);
+
+__position_catch(block) ->
+(
+	if(type(block) == 'string',
+		[0,0,0],
+		pos(block(block));
+	)
+);
+
+positioned_bounds(block) ->
+(
+	pos = __position_catch(block);
+	map(__bounds(block),map(_,_ + pos))
 );
 
 //returns list of all unique collision boxes for sorting or other analysis
