@@ -1162,14 +1162,18 @@ __blockcombinations(blockstring) ->
 draw_bounds(blocks,...colors) ->
 (
 	shapelist = [];
-	//recast as list in case you forgot
-	if(type(blocks) != 'list',
-		blocks = [copy(blocks)];
+	//if you didn't pass the function a list or you passed it a triple, turn it into a list
+	if(type(blocks) != 'list' || (all(blocks,type(_) == 'number') && length(blocks) == 3),
+		blocks = [blocks];
 	);
+	//recast everything as blocks, except any string you passed
+	//don't have the ability to handle those errors at this time
 	for(blocks,
-		block = _;
-		for(__bounds(block),
-			shapelist += ['box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+		if(type(_) != 'string',
+			block = block(_);
+			for(__bounds(block),
+				shapelist += ['box',100,'from',pos(block) + _:0,'to',pos(block) + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+			)
 		)
 	);
 	draw_shape(shapelist);
