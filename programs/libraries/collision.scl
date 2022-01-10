@@ -1159,7 +1159,7 @@ __blockcombinations(blockstring) ->
 );
 
 //draws bounds of a block
-draw_bounds(blocks,...colors) ->
+draw_bounds(blocks,ticks,colors,...positions) ->
 (
 	shapelist = [];
 	//if you didn't pass the function a list or you passed it a triple, turn it into a list
@@ -1169,11 +1169,11 @@ draw_bounds(blocks,...colors) ->
 	//recast everything as blocks, except any string you passed
 	//don't have the ability to handle those errors at this time
 	for(blocks,
-		if(type(_) != 'string',
+		if(type(_) != 'string' || positions != [],
 			block = block(_);
-			pos = pos(block);
+			pos = positions:_i || pos(block);
 			for(__bounds(block),
-				shapelist += ['box',100,'from',pos + _:0,'to',pos + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+				shapelist += ['box',ticks,'from',pos + _:0,'to',pos + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
 			)
 		)
 	);
@@ -1188,9 +1188,9 @@ __position_catch(block) ->
 	)
 );
 
-positioned_bounds(block) ->
+positioned_bounds(block, ...pos) ->
 (
-	pos = __position_catch(block);
+	pos = pos || __position_catch(block);
 	map(__bounds(block),map(_,_ + pos))
 );
 
