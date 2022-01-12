@@ -444,7 +444,7 @@ printStatValue(event, player, category) -> (
 changeStat(event, category) -> (
     if(global_carousel_active, _error('Couldn\'t change the displayed statistic, a carousel is currently active'));
     if(category == 'combined' && parseCombinedFile(event) == [null, null, null], _error('Combined statistic not found'));
-    showStat(category, if(category == 'digs' && !event, global_default_dig || 'combined_blocks', event));
+    showStat(category, if(category == 'digs' && !event, global_default_dig, event));
     logger(str('[Stat] Stat Change | %s ➡ %s.%s', player(), category, event));
 );
 
@@ -625,7 +625,7 @@ __on_start() -> (
     global_display_digs = settings:'display_digs' || {};
     global_display_digs_color = settings:'display_digs_color' || {};
     global_stat_color = settings:'stat_color' || 'FFEE44';
-    global_default_dig = settings:'default_dig';
+    global_default_dig = settings:'default_dig' || 'combined_blocks';
     if(global_stat:0 == 'combined', [display_name, combined_category, entries] = parseCombinedFile(global_stat:1); global_combined = [combined_category, entries]);
 
     for(if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')), updateDigs(_); updateStat(_));
