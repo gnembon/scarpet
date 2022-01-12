@@ -608,7 +608,7 @@ __on_close() -> (
     for(global_digs, write_file(str('digs/%s', _), 'json', global_digs:_));
 );
 
-// INITIALISATION
+// INITIALIZATION
 
 __on_start() -> (
     for(['stats', 'bedrock_removed', 'digs'], if(scoreboard()~_ == null, scoreboard_add(_)));
