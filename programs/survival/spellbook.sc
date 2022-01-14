@@ -5,6 +5,7 @@ __config()->{
   'commands' -> {
     '' -> 'help',
     'help' -> 'help',
+    'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
     '<book> set <title> <command>' -> 'set_command',
@@ -18,14 +19,23 @@ __config()->{
   }
 };
 
+
+//{pages:['
+// {
+//  "text":"Minecraft Tools book",
+//  "clickEvent":{"action":"run_command","value":"/foo"},
+//  "hoverEvent":{"action":"show_text","contents":"/foo"}
+//  }'
+// ],title:Book,author:"http://minecraft.tools/"}
+
 // spellbooks tack their own book version and the script version, 
 // it updates a book when either of those versions no longer match.
 // increment this number when you make changes to spell book rendering.
 // Not all changes need to update this.
-global_spellbook_version = 3;
+global_spellbook_version = 5;
 
 // When you make changes to the templates you should increment the script version
-global_spell_template = '{"text":"[%s]","color":"%s","clickEvent":{"action":"run_command","value":"%s"}},{"text":"\\\\n"}';
+global_spell_template = '{"text":"%s","color":"%s","clickEvent":{"action":"run_command","value":"%s"},"hoverEvent":{"action":"show_text","contents":"%s"}},{"text":"\\\\n"}';
 global_title_template = '{"text":"%s", "bold":true},{"text":".\\\\n"}';
 global_book_template = '{pages:%s, title:"%s",author:"nimda.spellbook.%s"}';
 
@@ -75,9 +85,11 @@ __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
 );
 
 
+
+
 // Standardize reading and writing functions
 _read_book(name) -> (
-  file = read_file(name, 'json');
+  file = read_file('books/'+name, 'json');
   if( file, 
     return(file);
   ,
@@ -90,14 +102,22 @@ _read_book(name) -> (
 _write_book(book) -> (
   book:'vscript' = global_spellbook_version;
   book:'vbook' = book:'vbook' + 1;
-  write_file(book:'title', 'json', book);
+
+  write_file('books/'+_sanitize_book_title(book:'title'), 'json', book);
 );
 
 _write_render(book) -> (
-  write_file(book:'title', 'json', book);
+  write_file('books/'+_sanitize_book_title(book:'title'), 'json', book);
 );
 
-
+// Because part of the in game book nbt is used to write a file 
+// remove any weird characters from the spellbook title.
+// This is probably a non-issue because 
+// scarpet seems to handles file security well, but just in case.
+// This would present a issue for non-roman characters. 
+_sanitize_book_title(title) -> (
+  return(replace(title, '[^A-z0-9_-]', '_'));
+);
 
 // Command Methods
 help() -> (
@@ -118,7 +138,20 @@ Remove a spell.
 
 List all spells in a book.
   /spellbook <book> read
+
+List all the spellbooks
+  /spellbook list
+
 ');
+);
+
+
+list_books() -> (
+  books = list_files('books/', 'json');
+  p = player();
+  for(books,
+    print(p,str('[ %s ]', get(split('/',_), -1) ));
+  );
 );
 
 display_book(book_name) -> (
@@ -161,18 +194,18 @@ set_command(book_name, title, command) -> (
 
 // Book Rendering Functions 
 _render_single_spell(title, command, color) -> (
-  return(str(global_spell_template,title,color,command));
+  return(str(global_spell_template,title,color,command, command));
 );
 
 _render_pages(book) -> (
-  spells = pairs(book:'spells');
+  spells = sort_key(pairs(book:'spells'), _:0 );
   pages = [];
   a = 0;
   l = length(spells);
   while(a<length(spells),50,
     page = [str(global_title_template, book:'title')];
     loop( min(global_spells_per_page,l) ,
-      put(page, null, _render_single_spell(spells:a:0, spells:a:1, _shuffle_color()));
+      put(page, null, _render_single_spell(spells:a:0, spells:a:1, _shuffle_color(a)));
       a += 1;
     );
     l = l - global_spells_per_page;
@@ -209,14 +242,24 @@ _render_book_nbt(book) -> (
   );
 );
 
-_shuffle_color() -> (
-  return(global_shuffle_colors:rand(length(global_shuffle_colors) - 1));
+_shuffle_color(color_idx) -> (
+  return(global_shuffle_colors:color_idx);
 );
 
 
 
+// Move old books from app root into books folder
+// run /script in spellbook invoke migrate_books_folder_location
+migrate_books_folder_location() -> (
+  old_files = list_files('./', 'json');
+  for(old_files, 
+    book = read_file(_, 'json');
+    write_file('books/'+_, 'json', book);
+    delete_file(_, 'json');
+  );
+  return(str('Migrated [ %s ] books from <app>/ to <app>/books.', join(', ',old_files) ));
+);
 
 
 
-
-
+ 
