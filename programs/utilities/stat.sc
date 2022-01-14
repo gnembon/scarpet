@@ -342,7 +342,7 @@ getStat(player, category, event) -> (
 
 displayDigs(player) -> (
     color = global_display_digs_color:(player~'uuid') || 'FFEE44';
-    if(player(player), display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, global_digs:'combined_blocks':str(player)), '#343A40  ｜ ', str('#%s ⚒ %s', color, global_digs:'total':str(player)), '#343A40  ｜ ', str('#%s ⛏ %s', color, global_digs:'pick':str(player)))));
+    if(player(player), display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, getStat(player, 'digs', 'combined_blocks')), '#343A40  ｜ ', str('#%s ⚒ %s', color, getStat(player, 'digs', 'total')), '#343A40  ｜ ', str('#%s ⛏ %s', color, getStat(player, 'digs', 'pick')))));
 );
 
 // COMMAND FUNCTIONS
@@ -468,14 +468,16 @@ updateStat(player) -> (
 );
 
 updateDigs(player) -> (
-    if(global_server_whitelisted && !has(system_info('server_whitelist'), str(player)) || !player(player), return());
-    for(global_dig_data,
-        global_digs:_ = global_digs:_ || {};
-        amount = getStat(player, 'digs', _);
-        if(amount > 0, global_digs:_:str(player) = amount);
+    if(!player(player), return());
+    if(!global_server_whitelisted || has(system_info('server_whitelist'), str(player)),
+        for(global_dig_data,
+            global_digs:_ = global_digs:_ || {};
+            amount = getStat(player, 'digs', _);
+            if(amount > 0, global_digs:_:str(player) = amount);
+        );
     );
-    scoreboard('digs', player, global_digs:global_default_dig:str(player));
     if(global_display_digs:(player(player)~'uuid') != false, displayDigs(player));
+    scoreboard('digs', player, getStat(player, 'digs', global_default_dig));
 );
 
 // COMBINED STATS MANAGING
@@ -628,7 +630,10 @@ __on_start() -> (
     global_default_dig = settings:'default_dig' || 'combined_blocks';
     if(global_stat:0 == 'combined', [display_name, combined_category, entries] = parseCombinedFile(global_stat:1); global_combined = [combined_category, entries]);
 
-    for(if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')), updateDigs(_); updateStat(_));
+    for(if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')),
+        updateDigs(_);
+        if(global_stat, updateStat(_));
+    );
     removeInvalidEntries();
-    calculateTotal()
+    if(global_stat, calculateTotal());
 );
