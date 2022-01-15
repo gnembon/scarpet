@@ -630,10 +630,7 @@ __on_start() -> (
     global_default_dig = settings:'default_dig' || 'combined_blocks';
     if(global_stat:0 == 'combined', [display_name, combined_category, entries] = parseCombinedFile(global_stat:1); global_combined = [combined_category, entries]);
 
-    for(if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')),
-        updateDigs(_);
-        if(global_stat, updateStat(_));
-    );
+    for(player('all'), updateDigs(_); if(global_stat, updateStat(_)));
     removeInvalidEntries();
     if(global_stat, calculateTotal());
 );
