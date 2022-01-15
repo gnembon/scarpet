@@ -23,6 +23,19 @@ global_categories = {'mined' -> '%s Mined', 'crafted' -> '%s Crafted', 'used' ->
 global_extra_stats = {'bedrock_removed' -> 'Bedrock Removed', 'ping' -> 'Ping', 'health' -> 'Health', 'xp_level' -> 'Levels of Experience', 'hunger' -> 'Hunger', 'saturation' -> 'Saturation', 'air' -> 'Remaining Air'};
 global_dig_data = {'combined_blocks' -> ['Combined Blocks', null], 'total' -> ['Total', [...pickaxes, ...shovels, ...axes, ...hoes, 'shears']], 'pick' -> ['Pickaxe', pickaxes], 'shovel' -> ['Shovel', shovels], 'pickshovel' -> ['Pickaxe & Shovel', [...pickaxes, ...shovels]], 'axe' -> ['Axe', axes], 'hoe' -> ['Hoe', hoes]};
 
+global_bedrock_removed = read_file('bedrock_removed', 'json') || {};
+global_digs = {};
+for(list_files('digs', 'json'), global_digs:slice(_, length('digs') + 1) = read_file(_, 'json'));
+global_carousel_data = read_file('carousel', 'json') || {'interval' -> 200, 'entries' -> []};
+settings = read_file('settings', 'json');
+global_stat = settings:'stat' || [];
+global_bots_included = settings:'bots_included';
+global_offline_digs = if(settings:'offline_digs' != null, settings:'offline_digs', true);
+global_display_digs = settings:'display_digs' || {};
+global_display_digs_color = settings:'display_digs_color' || {};
+global_stat_color = settings:'stat_color' || 'FFEE44';
+global_default_dig = settings:'default_dig' || 'combined_blocks';
+
 global_help_pages = [
     [
         '%color% /%app_name% mined <block> ', 'f ｜ ', 'g Amount of <block> mined', ' \n',
@@ -33,19 +46,19 @@ global_help_pages = [
         '%color% /%app_name% broken <item> ', 'f ｜ ', 'g Amount of <item> broken', '^g (that ran out of durability)', ' \n',
         '%color% /%app_name% killed <entity> ', 'f ｜ ', 'g Amount of <entity> killed', ' \n',
         '%color% /%app_name% killed_by <entity> ', 'f ｜ ', 'g Amount of times <entity> killed you', ' \n',
-        '%color% /%app_name% misc <misc_stat> ', 'f ｜ ', 'g Misc statistics, e.g. deaths, mob_kills, play_time, aviate_one_cm', ' \n',
+        '%color% /%app_name% misc <misc_stat> ', 'f ｜ ', 'g Misc statistics, e.g. play_time, deaths, mob_kills, aviate_one_cm', ' \n',
         '%color% /%app_name% extra <extra_stat> ', 'f ｜ ', 'g Extra statistics that are not normally in the game, e.g. xp_level, ping, health, hunger', ' \n',
         '%color% /%app_name% bedrock_removed ', 'f ｜ ', 'g Amount of bedrock removed by hand using pistons and tnt', ' \n',
         '%color% /%app_name% digs <dig> ', 'f ｜ ', 'g Amount of digs (%default_dig% by default)', ' \n',
-        '%color% /%app_name% combined <combined_stat> ', 'f ｜ ', 'g Various statistics combined together', ' \n',
+        '%color% /%app_name% combined <combined_stat> ', 'f ｜ ', 'g Multiple statistics combined together', ' \n',
     ],
     [
         '%color% /%app_name% print <category> <entry> [<player>]', 'f ｜ ', 'g Prints the value of a stat [of an online player]', ' \n',
         '%color% /%app_name% hide ', 'f ｜ ', 'g Hides the scoreboard', ' \n',
         '%color% /%app_name% show ', 'f ｜ ', 'g Shows the scoreboard', '  \n',
         '%color% /%app_name% bots (on/off/toggle) ', 'f ｜ ', 'g A shortcut for /%app_name% settings botsIncluded', '  \n',
-        '%color% /%app_name% default_dig <dig> ', 'f ｜ ', 'g Sets the default dig type ', 'f *', '^g For server operators only', '  \n',
         '%color% /%app_name% settings bots_included (on/off/toggle) ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
+        '%color% /%app_name% settings default_dig <dig> ', 'f ｜ ', 'g Sets the default dig type ', 'f *', '^g For server operators only', '  \n',
         '%color% /%app_name% settings offline_digs (on/off/toggle) ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
         '%color% /%app_name% settings dig_display (on/off/toggle) ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
         '%color% /%app_name% settings dig_display_color <hex_color> ', 'f ｜ ', 'g Changes the color of digs display for yourself (leave empty to reset)', ' \n',
@@ -305,6 +318,7 @@ parseCombinedFile(name) -> (
 );
 
 calculateTotal() -> (
+    if(!global_stat, return());
     for(scoreboard('stats'), if(_ != global_total_text, total += scoreboard('stats', _)));
     scoreboard('stats', global_total_text, total);
 );
@@ -350,12 +364,13 @@ displayDigs(player) -> (
 menu() -> (
     texts = [
         'fs ' + ' ' * 80, ' \n',
-        '#FED330b Statistic Display ', 'g by ', 'gb CommandLeo', '^g https://github.com/CommandLeo', ' \n\n',
+        '#FED330b Statistic Display ', 'g by ', '%color%b CommandLeo', '^g https://github.com/CommandLeo', ' \n\n',
         'g An app to easily display statistics on the scoreboard.', '  \n',
-        'g Type ', 'y /%app_name% help', '^g Click to run the command', '!/%app_name% help', 'g  to see all the commands.', '  \n',
+        'g Type ', '%color% /%app_name% help', '!/%app_name% help', '^g Click to run the command', 'g  to see a list of all the commands.', '  \n',
         'fs ' + ' ' * 80
     ];
-    print(format(map(texts, replace(_, '%app_name%', global_app_name))));
+    replacement_map = {'%app_name%' -> global_app_name, '%color%' -> '#FFEE44'};
+    print(format(map(texts, reduce(pairs(replacement_map), replace(_a, ..._), _))));
 );
 
 help(page) -> (
@@ -378,7 +393,6 @@ show() -> (
 toggleBots(value) -> (
     global_bots_included = if(value == null, !global_bots_included, value);
     print(format('f » ', 'g Bots are now ', ...if(global_bots_included, ['l included', 'g  in '], ['r excluded', 'g  from ']), 'g the scoreboard'));
-    if(!global_stat, exit());
     bots = filter(player('all'), _~'player_type' == 'fake');
     for(bots, updateStat(_));
     calculateTotal();
@@ -431,7 +445,7 @@ setDefaultDig(dig) -> (
     if(!has(global_dig_data, dig), _error('Invalid dig type'));
     global_default_dig = dig;
     for(player('all'), updateDigs(_));
-    print(format('f » ', 'g The default dig is now ', str('#%s %s', 'FFEE44', global_default_dig)));
+    print(format('f » ', 'g The default dig type is now ', str('#%s %s', 'FFEE44', global_default_dig)));
 );
 
 printStatValue(event, player, category) -> (
@@ -445,6 +459,7 @@ changeStat(event, category) -> (
     if(global_carousel_active, _error('Couldn\'t change the displayed statistic, a carousel is currently active'));
     if(category == 'combined' && parseCombinedFile(event) == [null, null, null], _error('Combined statistic not found'));
     showStat(category, if(category == 'digs' && !event, global_default_dig, event));
+    show();
     logger(str('[Stat] Stat Change | %s ➡ %s.%s', player(), category, event));
 );
 
@@ -458,10 +473,10 @@ showStat(category, event) -> (
     for(if(category == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')), updateStat(_));
     removeInvalidEntries();
     calculateTotal();
-    show();
 );
 
 updateStat(player) -> (
+    if(!global_stat, return());
     if(_isInvalidEntry(str(player)), return(scoreboard_remove('stats', player)));
     value = getStat(player, ...global_stat);
     if(value, scoreboard('stats', player, value), scoreboard_remove('stats', player));
@@ -494,6 +509,7 @@ createCombinedStat(name, display_name, category, entries_string) -> (
 );
 
 deleteCombinedStat(name) -> (
+    if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
     if(delete_file('combined/' + name, 'text'), print(format('f » ', 'g Successfully deleted the combined stat')), _error('Combined stat not found'));
 );
 
@@ -571,7 +587,7 @@ __on_player_places_block(player, item_tuple, hand, block) -> (
     facing_pos = pos_offset(block, block_state(block, 'facing'));
     facing_block = block(facing_pos);
     if(facing_block != 'bedrock', exit());
-    schedule(2, _(outer(facing_pos), outer(facing_block), outer(player)) -> 
+    schedule(2, _(outer(facing_pos), outer(player)) -> 
         if(block(facing_pos) != 'bedrock',
             global_bedrock_removed:(player~'uuid') += 1;
             scoreboard('bedrock_removed', player, global_bedrock_removed:(player~'uuid'));
@@ -581,17 +597,18 @@ __on_player_places_block(player, item_tuple, hand, block) -> (
 );
 
 __on_tick() -> (
-    if(!global_stat, return());
-    if((global_stat:0 == 'extra' && global_stat:1 != 'bedrock_removed') || global_stat == ['custom', 'play_time'] || global_stat == ['custom', 'play_one_minute'], for(player('all'), schedule(0, 'updateStat', _)); schedule(0, 'calculateTotal'));
+    if((global_stat:0 == 'extra' && global_stat:1 != 'bedrock_removed') || (global_stat:0 == 'custom' && has({'play_one_minute', 'play_time', 'time_since_death', 'time_since_reset', 'total_world_time'}, global_stat:1)), for(player('all'), updateStat(_)); calculateTotal());
 );
 
 __on_player_connects(player) -> (
     schedule(0, 'updateDigs', player);
-    if(global_stat, schedule(0, 'updateStat', player); schedule(0, 'calculateTotal'));
+    schedule(0, 'updateStat', player);
+    schedule(0, 'calculateTotal');
 );
 
 __on_player_disconnects(player, reason) -> (
-    if(global_stat, schedule(0, 'updateStat', player); schedule(0, 'calculateTotal'));
+    schedule(0, 'updateStat', player);
+    schedule(0, 'calculateTotal');
 );
 
 __on_close() -> (
@@ -616,21 +633,8 @@ __on_start() -> (
     for(['stats', 'bedrock_removed', 'digs'], if(scoreboard()~_ == null, scoreboard_add(_)));
     scoreboard_display('list', 'digs');
 
-    global_bedrock_removed = read_file('bedrock_removed', 'json') || {};
-    global_digs = {};
-    for(list_files('digs', 'json'), global_digs:slice(_, length('digs') + 1) = read_file(_, 'json'));
-    global_carousel_data = read_file('carousel', 'json') || {'interval' -> 200, 'entries' -> []};
-    settings = read_file('settings', 'json');
-    global_stat = settings:'stat' || [];
-    global_bots_included = settings:'bots_included';
-    global_offline_digs = if(settings:'offline_digs' != null, settings:'offline_digs', true);
-    global_display_digs = settings:'display_digs' || {};
-    global_display_digs_color = settings:'display_digs_color' || {};
-    global_stat_color = settings:'stat_color' || 'FFEE44';
-    global_default_dig = settings:'default_dig' || 'combined_blocks';
     if(global_stat:0 == 'combined', [display_name, combined_category, entries] = parseCombinedFile(global_stat:1); global_combined = [combined_category, entries]);
-
-    for(player('all'), updateDigs(_); if(global_stat, updateStat(_)));
+    for(player('all'), updateDigs(_); updateStat(_));
     removeInvalidEntries();
-    if(global_stat, calculateTotal());
+    calculateTotal();
 );
