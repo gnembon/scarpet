@@ -29,7 +29,6 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
                     harvest(player, pos(block));
                     if(player~'gamemode_id' == 1, set(pos(block), block, 'age', 0); return());
                     schedule(0,_(outer(block)) -> (
-                            for(entity_area('item', pos(block), [2, 2, 2]), print(_~'item'));
                             for(entity_area('item', pos(block), [2, 2, 2]),
                                 if(query(_, 'age') <= 1 && query(_, 'item'):0 == global_seeds:str(block),
                                     nbt = query(_, 'nbt');

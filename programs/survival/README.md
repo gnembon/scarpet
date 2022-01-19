@@ -22,6 +22,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	When you break a block, the item gets tp-ed to player, and left on ground if the inventory is full.
 	Also works for inventory blocks, delaying the check until they are done to grab the items off the ground.
 
+### [bee_healing.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bee_healing.sc):
+#### By Xendergo
+	Slowly heals bees, so you can have them on an island or near water without them drowning as much
+
 ### [bridge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge.sc):
 #### By Aplet123
 	When holding golden sword(configurable), sneaking and clicking on a block, the blocks in the offhand will be placed.
@@ -46,6 +50,22 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [carried_totem.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/carried_totem.sc):
 #### By KingOfTheClouds
 	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
+
+### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
+#### By Xendergo
+	https://youtu.be/q1muVOFOM-k
+	Adds a whole bunch of features helpful for Dream style minecraft challenges
+
+  Commands:
+	/compass giveCompass   	              Give yourself a compass to track people with
+	/compass track <player>               Make your compass point at someone
+	/compass timeToTrack <time>           The amount of time between when the compasses automatically update. Setting to onUse means the compass will update when you right click with the compass
+	/compass maxCompasses <amt>           The maximum amount of compasses a player can give themselves
+	/compass logOnTrack <enabled>         Whether to notify players when someone tracks them with the track or giveCompass command
+	/compass noPortalBreaking <enabled>   Whether to prevent breaking nether/end portals
+	/compass maxNetherTravel <dist>       The maximum distance players are allowed to travel in the overworld via the nether. If someone makes a portal farther than this amount, the portal breaks when they try to go through it. Units are in overworld blocks
+
+	Also some other stuff to do with respawning with stuff, but this description is already really long
 
 ### [destructive_lightning.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/destructive_lightning.sc):
 #### By Mdaff386
@@ -122,6 +142,12 @@ Various scripts that modify various game elements, often replicating popular mod
 	Useful when slicing portals, update supressing and debugging stuff.
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 
+### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
+### By Opsaaaaa
+	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
+	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
+
+
 ### [nopickup.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/nopickup.sc):
 #### By KonaeAkira
 	Prevents picking up unwanted items (configurable) like rotten flesh from the ground to save inventory space.
@@ -132,6 +158,27 @@ Various scripts that modify various game elements, often replicating popular mod
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
+	
+### [playerme.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/playerme.sc):
+#### by BisUmTo
+	A wrapper around the /player carpet command. It will only allow the caller to affect themselves
+	with the player command. This allows for afking, shadowing and such, but not bots, which a lot of
+	servers find useful.
+
+### [portalorient.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/portalorient.sc):
+#### By rv3r
+	Reorients a player after going through a Nether portal. App settings are per-player and default to not affecting player.
+	/portalorient off   - does not change player orientation
+	/portalorient air   - makes player face toward side with more air blocks
+	/portalorient solid - makes player face toward side with fewer solid blocks
+	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
+
+### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
+#### By Opsaaaaa
+	Adds 7 randomized potion trades to the Cleric. 
+	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, and Mining Fatigue available in survival as potions.
+	Each effect can appear as a regular, splash, or lingering potion.
+	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
@@ -142,6 +189,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	Makes branch mining more interesting for sure.
 	Fortune 1 shows only iron, coal and redstone.
 	Fortune 3 shows diamond, lapis,gold, redstone and emerald, not iron and coal
+
+### [renewable_elytra_trade.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/renewable_elytra_trade.sc):
+#### By Firigion
+	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
+	with a letherworker and all conditions for it to appear are met. Said conditions can be totally customizable in the
+	app, including the villager being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
+	level of the villager and chances of the trade to fail.
 
 ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
 #### By gnembonmc
@@ -171,8 +225,15 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you will likely be doing this while fighting off drowned, crouching on a magma block.
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you 
+	will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
+
+### [shoot_fireball.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shoot_fireball.sc)
+#### By Xendergo
+	Right clicking with a fire charge shoots a regular ghast fireball
+	Basically a less op & survival friendly version of holy_hand_grenades
+	Killing something with this counts as a player kill, as if you redirected a fireball shot by an actual ghast
 
 ### [shulkerboxes.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shulkerboxes.sc):
 #### By gnembon
@@ -205,6 +266,13 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [simply_harvest.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/simply_harvest.sc):
 #### By Gnottero
 	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
+
+### [skip_night.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/skip_night.sc):
+#### By Firigion
+	Allows the player to automatically skip the night witout the use of a bed bot. Can be used in bed
+	mode or in command mode (toggeled inside the app, default: bed mode). Bed mode will skip the night
+	as long as there's a bed in the overworld with the work "skip" in its name. Local difficulty is not
+	reset when skipping the night. See this video for a full showcase: https://youtu.be/FY0PwGE0g68.
 
 ### [sleep_ignore_fake_players.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/sleep_ignore_fake_players.sc):
 #### By Sanluli36li
@@ -253,16 +321,17 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [very_basic_overworld_wither_cage_finder.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/very_basic_overworld_wither_cage_finder.sc):
 #### By gnembonmc
-	There is a video on his channel about this.any trade
+	There is a video on his channel about this.
 	It will search in the given radius of blocks for a 3*3 of bedrock, and nothing else.
 	It's very basic, hence it's name.
 
 ### [villager_auto_trader.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/villager_auto_trader.sc):
 #### By Ghoulboy
-	When enabled, zombie villagers which can pick up loot, will change any emeralds in their hand for their first villager trade.
-	This only works for trades which take only emeralds as a first item, and nothing for the second.
-	NB: Zombie villagers will still be hostile and can despawn, so proper care is stilll required.
-	Trades happen every 6 seconds, as with piglin bartering.
+	When enabled, zombie villagers which can pick up loot and had villager trades before converting, will change any emeralds in their hand for their first trade which takes emeralds as a first item, and nothing for the second.
+	This was done as it was otherwise considered too OP.
+	It also launches items at closest player within 5m radius, regardless of line of sight, allowing for more ease of collection.
+	NB: Zombie villagers will still be hostile, so proper care is still required, but note that they can't despawn. Also, you will have to manually infect the villagers you want to automatically trade with.
+	Trades happen every 6 seconds, as with piglin bartering, to keep it fair and give a manageable time for trading.
 
 ### [villager_poi.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/villager_poi.sc):
 #### By gnembonmc
@@ -310,4 +379,6 @@ Various scripts that modify various game elements, often replicating popular mod
 	Firigion
 	boyenn
 	_GieR
+	Opsaaaaa
+	Xendergo
 	(Many more hopefully!)
