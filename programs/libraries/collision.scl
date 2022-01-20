@@ -1172,7 +1172,7 @@ draw_bounds(blocks,ticks,colors,...positions) ->
 		if(type(_) != 'string' || positions != [],
 			block = block(_);
 			pos = positions:_i || pos(block);
-			for(__bounds(block),
+			for(bounds(block),
 				shapelist += ['box',ticks,'from',pos + _:0,'to',pos + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
 			)
 		)
@@ -1191,7 +1191,7 @@ __position_catch(block) ->
 positioned_bounds(block, ...pos) ->
 (
 	pos = pos || __position_catch(block);
-	map(__bounds(block),map(_,_ + pos))
+	map(bounds(block),map(_,_ + pos))
 );
 
 //returns list of all unique collision boxes for sorting or other analysis
@@ -1227,7 +1227,7 @@ __all_collision_boxes() ->
 	bounds_map = {};
 	for([range(length(block_list) - 1,-1,-1)],
 		for(block_list:_,
-			bounds_map:__bounds(_) = _
+			bounds_map:bounds(_) = _
 		)
 	);
 	//simple map reversal, don't worry the values won't have duplicates
