@@ -8,13 +8,15 @@ __config()->{
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
-    '<book> set <title> <command>' -> 'set_command',
+    '<book> set <title> <command>' -> ['set_command', null],
+    '<book> set <title> <command> <tooltip>' -> 'set_command',
     '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
   'arguments' -> {
     'command' -> {'type' -> 'string', 'suggest' -> ['"/bar"', '"/tp @p x y z"', '"/gamerule doFireTick true"']},
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
+    'tooltip' -> {'type' -> 'string', 'suggest' -> ['"at x y z"', '"Fire Tick true"']},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
   }
 };
@@ -181,7 +183,7 @@ delete_command(book_name, spell) -> (
   );
 );
 
-set_command(book_name, title, command) -> (
+set_command(book_name, title, command, tooltip) -> (
   p = player();
   book = _read_book(book_name);
   book:'spells':title = command;
