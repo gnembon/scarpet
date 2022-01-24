@@ -177,7 +177,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [postmortem_death_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/postmortem_death_count.sc):
 #### By Opsaaaaa
 	Adds a scoreboard death count to a server after players have already died.
-	When players connect it sets their scoreboard death count to their statistic death count
+	When players connect it sets their scoreboard death count to their statistic death count.
 
 
 ### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
