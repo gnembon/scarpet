@@ -2,12 +2,7 @@
 
 // Fetches the server deaths statistic to use in the scoreboard death count. 
 
-// Add Death counter
-// create
-
-// scoreboard objectives add Deaths deathCount
-//         scoreboard('Speed',player,roundmath(speed*1000,1));
-
+// when players connect it sets their scoreboard death count to their statistic death count
 
 _initialize() -> (
     scoreboard_add( 'Deaths', 'deathCount');
