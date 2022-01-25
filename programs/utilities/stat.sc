@@ -290,7 +290,7 @@ __config() -> {
         }
     },
     'requires' -> {
-        'carpet' -> '>=1.4.45'
+        'carpet' -> '>=1.4.44'
     },
     'scope' -> 'global'
 };
