@@ -13,6 +13,8 @@ __config()->{
     '<book> warp <title> at <location> in <dimension>' -> 'set_warp',
     '<book> forceload <title> <from> <to>' -> 'set_forceload_at_player',
     '<book> forceload <title> <from> <to> in <dimension>' -> 'set_forceload',
+    '<book> bot <title> <bot>' -> 'set_bot_at_player',
+    '<book> bot <title> <bot> at <location> in <dimension>' -> 'set_bot',
     '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
@@ -23,6 +25,7 @@ __config()->{
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
     'from' -> {'type' -> 'columnpos'},
     'to' -> {'type' -> 'columnpos'},
+    'bot' -> {'type' -> 'players', 'single' -> true},
     'location' -> {'type' -> 'location'},
     'dimension' -> {'type' -> 'dimension'},
   }
@@ -158,6 +161,16 @@ List all the spellbooks
 ');
 );
 
+
+set_bot_at_player(book, title, bot_name) -> (
+  p = player();
+  set_bot( book, title, bot_name, p~'pos', p~'dimension');
+);
+
+set_bot(book, title, bot_name, location, dimension) -> (
+  set_command( book, title+' +', str('player %s spawn at %s facing 1 1 in %s', bot_name, join(' ', location), dimension ) );
+  set_command( book, title+' -', str('player %s kill', bot_name));
+);
 
 set_forceload_at_player(book, title, from, to) -> (
   set_forceload(book, title, from, to, player()~'dimension');
