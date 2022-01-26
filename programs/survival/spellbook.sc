@@ -11,6 +11,8 @@ __config()->{
     '<book> set <title> <command>' -> 'set_command',
     '<book> warp <title>' -> 'set_warp_at_player',
     '<book> warp <title> at <location> in <dimension>' -> 'set_warp',
+    '<book> forceload <title> <from> <to>' -> 'set_forceload_at_player',
+    '<book> forceload <title> <from> <to> in <dimension>' -> 'set_forceload',
     '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
@@ -19,6 +21,8 @@ __config()->{
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
     'tooltip' -> {'type' -> 'string', 'suggest' -> ['"at x y z"', '"Fire Tick true"']},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
+    'from' -> {'type' -> 'columnpos'},
+    'to' -> {'type' -> 'columnpos'},
     'location' -> {'type' -> 'location'},
     'dimension' -> {'type' -> 'dimension'},
   }
@@ -143,8 +147,8 @@ A utility used to create command books (spell books).
 
 Add or override a spell in a book.
   /spellbook <book> set <title> <"command">
-  /spellbook farms set "spawn slime farm bot" "/execute in overworld run player SlimeBot spawn at -50.50 82 24"
-  /spellbook farms set "kill slime farm bot" "/player SlimeBot kill"
+  /spellbook farms set "spawn slime farm bot" execute in overworld run player SlimeBot spawn at -50.50 82 24
+  /spellbook farms set "kill slime farm bot" player SlimeBot kill
   /spellbook farms give
 
 Give the player a spellbook.
@@ -162,6 +166,15 @@ List all the spellbooks
 ');
 );
 
+
+set_forceload_at_player(book, title, from, to) -> (
+  set_forceload(book, title, from, to, player()~'dimension');
+);
+
+set_forceload(book, title, from, to, dimension) -> (
+  set_command( book, title+' +', str('execute in %s run forceload add %s %s', dimension, join(' ', from), join(' ', to)));
+  set_command( book, title+' -', str('execute in %s run forceload remove %s %s', dimension, join(' ', from), join(' ', to)));
+);
 
 set_warp_at_player(book, title) -> (
   p = player();
@@ -287,6 +300,3 @@ migrate_books_folder_location() -> (
 );
 
 
-
-     print(p, v)d
-    print(p, _render_version(book_save));
