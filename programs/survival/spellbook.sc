@@ -15,7 +15,7 @@ __config()->{
     '<book> read' -> 'display_book'
   },
   'arguments' -> {
-    'command' -> {'type' -> 'string', 'suggest' -> ['"/bar"', '"/tp @p x y z"', '"/gamerule doFireTick true"']},
+    'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
     'tooltip' -> {'type' -> 'string', 'suggest' -> ['"at x y z"', '"Fire Tick true"']},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
@@ -89,7 +89,19 @@ __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
   );
 );
 
-
+// Automagically update spell books opened in hands.
+__on_player_uses_item(p, item, hand) -> (
+  // If the item is a spellbook
+  if( item:0 == 'written_book' && item:2:'author'~'nimda\\.spellbook', 
+    book_save = _read_book(item:2:'title');
+    v = item:2:'author'~'v\\d+\\.\\d+';
+    if(v != _render_version(book_save),
+      slot = if(hand=='mainhand', player~'selected_slot', -1);
+      inventory_set(p, p~'selected_slot', item:1, item:0, _render_book_nbt(book_save));
+      print(p, str('Automagically Updated %s Spell Book from %s to %s.', item:2:'title', v, book_save:'render':'v'));
+    )
+  ) 
+);
 
 
 // Standardize reading and writing functions
@@ -157,7 +169,7 @@ set_warp_at_player(book, title) -> (
 );
 
 set_warp(book, title, location, dimension) -> (
-  set_command( book, title, str('/execute as @p in %s run tp %s', dimension, join(' ', location)));
+  set_command( book, title, str('execute as @p in %s run tp %s', dimension, join(' ', location)));
 );
 
 list_books() -> (
@@ -198,7 +210,7 @@ delete_command(book_name, spell) -> (
 set_command(book_name, title, command) -> (
   p = player();
   book = _read_book(book_name);
-  book:'spells':title = command;
+  book:'spells':title = '/' + command;
   print(p, str('%s spell set: [ %s ]( %s ).', book_name, title, command));
   _write_book(book);
 );
