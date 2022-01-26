@@ -29,14 +29,6 @@ __config()->{
 };
 
 
-//{pages:['
-// {
-//  "text":"Minecraft Tools book",
-//  "clickEvent":{"action":"run_command","value":"/foo"},
-//  "hoverEvent":{"action":"show_text","contents":"/foo"}
-//  }'
-// ],title:Book,author:"http://minecraft.tools/"}
-
 // spellbooks tack their own book version and the script version, 
 // it updates a book when either of those versions no longer match.
 // increment this number when you make changes to spell book rendering.
