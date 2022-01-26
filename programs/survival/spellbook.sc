@@ -8,10 +8,9 @@ __config()->{
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
-    '<book> set <title> <command>' -> ['set_command', null],
-    '<book> set <title> <command> <tooltip>' -> 'set_command',
-    '<book> warp <title>',
-    '<book> warp <title> at <location> in <dimension>',
+    '<book> set <title> <command>' -> 'set_command',
+    '<book> warp <title>' -> 'set_warp_at_player',
+    '<book> warp <title> at <location> in <dimension>' -> 'set_warp',
     '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
@@ -20,6 +19,8 @@ __config()->{
     'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
     'tooltip' -> {'type' -> 'string', 'suggest' -> ['"at x y z"', '"Fire Tick true"']},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
+    'location' -> {'type' -> 'location'},
+    'dimension' -> {'type' -> 'dimension'},
   }
 };
 
@@ -150,6 +151,15 @@ List all the spellbooks
 );
 
 
+set_warp_at_player(book, title) -> (
+  p = player();
+  set_warp(book, title, p~'pos', p~'dimension');
+);
+
+set_warp(book, title, location, dimension) -> (
+  set_command( book, title, str('/execute as @p in %s run tp %s', dimension, join(' ', location)));
+);
+
 list_books() -> (
   books = list_files('books/', 'json');
   p = player();
@@ -185,7 +195,7 @@ delete_command(book_name, spell) -> (
   );
 );
 
-set_command(book_name, title, command, tooltip) -> (
+set_command(book_name, title, command) -> (
   p = player();
   book = _read_book(book_name);
   book:'spells':title = command;
