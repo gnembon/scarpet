@@ -1,4 +1,4 @@
-// A utility for creating and using command books (spellbooks)
+// A in game utility for creating, using, and updating command books (spellbooks)
 
 __config()->{
   'command_permission' -> 'ops', 
@@ -288,4 +288,5 @@ migrate_books_folder_location() -> (
 
 
 
- 
+     print(p, v)d
+    print(p, _render_version(book_save));
