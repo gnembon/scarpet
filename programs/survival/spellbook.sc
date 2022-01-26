@@ -10,6 +10,8 @@ __config()->{
     '<book> update' -> 'give_book',
     '<book> set <title> <command>' -> ['set_command', null],
     '<book> set <title> <command> <tooltip>' -> 'set_command',
+    '<book> warp <title>',
+    '<book> warp <title> at <location> in <dimension>',
     '<book> remove <title>' -> 'delete_command',
     '<book> read' -> 'display_book'
   },
