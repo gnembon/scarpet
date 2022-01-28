@@ -16,18 +16,24 @@ __config()->{
     '<book> bot <title> <bot>' -> 'set_bot_at_player',
     '<book> bot <title> <bot> at <location> in <dimension>' -> 'set_bot',
     '<book> remove <title>' -> 'delete_command',
-    '<book> read' -> 'display_book'
+    '<book> read' -> 'display_book',
+    '<book> color <title> <color>' -> 'set_spell_color',
+    '<book> tooltip <title> <tooltip>' -> 'set_spell_tooltip'
   },
   'arguments' -> {
     'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
-    'title' -> {'type' -> 'string', 'suggest' -> ['Foo', '"Warp to Spawn"', '"Fire Tick: true"']},
-    'tooltip' -> {'type' -> 'string', 'suggest' -> ['"at x y z"', '"Fire Tick true"']},
+    'title' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
+    'tooltip' -> {'type' -> 'string', 'suggest' -> ['"Spawn a witch"', '"Turn Fire Tick on"']},
+    'color' -> {'type' -> 'string', 'suggest' -> [
+      'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
+      'blue', 'light_purple', 'dark_purple', 'white', 'gray', 'dark_gray', 'black', '#000000', '#ffffff'
+    ]},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
     'from' -> {'type' -> 'columnpos'},
     'to' -> {'type' -> 'columnpos'},
-    'bot' -> {'type' -> 'players', 'single' -> true},
+    'bot' -> {'type' -> 'term', 'suggest'-> ['Alex', 'Steve']},
     'location' -> {'type' -> 'location'},
-    'dimension' -> {'type' -> 'dimension'},
+    'dimension' -> {'type' -> 'dimension'}
   }
 };
 
@@ -169,6 +175,10 @@ List all spells in a book.
 List all the spellbooks
   /spellbook list
 
+Customize colors or tooltips
+  /spellbook <book> tooltip <title> <tooltip>
+  /spellbook <book> color <title> <color>
+
 Spell Shortcuts
   Create two spells for summoning and killing a player bot
     /spellbook <book> bot <title> <username>
@@ -268,6 +278,26 @@ delete_command(book_name, spell) -> (
     print(player(), str('Unknown spell [ %s ].', spell))
   );
 );
+
+
+
+set_spell_color(book_name, title, color) -> (
+  set_spell_item(book_name, title, 'color', color)
+);
+
+set_spell_tooltip(book_name, title, tooltip) -> (
+  set_spell_item(book_name, title, 'tooltip', tooltip)
+);
+
+set_spell_item(book_name, spell, key, value) -> (
+  p = player();
+  book = _read_book(book_name);
+  book:'spells':spell:key = value;
+  print(p, str('[ %s:%s ]( %s )', book_name, key, value));
+  _write_book(book);
+);
+
+
 
 set_command(book_name, title, command) -> (
   _set_commands(book_name, [{
