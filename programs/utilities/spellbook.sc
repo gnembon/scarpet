@@ -182,7 +182,7 @@ Spell Shortcuts
 // Player bot shorthand
 set_bot_at_player(book, title, bot_name) -> (
   p = player();
-  set_bot( book, title, bot_name, p~'pos', p~'dimension');
+  set_bot( book, title, bot_name, map(p~'pos', round(_)), p~'dimension');
 );
 
 set_bot(book, title, bot_name, location, dimension) -> (
