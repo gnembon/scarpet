@@ -3,8 +3,9 @@
 __config()->{
   'command_permission' -> 'ops', 
   'commands' -> {
-    '' -> 'help',
-    'help' -> 'help',
+    '' -> ['help', 'main'],
+    'help' -> ['help', 'main'],
+    'help <helpPage>' -> 'help',
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
@@ -23,10 +24,11 @@ __config()->{
   'arguments' -> {
     'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
     'spell' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
-    'tooltip' -> {'type' -> 'string', 'suggest' -> ['"Spawn a witch"', '"Turn Fire Tick on"']},
+    'helpPage' -> {'type' -> 'term', 'options' -> ['main', 'basics', 'shorthands', 'customize', 'commands']},
+    'tooltip' -> {'type' -> 'text', 'suggest' -> ['Spawn a witch', 'Turn Fire Tick on']},
     'color' -> {'type' -> 'string', 'suggest' -> [
       'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
-      'blue', 'light_purple', 'dark_purple', 'white', 'gray', 'dark_gray', 'black', '#000000', '#ffffff'
+      'blue', 'light_purple', 'dark_purple', 'white', 'gray', 'dark_gray', 'black', '"#000000"', '"#ffffff"'
     ]},
     'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
     'from' -> {'type' -> 'columnpos'},
@@ -35,6 +37,77 @@ __config()->{
     'location' -> {'type' -> 'location'},
     'dimension' -> {'type' -> 'dimension'}
   }
+};
+
+
+global_help_pages = {
+  'main'-> [
+    'pb \nSpellBook\n', 
+    'm A utility used to create command books (spellbooks).\n',
+    'm Learn the basics with: ',
+    'ci /spellbook help basics\n',
+    'm Pages: ','ci (main), basics, shorthands, customize'
+  ],
+  'basics' -> [
+    'pb \nSpellBook Basics\n', 
+    'm Create a new spell with this command\n',
+    'ci /spellbook <book> set <spell> </command>\n',
+    'm ie ', 'ci /spellbook cat_spells set "spawn cat" /summon cat\n',
+    'm You can add more spells to the book\n',
+    'ci /spellbook cat_spells set "spawn Tabby" /summon cat ~ ~ ~ {CatType:2}\n',
+    'm You can give yourself a copy of the spellbook with the spellbook give command\n',
+    'ci /spellbook cat_spells give\n',
+    'm Any changes you make to the spells will automatically update your spellbook when opened.'
+  ],
+  'shorthands' -> [
+    'pb \nSpellbook Shorthands\n',
+    'm The spellbook command has many shorthands to make life easier.\n',
+    'm \nFor example you can add a warp spell to your current location.\n',
+    'ci /spellbook <book> warp <spell>\n',
+    'm you can also be more specific\n',
+    'ci /spellbook transporter warp "Zero" at 0 0 0 in overworld\n',
+    'ci /spellbook <book> warp <spell> at <location> in <dimension>\n',
+    'm \nThere is also a player bot shorthand that creates two spells. ',
+    'm One to summon the player and the other kill the player\n',
+    'ci /spellbook farms bot "Which Hut" Dorothy\n',
+    'ci /spellbook <book> bot <spell> <botName> at 0 0 0 in <dimension>\n',
+    'ci /spellbook <book> bot <spell> <botName>\n',
+    'm \nSome farms don\'t require player based mob spawning. ',    
+    'm You also have the option to use force loading instead\n',
+    'm The forceload shorthand creates one spell to load the chunks and another to unload the chunks.\n',
+    'ci /spellbook farms forceload "The Iron Bucket" 32 32 64 64\n',
+    'ci /spellbook <book> forceload <spell> <from> <to>\n',
+    'ci /spellbook <book> forceload <spell> <from> <to> in <dimension>\n'
+  ],
+  'customize'-> [
+    'pb \nSpellbook Customization\n',
+    'm you can customize the color or the tooltips of spells with the following commands.\n',
+    'ci /spellbook <book> tooltip <spell> <customTooltip>\n',
+    'ci /spellbook <book> color <spell> <customColor>\n',
+  ],
+  'commands' -> [
+    'pb \nSpellbook Commands\n',
+    'ci /spellbook <book> set <spell> </command> ',
+    'm Add any command to the spellbook\n',
+    'ci /spellbook <book> give ',
+    'm Give the player a copy of the book\n',
+    'ci /spellbook <book> read ',
+    'm List the spells within a book\n',
+    'ci /spellbook list ',
+    'm List all of the spellbooks\n',
+    'ci /spellbook <book> remove <spell> ',
+    'm Delete a spell\n',
+    'ci /spellbook <book> tooltip <spell> <customTooltip> ',
+    'm Customize a spells tooltip\n',
+    'ci /spellbook <book> color <spell> <customColor>\n',
+    'm Customize a spells color\n',
+    'ci /spellbook <book> warp <spell>\n',
+    'm Create a warp spell at your location\n',
+    'ci /spellbook <book> bot <spell> <botName>\n',
+    'm Make a set of spells to summon and kill a player bot\n',
+    'ci /spellbook <book> forceload <spell> <from> <to>\n',
+    'm Make a set of spells to load and unload chunks\n'
+  ]
 };
 
 
@@ -68,6 +141,8 @@ global_base_book_data = {
   'title' -> '',
   'spells' -> {},
 };
+
+
 
 
 // Automagically Update Spell Books in Lecterns  
@@ -106,7 +181,7 @@ __on_player_uses_item(p, item, hand) -> (
 );
 
 _print_update_spell_book(p, args) -> (
-  print(p, str('Automagically Updated %s Spell Book from %s to %s.', args));
+  print(p, str('Automagically Updated %s Spellbook from %s to %s.', args));
 );
 
 _app_is_author(book_nbt) -> (
@@ -153,40 +228,8 @@ _sanitize_book_title(title) -> (
 );
 
 // Command Methods
-help() -> (
-  print(player(), '
-A utility used to create command books (spell books).
-
-Add or override a spell in a book.
-  /spellbook <book> set <spell> <"command">
-  /spellbook farms set "spawn slime farm bot" execute in overworld run player SlimeBot spawn at -50.50 82 24
-  /spellbook farms set "kill slime farm bot" player SlimeBot kill
-  /spellbook farms give
-
-Give the player a spellbook.
-  /spellbook <book> give
-
-Remove a spell.
-  /spellbook <book> remove <spell>
-
-List all spells in a book.
-  /spellbook <book> read
-
-List all the spellbooks
-  /spellbook list
-
-Customize colors or tooltips
-  /spellbook <book> tooltip <spell> <tooltip>
-  /spellbook <book> color <spell> <color>
-
-Spell Shortcuts
-  Create two spells for summoning and killing a player bot
-    /spellbook <book> bot <spell> <username>
-  Create Two spells for adding and removing chunks from forceload.
-    /spellbook <book> forceload <spell> <from> <to>
-  Add a spell to teleport to this location
-    /spellbook <book> warp <spell>
-');
+help(page) -> (
+  print(player(), format(global_help_pages:page));
 );
 
 // Player bot shorthand
@@ -302,7 +345,7 @@ set_spell_item(book_name, spell, key, value) -> (
 set_command(book_name, spell, command) -> (
   _set_commands(book_name, [{
     'title'->spell,
-    'command'-> '/'+command
+    'command'-> command
   }]);
 );
 
