@@ -36,12 +36,12 @@ __config()->{
 // it updates a book when either of those versions no longer match.
 // increment this number when you make changes to spell book rendering.
 // Not all changes need to update this.
-global_spellbook_version = 5;
+global_spellbook_version = 6;
 
 // When you make changes to the templates you should increment the script version
 global_spell_template = '{"text":"%s","color":"%s","clickEvent":{"action":"run_command","value":"%s"},"hoverEvent":{"action":"show_text","contents":"%s"}},{"text":"\\\\n"}';
 global_title_template = '{"text":"%s", "bold":true},{"text":".\\\\n"}';
-global_book_template = '{pages:%s, title:"%s",author:"nimda.spellbook.%s"}';
+global_book_template = '{pages:%s, title:"%s",author:"nimda.spellbook.%s", version:"%s"}';
 
 // Pick a spell color at random.
 global_shuffle_colors = [
@@ -61,10 +61,6 @@ global_base_book_data = {
   'vscript' -> global_spellbook_version,
   'title' -> '',
   'spells' -> {},
-  'render' -> {
-    'v' -> 'v0.0',
-    'nbt' -> ''
-  }
 };
 
 
@@ -77,7 +73,7 @@ __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
     if(book_nbt:'author'~'nimda\\.spellbook',    
       book_save = _read_book(book_nbt:'title');
       v = book_nbt:'author'~'v\\d+\\.\\d+';
-      if(v != _render_version(book_save),
+      if(v != _get_version(book_save),
         put(block_data, 'Book.tag', nbt(_render_book_nbt(book_save)));
         without_updates(
           set(pos, block, {}, block_data);
@@ -94,7 +90,7 @@ __on_player_uses_item(p, item, hand) -> (
   if( item:0 == 'written_book' && item:2:'author'~'nimda\\.spellbook', 
     book_save = _read_book(item:2:'title');
     v = item:2:'author'~'v\\d+\\.\\d+';
-    if(v != _render_version(book_save),
+    if(v != _get_version(book_save),
       slot = if(hand=='mainhand', player~'selected_slot', -1);
       inventory_set(p, p~'selected_slot', item:1, item:0, _render_book_nbt(book_save));
       print(p, str('Automagically Updated %s Spell Book from %s to %s.', item:2:'title', v, book_save:'render':'v'));
@@ -122,9 +118,15 @@ _write_book(book) -> (
   write_file('books/'+_sanitize_book_title(book:'title'), 'json', book);
 );
 
-_write_render(book) -> (
-  write_file('books/'+_sanitize_book_title(book:'title'), 'json', book);
+_write_cache(title, book_nbt) -> (
+  write_file('cache/'+_sanitize_book_title(title), 'nbt', book_nbt);
 );
+
+_read_cache(title) -> (
+  return(read_file('cache/'+_sanitize_book_title(title), 'nbt'));
+);
+
+
 
 // Because part of the in game book nbt is used to write a file 
 // remove any weird characters from the spellbook title.
@@ -263,26 +265,28 @@ _render_pages(book) -> (
   ));
 );
 
-_render_version(book) -> (
+_get_version(book) -> (
   return(str('v%d.%d', global_spellbook_version, book:'vbook'));
 );
 
 _render_book_nbt(book) -> (
-  v = _render_version(book);
-  if(book:'render' && book:'render':'v' == v,
-    return( book:'render':'nbt' );
+  v = _get_version(book);
+  cache = _read_cache(book:'title');
+  if(cache && cache:'version' == v,
+    print(player(), 'cache');
+    print(player(), cache:'version');
+    print(player(), v);
+    return( cache );
   ,
-    book:'render' = {
-      'v' -> v,
-      'nbt' -> str(
+    render = nbt(str(
         global_book_template, 
         _render_pages(book), 
         book:'title', 
+        v,
         v
-      )
-    };
-    _write_render(book);
-    return( book:'render':'nbt' );
+    ));
+    _write_cache(book:'title', render);
+    return( render );
   );
 );
 
@@ -293,7 +297,7 @@ _shuffle_color(color_idx) -> (
 
 
 // Move old books from app root into books folder
-// run /script in spellbook invoke migrate_books_folder_location
+// run /script in spellbook invoke migrate_books_folder_location()
 migrate_books_folder_location() -> (
   old_files = list_files('./', 'json');
   for(old_files, 
@@ -303,5 +307,3 @@ migrate_books_folder_location() -> (
   );
   return(str('Migrated [ %s ] books from <app>/ to <app>/books.', join(', ',old_files) ));
 );
-
-
