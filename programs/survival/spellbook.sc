@@ -41,7 +41,7 @@ global_spellbook_version = 6;
 // When you make changes to the templates you should increment the script version
 global_spell_template = '{"text":"%s","color":"%s","clickEvent":{"action":"run_command","value":"%s"},"hoverEvent":{"action":"show_text","contents":"%s"}},{"text":"\\\\n"}';
 global_title_template = '{"text":"%s", "bold":true},{"text":".\\\\n"}';
-global_book_template = '{pages:%s, title:"%s",author:"nimda.spellbook.%s", version:"%s"}';
+global_book_template = '{pages:%s, title:"%s",author:"scarpet.spellbook", version:"%s"}';
 
 // Pick a spell color at random.
 global_shuffle_colors = [
@@ -67,18 +67,20 @@ global_base_book_data = {
 // Automagically Update Spell Books in Lecterns  
 __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
   if(block == block('lectern'),
+    
     pos = pos(block);
     block_data = block_data(pos);
     book_nbt = get(block_data, 'Book.tag');
-    if(book_nbt:'author'~'nimda\\.spellbook',    
+
+    if(_app_is_author(book_nbt),    
       book_save = _read_book(book_nbt:'title');
-      v = book_nbt:'author'~'v\\d+\\.\\d+';
-      if(v != _get_version(book_save),
+
+      if(book_nbt:'version' != _get_version(book_save),
         put(block_data, 'Book.tag', nbt(_render_book_nbt(book_save)));
         without_updates(
           set(pos, block, {}, block_data);
         );
-        print(p, str('Automagically Updated %s Spell Book from %s to %s.', book_nbt:'title', v, book_save:'render':'v'));
+        _print_update_spell_book(p, [book_nbt:'title', book_nbt:'version', _get_version(book_save)])
       );
     );
   );
@@ -87,15 +89,22 @@ __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
 // Automagically update spell books opened in hands.
 __on_player_uses_item(p, item, hand) -> (
   // If the item is a spellbook
-  if( item:0 == 'written_book' && item:2:'author'~'nimda\\.spellbook', 
+  if( item:0 == 'written_book' && _app_is_author(item:2),
     book_save = _read_book(item:2:'title');
-    v = item:2:'author'~'v\\d+\\.\\d+';
-    if(v != _get_version(book_save),
+    if(item:2:'version' != _get_version(book_save),
       slot = if(hand=='mainhand', player~'selected_slot', -1);
       inventory_set(p, p~'selected_slot', item:1, item:0, _render_book_nbt(book_save));
-      print(p, str('Automagically Updated %s Spell Book from %s to %s.', item:2:'title', v, book_save:'render':'v'));
+      _print_update_spell_book(p, [item:2:'title', item:2:'version', _get_version(book_save)])
     )
   ) 
+);
+
+_print_update_spell_book(p, args) -> (
+  print(p, str('Automagically Updated %s Spell Book from %s to %s.', args));
+);
+
+_app_is_author(book_nbt) -> (
+  return(book_nbt:'author'~'(nimda|scarpet)\\.spellbook');
 );
 
 
@@ -273,16 +282,12 @@ _render_book_nbt(book) -> (
   v = _get_version(book);
   cache = _read_cache(book:'title');
   if(cache && cache:'version' == v,
-    print(player(), 'cache');
-    print(player(), cache:'version');
-    print(player(), v);
     return( cache );
   ,
     render = nbt(str(
         global_book_template, 
         _render_pages(book), 
-        book:'title', 
-        v,
+        book:'title',
         v
     ));
     _write_cache(book:'title', render);
