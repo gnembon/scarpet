@@ -179,19 +179,22 @@ Spell Shortcuts
 ');
 );
 
-// Player bot shortcut
+// Player bot shorthand
 set_bot_at_player(book, title, bot_name) -> (
   p = player();
   set_bot( book, title, bot_name, p~'pos', p~'dimension');
 );
 
 set_bot(book, title, bot_name, location, dimension) -> (
+  location = join(' ', location);
   _set_commands( book, [{
     'title'-> title+' +',
-    'command'-> str('/player %s spawn at %s facing 1 1 in %s', bot_name, join(' ', location), dimension )
+    'command'-> str('/player %s spawn at %s facing 1 1 in %s', bot_name, location, dimension ),
+    'tooltip'-> str('Spawn %s bot at %s in %s', bot_name, location, dimension)
   },{
     'title'-> title+' -',
-    'command'-> str('/player %s kill', bot_name)
+    'command'-> str('/player %s kill', bot_name),
+    'tooltip'-> str('Kill %s bot at %s in %s', bot_name, location, dimension)
   }]);
 );
 
@@ -201,23 +204,32 @@ set_forceload_at_player(book, title, from, to) -> (
 );
 
 set_forceload(book, title, from, to, dimension) -> (
+  from = join(' ', from);
+  to = join(' ', to);
   _set_commands( book, [{
     'title'->title+' +', 
-    'command'-> str('/execute in %s run forceload add %s %s', dimension, join(' ', from), join(' ', to))
+    'command'-> str('/execute in %s run forceload add %s %s', dimension, from, to),
+    'tooltip'-> str('forceload chunks from %s to %s in %s', from, to, dimension)
   },{
     'title'-> title+' -', 
-    'command'-> str('/execute in %s run forceload remove %s %s', dimension, join(' ', from), join(' ', to))
+    'command'-> str('/execute in %s run forceload remove %s %s', dimension, from, to),
+    'tooltip'-> str('unload chunks from %s to %s in %s', from, to, dimension)
   }]);
 );
 
 // Warp Shorthand
 set_warp_at_player(book, title) -> (
   p = player();
-  set_warp(book, title, p~'pos', p~'dimension');
+  set_warp(book, title, map(p~'pos', round(_)), p~'dimension');
 );
 
 set_warp(book, title, location, dimension) -> (
-  set_command( book, title, str('execute as @p in %s run tp %s', dimension, join(' ', location)));
+  location = join(' ', location);
+  _set_commands( book, [{
+    'title'-> title, 
+    'command'-> str('/execute as @p in %s run tp %s', dimension, location ),
+    'tooltip'-> str('warp to %s in %s', location, dimension)
+  }]);
 );
 
 
