@@ -8,21 +8,21 @@ __config()->{
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> update' -> 'give_book',
-    '<book> set <title> <command>' -> 'set_command',
-    '<book> warp <title>' -> 'set_warp_at_player',
-    '<book> warp <title> at <location> in <dimension>' -> 'set_warp',
-    '<book> forceload <title> <from> <to>' -> 'set_forceload_at_player',
-    '<book> forceload <title> <from> <to> in <dimension>' -> 'set_forceload',
-    '<book> bot <title> <bot>' -> 'set_bot_at_player',
-    '<book> bot <title> <bot> at <location> in <dimension>' -> 'set_bot',
-    '<book> remove <title>' -> 'delete_command',
+    '<book> set <spell> <command>' -> 'set_command',
+    '<book> warp <spell>' -> 'set_warp_at_player',
+    '<book> warp <spell> at <location> in <dimension>' -> 'set_warp',
+    '<book> forceload <spell> <from> <to>' -> 'set_forceload_at_player',
+    '<book> forceload <spell> <from> <to> in <dimension>' -> 'set_forceload',
+    '<book> bot <spell> <bot>' -> 'set_bot_at_player',
+    '<book> bot <spell> <bot> at <location> in <dimension>' -> 'set_bot',
+    '<book> remove <spell>' -> 'delete_command',
     '<book> read' -> 'display_book',
-    '<book> color <title> <color>' -> 'set_spell_color',
-    '<book> tooltip <title> <tooltip>' -> 'set_spell_tooltip'
+    '<book> color <spell> <color>' -> 'set_spell_color',
+    '<book> tooltip <spell> <tooltip>' -> 'set_spell_tooltip'
   },
   'arguments' -> {
     'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
-    'title' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
+    'spell' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
     'tooltip' -> {'type' -> 'string', 'suggest' -> ['"Spawn a witch"', '"Turn Fire Tick on"']},
     'color' -> {'type' -> 'string', 'suggest' -> [
       'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
@@ -158,7 +158,7 @@ help() -> (
 A utility used to create command books (spell books).
 
 Add or override a spell in a book.
-  /spellbook <book> set <title> <"command">
+  /spellbook <book> set <spell> <"command">
   /spellbook farms set "spawn slime farm bot" execute in overworld run player SlimeBot spawn at -50.50 82 24
   /spellbook farms set "kill slime farm bot" player SlimeBot kill
   /spellbook farms give
@@ -167,7 +167,7 @@ Give the player a spellbook.
   /spellbook <book> give
 
 Remove a spell.
-  /spellbook <book> remove <title>
+  /spellbook <book> remove <spell>
 
 List all spells in a book.
   /spellbook <book> read
@@ -176,67 +176,67 @@ List all the spellbooks
   /spellbook list
 
 Customize colors or tooltips
-  /spellbook <book> tooltip <title> <tooltip>
-  /spellbook <book> color <title> <color>
+  /spellbook <book> tooltip <spell> <tooltip>
+  /spellbook <book> color <spell> <color>
 
 Spell Shortcuts
   Create two spells for summoning and killing a player bot
-    /spellbook <book> bot <title> <username>
+    /spellbook <book> bot <spell> <username>
   Create Two spells for adding and removing chunks from forceload.
-    /spellbook <book> forceload <title> <from> <to>
+    /spellbook <book> forceload <spell> <from> <to>
   Add a spell to teleport to this location
-    /spellbook <book> warp <title>
+    /spellbook <book> warp <spell>
 ');
 );
 
 // Player bot shorthand
-set_bot_at_player(book, title, bot_name) -> (
+set_bot_at_player(book, spell, bot_name) -> (
   p = player();
-  set_bot( book, title, bot_name, map(p~'pos', round(_)), p~'dimension');
+  set_bot( book, spell, bot_name, map(p~'pos', round(_)), p~'dimension');
 );
 
-set_bot(book, title, bot_name, location, dimension) -> (
+set_bot(book, spell, bot_name, location, dimension) -> (
   location = join(' ', location);
   _set_commands( book, [{
-    'title'-> title+' +',
+    'title'-> spell+' +',
     'command'-> str('/player %s spawn at %s facing 1 1 in %s', bot_name, location, dimension ),
     'tooltip'-> str('Spawn %s bot at %s in %s', bot_name, location, dimension)
   },{
-    'title'-> title+' -',
+    'title'-> spell+' -',
     'command'-> str('/player %s kill', bot_name),
     'tooltip'-> str('Kill %s bot at %s in %s', bot_name, location, dimension)
   }]);
 );
 
 // forceload shorthand
-set_forceload_at_player(book, title, from, to) -> (
-  set_forceload(book, title, from, to, player()~'dimension');
+set_forceload_at_player(book, spell, from, to) -> (
+  set_forceload(book, spell, from, to, player()~'dimension');
 );
 
-set_forceload(book, title, from, to, dimension) -> (
+set_forceload(book, spell, from, to, dimension) -> (
   from = join(' ', from);
   to = join(' ', to);
   _set_commands( book, [{
-    'title'->title+' +', 
+    'title'->spell+' +', 
     'command'-> str('/execute in %s run forceload add %s %s', dimension, from, to),
     'tooltip'-> str('forceload chunks from %s to %s in %s', from, to, dimension)
   },{
-    'title'-> title+' -', 
+    'title'-> spell+' -', 
     'command'-> str('/execute in %s run forceload remove %s %s', dimension, from, to),
     'tooltip'-> str('unload chunks from %s to %s in %s', from, to, dimension)
   }]);
 );
 
 // Warp Shorthand
-set_warp_at_player(book, title) -> (
+set_warp_at_player(book, spell) -> (
   p = player();
-  set_warp(book, title, map(p~'pos', round(_)), p~'dimension');
+  set_warp(book, spell, map(p~'pos', round(_)), p~'dimension');
 );
 
-set_warp(book, title, location, dimension) -> (
+set_warp(book, spell, location, dimension) -> (
   location = join(' ', location);
   _set_commands( book, [{
-    'title'-> title, 
+    'title'-> spell, 
     'command'-> str('/execute as @p in %s run tp %s', dimension, location ),
     'tooltip'-> str('warp to %s in %s', location, dimension)
   }]);
@@ -281,12 +281,12 @@ delete_command(book_name, spell) -> (
 
 
 
-set_spell_color(book_name, title, color) -> (
-  set_spell_item(book_name, title, 'color', color)
+set_spell_color(book_name, spell, color) -> (
+  set_spell_item(book_name, spell, 'color', color)
 );
 
-set_spell_tooltip(book_name, title, tooltip) -> (
-  set_spell_item(book_name, title, 'tooltip', tooltip)
+set_spell_tooltip(book_name, spell, tooltip) -> (
+  set_spell_item(book_name, spell, 'tooltip', tooltip)
 );
 
 set_spell_item(book_name, spell, key, value) -> (
@@ -299,9 +299,9 @@ set_spell_item(book_name, spell, key, value) -> (
 
 
 
-set_command(book_name, title, command) -> (
+set_command(book_name, spell, command) -> (
   _set_commands(book_name, [{
-    'title'->title,
+    'title'->spell,
     'command'-> '/'+command
   }]);
 );
@@ -310,9 +310,9 @@ _set_commands(book_name, spells) -> (
   p = player();
   book = _read_book(book_name);
   for(spells,
-    title = _:'title';
-    book:'spells':title = _;
-    print(p, str('%s spell set: [ %s ]( %s ).', book_name, title, _:'command'));
+    spell = _:'title';
+    book:'spells':spell = _;
+    print(p, str('%s spell set: [ %s ]( %s ).', book_name, spell, _:'command'));
   );
   _write_book(book);
 );
