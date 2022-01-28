@@ -179,26 +179,38 @@ Spell Shortcuts
 ');
 );
 
-
+// Player bot shortcut
 set_bot_at_player(book, title, bot_name) -> (
   p = player();
   set_bot( book, title, bot_name, p~'pos', p~'dimension');
 );
 
 set_bot(book, title, bot_name, location, dimension) -> (
-  set_command( book, title+' +', str('player %s spawn at %s facing 1 1 in %s', bot_name, join(' ', location), dimension ) );
-  set_command( book, title+' -', str('player %s kill', bot_name));
+  _set_commands( book, [{
+    'title'-> title+' +',
+    'command'-> str('/player %s spawn at %s facing 1 1 in %s', bot_name, join(' ', location), dimension )
+  },{
+    'title'-> title+' -',
+    'command'-> str('/player %s kill', bot_name)
+  }]);
 );
 
+// forceload shorthand
 set_forceload_at_player(book, title, from, to) -> (
   set_forceload(book, title, from, to, player()~'dimension');
 );
 
 set_forceload(book, title, from, to, dimension) -> (
-  set_command( book, title+' +', str('execute in %s run forceload add %s %s', dimension, join(' ', from), join(' ', to)));
-  set_command( book, title+' -', str('execute in %s run forceload remove %s %s', dimension, join(' ', from), join(' ', to)));
+  _set_commands( book, [{
+    'title'->title+' +', 
+    'command'-> str('/execute in %s run forceload add %s %s', dimension, join(' ', from), join(' ', to))
+  },{
+    'title'-> title+' -', 
+    'command'-> str('/execute in %s run forceload remove %s %s', dimension, join(' ', from), join(' ', to))
+  }]);
 );
 
+// Warp Shorthand
 set_warp_at_player(book, title) -> (
   p = player();
   set_warp(book, title, p~'pos', p~'dimension');
@@ -207,6 +219,8 @@ set_warp_at_player(book, title) -> (
 set_warp(book, title, location, dimension) -> (
   set_command( book, title, str('execute as @p in %s run tp %s', dimension, join(' ', location)));
 );
+
+
 
 list_books() -> (
   books = list_files('books/', 'json');
@@ -244,37 +258,47 @@ delete_command(book_name, spell) -> (
 );
 
 set_command(book_name, title, command) -> (
+  _set_commands(book_name, [{
+    'title'->title,
+    'command'-> '/'+command
+  }]);
+);
+
+_set_commands(book_name, spells) -> (
   p = player();
   book = _read_book(book_name);
-  book:'spells':title = '/' + command;
-  print(p, str('%s spell set: [ %s ]( %s ).', book_name, title, command));
+  for(spells,
+    title = _:'title';
+    book:'spells':title = _;
+    print(p, str('%s spell set: [ %s ]( %s ).', book_name, title, _:'command'));
+  );
   _write_book(book);
 );
 
-
-
-
 // Book Rendering Functions 
-_render_single_spell(title, command, color) -> (
-  return(str(global_spell_template,title,color,command, command));
+_render_single_spell(spell, default_color) -> (
+  return(str(global_spell_template,
+    spell:'title',
+    spell:'color' || default_color,
+    spell:'command',
+    spell:'tooltip' || spell:'command'
+  ));
 );
 
 _render_pages(book) -> (
-  spells = sort_key(pairs(book:'spells'), _:0 );
+  spells = sort_key(values(book:'spells'), _:'title' );
   pages = [];
   a = 0;
   l = length(spells);
   while(a<length(spells),50,
     page = [str(global_title_template, book:'title')];
     loop( min(global_spells_per_page,l) ,
-      put(page, null, _render_single_spell(spells:a:0, spells:a:1, _shuffle_color(a)));
+      put(page, null, _render_single_spell(spells:a, _shuffle_color(a)));
       a += 1;
     );
     l = l - global_spells_per_page;
     put(pages, null, page);
     if( l < 1, break() );  
-    
-
   );
   return(str('[%s]',
     str('\'[%s]\'', join(']\',\'[', pages)) 
@@ -306,7 +330,16 @@ _shuffle_color(color_idx) -> (
   return(global_shuffle_colors:color_idx);
 );
 
+// To clear the cache while testing.
+clear_cache() -> (
+  cache_files = list_files('cache/', 'nbt');
+  for( cache_files, 
+    delete_file(_, 'nbt')
+  );
+);
 
+
+// Migrations, invoke the following methods to apply changes in the data structures.
 
 // Move old books from app root into books folder
 // run /script in spellbook invoke migrate_books_folder_location()
@@ -317,5 +350,23 @@ migrate_books_folder_location() -> (
     write_file('books/'+_, 'json', book);
     delete_file(_, 'json');
   );
-  return(str('Migrated [ %s ] books from <app>/ to <app>/books.', join(', ',old_files) ));
+  print(str('Migrated [ %s ] books from <app>/ to <app>/books.', join(', ',old_files) ));
 );
+
+// Change the spell data structure to allow for custom tooltips and custom colors to be defined.
+// run /script in spellbook invoke migrate_spells_data_structure
+migrate_spells_data_structure() -> (
+  book_files = list_files('books/', 'json');
+  for(book_files,
+    book = read_file(_, 'json');
+    spells = book:'spells';
+    for( pairs(book:'spells'),
+      title = _:0;
+      command = _:1;
+      book:'spells':title = {'title'-> title, 'command'-> command};
+    );
+    write_file('books/'+book:'title', 'json', book);
+    print(str('Migrated %s spellbook.', book:'title'));
+  );
+);
+
