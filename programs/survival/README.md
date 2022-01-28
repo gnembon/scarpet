@@ -173,6 +173,14 @@ Various scripts that modify various game elements, often replicating popular mod
 	/portalorient solid - makes player face toward side with fewer solid blocks
 	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
 
+
+### [postmortem_death_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/postmortem_death_count.sc):
+#### By Opsaaaaa
+	Adds a scoreboard death count to a server after players have already died.
+	When players connect it sets their scoreboard death count to their statistic death count.
+	You can make the counter visible in the player list with `/scoreboard objectives setdisplay list Deaths`
+
+
 ### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
 #### By Opsaaaaa
 	Adds 7 randomized potion trades to the Cleric. 
