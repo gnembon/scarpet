@@ -46,7 +46,7 @@ global_help_pages = {
     'm A utility used to create command books (spellbooks).\n',
     'm Learn the basics with: ',
     'ci /spellbook help basics\n',
-    'm Pages: ','ci (main), basics, shorthands, customize'
+    'm Pages: ','ci (main), basics, shorthands, customize, commands'
   ],
   'basics' -> [
     'pb \nSpellBook Basics\n', 
