@@ -88,11 +88,11 @@ __on_player_right_clicks_block(p, item_tuple, hand, block, face, hitvec) -> (
 
 // Automagically update spell books opened in hands.
 __on_player_uses_item(p, item, hand) -> (
-  // If the item is a spellbook
   if( item:0 == 'written_book' && _app_is_author(item:2),
+    
     book_save = _read_book(item:2:'title');
     if(item:2:'version' != _get_version(book_save),
-      slot = if(hand=='mainhand', player~'selected_slot', -1);
+    
       inventory_set(p, p~'selected_slot', item:1, item:0, _render_book_nbt(book_save));
       _print_update_spell_book(p, [item:2:'title', item:2:'version', _get_version(book_save)])
     )
@@ -161,7 +161,7 @@ Give the player a spellbook.
   /spellbook <book> give
 
 Remove a spell.
-  /spellbook <book> remove <spell>
+  /spellbook <book> remove <title>
 
 List all spells in a book.
   /spellbook <book> read
@@ -169,6 +169,13 @@ List all spells in a book.
 List all the spellbooks
   /spellbook list
 
+Spell Shortcuts
+  Create two spells for summoning and killing a player bot
+    /spellbook <book> bot <title> <username>
+  Create Two spells for adding and removing chunks from forceload.
+    /spellbook <book> forceload <title> <from> <to>
+  Add a spell to teleport to this location
+    /spellbook <book> warp <title>
 ');
 );
 
