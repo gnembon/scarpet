@@ -1,4 +1,4 @@
-//Statistic Display by CommandLeo
+// Statistic Display by CommandLeo
 
 global_total_text = ' §lTotal';
 global_block_list = block_list();
@@ -27,6 +27,7 @@ global_bedrock_removed = read_file('bedrock_removed', 'json') || {};
 global_digs = {};
 for(list_files('digs', 'json'), global_digs:slice(_, length('digs') + 1) = read_file(_, 'json'));
 global_carousel_data = read_file('carousel', 'json') || {'interval' -> 200, 'entries' -> []};
+
 settings = read_file('settings', 'json');
 global_stat = settings:'stat' || [];
 global_bots_included = settings:'bots_included';
@@ -53,21 +54,22 @@ global_help_pages = [
         '%color% /%app_name% combined <combined_stat> ', 'f ｜ ', 'g Multiple statistics combined together', ' \n',
     ],
     [
-        '%color% /%app_name% print <category> <entry> [<player>]', 'f ｜ ', 'g Prints the value of a stat [of an online player]', ' \n',
+        '%color% /%app_name% print <category> <entry> [<player>] ', 'f ｜ ', 'g Prints the value of a stat of a player', ' \n',
         '%color% /%app_name% hide ', 'f ｜ ', 'g Hides the scoreboard', ' \n',
         '%color% /%app_name% show ', 'f ｜ ', 'g Shows the scoreboard', '  \n',
-        '%color% /%app_name% bots (on/off/toggle) ', 'f ｜ ', 'g A shortcut for /%app_name% settings botsIncluded', '  \n',
-        '%color% /%app_name% settings bots_included (on/off/toggle) ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
+        '%color% /%app_name% bots (on|off|toggle) ', 'f ｜ ', 'g A shortcut for /%app_name% settings bots_included', '  \n',
+        '%color% /%app_name% settings bots_included (on|off|toggle) ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
         '%color% /%app_name% settings default_dig <dig> ', 'f ｜ ', 'g Sets the default dig type ', 'f *', '^g For server operators only', '  \n',
-        '%color% /%app_name% settings offline_digs (on/off/toggle) ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
-        '%color% /%app_name% settings dig_display (on/off/toggle) ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
+        '%color% /%app_name% settings offline_digs (on|off|toggle) ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
+        '%color% /%app_name% settings dig_display (on|off|toggle) ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
         '%color% /%app_name% settings dig_display_color <hex_color> ', 'f ｜ ', 'g Changes the color of digs display for yourself (leave empty to reset)', ' \n',
         '%color% /%app_name% settings stat_color <hex_color> ', 'f ｜ ', 'g Changes the color of the scoreboard name for everyone (leave empty to reset) ', 'f *', '^g For server operators only', ' \n'
-    ],   
+    ],
     [
-        '%color% /%app_name% settings combined_stat info <combined_stat>', 'f ｜ ', 'g Gets info about a combined statistic ', ' \n',
-        '%color% /%app_name% settings combined_stat create <name> <display_name> <category> <entries> ', 'f ｜ ', 'g Creates a combined statistic from a list of entries', 'f *', '^g For server operators only', ' \n',
-        '%color% /%app_name% settings combined_stat delete <combined_stat> ', 'f ｜ ', 'g Deletes a combined statistic ', 'f *', '^g For server operators only', ' \n\n',
+        '%color% /%app_name% settings combined_stats list ', 'f ｜ ', 'g Lists combined statistics ', ' \n',
+        '%color% /%app_name% settings combined_stats info <combined_stat> ', 'f ｜ ', 'g Prints the entries of a combined statistic ', ' \n',
+        '%color% /%app_name% settings combined_stats create <name> <display_name> <category> <entries> ', 'f ｜ ', 'g Creates a combined statistic ', 'f *', '^g For server operators only', ' \n',
+        '%color% /%app_name% settings combined_stats delete <combined_stat> ', 'f ｜ ', 'g Deletes a combined statistic ', 'f *', '^g For server operators only', ' \n\n',
         '%color% /%app_name% carousel start ', 'f ｜ ', 'g Starts a carousel of statistics', ' \n',
         '%color% /%app_name% carousel stop ', 'f ｜ ', 'g Stops the carousel', ' \n',
         '%color% /%app_name% carousel interval [<seconds>] ', 'f ｜ ', 'g Gets or sets the interval of the carousel', ' \n',
@@ -122,9 +124,10 @@ __config() -> {
         'settings stat_color' -> ['setStatColor', null],
         'settings stat_color <hex_color>' -> 'setStatColor',
         'settings default_dig <dig>' -> 'setDefaultDig',
+        'settings combined_stats list' -> 'listCombinedStats',
+        'settings combined_stats info <combined_stat>' -> 'combinedStatInfo',
         'settings combined_stats create <name> <display_name> <category> <entries>' -> 'createCombinedStat',
         'settings combined_stats delete <combined_stat>' -> 'deleteCombinedStat',
-        'settings combined_stats info <combined_stat>' -> 'combinedStatInfo',
 
         'mined <block>' -> ['changeStat', 'mined'],
         'crafted <item>' -> ['changeStat', 'crafted'],
@@ -359,14 +362,14 @@ displayDigs(player) -> (
     if(player(player), display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, getStat(player, 'digs', 'combined_blocks')), '#343A40  ｜ ', str('#%s ⚒ %s', color, getStat(player, 'digs', 'total')), '#343A40  ｜ ', str('#%s ⛏ %s', color, getStat(player, 'digs', 'pick')))));
 );
 
-// COMMAND FUNCTIONS
+// MAIN FUNCTIONS
 
 menu() -> (
     texts = [
         'fs ' + ' ' * 80, ' \n',
         '#FED330b Statistic Display ', 'g by ', '%color%b CommandLeo', '^g https://github.com/CommandLeo', ' \n\n',
         'g An app to easily display statistics on the scoreboard.', '  \n',
-        'g Type ', '%color% /%app_name% help', '!/%app_name% help', '^g Click to run the command', 'g  to see a list of all the commands.', '  \n',
+        'g Run ', '%color% /%app_name% help', '!/%app_name% help', '^g Click to run the command', 'g  to see a list of all the commands.', '  \n',
         'fs ' + ' ' * 80
     ];
     replacement_map = {'%app_name%' -> global_app_name, '%color%' -> '#FFEE44'};
@@ -497,6 +500,18 @@ updateDigs(player) -> (
 
 // COMBINED STATS MANAGING
 
+listCombinedStats() -> (
+    combined_stats = map(list_files('combined', 'text'), slice(_, length('combined') + 1));
+    texts = reduce(combined_stats, [..._a, if(_i == 0, '', 'g , '), str('#FFEE44 %s', _), str('?/%s settings combined_stats info %s', global_app_name, _)], ['f » ', 'g Available combined stats: ']);
+    print(format(texts));
+);
+
+combinedStatInfo(name) -> (
+    [display_name, category, entries] = parseCombinedFile(name);
+    if(!display_name && !category && !entries, _error('Combined statistic not found'));
+    print(format('f » ', str('#FFEE44 %s', display_name), str('^g %s', name), 'g  ｜ Entries:\n', 'g ' + join('\n', map(entries, str('    %s.%s', category, _)))));
+);
+
 createCombinedStat(name, display_name, category, entries_string) -> (
     if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
     filename = 'combined/' + name;
@@ -513,12 +528,6 @@ deleteCombinedStat(name) -> (
     if(delete_file('combined/' + name, 'text'), print(format('f » ', 'g Successfully deleted the combined stat')), _error('Combined stat not found'));
 );
 
-combinedStatInfo(name) -> (
-    [display_name, category, entries] = parseCombinedFile(name);
-    if(!display_name && !category && !entries, _error('Combined statistic not found'));
-    print(format('f » ', str('#FFEE44 %s', display_name), str('^g %s', name), 'g  ｜ Entries:\n', 'g ' + join('\n', map(entries, str('    %s.%s', category, _)))));
-);
-
 // CAROUSEL
 
 startCarousel() -> (
@@ -530,6 +539,7 @@ startCarousel() -> (
     print(format('f » ', 'g You ', 'l started ', 'g the carousel'));
     logger(str('[Stat] Carousel Start | %s', player()));
     global_carousel_active = true;
+    show();
     carousel(entries, 0);
 );
 
@@ -582,6 +592,7 @@ __on_statistic(player, category, event, value) -> (
     if(global_stat == [category, event] || (global_stat == ['digs', 'combined_blocks'] && category == 'mined') || (category == 'used' && global_stat:0 == 'digs' && global_dig_data:'total':1~event != null) || (global_stat:0 == 'combined' && global_combined:0 == category && global_combined:1~event != null), schedule(0, 'updateStat', player); schedule(0, 'calculateTotal'));
 );
 
+// Bedrock breaking detection
 __on_player_places_block(player, item_tuple, hand, block) -> (
     if(!block~'piston', exit());
     facing_pos = pos_offset(block, block_state(block, 'facing'));
