@@ -2,10 +2,10 @@
 
 __config() -> {
     'commands' -> {
-	    '' -> _() -> print('type \'/'+system_info('app_name')+' from <from_pos> to <to_pos>\' to start'),
+        '' -> _() -> print('type \'/'+system_info('app_name')+' from <from_pos> to <to_pos>\' to start'),
         'from <from_pos> to <to_pos>' -> 'pregenerate',
         'abort' -> 'abort',
-		'clear' -> 'clear'
+        'clear' -> 'clear'
     }
 };
 
@@ -16,7 +16,7 @@ pregenerate(from_pos, to_pos) ->
 (
    if (global_chunks_to_go,
        print(format('w There is still a process running, click ', 'yb here ', '!/'+system_info('app_name')+' abort', 'w to abort it'));
-	   return();
+       return();
    );
    global_chunks_to_go = [];
    from_chpos = from_pos / 16;
@@ -53,7 +53,7 @@ clear() ->
 (
    if (global_chunks_to_go,
        print(format('w There is still a process running, click ', 'yb here ', '!/'+system_info('app_name')+' abort', 'w to abort it'));
-	   return();
+       return();
    );
    scoreboard_remove(global_title);
 );
@@ -66,8 +66,8 @@ __step() ->
       return();
    );
    if ( system_info('server_last_tick_times'):0 > 60,
-	  schedule(1, '__step');
-	  return();
+      schedule(1, '__step');
+      return();
    );
 
    start = time();
@@ -79,15 +79,15 @@ __step() ->
       chunk_pos = l(16*chx+8, 128, 16*chz+8);
       if (generation_status(chunk_pos, true) != 'full', // full shoudl suffice, but 'spawn' happens when light is removed
          // this will generate the chunk to full
-		 str(block(chunk_pos));
+         str(block(chunk_pos));
          __incstat('newly generated');
       ,
          __incstat('already present');
       );
       __incstat('total processed');
       chunks_this_tick += 1;
-	  scoreboard(global_title, 'region x', floor(chx/32));
-	  scoreboard(global_title, 'region z', floor(chz/32));
+      scoreboard(global_title, 'region x', floor(chx/32));
+      scoreboard(global_title, 'region z', floor(chz/32));
    );
    if ( !global_chunks_to_go,
       print(format('w Done, click ', 'eb here ', '!/'+system_info('app_name')+' clear', 'w to clear sidebar'));
