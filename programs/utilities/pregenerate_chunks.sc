@@ -3,7 +3,8 @@
 __config() -> {
     'commands' -> {
         '' -> _() -> print('type \'/'+system_info('app_name')+' from <from_pos> to <to_pos>\' to start'),
-        'from <from_pos> to <to_pos>' -> 'pregenerate',
+        'from <from_pos> to <to_pos>' -> ['pregenerate', false],
+        'from <from_pos> to <to_pos> aggressive' -> ['pregenerate', true],
         'abort' -> 'abort',
         'clear' -> 'clear'
     }
@@ -11,13 +12,16 @@ __config() -> {
 
 global_chunks_to_go = [];
 global_title = 'Chunk Generation Progress';
+global_aggressive = false;
 
-pregenerate(from_pos, to_pos) ->
+pregenerate(from_pos, to_pos, aggressive) ->
 (
    if (global_chunks_to_go,
        print(format('w There is still a process running, click ', 'yb here ', '!/'+system_info('app_name')+' abort', 'w to abort it'));
        return();
    );
+   global_aggressive = aggressive;
+
    global_chunks_to_go = [];
    from_chpos = from_pos / 16;
    to_chpos = to_pos / 16;
@@ -72,6 +76,7 @@ __step() ->
 
    start = time();
    chunks_this_tick = 0;
+   aggro = global_aggressive;
    while(global_chunks_to_go && (chunks_this_tick < 2 || time() < start+40), 1000,
       [chx, chz] = global_chunks_to_go:(-1);
       delete(global_chunks_to_go:(-1));
@@ -79,9 +84,14 @@ __step() ->
       chunk_pos = l(16*chx+8, 128, 16*chz+8);
       if (generation_status(chunk_pos, true) != 'full', // full shoudl suffice, but 'spawn' happens when light is removed
          // this will generate the chunk to full
+         if (aggro,
+            add_chunk_ticket(chunk_pos, 'portal', 1)
+         ,
+            __incstat('newly generated');
+         );
          str(block(chunk_pos));
-         __incstat('newly generated');
-      ,
+
+      , !aggro ,
          __incstat('already present');
       );
       __incstat('total processed');
