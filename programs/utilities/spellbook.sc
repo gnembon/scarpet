@@ -1,4 +1,16 @@
 // A in game utility for creating, using, and updating command books (spellbooks)
+// You can create a new spell in a book with this command
+// `/spellbook <book> set <spell> </command>` 
+// ie`/spellbook cat_spells set "spawn cat" /summon cat`
+// You can continue adding spells to existing spellbooks. 
+// `/spellbook cat_spells set "spawn Tabby" /summon cat ~ ~ ~ {CatType:2}`
+// You can give yourself a copy of the spellbook with the spellbook give command,
+// `/spellbook cat_spells give`
+// Any changes you make to your spells will automatically update your spellbook when opened.
+// You can find more info in-game with the help command',
+// `/spellbook help <page>',
+// Pages: (main), basics, shorthands, customize, commands
+
 
 __config()->{
   'command_permission' -> 'ops', 

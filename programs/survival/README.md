@@ -296,7 +296,6 @@ Various scripts that modify various game elements, often replicating popular mod
     It will display a number in the scoreboard. Divide said number by 100 to get actual speed.
     Speed toggle in minihud is obviously much better.
 
-
 ### [storage_drawers.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/storage_drawers.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
