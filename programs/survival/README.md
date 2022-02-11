@@ -126,6 +126,18 @@ Various scripts that modify various game elements, often replicating popular mod
 	locate will tell you first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat.
 	hist will print a histogram like in gnembon's ancient debris video, but this will accept any block, and if there are less than 	40 blocks for that y level, it will print a nice looking histogram.
 
+
+### [lodestone_chunk_loader.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lodestone_chunk_loader.sc)
+#### By Opsaaaaa
+	Lodestones are Loadstones aka chunk loaders.
+	When a player clicks on a lodestone while sneaking it marks that chunk to be force loaded
+	and if they click on it again the unmarks that chunk.
+	Breaking the loadstone also unmarks the chunk.
+	
+	Warning, with this script enabled players can unmark chunks admins intend to stay loaded.
+	Only use this script on your server if you would trust your players with the `/forceload` command.
+
+
 ### [magic_doors.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/magic_doors.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
