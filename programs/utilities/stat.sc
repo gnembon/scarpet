@@ -32,8 +32,8 @@ settings = read_file('settings', 'json');
 global_stat = settings:'stat' || [];
 global_bots_included = settings:'bots_included';
 global_offline_digs = if(settings:'offline_digs' != null, settings:'offline_digs', true);
-global_display_digs = settings:'display_digs' || {};
-global_display_digs_color = settings:'display_digs_color' || {};
+global_dig_display = settings:'dig_display' || {};
+global_dig_display_color = settings:'dig_display_color' || {};
 global_stat_color = settings:'stat_color' || 'FFEE44';
 global_default_dig = settings:'default_dig' || 'combined_blocks';
 
@@ -58,12 +58,12 @@ global_help_pages = [
         '%color% /%app_name% hide ', 'f ｜ ', 'g Hides the scoreboard', ' \n',
         '%color% /%app_name% show ', 'f ｜ ', 'g Shows the scoreboard', '  \n',
         '%color% /%app_name% bots (on|off|toggle) ', 'f ｜ ', 'g A shortcut for /%app_name% settings bots_included', '  \n',
-        '%color% /%app_name% settings bots_included (on|off|toggle) ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
+        '%color% /%app_name% settings bots_included [on|off|toggle] ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
         '%color% /%app_name% settings default_dig <dig> ', 'f ｜ ', 'g Sets the default dig type ', 'f *', '^g For server operators only', '  \n',
-        '%color% /%app_name% settings offline_digs (on|off|toggle) ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
-        '%color% /%app_name% settings dig_display (on|off|toggle) ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
-        '%color% /%app_name% settings dig_display_color <hex_color> ', 'f ｜ ', 'g Changes the color of digs display for yourself (leave empty to reset)', ' \n',
-        '%color% /%app_name% settings stat_color <hex_color> ', 'f ｜ ', 'g Changes the color of the scoreboard name for everyone (leave empty to reset) ', 'f *', '^g For server operators only', ' \n'
+        '%color% /%app_name% settings offline_digs [on|off|toggle] ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
+        '%color% /%app_name% settings dig_display [on|off|toggle] ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
+        '%color% /%app_name% settings dig_display_color <hex_color> ', 'f ｜ ', 'g Changes the color of digs display for yourself; leave empty to reset', ' \n',
+        '%color% /%app_name% settings stat_color <hex_color> ', 'f ｜ ', 'g Changes the color of the scoreboard name for everyone; leave empty to reset ', 'f *', '^g For server operators only', ' \n'
     ],
     [
         '%color% /%app_name% settings combined_stats list ', 'f ｜ ', 'g Lists combined statistics ', ' \n',
@@ -302,21 +302,21 @@ __config() -> {
 
 _error(error) -> exit(print(format(str('r %s', error))));
 
-_isInvalidEntry(entry) -> (
+isInvalidEntry(entry) -> (
     if(entry == global_total_text, return(false));
     if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, return(!has(system_info('server_whitelist'), str(entry))));
     return(!player(entry) || (!global_bots_included && player(entry)~'player_type' == 'fake'));
 );
 
 removeInvalidEntries() -> (
-    for(scoreboard('stats'), if(_isInvalidEntry(_), scoreboard_remove('stats', _)));
+    for(scoreboard('stats'), if(isInvalidEntry(_), scoreboard_remove('stats', _)));
 );
 
 parseCombinedFile(name) -> (
     file = read_file('combined/' + name, 'text');
     display_name = file:0;
     category = if(length(file) > 1, file:1);
-    delete(file, 0); delete(file, 0);
+    loop(2, delete(file, 0));
     return([display_name, category, file]);
 );
 
@@ -358,8 +358,10 @@ getStat(player, category, event) -> (
 );
 
 displayDigs(player) -> (
-    color = global_display_digs_color:(player~'uuid') || 'FFEE44';
-    if(player(player), display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, getStat(player, 'digs', 'combined_blocks')), '#343A40  ｜ ', str('#%s ⚒ %s', color, getStat(player, 'digs', 'total')), '#343A40  ｜ ', str('#%s ⛏ %s', color, getStat(player, 'digs', 'pick')))));
+    uuid = player~'uuid';
+    if(global_dig_display:uuid == false || !player(player), return());
+    color = global_dig_display_color:uuid || global_stat_color;
+    display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, getStat(player, 'digs', 'combined_blocks')), '#343A40  ｜ ', str('#%s ⚒ %s', color, getStat(player, 'digs', 'total')), '#343A40  ｜ ', str('#%s ⛏ %s', color, getStat(player, 'digs', 'pick'))));
 );
 
 // MAIN FUNCTIONS
@@ -380,7 +382,9 @@ help(page) -> (
     length = length(global_help_pages);
     if(page < 1 || page > length, _error('Invalid page number'));
     page = page - 1;
-    texts = ['fs ' + ' ' * 80, ' \n', ...global_help_pages:page, 'fs ' + ' ' * 31, '  ', 'fb «', '^g Previous page', '!/%app_name% help ' + ((page - 1) % length + 1), str('g \ Page %d/%d ', page + 1, length), 'fb »', '^g Next page', '!/%app_name% help ' + ((page + 1) % length + 1), '  ', 'fs ' + ' ' * 31];
+    previous_page = (page - 1) % length + 1;
+    next_page = ((page + 1) % length + 1);
+    texts = ['fs ' + ' ' * 80, ' \n', ...global_help_pages:page, 'fs ' + ' ' * 31, '  ', 'fb «', '^g Previous page', '!/%app_name% help ' + previous_page, str('g \ Page %d/%d ', page + 1, length), 'fb »', '^g Next page', '!/%app_name% help ' + next_page, '  ', 'fs ' + ' ' * 31];
     replacement_map = {'%app_name%' -> global_app_name, '%color%' -> '#FFEE44', '%default_dig%' -> global_default_dig};
     print(format(map(texts, reduce(pairs(replacement_map), replace(_a, ..._), _))));
 );
@@ -412,22 +416,22 @@ toggleOfflineDigs(value) -> (
 
 toggleDigDisplay(value) -> (
     uuid = player()~'uuid';
-    global_display_digs:uuid = if(value == null, global_display_digs:uuid == false, value);
-    print(format('f » ', 'g Digs are now ', if(global_display_digs:uuid, 'l displayed', 'r hidden'), 'g  in the player list footer'));
-    if(global_display_digs:uuid, displayDigs(player()), display_title(player(), 'player_list_footer'));
+    global_dig_display:uuid = if(value == null, global_dig_display:uuid == false, value);
+    print(format('f » ', 'g Digs are now ', if(global_dig_display:uuid, 'l displayed', 'r hidden'), 'g  in the player list footer'));
+    if(global_dig_display:uuid, displayDigs(player()), display_title(player(), 'player_list_footer'));
 );
 
 setDigDisplayColor(color) -> (
     uuid = player()~'uuid';
     if(!color,
-        delete(global_display_digs_color:uuid);
+        delete(global_dig_display_color:uuid);
         print(format('f » ', 'g Dig display color has been ', 'r reset')),
         color = upper(replace(color, '#'));
         if(length(color) != 6 || !all(split(color), has(global_hex_charset, _ )), _error('Invalid hex color'));
-        global_display_digs_color:uuid = color;
-        print(format('f » ', 'g Dig display color has been set to ', str('#%s #%s', global_display_digs_color:uuid, global_display_digs_color:uuid)));
+        global_dig_display_color:uuid = color;
+        print(format('f » ', 'g Dig display color has been set to ', str('#%s #%s', global_dig_display_color:uuid, global_dig_display_color:uuid)));
     );
-    if(global_display_digs:uuid != false, displayDigs(player()));
+    if(global_dig_display:uuid != false, displayDigs(player()));
 );
 
 setStatColor(color) -> (
@@ -441,6 +445,7 @@ setStatColor(color) -> (
         print(format('f » ', 'g Stat color has been set to ', str('#%s #%s', global_stat_color, global_stat_color)));
     );
     scoreboard_property('stats', 'display_name', format(str('#%s %s', global_stat_color, scoreboard_property('stats', 'display_name'))));
+    for(player('all'), displayDigs(_));
 );
 
 setDefaultDig(dig) -> (
@@ -460,7 +465,7 @@ printStatValue(event, player, category) -> (
 
 changeStat(event, category) -> (
     if(global_carousel_active, _error('Couldn\'t change the displayed statistic, a carousel is currently active'));
-    if(category == 'combined' && parseCombinedFile(event) == [null, null, null], _error('Combined statistic not found'));
+    if(category == 'combined' && !parseCombinedFile(event):0, _error('Combined statistic not found'));
     showStat(category, if(category == 'digs' && !event, global_default_dig, event));
     show();
     logger(str('[Stat] Stat Change | %s ➡ %s.%s', player(), category, event));
@@ -480,7 +485,7 @@ showStat(category, event) -> (
 
 updateStat(player) -> (
     if(!global_stat, return());
-    if(_isInvalidEntry(str(player)), return(scoreboard_remove('stats', player)));
+    if(isInvalidEntry(str(player)), return(scoreboard_remove('stats', player)));
     value = getStat(player, ...global_stat);
     if(value, scoreboard('stats', player, value), scoreboard_remove('stats', player));
 );
@@ -494,7 +499,7 @@ updateDigs(player) -> (
             if(amount > 0, global_digs:_:str(player) = amount);
         );
     );
-    if(global_display_digs:(player(player)~'uuid') != false, displayDigs(player));
+    displayDigs(player(player));
     scoreboard('digs', player, getStat(player, 'digs', global_default_dig));
 );
 
@@ -629,8 +634,8 @@ __on_close() -> (
         'stat' -> global_stat,
         'bots_included' -> global_bots_included,
         'offline_digs' -> global_offline_digs,
-        'display_digs' -> global_display_digs,
-        'display_digs_color' -> global_display_digs_color,
+        'dig_display' -> global_dig_display,
+        'dig_display_color' -> global_dig_display_color,
         'stat_color' -> global_stat_color,
         'default_dig' -> global_default_dig
     };
