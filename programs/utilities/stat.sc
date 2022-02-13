@@ -6,7 +6,6 @@ global_item_list = item_list();
 global_entity_list = entity_types('*');
 global_server_whitelisted = system_info('server_whitelisted') || length(system_info('server_whitelist')) > 0;
 global_app_name = system_info('app_name');
-global_game_major_target = system_info('game_major_target');
 global_hex_charset = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 pickaxes = filter(global_item_list, _~'_pickaxe');
@@ -14,7 +13,7 @@ axes = filter(global_item_list, _~'_axe');
 shovels = filter(global_item_list, _~'_shovel');
 hoes = filter(global_item_list, _~'_hoe');
 
-display_names = read_file(str('display_names/%d', global_game_major_target), 'json');
+display_names = read_file('display_names', 'json');
 global_misc_stats = display_names:'misc';
 global_block_names = display_names:'blocks';
 global_item_names = display_names:'items';
@@ -83,8 +82,8 @@ __config() -> {
     'resources' -> [
         // Display names
         {
-        'source' -> str('https://raw.githubusercontent.com/CommandLeo/scarpet/main/resources/stat/display_names/%d.json', global_game_major_target),
-        'target' -> str('display_names/%d.json', global_game_major_target)
+        'source' -> str('https://raw.githubusercontent.com/CommandLeo/scarpet/main/resources/stat/display_names/%d.json', system_info('game_major_target')),
+        'target' -> 'display_names.json'
         },
         // Default combined stats
         {
@@ -468,7 +467,7 @@ changeStat(event, category) -> (
     if(category == 'combined' && !parseCombinedFile(event):0, _error('Combined statistic not found'));
     showStat(category, if(category == 'digs' && !event, global_default_dig, event));
     show();
-    logger(str('[Stat] Stat Change | %s ➡ %s.%s', player(), category, event));
+    logger(str('[Stat] Stat Change | %s -> %s.%s', player(), category, event));
 );
 
 showStat(category, event) -> (
@@ -560,7 +559,7 @@ carouselInterval(seconds) -> (
     if(type(seconds) != 'number', _error('The interval provided is not a number'));
     global_carousel_data:'interval' = seconds * 20;
     print(format('f » ', 'g Carousel interval was set to ', str('d %d ', seconds), 'g seconds'));
-    logger(str('[Stat] Carousel Interval Change | %s ➡ %d', player(), seconds));
+    logger(str('[Stat] Carousel Interval Change | %s -> %d', player(), seconds));
 );
 
 addCarouselEntry(entry, category) -> (
@@ -613,7 +612,7 @@ __on_player_places_block(player, item_tuple, hand, block) -> (
 );
 
 __on_tick() -> (
-    if((global_stat:0 == 'extra' && global_stat:1 != 'bedrock_removed') || (global_stat:0 == 'custom' && has({'play_one_minute', 'play_time', 'time_since_death', 'time_since_reset', 'total_world_time'}, global_stat:1)), for(player('all'), updateStat(_)); calculateTotal());
+    if((global_stat:0 == 'extra' && global_stat:1 != 'bedrock_removed') || (global_stat:0 == 'custom' && has({'play_one_minute', 'play_time', 'time_since_death', 'time_since_rest', 'total_world_time'}, global_stat:1)), for(player('all'), updateStat(_)); calculateTotal());
 );
 
 __on_player_connects(player) -> (
