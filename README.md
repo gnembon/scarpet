@@ -1,7 +1,9 @@
 # scarpet
 Public Repository of scarpet apps for Minecraft. 
 
-All programs are available as is. They might be incorrect, they might be outdated. If you see some problems, either [open a pull request with a fix](https://github.com/gnembon/scarpet/compare) or [report on the bug tracker for someone else to look into it](https://github.com/gnembon/scarpet/issues)
+All programs are available as is. They might be incorrect, they might be outdated. If you see some problems, either [open a pull request with a fix](https://github.com/gnembon/scarpet/compare) or [report on the bug tracker for someone else to look into it](https://github.com/gnembon/scarpet/issues).
+
+You can find the apps in the [programs](https://github.com/gnembon/scarpet/tree/master/programs#readme) folder.
 
 ## Documentation and Examples
 
