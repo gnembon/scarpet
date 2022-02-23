@@ -37,6 +37,10 @@ global_effect_radius = 128;
 
 global_survival=false;
 
+global_min_light_level = 1; //1 for 1.18+, 8 for 1.17 and earlier
+
+global_light_ground = false; //Whether or not we want to light the surface
+
 spread_torches(player, initial_gamemode) ->
 (
 	if (global_spread_love && player~'holds':0 == 'torch' && player ~'gamemode_id' == initial_gamemode,
@@ -47,7 +51,7 @@ spread_torches(player, initial_gamemode) ->
 		loop(4000,
 			lpos = cpos+l(rand(d), rand(d), rand(d)) - d/2;
 			if (__distance_sq(cpos, lpos) <= dd  
-					&& air(lpos) && light(lpos) < 8 && sky_light(lpos) < 8
+					&& air(lpos) && light(lpos) < global_min_light_level && (global_light_ground || sky_light(lpos) < global_min_light_level)
 					&& solid(pos_offset(lpos, 'down')),
 				if (is_survival && not_able_loose_torch(player),
 					//running out of torches as survival
