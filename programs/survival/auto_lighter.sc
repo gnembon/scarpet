@@ -37,7 +37,7 @@ global_effect_radius = 128;
 
 global_survival=false;
 
-global_min_light_level = 1; //1 for 1.18+, 8 for 1.17 and earlier
+global_min_light_level = if(system_info('game_major_target')>=18, 1, 8); //1 for 1.18+, 8 for 1.17 and earlier
 
 global_light_ground = false; //Whether or not we want to light the surface
 
