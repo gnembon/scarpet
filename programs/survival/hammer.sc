@@ -20,7 +20,7 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 	if (hand != 'mainhand' || !item_tuple || item_tuple:0 !='stone_pickaxe', return());
 	global_radius = (global_radius + 1)%3;
 	diameter = 2*global_radius+1;
-	print('hammer mode '+diameter+'x'+diameter);
+	display_title(player, 'actionbar', format('y hammer mode '+diameter+'x'+diameter));
 	if(global_radius,
 		for(__get_block_range(pos(block), face), 
 			particle('block '+block(_), _, 50, 0, 0.7)
