@@ -10,9 +10,10 @@ __config() -> (
 __command()->(
 	global_active = !global_active;
 	if(global_active,
-		format('gi Turned on hammer'),
-		format('gi Turned off hammer'),
+		display_title(player(), 'actionbar', format('yi Turned on hammer')),
+		display_title(player(), 'actionbar', format('yi Turned off hammer'))
 	);
+	null
 );
 
 __get_block_range(position, face) ->  (
