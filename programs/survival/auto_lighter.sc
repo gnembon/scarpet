@@ -5,6 +5,14 @@
 
 ///right click on a torch while looking at nothing to toggle.
 
+//Here you can customize the app to your needs
+global_effect_radius = 128; //How far away you want to send torches
+
+global_min_light_level = __light_level_for_version(); //1 for 1.18+, 8 for 1.17 and earlier
+
+global_light_ground = true; //Whether or not we want to light the surface
+
+
 // stay loaded
 __config() -> (
    m(
@@ -33,13 +41,9 @@ __on_player_uses_item(player, item, hand) ->
 
 __distance_sq(vec1, vec2) -> reduce(vec1 - vec2, _a + _*_, 0);
 
-global_effect_radius = 128;
+__light_level_for_version()-> if(system_info('game_major_target')>=18, 1, 8); //1 for 1.18+, 8 for 1.17 and earlier
 
 global_survival=false;
-
-global_min_light_level = if(system_info('game_major_target')>=18, 1, 8); //1 for 1.18+, 8 for 1.17 and earlier
-
-global_light_ground = false; //Whether or not we want to light the surface
 
 spread_torches(player, initial_gamemode) ->
 (
