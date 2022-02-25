@@ -20,7 +20,7 @@ __config()->{
     'help <helpPage>' -> 'help',
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
-    '<book> update' -> 'give_book',
+    '<book> delete' -> 'delete_book',
     '<book> set <spell> <command>' -> 'set_command',
     '<book> warp <spell>' -> 'set_warp_at_player',
     '<book> warp <spell> at <location> in <dimension>' -> 'set_warp',
@@ -44,7 +44,11 @@ __config()->{
       'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
       'blue', 'light_purple', 'dark_purple', 'white', 'gray', 'dark_gray', 'black', '"#000000"', '"#ffffff"'
     ]},
-    'book' -> {'type' -> 'string', 'suggest' -> ['bots', 'warps', 'zones', 'farms', 'rules']},
+    'book' -> {'type' -> 'string', 'suggester' -> _(args) -> (
+      options = ['bots', 'rules', 'warps'];
+      put(options, -1, _get_book_list(), 'extend');
+      options;
+    )},
     'from' -> {'type' -> 'columnpos'},
     'to' -> {'type' -> 'columnpos'},
     'bot' -> {'type' -> 'term', 'suggest'-> ['Alex', 'Steve']},
@@ -155,7 +159,6 @@ global_base_book_data = {
   'title' -> '',
   'spells' -> {},
 };
-
 
 
 
@@ -305,16 +308,23 @@ list_books() -> (
   p = player();
   display = [];
   
-  for( list_files('books/', 'json'),
-    display += str('m %s', get(split('/',_), -1));
+  for( _get_book_list(),
+    display += str('m %s', _, -1);
     display += 'g , ';
   );
   
   delete(display, -1);
-  
+
   _print_title(p, 'Spellbook List');
   print(p, format( display ));
 );
+
+delete_book(book) -> (
+  delete_file('books/'+book, 'json');
+  _print_message(player(), str('Burned the %s spellbook to ashes.', book));
+);
+
+_get_book_list() -> map( list_files('books/', 'json'), get(split('/',_), -1) );
 
 display_book(book_name, page) -> (
   p = player();
