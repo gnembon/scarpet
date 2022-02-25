@@ -113,6 +113,8 @@ global_help_pages = {
     'm List the spells within a book\n',
     'ci /spellbook list ',
     'm List all of the spellbooks\n',
+    'ci /spellbook <book> delete ',
+    'm Delete the whole spellbook\n',
     'ci /spellbook <book> remove <spell> ',
     'm Delete a spell\n',
     'ci /spellbook <book> tooltip <spell> <customTooltip> ',
