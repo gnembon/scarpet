@@ -29,7 +29,8 @@ __config()->{
     '<book> bot <spell> <bot>' -> 'set_bot_at_player',
     '<book> bot <spell> <bot> at <location> in <dimension>' -> 'set_bot',
     '<book> remove <spell>' -> 'delete_command',
-    '<book> read' -> 'display_book',
+    '<book> read' -> ['display_book', 1],
+    '<book> read <spellPage>' -> 'display_book',
     '<book> color <spell> <color>' -> 'set_spell_color',
     '<book> tooltip <spell> <tooltip>' -> 'set_spell_tooltip'
   },
@@ -37,6 +38,7 @@ __config()->{
     'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
     'spell' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
     'helpPage' -> {'type' -> 'term', 'options' -> ['main', 'basics', 'shorthands', 'customize', 'commands']},
+    'spellPage' -> {'type' -> 'int'},
     'tooltip' -> {'type' -> 'text', 'suggest' -> ['Spawn a witch', 'Turn Fire Tick on']},
     'color' -> {'type' -> 'string', 'suggest' -> [
       'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
@@ -307,19 +309,29 @@ list_books() -> (
   );
 );
 
-display_book(book_name) -> (
+display_book(book_name, page) -> (
   book = _read_book(book_name);
+  spells = _sort_by_title(book:'spells');
+  last_page = ceil(length(spells) / global_spells_per_page);
+  page = min(max(page, 1), last_page);
   p = player();
-  print(p, format( str('pb \n%s spells', book_name)));
-  for(values(book:'spells'),
-  // 'm spell', '^di Copy', '& spell'
+  
+  print(p, format( 
+    str('pb \n%s spells ', book_name), 
+    str('mi page %d/%d', page, last_page)
+  ));
+
+  print(p, str('%s, %s', (page - 1) * global_spells_per_page, min( length(spells), page * global_spells_per_page)));
+
+  for(slice(spells, (page - 1) * global_spells_per_page, min( length(spells), page * global_spells_per_page)),
     print(p, format( _display_spell(_:'title', _:'command', _:'tooltip') ));
   );
 );
 
+
 _display_spell(title, command, tooltip) -> (
   tooltip || tooltip = '';
-  ['m   [ ' + title + ' ]', '^mi Copy', '&' + title,  
+  ['m [ ' + title + ' ]', '^mi Copy', '&' + title,  
     'ci ( ' + command +' ) ', '^ci Copy', '&' + command, 
     'g ' + tooltip || ' ']
 );
@@ -390,8 +402,12 @@ _render_single_spell(spell, default_color) -> (
   ));
 );
 
+_sort_by_title(spells) -> (
+  return( sort_key(values(spells), _:'title') );
+);
+
 _render_pages(book) -> (
-  spells = sort_key(values(book:'spells'), _:'title' );
+  spells = _sort_by_title(book:'spells');
   pages = [];
   a = 0;
   l = length(spells);
