@@ -35,7 +35,7 @@ __config()->{
     '<book> tooltip <spell> <tooltip>' -> 'set_spell_tooltip'
   },
   'arguments' -> {
-    'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
+    'command' -> {'type' -> 'text', 'suggest' -> ['/tp @p x y z', '/gamerule doFireTick true']},
     'spell' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
     'helpPage' -> {'type' -> 'term', 'options' -> ['main', 'basics', 'shorthands', 'customize', 'commands']},
     'spellPage' -> {'type' -> 'int', 'suggest' -> [1,2,3,5]},
