@@ -200,7 +200,7 @@ __on_player_uses_item(p, item, hand) -> (
 );
 
 _print_update_spell_book(p, args) -> (
-  print(p, str('Automagically Updated %s Spellbook from %s to %s.', args));
+  _print_message(p, str('Automagically Updated %s Spellbook from %s to %s.', args));
 );
 
 _app_is_author(book_nbt) -> (
