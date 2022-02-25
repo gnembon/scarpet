@@ -321,19 +321,23 @@ display_book(book_name, page) -> (
     str('mi page %d/%d', page, last_page)
   ));
 
-  print(p, str('%s, %s', (page - 1) * global_spells_per_page, min( length(spells), page * global_spells_per_page)));
-
   for(slice(spells, (page - 1) * global_spells_per_page, min( length(spells), page * global_spells_per_page)),
-    print(p, format( _display_spell(_:'title', _:'command', _:'tooltip') ));
+    print(p, format( _display_spell(_:'title', _:'command', _:'tooltip', book_name) ));
   );
+  
 );
 
 
-_display_spell(title, command, tooltip) -> (
-  tooltip || tooltip = '';
-  ['m [ ' + title + ' ]', '^mi Copy', '&' + title,  
-    'ci ( ' + command +' ) ', '^ci Copy', '&' + command, 
-    'g ' + tooltip || ' ']
+_display_spell(spell, command, tooltip, book) -> (
+  tooltip = tooltip || '';
+  [
+    'mb ' + spell + ' ', '^mi Copy', '&' + spell,
+    'l [run] ', '!'+command,
+    'q [edit] ', str('?/spellbook %s set "%s" %s', book, spell, command),
+    'r [remove] ', str('?/spellbook %s remove "%s"', book, spell),
+    'g  ' + tooltip,
+    'ci \n' + command +' ', '^ci Copy', '&' + command 
+  ]
 );
 
 give_book(name) -> (
