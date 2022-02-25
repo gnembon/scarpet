@@ -9,7 +9,7 @@ _set_max_llama_storage(llama) -> (
 
 // detect when a player clicks a llama with a chest
 __on_player_interacts_with_entity(p, entity, hand) -> (
-    if(entity~'type'=='llama' && p~'holds':0 == 'chest',
+    if(entity~'type'~'llama' && p~'holds':0 == 'chest',
         _set_max_llama_storage(entity);
     );
 );
