@@ -38,7 +38,7 @@ __config()->{
     'command' -> {'type' -> 'text', 'suggest' -> ['bar', 'tp @p x y z', 'gamerule doFireTick true']},
     'spell' -> {'type' -> 'string', 'suggest' -> ['"Which Farm Bot"', '"Warp to Spawn"', '"Fire Tick True"']},
     'helpPage' -> {'type' -> 'term', 'options' -> ['main', 'basics', 'shorthands', 'customize', 'commands']},
-    'spellPage' -> {'type' -> 'int'},
+    'spellPage' -> {'type' -> 'int', 'suggest' -> [1,2,3,5]},
     'tooltip' -> {'type' -> 'text', 'suggest' -> ['Spawn a witch', 'Turn Fire Tick on']},
     'color' -> {'type' -> 'string', 'suggest' -> [
       'dark_red', 'red', 'gold', 'yellow', 'dark_green', 'green', 'aqua', 'dark_aqua', 'dark_blue', 
@@ -261,7 +261,7 @@ set_bot(book, spell, bot_name, location, dimension) -> (
   },{
     'title'-> spell+' -',
     'command'-> str('/player %s kill', bot_name),
-    'tooltip'-> str('Kill %s bot at %s in %s', bot_name, location, dimension)
+    'tooltip'-> str('Kill %s bot in %s', bot_name, dimension)
   }]);
 );
 
@@ -310,40 +310,46 @@ list_books() -> (
 );
 
 display_book(book_name, page) -> (
+  p = player();
   book = _read_book(book_name);
   spells = _sort_by_title(book:'spells');
+  if(length(spells) < 1, 
+    _print_message(p,str('The %s book has no spells to read.', book_name));
+    return();
+  );
   last_page = ceil(length(spells) / global_spells_per_page);
   page = min(max(page, 1), last_page);
-  p = player();
   
   print(p, format( 
-    str('pb \n%s spells ', book_name), 
+    _display_title(book_name+' spells '), 
     str('mi page %d/%d', page, last_page)
   ));
 
   for(slice(spells, (page - 1) * global_spells_per_page, min( length(spells), page * global_spells_per_page)),
-    print(p, format( _display_spell(_:'title', _:'command', _:'tooltip', book_name) ));
+    _print_spell_editor(p, _, book_name);
   );
   
 );
 
+_print_message(p, message) -> print(p, format('m '+message));
 
-_display_spell(spell, command, tooltip, book) -> (
-  tooltip = tooltip || '';
+_display_title(text) -> str('pb \n%s', text);
+
+_print_spell_editor(p, spell, book) -> print(p, format(
   [
-    'mb ' + spell + ' ', '^mi Copy', '&' + spell,
-    'l [run] ', '!'+command,
-    'q [edit] ', str('?/spellbook %s set "%s" %s', book, spell, command),
-    'r [remove] ', str('?/spellbook %s remove "%s"', book, spell),
-    'g  ' + tooltip,
-    'ci \n' + command +' ', '^ci Copy', '&' + command 
+    'mb ' + spell:'title' + ' ',
+    'l [run] ', '!'+spell:'command',
+    'q [edit] ', str('?/spellbook %s set "%s" %s', book, spell:'title', spell:'command'),
+    'r [remove] ', str('?/spellbook %s remove "%s"', book, spell:'title'),
+    'g  ' + (spell:'tooltip' || '[tooltip]'), str('?/spellbook %s tooltip "%s" %s', book, spell:'title', spell:'tooltip' || ''),
+    'ci \n' + spell:'command' +' ', '^ci Copy', '&' + spell:'command' 
   ]
-);
+));
 
 give_book(name) -> (
   book = _read_book(name);
   p = player();
-  print(p, 
+  _print_message(p, 
     run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1
   );
 );
@@ -352,9 +358,9 @@ delete_command(book_name, spell) -> (
   book = _read_book(book_name);
   if( delete(book:'spells':spell),
     _write_book(book);
-    print(player(), str('Removed the [ %s ] spell.', spell))
+    _print_message(player(), str('Removed the "%s" spell from the %s book.', spell, book_name))
   ,
-    print(player(), str('Unknown spell [ %s ].', spell))
+    _print_message(player(), str('Unknown spell "%s" in %s.', spell, book_name))
   );
 );
 
@@ -372,7 +378,8 @@ set_spell_item(book_name, spell, key, value) -> (
   p = player();
   book = _read_book(book_name);
   book:'spells':spell:key = value;
-  print(p, str('[ %s:%s ]( %s )', book_name, key, value));
+  _print_message(p, str('%s spell "%s" %s set.', book_name, spell, key));
+  _print_spell_editor(p, book:'spells':spell, book_name);
   _write_book(book);
 );
 
@@ -391,7 +398,8 @@ _set_commands(book_name, spells) -> (
   for(spells,
     spell = _:'title';
     book:'spells':spell = _;
-    print(p, str('%s spell set: [ %s ]( %s ).', book_name, spell, _:'command'));
+    _print_message(p, str('%s spell "%s" set.', book_name, spell) );
+    _print_spell_editor(p, _, book_name);
   );
   _write_book(book);
 );
