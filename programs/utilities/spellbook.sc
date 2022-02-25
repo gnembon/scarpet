@@ -302,11 +302,18 @@ set_warp(book, spell, location, dimension) -> (
 
 
 list_books() -> (
-  books = list_files('books/', 'json');
   p = player();
-  for(books,
-    print(p,str('[ %s ]', get(split('/',_), -1) ));
+  display = [];
+  
+  for( list_files('books/', 'json'),
+    display += str('m %s', get(split('/',_), -1));
+    display += 'g , ';
   );
+  
+  delete(display, -1);
+  
+  _print_title(p, 'Spellbook List');
+  print(p, format( display ));
 );
 
 display_book(book_name, page) -> (
@@ -334,6 +341,8 @@ display_book(book_name, page) -> (
 _print_message(p, message) -> print(p, format('m '+message));
 
 _display_title(text) -> str('pb \n%s', text);
+
+_print_title(p, text) -> print(p, format(str('pb \n%s', text)));
 
 _print_spell_editor(p, spell, book) -> print(p, format(
   [
