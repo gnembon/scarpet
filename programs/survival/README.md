@@ -134,8 +134,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	and if they click on it again the unmarks that chunk.
 	Breaking the loadstone also unmarks the chunk.
 	
-	Warning, with this script enabled players can unmark chunks admins intend to stay loaded.
-	Only use this script on your server if you would trust your players with the `/forceload` command.
+	Note that with this script players can unmark forceload chunks set by admins.
 
 
 ### [magic_doors.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/magic_doors.sc):

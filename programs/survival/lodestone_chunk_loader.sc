@@ -3,10 +3,7 @@
 // and if they click on it again the unmarks that chunk.
 // Breaking the loadstone also unmarks the chunk.
 
-// Warning this script is not very smart, 
-// it cant tell between an admin marked chunk and a lodestone marked chunk
-// Players can unmark chunks admins intend to stay loaded.
-// Only use this script on your server if you would trust your players with the /forceload command 
+// Note that with this script players can unmark forceload chunks set by admins.
 
 global_chunk_regex = '\\[[\\d,\\s]+\\]';
 
