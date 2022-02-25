@@ -310,10 +310,18 @@ list_books() -> (
 display_book(book_name) -> (
   book = _read_book(book_name);
   p = player();
-  print(p, str('%s spells:', book_name));
-  for(pairs(book:'spells'),
-    print(p,str('[ %s ]( %s )', _:0, _:1));
+  print(p, format( str('pb \n%s spells', book_name)));
+  for(values(book:'spells'),
+  // 'm spell', '^di Copy', '& spell'
+    print(p, format( _display_spell(_:'title', _:'command', _:'tooltip') ));
   );
+);
+
+_display_spell(title, command, tooltip) -> (
+  tooltip || tooltip = '';
+  ['m   [ ' + title + ' ]', '^mi Copy', '&' + title,  
+    'ci ( ' + command +' ) ', '^ci Copy', '&' + command, 
+    'g ' + tooltip || ' ']
 );
 
 give_book(name) -> (
