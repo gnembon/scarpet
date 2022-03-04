@@ -109,6 +109,10 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By KingOfTheClouds
 	The command /horse_stats prints the health, speed and jump attributes of the horse/donkey/mule the player is looking at.
 
+### [instamine_deepslate.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/instamine_deepslate.sc):
+#### By manyrandomthings
+	Allows players to instamine deepslate if they have an efficiency 5 netherite pick and haste 2
+
 ### [inventory_refill.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/inventory_refill.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
