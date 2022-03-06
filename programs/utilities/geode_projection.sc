@@ -53,7 +53,7 @@ projection_tick() -> (
 			colours = global_colours:(_:0);
 			for(_:1,
 				cubes = map(_, //iterate over the three directions
-					_make_cubes(...colours, _);
+					_make_cube(...colours, _);
 				);
 				draw_shape(cubes)
 			);
@@ -91,11 +91,8 @@ place() -> (
 	print(format(str('g Filled %d blocks', total_placed)));
 );
 
-_mark_block(pos, color) -> (
-	draw_shape( 'box', 400, 'from', pos, 'to', pos+1, 'fill', color)
-);
 
-_make_cubes(fill_colour, edge_colour, block) -> [
+_make_cube(fill_colour, edge_colour, block) -> [
 	'box', global_update_rate*2,
 	'from', block, 
 	'to', block+1,
