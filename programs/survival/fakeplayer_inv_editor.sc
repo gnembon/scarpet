@@ -25,7 +25,7 @@ global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...
 
 
 global_fakeplayersscreen={};
-global_quick_craft={};
+
 __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
     if(
         hand != 'mainhand', return(),
