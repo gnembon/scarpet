@@ -41,8 +41,8 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
         if(action=='close',(
                     //screentoplayer(fakeplayer,screen);
                     drop_item(screen,-1);
-                    close_screen(screen);//end_portal/die
-                    return('cancel')
+                    //close_screen(screen);//end_portal/die
+                    return()
         ));
         if(action=='slot_update'
         &&0<=data:'slot'
