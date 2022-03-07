@@ -2,23 +2,23 @@ __config()->{
     'scope'->'global',
     'stay_loaded'->true
 };
-create_datapack('invupd',{
-'readme.txt'->['this data pack is created by scarpet','please dont touch it'],
-'data'->{'chyx/advancements/xd.json'->
-
-{'rewards'->{'function'->'chyx:invupd'},
-  'criteria'-> {
-    'example'-> {
-      'trigger'-> 'minecraft:inventory_changed',
-      'conditions'-> {
-      }
+create_datapack('invupd', 
+    {
+        'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
+        'data' -> {
+            'chyx/advancements/xd.json'-> {
+                'rewards' -> {'function' -> 'chyx:invupd'},
+                'criteria' -> {
+                    'example' -> {
+                        'trigger' -> 'minecraft:inventory_changed',
+                        'conditions' -> {}
+                    }
+                }
+        },
+            'chyx/functions/invupd.mcfunction' -> 'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'
+        }
     }
-  }
-},
-
-
-
-'chyx/functions/invupd.mcfunction'->'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'}});
+);
 global_nope=nbt('{nope:nopeChYx'+rand(1)+'nope}');
 
 global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...map(range(27),[9+_,18+_])];
