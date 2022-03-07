@@ -14,7 +14,7 @@ create_datapack('invupd',
                         'conditions' -> {}
                     }
                 }
-        },
+            },
             'chyx/functions/invupd.mcfunction' -> 'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'
         }
     }
