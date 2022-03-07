@@ -27,12 +27,13 @@ global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...
 global_fakeplayersscreen={};
 global_quick_craft={};
 __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
-    if(hand=='mainhand',0,return());
-    if(fakeplayer~'player_type'=='fake',0,return());
-    if(creativeplayer~'player_type'=='fake',return());
-    //if(creativeplayer~'gamemode'=='creative',0,return());
-    if(global_fakeplayersscreen:fakeplayer,return());
-
+    if(
+        hand != 'mainhand', return(),
+        fakeplayer~'player_type' != 'fake', return(),
+        creativeplayer~'player_type' == 'fake', return(),
+        //creativeplayer~'gamemode' != 'creative', return(),
+        global_fakeplayersscreen:fakeplayer, return()
+    );
     
 
     screen=create_screen(creativeplayer,'generic_9x6',fakeplayer~'name',_(screen, player, action,data,outer(fakeplayer))->(
