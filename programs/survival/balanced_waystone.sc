@@ -43,7 +43,7 @@ _warp_player(p, pos, dimension)->(
         add_chunk_ticket(pos, 'teleport', 2); 
     );
     schedule( 3, _(p, pos, dimension)->(
-        in_dimension(dimension, modify(p, 'pos', pos))
+        in_dimension(dimension, modify(p, 'pos', pos + [0.5, 0, 0.5]))
     ), p, pos, dimension);
 );
 
@@ -74,7 +74,7 @@ _handle_name_tag(item, pos, p, hand) -> (
 
 _mark_player_waypoint(stone_pos, point_pos, uuid) -> (
     if(!global_waypoints:uuid, global_waypoints:uuid = {}); 
-    global_waypoints:uuid:stone_pos = map(point_pos, floor(_) + 0.5);
+    global_waypoints:uuid:stone_pos = map(point_pos, floor(_));
 );
 
 _open_waypoint_screen(p, waystone, uuid) -> (
@@ -113,9 +113,10 @@ _open_waypoint_screen(p, waystone, uuid) -> (
             }
         });
         try(
+            if(stone:'icon'=='air', throw('Dont set inventory slot to air'));
             inventory_set(screen, _i, 1, stone:'icon', nbt);
         , 'exception', 
-           inventory_set(screen, _i, 1, 'lodestone', nbt);
+            inventory_set(screen, _i, 1, 'lodestone', nbt);
         );
     );
 );
