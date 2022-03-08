@@ -45,7 +45,7 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 );
 
 __on_player_clicks_block(player, block, face) -> (
-	if (global_radius,
+	if (global_radius && global_active,
 		global_breakrange = null;
 		
 		item_mainhand = player ~ 'holds';
