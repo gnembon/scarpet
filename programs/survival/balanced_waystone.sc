@@ -13,6 +13,7 @@ global_settings = {
 };
 
 __config()->{
+    'command_permission'->'ops',
     'commands'->{
         ''->'open_waystones_screen'
     }
