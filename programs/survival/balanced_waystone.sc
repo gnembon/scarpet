@@ -1,15 +1,27 @@
 // This app makes lodestones into waystones
 // When a player clicks a waystone it 
 
-global_waystones = {};
-global_waypoints = {};
+
+
 
 global_settings = {
     'dimensional_crossing'->false,
     'dimensions'->['overworld'],
     'required_item'->null,
+    'clear_waypoints_on_death'->true,
     'exp_cost'->0,
 };
+
+__config()->{
+    'commands'->{
+        ''->'open_waystones_screen'
+    }
+};
+
+
+global_waystones = {};
+global_waypoints = {};
+
 
 __on_start() -> (
     _read_waystones();
@@ -21,9 +33,10 @@ __on_close() -> (
 __on_player_places_block(p, item, hand, block)->(
     if(item:0=='lodestone',
         pos = pos(block);
+        floor = str(block(pos:0, pos:1 - 1, pos:2));
         global_waystones:pos = {
-            'icon'->str(block(pos:0, pos:1 - 1, pos:2)),
-            'name'->_get_name_from_nbt(item:2) || 'Unnamed'    
+            'icon'->floor,
+            'name'->_get_name_from_nbt(item:2) || floor+' Waystone'  
         };
         display_title(p, 'actionbar', format(str('wb Created %s Waystone',global_waystones:pos:'name' )));
         _write_waystones();
@@ -43,13 +56,16 @@ _warp_player(p, pos, dimension)->(
         add_chunk_ticket(pos, 'teleport', 2); 
     );
     schedule( 3, _(p, pos, dimension)->(
-        in_dimension(dimension, modify(p, 'pos', pos + [0.5, 0, 0.5]))
+        in_dimension(dimension, 
+            modify(p, 'pos', pos + [0.5, 0, 0.5]);
+            particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+        );
     ), p, pos, dimension);
 );
 
 
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
-    if(block~'lodestone',
+    if(block~'lodestone' && !p~'sneaking',
         pos = pos(block);
         
         if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
@@ -60,6 +76,15 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
             _write_player_waypoints(uuid);
         );
     );
+);
+
+__on_player_dies(p) -> (
+    if(global_settings:'clear_waypoints_on_death', 
+        uuid = p~'uuid';
+        _read_player_waypoints(uuid);
+        delete(global_waypoints:uuid);
+        _write_player_waypoints(uuid);
+    ); 
 );
 
 _handle_name_tag(item, pos, p, hand) -> (
@@ -77,18 +102,26 @@ _mark_player_waypoint(stone_pos, point_pos, uuid) -> (
     global_waypoints:uuid:stone_pos = map(point_pos, floor(_));
 );
 
-_open_waypoint_screen(p, waystone, uuid) -> (
+open_waystones_screen() -> (
+    p = player();
+);
 
-
-    screen = create_screen(p, 'generic_9x6', format(str('kb %s\'s Waypoints', p~'name')), _(screen, p, action, data) -> (
+_create_warps_screen(p, title) -> (
+    create_screen(p, 'generic_9x6', format(title), _(screen, p, action, data) -> (
         if(data:'slot' > 53, return());
         if(action=='pickup',
             btn = inventory_get(screen, data:'slot');
+            if(!btn, return('cancel'));
             _warp_player(p, parse_nbt(btn:2:'pos'), 'overworld');
             close_screen(screen)
         );
-        'cancel'
+        return('cancel');
     ));
+);
+
+_open_waypoint_screen(p, waystone, uuid) -> (
+
+    screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
 
     points = [];
     bad_keys = [];
