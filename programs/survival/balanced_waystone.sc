@@ -2,8 +2,14 @@
 // When a player clicks a waystone it 
 
 global_waystones = {};
-
 global_waypoints = {};
+
+global_settings = {
+    'dimensional_crossing'->false,
+    'dimensions'->['overworld'],
+    'required_item'->null,
+    'exp_cost'->0,
+};
 
 __on_start() -> (
     _read_waystones();
@@ -19,7 +25,7 @@ __on_player_places_block(p, item, hand, block)->(
             'icon'->str(block(pos:0, pos:1 - 1, pos:2)),
             'name'->_get_name_from_nbt(item:2) || 'Unnamed'    
         };
-        display_title(p, 'actionbar', format('wb Waystone Created'));
+        display_title(p, 'actionbar', format(str('wb Created %s Waystone',global_waystones:pos:'name' )));
         _write_waystones();
     );
 );
@@ -27,10 +33,20 @@ __on_player_places_block(p, item, hand, block)->(
 __on_player_breaks_block(p, block)->(
     if(block~'lodestone',
         pos = pos(block);
-        print(delete(global_waystones:pos)); 
-        display_title(p, 'actionbar', format('wb Waystone Removed'));
+        display_title(p, 'actionbar', format(str('wb Removed %s Waystone',global_waystones:pos:'name' )));
+        delete(global_waystones:pos); 
     );
 );
+
+_warp_player(p, pos, dimension)->(
+    in_dimension(dimension, 
+        add_chunk_ticket(pos, 'teleport', 2); 
+    );
+    schedule( 3, _(p, pos, dimension)->(
+        in_dimension(dimension, modify(p, 'pos', pos))
+    ), p, pos, dimension);
+);
+
 
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
     if(block~'lodestone',
@@ -68,18 +84,20 @@ _open_waypoint_screen(p, waystone, uuid) -> (
         if(data:'slot' > 53, return());
         if(action=='pickup',
             btn = inventory_get(screen, data:'slot');
-            print(p, btn:2:'pos')
+            _warp_player(p, parse_nbt(btn:2:'pos'), 'overworld');
+            close_screen(screen)
         );
         'cancel'
     ));
 
-    // print(p,pairs(global_waypoints:uuid));
-    // print(p,slice(pairs(global_waypoints:uuid), 0, 53));
     points = [];
     bad_keys = [];
-    for(keys(global_waypoints:uuid),
-        if( global_waystones:_, points += ([_,global_waystones:_]), bad_keys += _);
-        print(str('%d %s %s', _i, _, global_waystones:_:'name'))
+    for(pairs(global_waypoints:uuid),
+        if( global_waystones:(_:0), 
+            points += ([_:0,global_waystones:(_:0),_:1]);
+        , 
+            bad_keys += _:0;
+        );
     );
     for(bad_keys, delete(global_waypoints:uuid:_));
 
@@ -88,33 +106,20 @@ _open_waypoint_screen(p, waystone, uuid) -> (
     for(slice(sort_key(points, _:1:'name'),0, min(length(points),53)),
         stone = _:1;
         nbt = nbt({
-            'pos'->_:0,
+            'pos'->_:2,
             'display'->{
                 'Lore'->[escape_nbt(str('"%d, %d, %d"', _:0))],
                 'Name'->escape_nbt( str('"%s"', stone:'name'))
             }
         });
-        // print(stone:'icon'+' '+_i);
         try(
             inventory_set(screen, _i, 1, stone:'icon', nbt);
         , 'exception', 
            inventory_set(screen, _i, 1, 'lodestone', nbt);
         );
     );
-    // create_screen(player, type, name, callback?)
 );
 
-
-// Proper tp 
-// p = player(); 
-// pos = [800,66,-9920]; 
-// Load chunks for 5 ticks and tp player in 3
-// add_chunk_ticket(pos, 'teleport', 2); 
-// schedule( 3, _(p, pos)->(modify(p, 'pos', pos)), p, pos)
-
-// _tp(p, pos) -> modify(p, 'pos', pos); 
-// schedule( 3, '_tp', p, pos)
-// teleport modify(p, 'pos', map(p~'pos', floor(_) + 0.5))
 
 _write_player_waypoints(uuid) -> (
     _write_pos_map_file(str('players/%s',uuid), global_waypoints:uuid);
