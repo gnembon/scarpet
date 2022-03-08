@@ -5,30 +5,44 @@ global_waystones = {};
 
 global_waypoints = {};
 
-__on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
-    if(block~'lodestone',
-        print(item:0);
+__on_start() -> (
+    _read_waystones();
+);
+__on_close() -> (
+    _write_waystones();
+);
+
+__on_player_places_block(p, item, hand, block)->(
+    if(item:0=='lodestone',
         pos = pos(block);
-
-        _handle_new_waystone(pos); 
-
-        
-        if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
-            _read_player_waypoints(p);
-            _mark_player_waypoint(p, pos); 
-            _open_waypoints_screen(p);
-        );
-        
-
+        global_waystones:pos = {
+            'icon'->str(block(pos:0, pos:1 - 1, pos:2)),
+            'name'->_get_name_from_nbt(item:2) || 'Unnamed'    
+        };
+        display_title(p, 'actionbar', format('wb Waystone Created'));
+        _write_waystones();
     );
 );
 
+__on_player_breaks_block(p, block)->(
+    if(block~'lodestone',
+        pos = pos(block);
+        print(delete(global_waystones:pos)); 
+        display_title(p, 'actionbar', format('wb Waystone Removed'));
+    );
+);
 
-_handle_new_waystone(pos) -> (
-    if(!global_waystones:pos, 
-        icon = block(pos:0, pos:1 - 1, pos:2);
-        if(icon~'air', icon = block('lodestone'));
-        global_waystones:pos = {'icon'->[str(icon),1]};
+__on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
+    if(block~'lodestone',
+        pos = pos(block);
+        
+        if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
+            uuid = p~'uuid';
+            _read_player_waypoints(uuid);
+            _mark_player_waypoint(pos, p~'pos', uuid); 
+            _open_waypoint_screen(p, global_waystones:pos, uuid);
+            _write_player_waypoints(uuid);
+        );
     );
 );
 
@@ -42,13 +56,54 @@ _handle_name_tag(item, pos, p, hand) -> (
     true, false);
 );
 
-_mark_player_waypoint(p, positions) -> (
-    global_waypoints:(p~'uuid'):pos = map(p~'pos', floor(_) + 0.5);
+_mark_player_waypoint(stone_pos, point_pos, uuid) -> (
+    if(!global_waypoints:uuid, global_waypoints:uuid = {}); 
+    global_waypoints:uuid:stone_pos = map(point_pos, floor(_) + 0.5);
 );
 
-_open_waypoint_screen(p) -> (
+_open_waypoint_screen(p, waystone, uuid) -> (
+
+
+    screen = create_screen(p, 'generic_9x6', format(str('kb %s\'s Waypoints', p~'name')), _(screen, p, action, data) -> (
+        if(data:'slot' > 53, return());
+        if(action=='pickup',
+            btn = inventory_get(screen, data:'slot');
+            print(p, btn:2:'pos')
+        );
+        'cancel'
+    ));
+
+    // print(p,pairs(global_waypoints:uuid));
+    // print(p,slice(pairs(global_waypoints:uuid), 0, 53));
+    points = [];
+    bad_keys = [];
+    for(keys(global_waypoints:uuid),
+        if( global_waystones:_, points += ([_,global_waystones:_]), bad_keys += _);
+        print(str('%d %s %s', _i, _, global_waystones:_:'name'))
+    );
+    for(bad_keys, delete(global_waypoints:uuid:_));
+
+  
+    
+    for(slice(sort_key(points, _:1:'name'),0, min(length(points),53)),
+        stone = _:1;
+        nbt = nbt({
+            'pos'->_:0,
+            'display'->{
+                'Lore'->[escape_nbt(str('"%d, %d, %d"', _:0))],
+                'Name'->escape_nbt( str('"%s"', stone:'name'))
+            }
+        });
+        // print(stone:'icon'+' '+_i);
+        try(
+            inventory_set(screen, _i, 1, stone:'icon', nbt);
+        , 'exception', 
+           inventory_set(screen, _i, 1, 'lodestone', nbt);
+        );
+    );
     // create_screen(player, type, name, callback?)
 );
+
 
 // Proper tp 
 // p = player(); 
@@ -61,18 +116,18 @@ _open_waypoint_screen(p) -> (
 // schedule( 3, '_tp', p, pos)
 // teleport modify(p, 'pos', map(p~'pos', floor(_) + 0.5))
 
-_write_player_waypoints(p) -> (
-    _write_pos_map_file(str('players/%s', p~'uuid'), global_waypoints:p~'uuid');
-    delete(global_waypoints:p~'uuid');
+_write_player_waypoints(uuid) -> (
+    _write_pos_map_file(str('players/%s',uuid), global_waypoints:uuid);
+    delete(global_waypoints:uuid);
 );
 
-_read_player_waypoints(p) -> (
-    global_waypoints:p~'uuid' = _read_pos_map_file(str('players/%s', p~'uuid'));
+_read_player_waypoints(uuid) -> (
+    global_waypoints:uuid = _read_pos_map_file(str('players/%s', uuid));
 );
 
 _write_waystones() -> (_write_pos_map_file('waystones', global_waystones));
 
-_read_waystones() -> (global_waystones = _read_pos_map_file('waystones'));
+_read_waystones() -> (global_waystones = _read_pos_map_file('waystones') || {});
 
 // keep x,y,z keys intact within json format by converting root map to array and back
 _write_pos_map_file(path, map_data) -> (
@@ -81,7 +136,7 @@ _write_pos_map_file(path, map_data) -> (
 
 _read_pos_map_file(path) -> (
     data = read_file(path, 'json');
-    if( data, m(...data), {} );
+    if( data, m(...data), null );
 );
 
 _get_name_from_nbt(nbt) -> (
