@@ -104,6 +104,9 @@ _mark_player_waypoint(stone_pos, point_pos, uuid) -> (
 
 open_waystones_screen() -> (
     p = player();
+    screen = _create_warps_screen(p,'kb All Waystones');
+    icons = map(pairs(global_waystones), [_:0, _:1, _:0 + [1,0,0]] );
+    _print_icons_to_screen(screen, icons);
 );
 
 _create_warps_screen(p, title) -> (
@@ -119,24 +122,8 @@ _create_warps_screen(p, title) -> (
     ));
 );
 
-_open_waypoint_screen(p, waystone, uuid) -> (
-
-    screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
-
-    points = [];
-    bad_keys = [];
-    for(pairs(global_waypoints:uuid),
-        if( global_waystones:(_:0), 
-            points += ([_:0,global_waystones:(_:0),_:1]);
-        , 
-            bad_keys += _:0;
-        );
-    );
-    for(bad_keys, delete(global_waypoints:uuid:_));
-
-  
-    
-    for(slice(sort_key(points, _:1:'name'),0, min(length(points),53)),
+_print_icons_to_screen(screen, icons) -> (
+    for(slice(sort_key(icons, _:1:'name'),0, min(length(icons),53)),
         stone = _:1;
         nbt = nbt({
             'pos'->_:2,
@@ -152,6 +139,22 @@ _open_waypoint_screen(p, waystone, uuid) -> (
             inventory_set(screen, _i, 1, 'lodestone', nbt);
         );
     );
+);
+
+_open_waypoint_screen(p, waystone, uuid) -> (
+    screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
+
+    icons = [];
+    bad_keys = [];
+    for(pairs(global_waypoints:uuid),
+        if( global_waystones:(_:0), 
+            icons += ([_:0,global_waystones:(_:0),_:1]);
+        , 
+            bad_keys += _:0;
+        );
+    );
+    for(bad_keys, delete(global_waypoints:uuid:_));
+    _print_icons_to_screen(screen, icons)
 );
 
 
