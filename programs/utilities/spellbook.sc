@@ -21,6 +21,7 @@ __config()->{
     'list' -> 'list_books',
     '<book> give' -> 'give_book',
     '<book> delete' -> 'delete_book',
+    '<book> delete confirm' -> 'delete_book_confirm',
     '<book> set <spell> <command>' -> 'set_command',
     '<book> warp <spell>' -> 'set_warp_at_player',
     '<book> warp <spell> at <location> in <dimension>' -> 'set_warp',
@@ -344,6 +345,13 @@ list_books() -> (
 );
 
 delete_book(book) -> (
+  print(player(), format(
+    str('m Are you sure you want to delete the %s spellbook for good? ', book), 
+    'ci [confirm]', str('!/spellbook %s delete confirm', book)
+  ));
+);
+
+delete_book_confirm(book) -> (
   delete_file('books/'+book, 'json');
   _print_message(player(), str('Burned the %s spellbook to ashes.', book));
 );
