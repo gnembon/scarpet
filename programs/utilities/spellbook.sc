@@ -58,14 +58,13 @@ __config()->{
 };
 
 
+
 global_help_pages = {
   'main'-> [
     'pb \nSpellBook\n', 
     'm A utility used to create command books (spellbooks).\n',
     'm Learn the basics with: ',
-    'ci /spellbook help basics\n',
-    'm Pages: ','ci (main), basics, shorthands, customize, commands'
-  ],
+    'ci /spellbook help basics\n'],
   'basics' -> [
     'pb \nSpellBook Basics\n', 
     'm Create a new spell with this command\n',
@@ -75,7 +74,7 @@ global_help_pages = {
     'ci /spellbook cat_spells set "spawn Tabby" /summon cat ~ ~ ~ {CatType:2}\n',
     'm You can give yourself a copy of the spellbook with the spellbook give command\n',
     'ci /spellbook cat_spells give\n',
-    'm Any changes you make to the spells will automatically update your spellbook when opened.'
+    'm Any changes you make to the spells will automatically update your spellbook when opened.\n'
   ],
   'shorthands' -> [
     'pb \nSpellbook Shorthands\n',
@@ -246,10 +245,33 @@ _sanitize_book_title(title) -> (
   return(replace(title, '[^A-z0-9_-]', '_'));
 );
 
+
+
 // Command Methods
 help(page) -> (
-  print(player(), format(global_help_pages:page));
+  p = player();
+  print(p, format(global_help_pages:page));
+  print(p, format(_display_page_links(page)));
+
 );
+
+_display_page_links(page) -> (
+  links = ['p Pages: '];
+  for(sort(keys(global_help_pages)),
+    if( page == _ ,
+      links += 'gi ('+ _ +')';
+    ,
+      links += 'ci ['+ _ +']';
+      links += '!/spellbook help '+ _;
+    );
+    links += 'g , ';
+  );
+  delete(links, -1);
+  links;
+);
+    // 'm Pages: ', ...(_display_page_links(['main', 'basics', 'shorthands', 'customize', 'commands'])) 
+
+
 
 // Player bot shorthand
 set_bot_at_player(book, spell, bot_name) -> (
