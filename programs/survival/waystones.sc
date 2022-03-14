@@ -110,9 +110,11 @@ __on_player_places_block(p, item, hand, block)->(
 __on_player_breaks_block(p, block)->(
     if(block~'lodestone',
         pos = pos(block);
-        sound( 'minecraft:item.trident.thunder', pos );
-        _app_message(p, str('Removed %s Waystone', global_waystones:pos:'name'));
-        delete(global_waystones:pos); 
+        if(global_waystones:pos,
+            sound( 'minecraft:item.trident.thunder', pos );
+            _app_message(p, str('Removed %s Waystone', global_waystones:pos:'name'));
+            delete(global_waystones:pos); 
+        );
     );
 );
 
@@ -122,13 +124,18 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
         if(global_settings:'enabled_dimensions'~dimension,
             pos = pos(block);
             
-            if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
-                uuid = p~'uuid';
-                _read_player_waypoints(uuid);
-                _mark_player_waypoint(pos, p~'pos', uuid); 
-                sound( 'minecraft:block.amethyst_block.hit', block );
-                _open_waypoint_screen(p, global_waystones:pos, uuid);
-                _write_player_waypoints(uuid);
+            if(global_waystones:pos,
+                if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
+                    uuid = p~'uuid';
+                    _read_player_waypoints(uuid);
+                    _mark_player_waypoint(pos, p~'pos', uuid); 
+                    sound( 'minecraft:block.amethyst_block.hit', block );
+                    _open_waypoint_screen(p, pos, uuid);
+                    _write_player_waypoints(uuid);
+                );
+            ,
+                _app_message(p, str('Place the lodestone near a %d block %s structure to activate',
+                    global_settings:'structure_size',global_settings:'structure_material'));
             );
         ,
             _app_message(p, 'Waystones dont\'t work in this dimension');
@@ -202,9 +209,40 @@ _mark_player_waypoint(stone_pos, point_pos, uuid) -> (
 // op's waystone screen
 open_waystones_screen() -> (
     p = player();
-    screen = _create_warps_screen(p,'kb All Waystones');
     icons = map(pairs(global_waystones), [_:0, _:1, _:0 + [1,0,0]] );
-    _print_icons_to_screen(screen, icons);
+    if(length(icons) > 0,  
+        _print_icons_to_screen(_create_warps_screen(p,'fb All Waystones'), icons);
+    ,
+        _app_message(p, 'No waystones to display');
+    );
+);
+
+// open when player clicks on a lodestone
+_open_waypoint_screen(p, pos, uuid) -> (
+    icons = [];
+    bad_keys = [];
+
+    // merge waypoints and waystones data into icons.
+    for(pairs(global_waypoints:uuid),
+        if( global_waystones:(_:0), 
+            icons += ([_:0,global_waystones:(_:0),_:1]);
+        , 
+            bad_keys += _:0;
+        );
+    );
+
+    // Clear player waypoints with missing waystone entires
+    for(bad_keys, delete(global_waypoints:uuid:_));
+
+    // filter out entires in different dimensions.
+    if(!global_settings:'dimensional_crossing', 
+        dimension = current_dimension();
+        icons = filter(icons, _:1:'dimension' == dimension);
+    );
+
+    if(length(icons) > 0,  
+        _print_icons_to_screen(_create_warps_screen(p, str('fb Visited Waypoints', p~'name')), icons);
+    );
 );
 
 _create_warps_screen(p, title) -> (
@@ -241,34 +279,6 @@ _print_icons_to_screen(screen, icons) -> (
         );
     );
 );
-
-_open_waypoint_screen(p, waystone, uuid) -> (
-    screen = _create_warps_screen(p, str('fb Visited Waypoints', p~'name'));
-
-    icons = [];
-    bad_keys = [];
-
-    // merge waypoints and waystones data into icons.
-    for(pairs(global_waypoints:uuid),
-        if( global_waystones:(_:0), 
-            icons += ([_:0,global_waystones:(_:0),_:1]);
-        , 
-            bad_keys += _:0;
-        );
-    );
-
-    // Clear player waypoints with missing waystone entires
-    for(bad_keys, delete(global_waypoints:uuid:_));
-
-    // filter out entires in different dimensions.
-    if(!global_settings:'dimensional_crossing', 
-        dimension = current_dimension();
-        icons = filter(icons, _:1:'dimension' == dimension);
-    );
-
-    _print_icons_to_screen(screen, icons)
-);
-
 
 _write_player_waypoints(uuid) -> (
     _write_pos_map_file(str('players/%s',uuid), global_waypoints:uuid);
