@@ -1,13 +1,11 @@
 // This app makes lodestones into waystones
-// When a player clicks a waystone it 
-
-
-
+// When a player clicks a waystone it displays a list of
+// waypoints the player has visited.
 
 global_settings = {
     'dimensional_crossing'->false,
     'enabled_dimensions'->['overworld'],
-    'required_item'->null,
+    'use_item'->null,
     'clear_waypoints_on_death'->true,
     'exp_cost'->0,
 };
@@ -31,6 +29,10 @@ __on_close() -> (
     _write_waystones();
 );
 
+_app_message(p, m) -> (
+    display_title(p, 'actionbar', format('wb '+m));
+);
+
 __on_player_places_block(p, item, hand, block)->(
     if(item:0=='lodestone',
         pos = pos(block);
@@ -38,9 +40,9 @@ __on_player_places_block(p, item, hand, block)->(
         global_waystones:pos = {
             'icon'->floor,
             'dimension'->current_dimension(),
-            'name'->_get_name_from_nbt(item:2) || floor+' Waystone' 
+            'name'->_get_name_from_nbt(item:2) || floor+' Waypoint' 
         };
-        display_title(p, 'actionbar', format(str('wb Created %s Waystone',global_waystones:pos:'name' )));
+        _app_message(p, str('Summoned %s Waystone', global_waystones:pos:'name'));
         _write_waystones();
     );
 );
@@ -48,7 +50,7 @@ __on_player_places_block(p, item, hand, block)->(
 __on_player_breaks_block(p, block)->(
     if(block~'lodestone',
         pos = pos(block);
-        display_title(p, 'actionbar', format(str('wb Removed %s Waystone',global_waystones:pos:'name' )));
+        _app_message(p, str('Removed %s Waystone', global_waystones:pos:'name'));
         delete(global_waystones:pos); 
     );
 );
@@ -76,19 +78,16 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
                 uuid = p~'uuid';
                 _read_player_waypoints(uuid);
                 _mark_player_waypoint(pos, p~'pos', uuid); 
+                sound( 'minecraft:block.amethyst_block.hit', block );
                 _open_waypoint_screen(p, global_waystones:pos, uuid);
                 _write_player_waypoints(uuid);
             );
         ,
-            display_title(p, 'actionbar', format(str('wb Waystones don\'t work in the %s dimension', dimension)));
-            // sound( 'minecraft:block.amethyst_block.break', block );
+            _app_message(p, 'Waystones dont\'t work in this dimension');
             sound( 'item.trident.return', block );
         );
     );
 );
-
-// sounds
-// minecraft:block.amethyst_block.hit
 
 __on_player_dies(p) -> (
     if(global_settings:'clear_waypoints_on_death', 
@@ -105,7 +104,8 @@ _handle_name_tag(item, pos, p, hand) -> (
         global_waystones:pos:'name' = _get_name_from_nbt(item:2);
         slot = if(hand=='mainhand', p~'selected_slot', -1);
         inventory_set(p, slot, item:1 - 1);
-        display_title(p, 'actionbar', format('w Waypoint named '+global_waystones:pos:'name'));
+        sound( 'block.enchantment_table.use', pos );
+        _app_message(p, 'Waypoint named '+global_waystones:pos:'name');
     true, false);
 );
 
@@ -129,7 +129,8 @@ _create_warps_screen(p, title) -> (
             if(!btn, return('cancel'));
             btn = parse_nbt(btn:2);
             _warp_player(p, btn:'pos', btn:'dimension');
-            close_screen(screen)
+            close_screen(screen);
+            _app_message(p, global_waystones:(btn:'point'):'name');
         );
         return('cancel');
     ));
@@ -140,6 +141,7 @@ _print_icons_to_screen(screen, icons) -> (
         stone = _:1;
         nbt = nbt({
             'pos'->_:2,
+            'point'->_:0,
             'dimension'->stone:'dimension' || 'overworld',
             'display'->{
                 'Lore'->[escape_nbt(str('"%d, %d, %d"', _:0))],
@@ -156,7 +158,7 @@ _print_icons_to_screen(screen, icons) -> (
 );
 
 _open_waypoint_screen(p, waystone, uuid) -> (
-    screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
+    screen = _create_warps_screen(p, str('fb Visited Waypoints', p~'name'));
 
     icons = [];
     bad_keys = [];
