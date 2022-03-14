@@ -15,7 +15,7 @@ global_settings = {
 __config()->{
     'command_permission'->'ops',
     'commands'->{
-        ''->'open_waystones_screen'
+        ''->'open_waystones_screen',
     }
 };
 
@@ -37,7 +37,8 @@ __on_player_places_block(p, item, hand, block)->(
         floor = str(block(pos:0, pos:1 - 1, pos:2));
         global_waystones:pos = {
             'icon'->floor,
-            'name'->_get_name_from_nbt(item:2) || floor+' Waystone'  
+            'dimension'->p~'dimension',
+            'name'->_get_name_from_nbt(item:2) || floor+' Waystone' 
         };
         display_title(p, 'actionbar', format(str('wb Created %s Waystone',global_waystones:pos:'name' )));
         _write_waystones();
@@ -54,11 +55,12 @@ __on_player_breaks_block(p, block)->(
 
 _warp_player(p, pos, dimension)->(
     in_dimension(dimension, 
-        add_chunk_ticket(pos, 'teleport', 2); 
+        run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
+        // add_chunk_ticket(pos, 'teleport', 2); 
     );
-    schedule( 3, _(p, pos, dimension)->(
+    schedule( 2, _(p, pos, dimension)->(
         in_dimension(dimension, 
-            modify(p, 'pos', pos + [0.5, 0, 0.5]);
+            // modify(p, 'pos', pos + [0.5, 0, 0.5]);
             particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
         );
     ), p, pos, dimension);
@@ -116,7 +118,8 @@ _create_warps_screen(p, title) -> (
         if(action=='pickup',
             btn = inventory_get(screen, data:'slot');
             if(!btn, return('cancel'));
-            _warp_player(p, parse_nbt(btn:2:'pos'), 'overworld');
+            btn = parse_nbt(btn:2);
+            _warp_player(p, btn:'pos', btn:'dimension');
             close_screen(screen)
         );
         return('cancel');
@@ -128,6 +131,7 @@ _print_icons_to_screen(screen, icons) -> (
         stone = _:1;
         nbt = nbt({
             'pos'->_:2,
+            'dimension'->stone:'dimension' || 'overworld',
             'display'->{
                 'Lore'->[escape_nbt(str('"%d, %d, %d"', _:0))],
                 'Name'->escape_nbt( str('"%s"', stone:'name'))
