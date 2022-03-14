@@ -6,7 +6,7 @@
 
 global_settings = {
     'dimensional_crossing'->false,
-    'dimensions'->['overworld'],
+    'enabled_dimensions'->['overworld'],
     'required_item'->null,
     'clear_waypoints_on_death'->true,
     'exp_cost'->0,
@@ -56,11 +56,10 @@ __on_player_breaks_block(p, block)->(
 _warp_player(p, pos, dimension)->(
     in_dimension(dimension, 
         run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
-        // add_chunk_ticket(pos, 'teleport', 2); 
     );
     schedule( 2, _(p, pos, dimension)->(
         in_dimension(dimension, 
-            // modify(p, 'pos', pos + [0.5, 0, 0.5]);
+            sound( 'item.trident.thunder', pos );
             particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
         );
     ), p, pos, dimension);
@@ -69,17 +68,27 @@ _warp_player(p, pos, dimension)->(
 
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
     if(block~'lodestone' && !p~'sneaking',
-        pos = pos(block);
-        
-        if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
-            uuid = p~'uuid';
-            _read_player_waypoints(uuid);
-            _mark_player_waypoint(pos, p~'pos', uuid); 
-            _open_waypoint_screen(p, global_waystones:pos, uuid);
-            _write_player_waypoints(uuid);
+        dimension = current_dimension();
+        if(first(global_settings:'enabled_dimensions', _ == dimension),
+            pos = pos(block);
+            
+            if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
+                uuid = p~'uuid';
+                _read_player_waypoints(uuid);
+                _mark_player_waypoint(pos, p~'pos', uuid); 
+                _open_waypoint_screen(p, global_waystones:pos, uuid);
+                _write_player_waypoints(uuid);
+            );
+        ,
+            display_title(p, 'actionbar', format(str('wb Waystones don\'t work in the %s dimension', dimension)));
+            // sound( 'minecraft:block.amethyst_block.break', block );
+            sound( 'item.trident.return', block );
         );
     );
 );
+
+// sounds
+// minecraft:block.amethyst_block.hit
 
 __on_player_dies(p) -> (
     if(global_settings:'clear_waypoints_on_death', 
@@ -145,18 +154,6 @@ _print_icons_to_screen(screen, icons) -> (
         );
     );
 );
-
-// _get_enabled_waypoints(uuid) -> (
-//     dimension = current_dimension();
-//     if(global_settings:'dimensional_crossing', 
-//         return(pairs(global_waypoints:uuid));
-//     , 
-//         return(filter(pairs(global_waypoints:uuid),
-//             print(_); 
-//             (_:3):'dimension' == dimension;
-//         ));
-//     );
-// );
 
 _open_waypoint_screen(p, waystone, uuid) -> (
     screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
