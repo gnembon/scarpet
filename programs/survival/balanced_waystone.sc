@@ -7,6 +7,8 @@ global_settings = {
     'enabled_dimensions'->'overworld',
     'offering'->'end_crystal',
     'clear_waypoints_on_death'->true,
+    'structure_material'->'copper',
+    'structure_size'->8
 };
 
 __config()->{
@@ -22,6 +24,10 @@ __config()->{
         'setting clearWaypointsOnDeath'->['setting_read','clear_waypoints_on_death'],
         'setting enabledDimensions <dimensions>'->['setting_command','enabled_dimensions'],
         'setting enabledDimensions'->['setting_read','enabled_dimensions'],
+        'setting structureMaterial <dimensions>'->['setting_command','structure_material'],
+        'setting structureMaterial'->['setting_read','structure_material'],
+        'setting structureSize <int>'->['setting_command','structure_size'],
+        'setting structureSize'->['setting_read','structure_size'],
     },
     'arguments' -> {
         'item'->{'type'->'term', 'suggest'->[
@@ -63,13 +69,18 @@ __on_player_places_block(p, item, hand, block)->(
     if(item:0=='lodestone',
         pos = pos(block);
         floor = str(block(pos:0, pos:1 - 1, pos:2));
-        global_waystones:pos = {
-            'icon'->floor,
-            'dimension'->current_dimension(),
-            'name'->_get_name_from_nbt(item:2) || floor+' Waypoint' 
-        };
-        _app_message(p, str('Summoned %s Waystone', global_waystones:pos:'name'));
-        _write_waystones();
+        if(_has_required_structure(pos),
+            global_waystones:pos = {
+                'icon'->floor,
+                'dimension'->current_dimension(),
+                'name'->_get_name_from_nbt(item:2) || floor+' Waypoint' 
+            };
+            _app_message(p, str('Activated %s Waystone', global_waystones:pos:'name'));
+            _write_waystones();
+        ,
+            _app_message(p, str('Waystone structure requires %d %s to activate',
+                global_settings:'structure_size',global_settings:'structure_material'));
+        );
     );
 );
 
@@ -80,36 +91,6 @@ __on_player_breaks_block(p, block)->(
         delete(global_waystones:pos); 
     );
 );
-
-_has_required_item(p) -> (
-    if(!global_settings:'offering', return(true));
-    slot = inventory_find(p, global_settings:'item_cost');
-    if(slot,
-        item = inventory_get(p, slot);
-        inventory_set(p, slot, item:1 - 1);
-        true;
-    ,
-        _app_message(p, str('The Waystone requires an %s offering', global_settings:'item_cost'));
-        sound( 'item.trident.return', p~'pos' );
-        false;
-    );
-);
-
-_warp_player(p, pos, dimension, point)->(
-    if(_has_required_item(p),
-        in_dimension(dimension, 
-            run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
-        );
-        schedule( 2, _(p, pos, dimension)->(
-            in_dimension(dimension, 
-                sound( 'item.trident.thunder', pos );
-                particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
-            );
-        ), p, pos, dimension);
-        _app_message(p, global_waystones:point:'name');
-    );
-);
-
 
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
     if(block~'lodestone' && !p~'sneaking',
@@ -129,6 +110,43 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
             _app_message(p, 'Waystones dont\'t work in this dimension');
             sound( 'item.trident.return', block );
         );
+    );
+);
+
+_has_required_structure(pos) -> (
+    if(global_settings:'structure_material' && global_settings:'structure_size', 
+        count = 0;
+        scan(pos, 2,2,2, if( _~(global_settings:'structure_material'), count+=1) );
+        count >= global_settings:'structure_size';
+    ,true);
+);
+
+_has_required_item(p) -> (
+    if(!global_settings:'offering', return(true));
+    slot = inventory_find(p, global_settings:'offering');
+    if(slot,
+        item = inventory_get(p, slot);
+        inventory_set(p, slot, item:1 - 1);
+        true;
+    ,
+        _app_message(p, str('The Waystone requires an %s offering', global_settings:'offering'));
+        sound( 'item.trident.return', p~'pos' );
+        false;
+    );
+);
+
+_warp_player(p, pos, dimension, point)->(
+    if(_has_required_item(p),
+        in_dimension(dimension, 
+            run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
+        );
+        schedule( 2, _(p, pos, dimension)->(
+            in_dimension(dimension, 
+                sound( 'item.trident.thunder', pos );
+                particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+            );
+        ), p, pos, dimension);
+        _app_message(p, global_waystones:point:'name');
     );
 );
 
