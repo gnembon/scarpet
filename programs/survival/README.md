@@ -383,6 +383,22 @@ Various scripts that modify various game elements, often replicating popular mod
 	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also
 	features the ability to render a line in direction of a waypoint (see https://youtu.be/0N2qVahMD7s).
 
+### [waystones.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/waystones.sc):
+#### By Opsaaaaa
+	This app makes lodestones into waystones players can teleport to after visiting.
+	The goal is to add waystones to the game in a balanced and natural feeling way.
+
+	When a player clicks a lodestone it displays a list of waystones the player has perviously visited.
+	The icon for each location is the block the lodestone was placed on.
+	Waystone can be named by naming the lodestone in an anvil or with a name tag after the fact.
+
+	Configurable Features:
+	- Teleporting to a waystone costs an ender_eye.
+	- A players waypoints get reset on death.
+	- Activating a waystone requires 6 copper blocks in a 5x5 area around the lodestone.
+	- by default waystones only work in the overworld dimension.
+	- by default waystones can't cross dimensions.
+
 ### [world_map.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/world_map.sc):
 #### By gnembon
 	https://www.youtube.com/watch?v=TqgyvnjEAn4

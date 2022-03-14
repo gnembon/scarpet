@@ -1,11 +1,27 @@
-// This app makes lodestones into waystones
-// When a player clicks a waystone it displays a list of
-// waypoints the player has perviously visited.
+// This app makes lodestones into waystones players can teleport to.
+// The goal is to add waystones to the game in a balanced and natural feeling way.
+
+// When a player clicks a lodestone it displays a list of
+// waystones the player has perviously visited.
+// the icon for each location is the block the lodestone was placed on.
+// Waystone can be named by naming the lodestone in an anvil or with a name tag
+// after the fact.
+
+// Configurable Features:
+// Teleporting to a waystone costs an ender_eye
+// A players waypoints get reset on death.
+// Activating a waystone requires 6 copper blocks in a 5x5 area around the lodestone
+// by default waystones only work in the overworld dimension.
+// by default waystones can't cross dimensions.
+
+// Missing features,
+// - pagination, currently the app will display 54 waypoints per player.
+
 
 global_settings = {
     'dimensional_crossing'->false,
     'enabled_dimensions'->'overworld',
-    'offering'->'end_crystal',
+    'offering'->'ender_eye',
     'clear_waypoints_on_death'->true,
     'structure_material'->'copper',
     'structure_size'->6
