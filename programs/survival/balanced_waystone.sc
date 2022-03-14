@@ -1,6 +1,6 @@
 // This app makes lodestones into waystones
 // When a player clicks a waystone it displays a list of
-// waypoints the player has visited.
+// waypoints the player has perviously visited.
 
 global_settings = {
     'dimensional_crossing'->false,
@@ -8,7 +8,7 @@ global_settings = {
     'offering'->'end_crystal',
     'clear_waypoints_on_death'->true,
     'structure_material'->'copper',
-    'structure_size'->8
+    'structure_size'->6
 };
 
 __config()->{
@@ -38,7 +38,11 @@ __config()->{
 };
 
 
+// Keep track of all the waystones within the world.
+// [x,y,z] > name, dimension, icon
 global_waystones = {};
+// keep track of the waypoints each player has discovered.
+// uuid > [x,y,z](waystone pos) > [x,y,z](tp safe pos)
 global_waypoints = {};
 
 
@@ -77,9 +81,12 @@ __on_player_places_block(p, item, hand, block)->(
             };
             _app_message(p, str('Activated %s Waystone', global_waystones:pos:'name'));
             _write_waystones();
+            sound( 'block.enchantment_table.use', pos );
+            sound( 'minecraft:block.amethyst_block.hit', pos );
         ,
             _app_message(p, str('Waystone structure requires %d %s to activate',
                 global_settings:'structure_size',global_settings:'structure_material'));
+            sound( 'block.copper.step', pos );
         );
     );
 );
@@ -87,6 +94,7 @@ __on_player_places_block(p, item, hand, block)->(
 __on_player_breaks_block(p, block)->(
     if(block~'lodestone',
         pos = pos(block);
+        sound( 'minecraft:item.trident.thunder', pos );
         _app_message(p, str('Removed %s Waystone', global_waystones:pos:'name'));
         delete(global_waystones:pos); 
     );
@@ -175,6 +183,7 @@ _mark_player_waypoint(stone_pos, point_pos, uuid) -> (
     global_waypoints:uuid:stone_pos = map(point_pos, floor(_));
 );
 
+// op's waystone screen
 open_waystones_screen() -> (
     p = player();
     screen = _create_warps_screen(p,'kb All Waystones');
@@ -268,7 +277,7 @@ _read_pos_map_file(path) -> (
 );
 
 _get_name_from_nbt(nbt) -> (
-    // turn '"Foo"' or '{"text":"Foo"}' into 'Foo' If
+    // turn '"Foo"' or '{"text":"Foo"}' into 'Foo'
     name = decode_json(nbt:'display':'Name');
     return(name:'text' || name);
 );
