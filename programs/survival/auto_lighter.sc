@@ -6,11 +6,13 @@
 ///right click on a torch while looking at nothing to toggle.
 
 //Here you can customize the app to your needs
-global_effect_radius = 128; //How far away you want to send torches
+__on_start() -> (
+	global_effect_radius = 128; //How far away you want to send torches
 
-global_min_light_level = __light_level_for_version(); //1 for 1.18+, 8 for 1.17 and earlier
+	global_min_light_level = __light_level_for_version(); //1 for 1.18+, 8 for 1.17 and earlier
 
-global_light_ground = true; //Whether or not we want to light the surface
+	global_light_ground = true; //Whether or not we want to light the surface
+);
 
 
 // stay loaded
