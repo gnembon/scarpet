@@ -5,7 +5,7 @@
 global_settings = {
     'dimensional_crossing'->false,
     'enabled_dimensions'->['overworld'],
-    'use_item'->null,
+    'item_cost'->'end_crystal',
     'clear_waypoints_on_death'->true,
     'exp_cost'->0,
 };
@@ -55,16 +55,33 @@ __on_player_breaks_block(p, block)->(
     );
 );
 
-_warp_player(p, pos, dimension)->(
-    in_dimension(dimension, 
-        run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
+_has_required_item(p) -> (
+    if(!global_settings:'item_cost', return(true));
+    slot = inventory_find(p, global_settings:'item_cost');
+    if(slot,
+        item = inventory_get(p, slot);
+        inventory_set(p, slot, item:1 - 1);
+        true;
+    ,
+        _app_message(p, str('The Waystone requires an %s offering', global_settings:'item_cost'));
+        sound( 'item.trident.return', p~'pos' );
+        false;
     );
-    schedule( 2, _(p, pos, dimension)->(
+);
+
+_warp_player(p, pos, dimension, point)->(
+    if(_has_required_item(p),
         in_dimension(dimension, 
-            sound( 'item.trident.thunder', pos );
-            particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+            run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
         );
-    ), p, pos, dimension);
+        schedule( 2, _(p, pos, dimension)->(
+            in_dimension(dimension, 
+                sound( 'item.trident.thunder', pos );
+                particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+            );
+        ), p, pos, dimension);
+        _app_message(p, global_waystones:point:'name');
+    );
 );
 
 
@@ -128,9 +145,8 @@ _create_warps_screen(p, title) -> (
             btn = inventory_get(screen, data:'slot');
             if(!btn, return('cancel'));
             btn = parse_nbt(btn:2);
-            _warp_player(p, btn:'pos', btn:'dimension');
+            _warp_player(p, btn:'pos', btn:'dimension', btn:'point');
             close_screen(screen);
-            _app_message(p, global_waystones:(btn:'point'):'name');
         );
         return('cancel');
     ));
