@@ -4,16 +4,30 @@
 
 global_settings = {
     'dimensional_crossing'->false,
-    'enabled_dimensions'->['overworld'],
-    'item_cost'->'end_crystal',
+    'enabled_dimensions'->'overworld',
+    'offering'->'end_crystal',
     'clear_waypoints_on_death'->true,
-    'exp_cost'->0,
 };
 
 __config()->{
     'command_permission'->'ops',
+    'scope'->'global',
     'commands'->{
         ''->'open_waystones_screen',
+        'setting offering <item>'->['setting_command','offering'],
+        'setting offering'->['setting_read','offering'],
+        'setting dimensionalCrossing <bool>'->['setting_command','dimensional_crossing'],
+        'setting dimensionalCrossing'->['setting_read','dimensional_crossing'],
+        'setting clearWaypointsOnDeath <bool>'->['setting_command','clear_waypoints_on_death'],
+        'setting clearWaypointsOnDeath'->['setting_read','clear_waypoints_on_death'],
+        'setting enabledDimensions <dimensions>'->['setting_command','enabled_dimensions'],
+        'setting enabledDimensions'->['setting_read','enabled_dimensions'],
+    },
+    'arguments' -> {
+        'item'->{'type'->'term', 'suggest'->[
+            'ender_pearl', 'ender_eye', 'amethyst_shard', 'end_crystal', 'chorus_fruit', 'totem_of_undying']},
+        'setting'->{'type'->'term'},
+        'dimensions'->{'type'->'text', 'suggest'->['overworld', 'the_nether', 'the_end', 'overworld the_nether']}
     }
 };
 
@@ -24,13 +38,25 @@ global_waypoints = {};
 
 __on_start() -> (
     _read_waystones();
+    file = read_file('waystone_settings', 'json');
+    if(file, global_settings = file);
 );
 __on_close() -> (
     _write_waystones();
+    write_file('waystone_settings', 'json', global_settings);
 );
 
 _app_message(p, m) -> (
     display_title(p, 'actionbar', format('wb '+m));
+);
+
+setting_read(key) -> (
+    print(player(), str('%s: %s', key, global_settings:key));
+);
+
+setting_command(val, key) -> (
+    global_settings:key = val;
+    print(player(), str('%s: %s', key, global_settings:key));
 );
 
 __on_player_places_block(p, item, hand, block)->(
@@ -56,7 +82,7 @@ __on_player_breaks_block(p, block)->(
 );
 
 _has_required_item(p) -> (
-    if(!global_settings:'item_cost', return(true));
+    if(!global_settings:'offering', return(true));
     slot = inventory_find(p, global_settings:'item_cost');
     if(slot,
         item = inventory_get(p, slot);
@@ -88,7 +114,7 @@ _warp_player(p, pos, dimension, point)->(
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
     if(block~'lodestone' && !p~'sneaking',
         dimension = current_dimension();
-        if(first(global_settings:'enabled_dimensions', _ == dimension),
+        if(global_settings:'enabled_dimensions'~dimension,
             pos = pos(block);
             
             if( !_handle_name_tag(item, pos, p, hand) && hand=='mainhand',
