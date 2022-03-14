@@ -232,6 +232,7 @@ _open_waypoint_screen(p, waystone, uuid) -> (
     icons = [];
     bad_keys = [];
 
+    // merge waypoints and waystones data into icons.
     for(pairs(global_waypoints:uuid),
         if( global_waystones:(_:0), 
             icons += ([_:0,global_waystones:(_:0),_:1]);
@@ -243,11 +244,11 @@ _open_waypoint_screen(p, waystone, uuid) -> (
     // Clear player waypoints with missing waystone entires
     for(bad_keys, delete(global_waypoints:uuid:_));
 
+    // filter out entires in different dimensions.
     if(!global_settings:'dimensional_crossing', 
         dimension = current_dimension();
         icons = filter(icons, _:1:'dimension' == dimension);
     );
-
 
     _print_icons_to_screen(screen, icons)
 );
