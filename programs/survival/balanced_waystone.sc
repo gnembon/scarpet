@@ -37,7 +37,7 @@ __on_player_places_block(p, item, hand, block)->(
         floor = str(block(pos:0, pos:1 - 1, pos:2));
         global_waystones:pos = {
             'icon'->floor,
-            'dimension'->p~'dimension',
+            'dimension'->current_dimension(),
             'name'->_get_name_from_nbt(item:2) || floor+' Waystone' 
         };
         display_title(p, 'actionbar', format(str('wb Created %s Waystone',global_waystones:pos:'name' )));
@@ -146,11 +146,24 @@ _print_icons_to_screen(screen, icons) -> (
     );
 );
 
+// _get_enabled_waypoints(uuid) -> (
+//     dimension = current_dimension();
+//     if(global_settings:'dimensional_crossing', 
+//         return(pairs(global_waypoints:uuid));
+//     , 
+//         return(filter(pairs(global_waypoints:uuid),
+//             print(_); 
+//             (_:3):'dimension' == dimension;
+//         ));
+//     );
+// );
+
 _open_waypoint_screen(p, waystone, uuid) -> (
     screen = _create_warps_screen(p, str('kb %s\'s Waypoints', p~'name'));
 
     icons = [];
     bad_keys = [];
+
     for(pairs(global_waypoints:uuid),
         if( global_waystones:(_:0), 
             icons += ([_:0,global_waystones:(_:0),_:1]);
@@ -158,7 +171,16 @@ _open_waypoint_screen(p, waystone, uuid) -> (
             bad_keys += _:0;
         );
     );
+
+    // Clear player waypoints with missing waystone entires
     for(bad_keys, delete(global_waypoints:uuid:_));
+
+    if(!global_settings:'dimensional_crossing', 
+        dimension = current_dimension();
+        icons = filter(icons, _:1:'dimension' == dimension);
+    );
+
+
     _print_icons_to_screen(screen, icons)
 );
 
