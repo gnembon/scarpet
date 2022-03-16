@@ -6,16 +6,22 @@ create_datapack('invupd',
     {
         'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
         'data' -> {
-            'chyx/advancements/xd.json'-> {
-                'rewards' -> {'function' -> 'chyx:invupd'},
-                'criteria' -> {
-                    'example' -> {
-                        'trigger' -> 'minecraft:inventory_changed',
-                        'conditions' -> {}
+            'chyx' ->{
+                'advancements'->{
+                    'xd.json'-> {
+                        'rewards' -> {'function' -> 'chyx:invupd'},
+                        'criteria' -> {
+                            'example' -> {
+                                'trigger' -> 'minecraft:inventory_changed',
+                                'conditions' -> {}
+                            }
+                        }
                     }
+                },
+                'functions'->{
+                    'invupd.mcfunction' -> 'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'
                 }
-            },
-            'chyx/functions/invupd.mcfunction' -> 'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'
+            }
         }
     }
 );
