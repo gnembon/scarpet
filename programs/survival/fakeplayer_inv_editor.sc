@@ -2,12 +2,12 @@ __config()->{
     'scope'->'global',
     'stay_loaded'->true,
     'requires' -> {
-        'carpet' -> '>=1.4.56'
+        'carpet' -> '>=1.4.57'
     }
 };
 create_datapack('invupd', 
     {
-        //'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
+        'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
         'data' -> {
             'chyx' ->{
                 'advancements'->{
