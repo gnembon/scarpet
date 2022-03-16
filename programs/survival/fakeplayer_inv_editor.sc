@@ -2,12 +2,12 @@ __config()->{
     'scope'->'global',
     'stay_loaded'->true,
     'requires' -> {
-        'carpet' -> '>=1.4.57'
+        'carpet' -> '>=1.4.56'
     }
 };
 create_datapack('invupd', 
     {
-        'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
+        //'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
         'data' -> {
             'chyx' ->{
                 'advancements'->{
@@ -43,32 +43,34 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
         //creativeplayer~'gamemode' != 'creative', return(),
         global_fakeplayersscreen:fakeplayer, return()
     );
-    
 
     screen=create_screen(creativeplayer,'generic_9x6',fakeplayer~'name',_(screen, player, action,data,outer(fakeplayer))->(
-        
         if(action=='close',(
-                    //screentoplayer(fakeplayer,screen);
-                    drop_item(screen,-1);
-                    //close_screen(screen);//end_portal/die
-                    return()
+            drop_item(screen,-1);
+            global_fakeplayersscreen:fakeplayer = null;
+            return()
         ));
-        if(action=='slot_update'
-        &&0<=data:'slot'
-        &&data:'slot'<54
-        ,screentoplayer(fakeplayer,screen);return());
         if(data:'slot'==null,return());
-        if(inventory_get(screen, data:'slot'):2==global_nope,return('cancel'));
-        
-        
+        if(action=='pickup' && 9<=data:'slot' && data:'slot'<18,
+            // CARPET BUG 1.4.66 - Modify not working for fake players: 
+            // modify(fakeplayer,'selected_slot', data:'slot'-9);
+            // FIX:
+            run('player ' + fakeplayer + ' hotbar ' + (data:'slot'-8))
+            // END FIX
+        );
+        if(inventory_get(screen, data:'slot'):2==global_nope,
+            return('cancel')
+        );
+        if(action=='slot_update' && 0<=data:'slot' && data:'slot'<54,
+            screentoplayer(fakeplayer,screen)
+        )
     ));
 
     global_fakeplayersscreen:fakeplayer=screen;
 
     loop(54,inventory_set(screen,_, 1, 'minecraft:structure_void',global_nope));
-    //inventory_set(screen,fakeplayer~'selected_slot'+9, 1, 'minecraft:barrier',global_nope);
-    playertoscreen(fakeplayer,screen);
-
+    inventory_set(screen,fakeplayer~'selected_slot'+9, 1, 'minecraft:barrier',global_nope);
+    playertoscreen(fakeplayer,screen)
 );
 
 playertoscreen(fakeplayer,screen)->(
@@ -97,15 +99,28 @@ handle_event('invupd',_(fakeplayer)->(
     if(screen,playertoscreen(fakeplayer,screen));
 ));
 
+// CARPET BUG 1.4.66 - Event not working for fake players: 
+// __on_player_switches_slot(fakeplayer, from, to)-> if(player ~ 'player_type' == 'fake',
+// FIX:
+global_fakeplayers_selected_slot = {};
+__on_tick() ->
+for(filter(player('all'), _~'player_type' == 'fake'),
+    selected_slot = _ ~ 'selected_slot';
+    if((old_slot = global_fakeplayers_selected_slot:_) != null &&
+        old_slot != selected_slot,
+        __fakeplayer_switches_slot(_, old_slot, selected_slot)
+    );
+    global_fakeplayers_selected_slot:_ = selected_slot
+);
 
-//__on_player_switches_slot(fakeplayer, from, to)->(
-//    screen=global_fakeplayersscreen:fakeplayer;
-//    if(screen,(
-//        inventory_set(screen,from+9, 1, 'minecraft:structure_void',global_nope);
-//        inventory_set(screen,to  +9, 1, 'minecraft:barrier',global_nope);
-//    ))
-//);
-
+__fakeplayer_switches_slot(fakeplayer, from, to)->(
+// END FIX
+    screen=global_fakeplayersscreen:fakeplayer;
+    if(screen,(
+        inventory_set(screen,from+9, 1, 'minecraft:structure_void',global_nope);
+        inventory_set(screen,to  +9, 1, 'minecraft:barrier',global_nope);
+    ))
+);
 
 __on_player_disconnects(fakeplayer, reason)->(
     screen=global_fakeplayersscreen:fakeplayer;
