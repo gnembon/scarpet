@@ -1,6 +1,9 @@
 __config()->{
     'scope'->'global',
-    'stay_loaded'->true
+    'stay_loaded'->true,
+    'requires' -> {
+        'carpet' -> '>=1.4.57'
+    }
 };
 create_datapack('invupd', 
     {
