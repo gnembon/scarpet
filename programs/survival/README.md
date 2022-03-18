@@ -95,6 +95,10 @@ Various scripts that modify various game elements, often replicating popular mod
 
 	Only really useful in peaceful.
 
+### [fakeplayer_inv_editor.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeplayer_inv_editor.sc):
+#### By Chen_yu_xuan
+	Right click fakeplayers to edit their inventorys.
+
 ### [hammer.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -163,7 +167,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 
 ### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
-### By Opsaaaaa
+#### By Opsaaaaa
 	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
 	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
 
@@ -409,4 +413,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	_GieR
 	Opsaaaaa
 	Xendergo
+	ch-yx
 	(Many more hopefully!)
