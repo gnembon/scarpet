@@ -23,3 +23,8 @@ Lets you replace blocks in an area with other blocks, preserving their block pro
 #### By Firigion
 
 A set of tools to define simple shapes (spheres, discs, circles, lines and planes) in 3D space by setting three points in the world and fitting the shape to those. Also has a fun eraser tool to delete blobs of connected blocks. [Here](https://github.com/Firigion/scarpets#shapes) you can find more specifi information.
+
+### loft.sc
+#### By Cfer89
+
+A tool to make splines and merge them in a one surface with a loft function. Use the phantom membrane as a wand and select blocks to define the surface points. Start a new spline by left clicking on block and extend it by right clicking on blocks. Create in this way at least 2 splines to have a proper surface that can be pasted with `/loft paste`. [Here](https://github.com/Cfer98/Scarpet-scripts#loft.sc) you can find more specifi information.
