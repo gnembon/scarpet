@@ -28,3 +28,7 @@ Scarpet is a part of the [carpet mod](https://github.com/gnembon/fabric-carpet/r
 ## Changelog
 
 For history of changes, please consult update notes of [fabric-carpet releases](https://github.com/gnembon/fabric-carpet/releases) where scarpet is being developed and expanded.
+
+## Loft documentation
+
+Coming soon...
