@@ -13,63 +13,66 @@ __config() -> {
     }
 };
 
-global_tool='phantom_membrane';
-global_block='diamond_block';
-global_replace=null;
-global_sets=[]; //array containing current information about the m splines created
-global_points=[]; //vector of maximum n points of the current spline that is being created by the player
-global_cset=[]; //grid of nxm points created based on global_sets by the function _normalise_set()
-global_a=[]; //grid of a coefficients needed for bezier surfaces
-global_b=[]; //grid of b coefficients needed for bezier surfaces
-global_c=[]; //grid of c coefficients needed for bezier surfaces
-global_affected_block=[]; //vector containing information about block that the script changed in the last paste operation
-global_history=[]; //vector containing information about block that the script changed in the last N paste operation
+global_loft={
+    'wand'->'phantom_membrane',
+    'material'->'diamond_block',
+    'replace'->null,
+    'points'->[],//vector of maximum n points of the current spline that is being created by the player
+    'sets'->[],//array containing current information about the m splines created
+    'cset'->[], //grid of nxm points created based on global_sets by the function _normalise_set()
+    'a'->[], //grid of a coefficients needed for bezier surfaces
+    'b'->[], //grid of b coefficients needed for bezier surfaces
+    'c'->[], //grid of c coefficients needed for bezier surfaces
+    'history'->[], //vector containing information about block that the script changed in the last N paste operation
+    'draw'->false,
+    'affected_blocks'->[] //vector containing information about block that the script changed in the last paste operation
+};
 
 wand()->(
     print('the wand is:');
-    print(global_tool);
+    print(global_loft:'wand')
 );
 
 __on_player_breaks_block(player, block)->( //starts a new spline
     item_tuple = query(player,'holds',hand='mainhand'):0;
-    if(item_tuple==global_tool,
+    if(item_tuple==global_loft:'wand',
         schedule(0, _(outer(block)) -> set(pos(block), block));
-        global_draw_surf=false;
-        global_points=[];
-        global_points+=pos(block);
-        global_sets:(length(global_sets))=global_points;
+        global_loft:'draw'=false;
+        global_loft:'points'=[];
+        global_loft:'points'+=pos(block);
+        global_loft:'sets':(length(global_loft:'sets'))=global_loft:'points';
         _normalise_set();
-        global_draw_surf=true;
+        global_loft:'draw'=true;
         _draw_surf_tick()
     );
-    if(item_tuple!=global_tool,
-        if(global_sets!=[],
-            global_draw=false;
+    if(item_tuple!=global_loft:'wand',
+        if(global_loft:'sets'!=[],
+            global_loft:'draw'=false;
             print('operation cancelled');
-            global_sets=[];
-            global_cset=[];
-            global_points=[]
+            global_loft:'sets'=[];
+            global_loft:'cset'=[];
+            global_loft:'points'=[]
         )
     )
 );
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec)->( //expands the spline adding new points
-    if((item_tuple:0==global_tool)&&(hand=='mainhand')&&(global_points!=[]),
-        global_draw_surf=false;
-        global_points+=pos(block);
-        delete(global_sets,-1);
-        global_sets:(length(global_sets))=global_points;
+    if((item_tuple:0==global_loft:'wand')&&(hand=='mainhand')&&(global_loft:'points'!=[]),
+        global_loft:'draw'=false;
+        global_loft:'points'+=pos(block);
+        delete(global_loft:'sets',-1);
+        global_loft:'sets':(length(global_loft:'sets'))=global_loft:'points';
         _normalise_set();
-        global_draw_surf=true;
+        global_loft:'draw'=true;
         _draw_surf_tick()
     );
-    if(((get(item_tuple,0)!=global_tool)&&(hand=='mainhand')),
-        if(global_sets!=[],
-            global_draw=false;
+    if(((get(item_tuple,0)!=global_loft:'wand')&&(hand=='mainhand')),
+        if(global_loft:'sets'!=[],
+            global_loft:'draw'=false;
             print('operation cancelled');
-            global_sets=[];
-            global_cset=[];
-            global_points=[]
+            global_loft:'sets'=[];
+            global_loft:'cset'=[];
+            global_loft:'points'=[]
         )
     )
 );
@@ -77,124 +80,124 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec)->(
 //this function transform the global_sets in a rectangoular grid (m*n) creating the loft using the created splines
 //it defines global_a, global_b and global_c array of coefficient points needed for the defination of the surfaces
 _normalise_set()->( 
-    global_cset=[];
-    m=length(global_sets); //m is the number of splines contained in global_sets
-    n=length(global_sets:0); //n will be the max number of points found in one of the splines
+    global_loft:'cset'=[];
+    m=length(global_loft:'sets'); //m is the number of splines contained in global_sets
+    n=length(global_loft:'sets':0); //n will be the max number of points found in one of the splines
     c_for(i=1,i<m,i=i+1, 
-        if(length(global_sets:i)>n,
-            n=length(global_sets:i)
+        if(length(global_loft:'sets':i)>n,
+            n=length(global_loft:'sets':i)
         )
     );
     if(n<=1, //in case each spline is composed by only one point (so not really a spline in this case)
-        global_cset=global_sets;
+        global_loft:'cset'=global_loft:'sets';
     );
     if(n>1,
         c_for(i=0,i<m,i=i+1, //calculate new_points, a vector of n points for each splines that has less than n points
-            if(n>length(global_sets:i),
+            if(n>length(global_loft:'sets':i),
                 new_points=[];
                 //in case spline had 1 point
-                if(1==length(global_sets:i), 
+                if(1==length(global_loft:'sets':i), 
                     c_for(j=0,j<n,j=j+1,
-                        new_points+=global_sets:i:0
+                        new_points+=global_loft:'sets':i:0
                     )
                 );
                 //in case spline had 2 points
-                if(2==length(global_sets:i),
+                if(2==length(global_loft:'sets':i),
                     c_for(j=0,j<n,j=j+1,
-                        new_points+=(global_sets:i:0)+((global_sets:i:1)-(global_sets:i:0))*j/(n-1);
+                        new_points+=(global_loft:'sets':i:0)+((global_loft:'sets':i:1)-(global_loft:'sets':i:0))*j/(n-1);
                     )
                 );
                 //in case spline had more than 2 points (this operation may distort a little the spline)
-                if(2<length(global_sets:i), 
+                if(2<length(global_loft:'sets':i), 
                     a=[];
-                    a+=0.25*(global_sets:i:0)-0.25*(global_sets:i:2)+(global_sets:i:1);
-                    c_for(j=1,j<length(global_sets:i)-1,j=j+1,
-                        a+=2*(global_sets:i:j)-a:(j-1);
+                    a+=0.25*(global_loft:'sets':i:0)-0.25*(global_loft:'sets':i:2)+(global_loft:'sets':i:1);
+                    c_for(j=1,j<length(global_loft:'sets':i)-1,j=j+1,
+                        a+=2*(global_loft:'sets':i:j)-a:(j-1);
                     );
-                    r=(length(global_sets:i)-1)/(n-1);
+                    r=(length(global_loft:'sets':i)-1)/(n-1);
                     c_for(j=0,j<n-1,j=j+1,
                         t=(j*r)%1;
                         k=j*r-t;
-                        new_points+=(global_sets:i:k)*(1-t)^2+2*(a:k)*t*(1-t)+(global_sets:i:(k+1))*t^2
+                        new_points+=(global_loft:'sets':i:k)*(1-t)^2+2*(a:k)*t*(1-t)+(global_loft:'sets':i:(k+1))*t^2
                     );
-                    new_points+=global_sets:i:(-1)
+                    new_points+=global_loft:'sets':i:(-1)
                 );
-                global_cset+=new_points
+                global_loft:'cset'+=new_points
             );
-            if(n==length(global_sets:i),
-                global_cset+=global_sets:i
+            if(n==length(global_loft:'sets':i),
+                global_loft:'cset'+=global_loft:'sets':i
             )
         )
     );
     //now we have global_cset containing all the point of the surface (a grid of m*n points)
     //global_cset contains m splines each spline is composed by n points
     //then we want to calculate all the control points of the surfaces global_a, global_b and global_c
-    global_a=[]; //will be a m*(n-1) grid of coefficient points
-    global_b=[]; //will be a (m-1)*n grid of coefficient points
-    global_c=[]; //will be a (m-1)*(n-1) grid of coefficient points
+    global_loft:'a'=[]; //will be a m*(n-1) grid of coefficient points
+    global_loft:'b'=[]; //will be a (m-1)*n grid of coefficient points
+    global_loft:'c'=[]; //will be a (m-1)*(n-1) grid of coefficient points
     if((n==2)&&(m==2),
-        global_a=[[0.5*(global_cset:0:0)+0.5*(global_cset:0:1)],[0.5*(global_cset:1:0)+0.5*(global_cset:1:1)]];
-        global_b=[[0.5*(global_cset:0:0)+0.5*(global_cset:1:0),0.5*(global_cset:0:1)+0.5*(global_cset:1:1)]];
-        global_c=[[0.5*(global_a:0:0)+0.5*(global_a:1:0)]]
+        global_loft:'a'=[[0.5*(global_loft:'cset':0:0)+0.5*(global_loft:'cset':0:1)],[0.5*(global_loft:'cset':1:0)+0.5*(global_loft:'cset':1:1)]];
+        global_loft:'b'=[[0.5*(global_loft:'cset':0:0)+0.5*(global_loft:'cset':1:0),0.5*(global_loft:'cset':0:1)+0.5*(global_loft:'cset':1:1)]];
+        global_loft:'c'=[[0.5*(global_loft:'a':0:0)+0.5*(global_loft:'a':1:0)]]
     );
     if((n==2)&&(m>2), //in case you have m spline each formed by only 2 points (so m lines...)
         c_for(j=0,j<m,j=j+1,
-            global_a+=[0.5*(global_cset:j:0)+0.5*(global_cset:j:1)]
+            global_loft:'a'+=[0.5*(global_loft:'cset':j:0)+0.5*(global_loft:'cset':j:1)]
         );
-        global_b+=[(global_cset:1:0)+0.25*(global_cset:0:0)-0.25*(global_cset:2:0),
-                   (global_cset:1:1)+0.25*(global_cset:0:1)-0.25*(global_cset:2:1)];
-        global_b:0:1=(global_cset:1:1)+0.25*(global_cset:0:1)-0.25*(global_cset:2:1);
+        global_loft:'b'+=[(global_loft:'cset':1:0)+0.25*(global_loft:'cset':0:0)-0.25*(global_loft:'cset':2:0),
+                   (global_loft:'cset':1:1)+0.25*(global_loft:'cset':0:1)-0.25*(global_loft:'cset':2:1)];
+        global_loft:'b':0:1=(global_loft:'cset':1:1)+0.25*(global_loft:'cset':0:1)-0.25*(global_loft:'cset':2:1);
         c_for(j=1,j<m-1,j=j+1,
-            global_b+=[2*(global_cset:j:0)-(global_b:(j-1):0),2*(global_cset:j:1)-(global_b:(j-1):1)];
+            global_loft:'b'+=[2*(global_loft:'cset':j:0)-(global_loft:'b':(j-1):0),2*(global_loft:'cset':j:1)-(global_loft:'b':(j-1):1)];
         );
         c_for(j=0,j<m-1,j=j+1,
-            global_c+=[0.5*(global_b:j:0)+0.5*(global_b:j:1)]
+            global_loft:'c'+=[0.5*(global_loft:'b':j:0)+0.5*(global_loft:'b':j:1)]
         )
     );
     if((m==2)&&(n>2), //in case you have 2 splines each composed by more than 2 points
-        a0=[(global_cset:0:1)+0.25*(global_cset:0:0)-0.25*(global_cset:0:2)];
-        a1=[(global_cset:1:1)+0.25*(global_cset:1:0)-0.25*(global_cset:1:2)];
+        a0=[(global_loft:'cset':0:1)+0.25*(global_loft:'cset':0:0)-0.25*(global_loft:'cset':0:2)];
+        a1=[(global_loft:'cset':1:1)+0.25*(global_loft:'cset':1:0)-0.25*(global_loft:'cset':1:2)];
         c_for(i=1,i<n-1,i=i+1,
-            a0+=2*(global_cset:0:i)-(a0:(i-1));
-            a1+=2*(global_cset:1:i)-(a1:(i-1))
+            a0+=2*(global_loft:'cset':0:i)-(a0:(i-1));
+            a1+=2*(global_loft:'cset':1:i)-(a1:(i-1))
         );
-        global_a+=a0;
-        global_a+=a1;
+        global_loft:'a'+=a0;
+        global_loft:'a'+=a1;
         c_for(i=0,i<n,i=i+1,
-            global_b+=0.5*(global_cset:0:i)+0.5*(global_cset:1:i);
+            global_loft:'b'+=0.5*(global_loft:'cset':0:i)+0.5*(global_loft:'cset':1:i);
         );
-        global_b=[global_b];
+        global_loft:'b'=[global_loft:'b'];
         c_for(i=0,i<n-1,i=i+1,
-            global_c+=0.5*(global_a:0:i)+0.5*(global_a:1:i)
+            global_loft:'c'+=0.5*(global_loft:'a':0:i)+0.5*(global_loft:'a':1:i)
         );
-        global_c=[global_c]
+        global_loft:'c'=[global_loft:'c']
     );
     if((m>2)&&(n>2), //in case you have more than 2 splines composed by more than 2 points each
         c_for(j=0,j<m,j=j+1,
-            a=[(global_cset:j:1)+0.25*(global_cset:j:0)-0.25*(global_cset:j:2)];
+            a=[(global_loft:'cset':j:1)+0.25*(global_loft:'cset':j:0)-0.25*(global_loft:'cset':j:2)];
             c_for(i=1,i<n-1,i=i+1,
-                a+=2*(global_cset:j:i)-(a:(i-1))
+                a+=2*(global_loft:'cset':j:i)-(a:(i-1))
             );
-            global_a+=a;
+            global_loft:'a'+=a;
         );
         b=[];
         c_for(i=0,i<n,i=i+1,
-            b+=(global_cset:1:i)+0.25*(global_cset:0:i)-0.25*(global_cset:2:i)
+            b+=(global_loft:'cset':1:i)+0.25*(global_loft:'cset':0:i)-0.25*(global_loft:'cset':2:i)
         );
-        global_b+=b;
+        global_loft:'b'+=b;
         c_for(j=1,j<m-1,j=j+1,
             b=[];
             c_for(i=0,i<n,i=i+1,
-                b+=2*(global_cset:j:i)-(global_b:(j-1):i)
+                b+=2*(global_loft:'cset':j:i)-(global_loft:'b':(j-1):i)
             );
-            global_b+=b
+            global_loft:'b'+=b
         );
         c_for(j=0,j<m-1,j=j+1,
-            c=[((global_b:j:1)+0.25*(global_b:j:0)-0.25*(global_b:j:2))];
+            c=[((global_loft:'b':j:1)+0.25*(global_loft:'b':j:0)-0.25*(global_loft:'b':j:2))];
             c_for(i=1,i<n-1,i=i+1,
-                c+=2*(global_b:j:i)-(c:(i-1))
+                c+=2*(global_loft:'b':j:i)-(c:(i-1))
             );
-            global_c+=c
+            global_loft:'c'+=c
         )
     )
 );
@@ -230,20 +233,20 @@ _draw_spline(points,number_of_tick)->( //a function used to render a spline give
 );
 
 _draw_surf(number_of_tick)->( //function used to render the surface created
-    m=length(global_cset);
-    n=length(global_cset:0);
+    m=length(global_loft:'cset');
+    n=length(global_loft:'cset':0);
     if((m==1)||(n==1),
-        _draw_spline(global_points,number_of_tick)
+        _draw_spline(global_loft:'points',number_of_tick)
     );
     if((m>1)&&(n>1),
         c_for(j=0,j<m,j=j+1,
-            points=global_cset:j;
+            points=global_loft:'cset':j;
             _draw_spline(points,number_of_tick)
         );
         c_for(i=0,i<n,i=i+1,
             points=[];
             c_for(j=0,j<m,j=j+1,
-                points+=global_cset:j:i;
+                points+=global_loft:'cset':j:i;
             );
             _draw_spline(points,number_of_tick);
         )
@@ -252,15 +255,15 @@ _draw_surf(number_of_tick)->( //function used to render the surface created
 
 _draw_surf_tick() -> (
     _draw_surf(12);
-    if(global_draw_surf, schedule(10, '_draw_surf_tick') )
+    if(global_loft:'draw', schedule(10, '_draw_surf_tick') )
 );
 
 _set_block(pos)->( //function for setting block and storing their preavious value in global_affected_block
-    if(block(pos)!=global_block,
-        if((block(pos)==global_replace)||(global_replace==null),
+    if(block(pos)!=global_loft:'material',
+        if((block(pos)==global_loft:'replace')||(global_loft:'replace'==null),
             existing_block=block(pos);
-	        global_affected_block+=[pos,existing_block];
-            set(pos,global_block)
+	        global_loft:'affected_blocks'+=[pos,existing_block];
+            set(pos,global_loft:'material')
         )
     )
 );
@@ -309,48 +312,48 @@ _paste_patch(p00,p01,p10,p11,a0,a1,b0,b1,c)->( //function used to paste a patch 
 );
 
 paste(Block,replace)->(
-    global_block=Block;
-    global_replace=replace;
-    m=length(global_cset);
-    n=length(global_cset:0);
+    global_loft:'material'=Block;
+    global_loft:'replace'=replace;
+    m=length(global_loft:'cset');
+    n=length(global_loft:'cset':0);
     if((n>1)&&(m>1),
         c_for(i=0,i<n-1,i=i+1,
             c_for(j=0,j<m-1,j=j+1,
                 _paste_patch(
-                    global_cset:j:i,
-                    global_cset:j:(i+1),
-                    global_cset:(j+1):i,
-                    global_cset:(j+1):(i+1),
-                    global_a:j:i,
-                    global_a:(j+1):i,
-                    global_b:j:i,
-                    global_b:j:(i+1),
-                    global_c:j:i
+                    global_loft:'cset':j:i,
+                    global_loft:'cset':j:(i+1),
+                    global_loft:'cset':(j+1):i,
+                    global_loft:'cset':(j+1):(i+1),
+                    global_loft:'a':j:i,
+                    global_loft:'a':(j+1):i,
+                    global_loft:'b':j:i,
+                    global_loft:'b':j:(i+1),
+                    global_loft:'c':j:i
                 )
             )
         );
         schedule(1,'_add_to_history');
-        global_draw=false;
-        global_sets=[];
-        global_cset=[];
-        global_points=[]
+        global_loft:'draw'=false;
+        global_loft:'sets'=[];
+        global_loft:'cset'=[];
+        global_loft:'points'=[]
     )
 );
 
 _add_to_history()->(
-	if(length(global_affected_block)==0,return);
-	operation={'affected_position'->global_affected_block};
-	global_history+=operation;
-	global_affected_block=[];
+	if(length(global_loft:'affected_blocks')==0,return);
+	operation={'affected_position'->global_loft:'affected_blocks'};
+	global_loft:'history'+=operation;
+	global_loft:'affected_blocks'=[];
     print('done');
 );
 
 undo()->(
-	if(length(global_history)==0,print('no mooves to undo');return);
-	operation=global_history:(length(global_history)-1);
+	if(length(global_loft:'history')==0,print('no mooves to undo');return);
+	operation=global_loft:'history':(length(global_loft:'history')-1);
 	affected_block=operation:'affected_position';
 	c_for(i=0,i<length(affected_block),i=i+1,
 		set(affected_block:i:0,affected_block:i:1)
 	);
-	delete(global_history,length(global_history)-1)
+	delete(global_loft:'history',length(global_loft:'history')-1)
 );
