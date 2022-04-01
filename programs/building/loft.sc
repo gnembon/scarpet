@@ -5,11 +5,17 @@ __config() -> {
         'paste <Block> <replace>'->['paste'],
         'paste <Block>'->['paste',null],
         'paste'->['paste','diamond_block',null],
-        'undo'->['undo']
+        'undo'->['undo'],
+        'del'->['del','point'],
+        'del <object>'->['del']
     },
     'arguments'->{
         'Block'->{'type'->'block'},
-        'replace'->{'type'->'block'}
+        'replace'->{'type'->'block'},
+        'object'->{
+            'type'->'term',
+            'suggest'->['spline','point','all']
+        }
     }
 };
 
@@ -17,12 +23,12 @@ global_loft={
     'wand'->'phantom_membrane',
     'material'->'diamond_block',
     'replace'->null,
-    'points'->[],//vector of maximum n points of the current spline that is being created by the player
     'sets'->[],//array containing current information about the m splines created
     'cset'->[], //grid of nxm points created based on global_sets by the function _normalise_set()
     'a'->[], //grid of a coefficients needed for bezier surfaces
     'b'->[], //grid of b coefficients needed for bezier surfaces
     'c'->[], //grid of c coefficients needed for bezier surfaces
+    'cursor'->0,
     'history'->[], //vector containing information about block that the script changed in the last N paste operation
     'draw'->false,
     'affected_blocks'->[] //vector containing information about block that the script changed in the last paste operation
@@ -37,44 +43,77 @@ __on_player_breaks_block(player, block)->( //starts a new spline
     item_tuple = query(player,'holds',hand='mainhand'):0;
     if(item_tuple==global_loft:'wand',
         schedule(0, _(outer(block)) -> set(pos(block), block));
-        global_loft:'draw'=false;
-        global_loft:'points'=[];
-        global_loft:'points'+=pos(block);
-        global_loft:'sets':(length(global_loft:'sets'))=global_loft:'points';
+        //insert a new spline in position spline_cursor and moove all the following splines by one position
+        if(length(global_loft:'sets')==0,
+
+            global_loft:'sets':0=[pos(block)];
+            global_loft:'cursor'=1,
+
+            [spline_cursor,point_cursor]=_get_cursor_position();
+            l=length(global_loft:'sets');
+            c_for(j=l,j>spline_cursor,j=j-1,
+                global_loft:'sets':j=global_loft:'sets':(j-1)
+            );
+            global_loft:'sets':spline_cursor=[pos(block)];
+            global_loft:'cursor'=global_loft:'cursor'+2
+        );
         _normalise_set();
-        global_loft:'draw'=true;
-        _draw_surf_tick()
-    );
-    if(item_tuple!=global_loft:'wand',
-        if(global_loft:'sets'!=[],
-            global_loft:'draw'=false;
-            print('operation cancelled');
-            global_loft:'sets'=[];
-            global_loft:'cset'=[];
-            global_loft:'points'=[]
+        if(global_loft:'sets'==[[pos(block)]],
+            global_loft:'draw'=true;
+            _draw_surf_tick();
         )
     )
 );
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec)->( //expands the spline adding new points
-    if((item_tuple:0==global_loft:'wand')&&(hand=='mainhand')&&(global_loft:'points'!=[]),
-        global_loft:'draw'=false;
-        global_loft:'points'+=pos(block);
-        delete(global_loft:'sets',-1);
-        global_loft:'sets':(length(global_loft:'sets'))=global_loft:'points';
+    if((item_tuple:0==global_loft:'wand')&&(hand=='mainhand')&&(global_loft:'sets'!=[]),
+        [spline_cursor,point_cursor]=_get_cursor_position();
+        if(point_cursor!=0,
+            spline_cursor=spline_cursor-1
+        );
+        l=length(global_loft:'sets':spline_cursor);
+        //insert a new control point in the selected spline at the selected position
+        c_for(i=l,i>point_cursor,i=i-1,
+            global_loft:'sets':spline_cursor:i=global_loft:'sets':spline_cursor:(i-1);
+        );
+        global_loft:'sets':spline_cursor:point_cursor=pos(block);
+        global_loft:'cursor'=global_loft:'cursor'+1;
         _normalise_set();
-        global_loft:'draw'=true;
-        _draw_surf_tick()
-    );
-    if(((get(item_tuple,0)!=global_loft:'wand')&&(hand=='mainhand')),
-        if(global_loft:'sets'!=[],
-            global_loft:'draw'=false;
-            print('operation cancelled');
-            global_loft:'sets'=[];
-            global_loft:'cset'=[];
-            global_loft:'points'=[]
-        )
     )
+);
+
+_switch_slot(player,slot)->(
+    run('/player '+player+' hotbar '+slot);
+);
+__on_player_switches_slot(player, from, to)->(
+    item=inventory_get(player, from):0;
+    if((item=='phantom_membrane')&&(length(global_loft:'sets')>0),
+        k=to-from;
+        if(to-from==8,k=-1);
+        if(to-from==-8,k=1);
+        if(abs(k)==1,
+            schedule(0,'_switch_slot',player,from+1);
+            N=0;
+            c_for(i=0,i<length(global_loft:'sets'),i=i+1,
+                N=N+length(global_loft:'sets':i)+1
+            );
+            global_loft:'cursor'=(global_loft:'cursor'+k)%N
+        );
+    );
+);
+
+_get_cursor_position()->( //a function to match the cursor to a spline and a point of that spline
+    m=global_loft:'cursor';
+    spline_cursor=0;
+    point_cursor=0;
+    n=m;
+    while(n>0,m,
+        point_cursor=n;
+        n=n-length(global_loft:'sets':spline_cursor)-1;
+        spline_cursor=spline_cursor+1;
+    );
+    if(n==0,point_cursor=0);
+    [spline_cursor,point_cursor]
 );
 
 //this function transform the global_sets in a rectangoular grid (m*n) creating the loft using the created splines
@@ -202,15 +241,15 @@ _normalise_set()->(
     )
 );
 
-_draw_spline(points,number_of_tick)->( //a function used to render a spline given it's vector of points
+_draw_spline(points,number_of_tick,color)->( //a function used to render a spline given it's vector of points
     if(length(points)==1, //in case the spline has only one point (not a spline obviously, just a point)
         p1=points:0;
-        draw_shape('sphere',number_of_tick,{'center'->p1+0.5,'radius'->1})
+        draw_shape('sphere',number_of_tick,{'center'->p1+0.5,'radius'->1,'color'->color})
     );
     if(length(points)==2, //in case the spline has only 2 points (a straight line)
         p1=points:0;
         p2=points:1;
-        draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->p2+0.5})
+        draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->p2+0.5,'color'->color})
     );
     if(length(points)>2, //in case the spline has more than 3 points
         //first, calculating the vector of coefficients of the spline
@@ -223,41 +262,67 @@ _draw_spline(points,number_of_tick)->( //a function used to render a spline give
 			c_for(t=0.05,t<1,t=t+0.05,
 				p2=get(points,i)*(1-t)^2+get(a,i)*2*t*(1-t)+get(points,i+1)*t^2;
                 if(p1!=p2,
-                    draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->p2+0.5})
+                    draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->p2+0.5,'color'->color})
                 );
 				p1=p2;
 			);
-			draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->get(points,i+1)+0.5})
+			draw_shape('line',number_of_tick,{'from'->p1+0.5,'to'->get(points,i+1)+0.5,'color'->color})
 		)
     )
 );
 
 _draw_surf(number_of_tick)->( //function used to render the surface created
+    if(length(global_loft:'sets'==0),return);
+    if(length(global_loft:'cset'==0),return);
     m=length(global_loft:'cset');
     n=length(global_loft:'cset':0);
-    if((m==1)||(n==1),
-        _draw_spline(global_loft:'points',number_of_tick)
+    c_for(j=0,j<m,j=j+1,
+        points=global_loft:'cset':j;
+        _draw_spline(points,number_of_tick,0x10101080)
     );
-    if((m>1)&&(n>1),
-        c_for(j=0,j<m,j=j+1,
-            points=global_loft:'cset':j;
-            _draw_spline(points,number_of_tick)
-        );
-        c_for(i=0,i<n,i=i+1,
-            points=[];
+    c_for(i=0,i<n,i=i+1,
+        points=[];
+        if(m>1,
             c_for(j=0,j<m,j=j+1,
                 points+=global_loft:'cset':j:i;
             );
-            _draw_spline(points,number_of_tick);
+            _draw_spline(points,number_of_tick,0xFFFFFFFF);
         )
+    );
+    [s,p]=_get_cursor_position();
+    if(p==0,(
+            point=global_loft:'sets':s:p;
+            draw_shape('sphere',number_of_tick,{'center'->point+0.5,'radius'->1,'color'->0xCCCC00FF})
+        ),(
+            s=s-1;
+            if(p==length(global_loft:'sets':s),
+                point=global_loft:'sets':s:(p-1);
+                draw_shape('sphere',number_of_tick,{'center'->point+0.5,'radius'->1,'color'->0x009999FF}),
+                
+                point=global_loft:'sets':s:(p-1);
+                p2=global_loft:'sets':s:p;
+                draw_shape('line',number_of_tick,{'from'->point+0.51,'to'->p2+0.51,'color'->0x00FFFFFF})
+            )
+        )     
+    );
+    _draw_cross(point,number_of_tick,0xFF0000FF)
+);
+_draw_cross(pos,number_of_tick,color)->(
+    a=[1,1,1];
+    b=[1,1,-1];
+    c=[1,-1,-1];
+    d=[1,-1,1];
+    draw_shape('line',number_of_tick,{'from'->pos+0.5+a,'to'->pos+0.5-a,'color'->color});
+    draw_shape('line',number_of_tick,{'from'->pos+0.5+b,'to'->pos+0.5-b,'color'->color});
+    draw_shape('line',number_of_tick,{'from'->pos+0.5+c,'to'->pos+0.5-c,'color'->color});
+    draw_shape('line',number_of_tick,{'from'->pos+0.5+d,'to'->pos+0.5-d,'color'->color})
+);
+_draw_surf_tick() -> (
+    if(global_loft:'draw',
+        _draw_surf(5);
+        schedule(4, '_draw_surf_tick')
     )
 );
-
-_draw_surf_tick() -> (
-    _draw_surf(12);
-    if(global_loft:'draw', schedule(10, '_draw_surf_tick') )
-);
-
 _set_block(pos)->( //function for setting block and storing their preavious value in global_affected_block
     if(block(pos)!=global_loft:'material',
         if((block(pos)==global_loft:'replace')||(global_loft:'replace'==null),
@@ -267,7 +332,6 @@ _set_block(pos)->( //function for setting block and storing their preavious valu
         )
     )
 );
-
 _leng_approx(a,b,c)->( //function that approximate the length of a piece of quadratic spline given its 3 control points
     L1=0.5*(a-b);
     L2=0.5*(b-c);
@@ -276,7 +340,6 @@ _leng_approx(a,b,c)->( //function that approximate the length of a piece of quad
     sqrt((L2:0)^2+(L2:1)^2+(L2:2)^2)+
     sqrt((L3:0)^2+(L3:1)^2+(L3:2)^2)
 );
-
 _paste_patch(p00,p01,p10,p11,a0,a1,b0,b1,c)->( //function used to paste a patch of the surface
     v=0;
     lvmax=max(
@@ -310,7 +373,6 @@ _paste_patch(p00,p01,p10,p11,a0,a1,b0,b1,c)->( //function used to paste a patch 
         )
     )
 );
-
 paste(Block,replace)->(
     global_loft:'material'=Block;
     global_loft:'replace'=replace;
@@ -333,13 +395,8 @@ paste(Block,replace)->(
             )
         );
         schedule(1,'_add_to_history');
-        global_loft:'draw'=false;
-        global_loft:'sets'=[];
-        global_loft:'cset'=[];
-        global_loft:'points'=[]
     )
 );
-
 _add_to_history()->(
 	if(length(global_loft:'affected_blocks')==0,return);
 	operation={'affected_position'->global_loft:'affected_blocks'};
@@ -347,7 +404,6 @@ _add_to_history()->(
 	global_loft:'affected_blocks'=[];
     print('done');
 );
-
 undo()->(
 	if(length(global_loft:'history')==0,print('no mooves to undo');return);
 	operation=global_loft:'history':(length(global_loft:'history')-1);
@@ -357,3 +413,34 @@ undo()->(
 	);
 	delete(global_loft:'history',length(global_loft:'history')-1)
 );
+
+del(ob)->(
+    if(length(global_loft:'sets')!=0,
+        [s,p]=_get_cursor_position();
+        if(p>0,s=s-1);
+        if(ob=='spline',
+            delete(global_loft:'sets':s)
+        );
+        if(ob=='point',
+            if(length(global_loft:'sets':s)==1,
+                delete(global_loft:'sets':s),
+                if(p==0,
+                    delete(global_loft:'sets':s:p),
+                    delete(global_loft:'sets':s:(p-1))
+                )
+            )
+        );
+        if(ob=='all',
+            global_loft:'sets'=[];
+            global_loft:'cset'=[];
+            global_loft:'a'=[];
+            global_loft:'b'=[];
+            global_loft:'c'=[];
+            global_loft:'cursor'=0
+        );
+        if(global_loft:'sets'==[],
+            global_loft:'draw'=false,
+            _normalise_set();
+        )
+    )
+)
