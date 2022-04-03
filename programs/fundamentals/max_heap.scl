@@ -1,3 +1,11 @@
+//A library script which contains the class of max heaps, implemented using classes.scl
+//If you want to know how a max heap works, see documentation of min_heaps.sc (which works very differently)
+//
+//To use this, import it into your script, and then import 'call_function' from classes.scl, so you can use the methods
+//At the bottom, commented out, is an example script showing how it works and how to use it.
+//
+//By: Ghoulboy
+
 import('classes', 'new_class', 'new_object', 'call_function');
 
 max_heap_class = new_class('MaxHeap', {
@@ -58,21 +66,21 @@ max_heap_class = new_class('MaxHeap', {
 max_heap(outer(max_heap_class), maxsize) -> new_object(max_heap_class, maxsize);
 
 //This is an example of using a MaxHeap
-//heap = new_object(max_heap, 10);
-//print(heap:'_Heap');
+//heap = new_object(max_heap, 5);
+//print(heap:'_Heap');					=> [0, 0, 0, 0, 0]
 //call_function(heap, 'insert', 1);
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [1, 0, 0, 0, 0]
 //call_function(heap, 'insert', 3);
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [3, 1, 0, 0, 0]
 //call_function(heap, 'insert', 3);
-//print(heap:'_Heap');
-//print(call_function(heap, 'remove'));
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [3, 3, 0, 1, 0]
+//print(call_function(heap, 'remove')); => 3
+//print(heap:'_Heap');					=> [3, 1, 0, 1, 0] //The extra 1 here is becase we don't remove it from the list, rather overwrite it later
 //call_function(heap, 'insert', 5);
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [5, 3, 0, 1, 0] //The first 1 from before has overwritten the trailing 1
 //call_function(heap, 'insert', 6);
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [6, 5, 3, 1, 0]
 //print(call_function(heap, 'remove'));
-//print(heap:'_Heap');
+//print(heap:'_Heap');					=> [5, 3, 0, 1, 0]
 //
-//print(heap);
+//print(heap); => {remove: _, __name__: MaxHeap, _Heap: [5, 3, 0, 1, 0], _leftChild: _, _isLeaf: _, _rightChild: _, _maxHeapify: _, __init__: _, _swap: _, insert: _, _parent: _, _FRONT: 0, size: 3, max_size: 5}

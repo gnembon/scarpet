@@ -1,5 +1,29 @@
+//Library functions which add classes to scarpet
+//
+//Only use this if you understand the syntax, and if you have little other choice, as it adds a lot of syntactic parameters
+//which may make your code harder to read.
+//
+//This implementation makes maps as classes, and each map has to have a __init__ function.
+//All functions must take at least one parameter (like in Python 'self'), and then any additional parameters.
+//If the function should return nothing, then return just the object itself (with any modifications that the function adds)
+//If the function should return something, return a list with the object as the first element, and return value as the second
+//For fields, just access and set them like you would access and set values in a normal map
+//
+//When declaring methods in the class, you can optionally add a _ infront of them to make them private.
+//This means that they cannot be called using call_function(), telling the programmer that they're potentially dangerous.
+//When calling functions within the class methods, just use call(self:function_name, self, args).
+//This allows you to access private functions within the object.
+//
+//When calling a function, use call_function(), with the object as the first parameter, function name as the second
+//and then any arguments at the end. If the function has a return value, then call_function() will return it, otherwise
+//it will return null.
+//
+//
+//For an example of all this, see max_heap.scl
+//By: Ghoulboy
 
-//Mostly just a decorator tbh, but it allows user to be sure that if it passes through here
+
+//Mostly just a decorator function tbh, but it allows user to be sure that if it passes through here
 //then it's a valid class
 new_class(name, declarer)->(
     if(!has(declarer, '__init__') || type(declarer:'__init__')!='function', throw('missing_constructor', 'value_exception', declarer));
@@ -11,7 +35,7 @@ is_class(class)->
     has(class, '__init__') && type(class:'__init__')=='function' && has(class, '__name__');
 
 check_class(class)->
-    if(!is_class(class), throw('unknown_class', 'value_exception', class));
+    if(!is_class(class), throw('invalid_class', 'value_exception', class));
 
 //object is literally the same as class, except we have called initializer
 new_object(class, ...args)->(
@@ -20,7 +44,7 @@ new_object(class, ...args)->(
 );
 
 //This is for calling public functions (which don't begin with _)
-//You can use call() directly, but this gives return value of functions neatly
+//You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
 call_function(object, function, ...args)->(
     check_class(object);
     if(!has(object, function), throw('unknown_method', 'value_exception', function));
