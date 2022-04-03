@@ -1,6 +1,6 @@
 import('classes', 'new_class', 'new_object', 'call_function');
 
-max_heap = new_class('MaxHeap', {
+max_heap_class = new_class('MaxHeap', {
     '__init__'->_(self, max_size)->(
         self:'max_size' = max_size;
         self:'size' = 0;
@@ -54,6 +54,8 @@ max_heap = new_class('MaxHeap', {
         [self, popped]
     ),
 });
+
+max_heap(outer(max_heap_class), maxsize) -> new_object(max_heap_class, maxsize);
 
 //This is an example of using a MaxHeap
 //heap = new_object(max_heap, 10);
