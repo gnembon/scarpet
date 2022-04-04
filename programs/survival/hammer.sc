@@ -36,12 +36,13 @@ __on_player_clicks_block(player, block, face) -> if (global_radius,
 	for(global_breakrange, particle('block '+block(_), _, 100, 0, 0.7))
 );
 
-__on_player_breaks_block(player, block) -> 
-(
+__on_player_breaks_block(player, block) -> (
 	block_range = global_breakrange;
 	global_breakrange = null;
-	if (!global_radius || !block_range, return());
-	item_mainhand = player ~ 'holds';
-	if(!item_mainhand || !(item_mainhand:0 == 'stone_pickaxe'), return());
-	for(block_range, harvest(player, _); signal_event('player_breaks_block', player, player, _))
+	if (global_active && global_radius && block_range,
+		item_mainhand = player ~ 'holds';
+		if(item_mainhand && item_mainhand:0 == 'stone_pickaxe',
+			for(block_range, harvest(player, _); signal_event('block_broken', player, pos(_)))
+		)
+	)
 )

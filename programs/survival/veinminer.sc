@@ -1,3 +1,10 @@
+// stay loaded
+__config() -> (
+   m(
+      l('stay_loaded','true')
+   )
+);
+
 __holds(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));
@@ -43,6 +50,7 @@ __cascade_pick(player, ttl, block_name, position, break_block) ->
 		if (block != block_name, return());
 		//set(block, 'air')
 		harvest(player, block);
+		signal_event('block_broken_no_delay', player, pos(block))
 	);
 	l(x,y,z) = position;
 	penalty = 0.5+rand(1);

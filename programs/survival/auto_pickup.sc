@@ -1,17 +1,14 @@
 // stay loaded
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
+__config() -> {
+	'stay_loaded'->'true'
+};
 
 // seems like drops are generated later, before the callback is made
 // so we execute moving items at the end of the tick
 __on_player_breaks_block(player, block) -> 
 (
-	schedule(0,'_move_items_to_inventory', player, pos(block))
+	signal_event('block_broken', player, pos(block));
 );
-
 
 // (_ ~ 'pickup_delay') == 10 check is optional
 // it will only pick up items that are 'pick-broken'.
@@ -59,4 +56,8 @@ _move_items_to_inventory(player, coords) ->
 			modify(current_entity_item, 'remove')
 		)
 	)
-)
+);
+
+
+handle_event('block_broken', _(pp)->schedule(0,'_move_items_to_inventory', player(), pp));
+handle_event('block_broken_no_delay', _(pp)->_move_items_to_inventory(player(), pp));
