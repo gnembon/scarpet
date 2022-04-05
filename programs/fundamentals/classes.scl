@@ -40,7 +40,8 @@ check_class(class)->
 //object is literally the same as class, except we have called initializer
 new_object(class, ...args)->(
     check_class(class);
-    call(class:'__init__', class, ...args);
+    object = copy(class);
+    call(object:'__init__', object, ...args);
 );
 
 //This is for calling public functions (which don't begin with _)
