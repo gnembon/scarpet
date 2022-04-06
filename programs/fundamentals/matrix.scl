@@ -1,176 +1,171 @@
-//A library of functions to create and manipulate matrices. These are as of now just lists of lists of numbers, but with these functions they can act as matrices
-//This is of course an abstract library, which will no doubt be replaced by a better native scarpet implementation in the future, but it will do for now.
-//This may be temporary in case gnembon adds matrices into scarpet as a built in data structure, but nothing is certain so far.
+//A library of functions to create and manipulate matrices. It uses classes.scl, and is written as a class
+//To use it, import the matrix_data and matrix_empty functions from here and call_function from classes.scl
+//The matrix_data function takes in a list of lists of numbers, and returns an appropriate matrix
+//  my_matrix = matrix_data([[1, 2], [3, 4]])
+//The matrix_empty functoin takes in a row number and column number, and returns an empty matrix
+//  empty_matrix = matrix_empty(3, 4)
+//
+//To call a method, use call_function(matrix_object, function_name, args)
+//To get your matrix as a string, use call_function(matrix_object, 'str')
+//To access the matrix's fields, use matrix_object:fieldname
+//  matrix_data = matrix_object:'data'
+//  matrix_rows = matrix_object:'rows'
+//  matrix_cols = matrix_object:'cols'
+//  is_matrix_square = matrix_object:'is_square'
+//
 //By: Ghoulboy
 
-zero_matrix(width, height)->(//creates a zero matrix (so all 0 values)
-    matrix = [];
-    loop(height,
-        matrix: _= [];
-        w = _;
-        loop(width,
-            matrix:w:_ = 0
+import('classes', 'new_class', 'call_function', 'new_object');
+
+//class code taken from https://gist.github.com/hallazzang/4e6abbb05ff2d3e168a87cf10691c4fb
+matrix_class = new_class('Matrix', {
+    'data'->null,
+    'rows'->0,
+    'cols'->0,
+    'is_square'->null,
+    '__init__'->_(self, ...args)->(
+        if(length(args)==1,
+            call(self:'__init_data', self, args:0),
+            length(args)==2,
+            call(self:'__init_empty', self, args:0, args:1),
+            throw('Must initialise a matrix with either 1 data value or a row number and column number')
+        )
+    ),
+    '__init_data'->_(self, data)->(
+        if(!is_matrix(data), throw('Must initialize a matrix with a list of lists of numbers with even lengths'));
+        self:'data' = data;
+        self:'rows'=length(data);
+        self:'cols'=length(data:0);
+        self:'is_square'=length(data)==length(data:0);
+        self
+    ),
+    '__init_empty'->_(self, rows, cols)->(
+        data = [];
+        col = [];
+        loop(cols, col+=0);
+        loop(rows, data+=copy(col));
+        self:'data' = data;
+        self:'rows'=rows;
+        self:'cols'=cols;
+        self:'is_square'=rows==cols;
+        self
+    ),
+    'str'->_(self)->[self, str(self:'data')],
+    'transpose'->_(self)->(
+        result = matrix_empty(self:'cols', self:'rows');
+        result:'data' = _iterate(result:'data', _(outer(self), v, r, c)->
+            self:'data':c:r
         );
+        [self, result]
+    ),
+    'sub_matrix'->_(self, exclude_row, exclude_column)->(
+        result = matrix_empty(self:'rows'-1, self:'cols'-1);
+        p=0;
+        q=0;
+        result:'data'=_iterate(result:'data', _(outer(self), outer(exclude_row), outer(exclude_column), v, r, c)->(
+            x = if(r<exclude_row, r, r+1);
+            y = if(c<exclude_column, c, c+1);
+            self:'data':x:y
+        ));
+        [self, result]
+    ),
+    'row'->_(self, row)->[self, self:'data':row],
+    'column'->_(self, column)->(
+        col = [];
+        loop(length(self:'data'), col+=self:'data':_:column);
+        [self, col]
+    ),
+    'determinant'->_(self)->[self, if(!self:'is_square', null, call(self:'_determinant', self):1)],
+    '_determinant'->_(self)->(
+        data=self:'data';
+        if(self:'cols'==1,
+            result=data:0:0,
+            self:'cols'==2,
+            result=data:0:0*data:1:1-data:0:1*data:1:0,
+            result=0;
+            loop(self:'cols',
+                col=_;
+                sub = call_function(self, 'sub_matrix', 0, col);
+                result+=((col)%2*-2+1)*(data:0:col)*(call(sub:'_determinant', sub):1) 
+            )
+        );
+        [self, result]
+    ),
+    'inverse'->_(self)->( //todo fix this, seems broken
+        det = call_function(self, 'determinant');
+        result = null;
+        if(!self:'is_square' || det == 0,
+            self,
+            result = matrix_empty(self:'rows', self:'cols');
+            result:'data'=_iterate(self:'data', _(outer(self), outer(det), v, r, c)->(
+                sub = call_function(self, 'sub_matrix', r, c);
+                1/det*((r+c)%2*-2+1)*call(sub:'determinant', sub):1
+            ));
+            [self, result]
+        );
+    ),
+    'add'->_(self, matrix)->(
+        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
+        check_matrix(matrix:'data');
+        if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
+            throw('Cannot add uneven matrices')
+        );
+        result = copy(self);
+        result:'data' = self:'data' + matrix:'data';
+        [self, result]
+    ),
+    'subtract'->_(self, matrix)->(
+        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
+        check_matrix(matrix:'data');
+        if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
+            throw('Cannot subtract uneven matrices')
+        );
+        result = copy(self);
+        result:'data' = self:'data' - matrix:'data';
+        [self, result]
+    ),
+    'multiply'->_(self, matrix)->(
+        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
+        check_matrix(matrix:'data');
+        if(matrix:'rows'!=self:'cols',
+            throw('The first matrix\'s columns must equal the second\'s rows')
+        );
+        result = matrix_empty(self:'rows', matrix:'cols');
+        result:'data'=_iterate(result:'data', _(outer(self), outer(matrix), v, r, c)->(
+            sum(...(call_function(self, 'row', r)*call_function(matrix, 'column', c))) 
+        ));
+        [self, result]
+    ),
+});
+
+//Checks for a list of lists of numbers
+is_matrix(data)-> (type(data)=='list' && (
+    init_length = length(data:0);
+    d = for(data,
+        l=_;
+        type(l)=='list' && for(l, type(_)=='number') == init_length
     );
-    matrix
-);
+    d==length(data)
+));
 
-_create_matrix(...columns)->( //creating matrix a bunch of columns, or as a singleton list of columns
-    if(is_matrix(columns),
-        matrix = columns,
-        check_matrix(columns:0); //if this throws an error (i.e that is not a matrix) then it will fail, if not return null and continue as normal
-        matrix = columns:0
-    );
-    matrix
-);
+//If it's not a matrix, throws an error
+check_matrix(data)->if(!is_matrix(data), throw('invalid_matrix', 'value_exception', data));
 
-is_matrix(matrix)->(//returns boolean, true if given value is a matrix and false otherwise
-
-    try(//cos scarpet try doesn't actually catch errors, only when you call throw() function
-
-        if(type(matrix) == 'list' && length(matrix)>0 && type(matrix:0)=='list',//doing easy checks first, so it fails early without having to do excess computation.
-
-            //checking if all columns are the same length
-            col_size = length(matrix:0);
-            if(col_size==0, throw());//checking that it's not got empty columns (cos that technically passes the next check)
-
-            //checking if all the items are numbers
-            loop(length(matrix),
-                row = _;
-
-                if(length(matrix:_)!=col_size, throw()); //checking that all columns are the same length
-
-                loop(col_size,
-                    if(type(matrix:row:_)!='number',
-                        throw()
-                    )
-                )
-            ),
-
-            throw()
-        ),
-        return(false)
-    );
-    true
-);
-
-is_vector(vector)->//checking like this so the first check fails without having to iterate over the whole list potentially
-    !(type(vector)!='list' || length(vector)==0 || first(vector, type(_)!='number'));
-
-check_matrix(matrix)->( //checks if given value is a matrix, and if not throws an error
-    if(!is_matrix(matrix),// todo decide whether or not to give more detailed error, i.e what exactly went wrong
-        exit(print('Operation is invalid, "' + matrix + '" is not a matrix'))
-    )
-);
-
-
-identity(size)->(//returns identity matrix of given size
-    identity = [];
-    loop(size,
-        width = _;
-        identity:_=[];
-        loop(size, //cos its always a square matrix
-            identity:width:_ = width ==_
+//Iterate across rows and columns
+_iterate(data, func)->(
+    _data = data;
+    rows = length(_data);
+    cols = length(_data:0);
+    loop(rows,
+        r=_;
+        loop(cols,
+            c=_;
+            d=_data:r:c;
+            _data:r:c = call(func, d, r, c)
         )
     );
-    identity
+    _data
 );
 
-get_column(matrix, column)->( //get_row func would be identical to matrix:row, whereas here you need that element of each list, which is O(n)
-    check_matrix(matrix);
-    if(length(matrix:0)<=column,
-        exit(print(str('Index out of bounds, cannot access %s column of %s by %s matrix', column, length(matrix), length(matrix:0))))
-    );
-    col = [];
-    loop(length(matrix),
-        col:_ = matrix:_:column
-    );
-    col
-);
-
-matrix_add(a, b) ->( //returns a new matrix whose values are the sum of the two input matrices
-    check_matrix(a);
-    check_matrix(b);
-
-    if(length(a)!=length(b) || length(a:0)!=length(b:0),
-        exit(print('Cannot add uneven matrices'))
-    );
-
-    sum = [];
-
-    loop(length(a),
-        width = _;
-        sum:width=[];
-        loop(length(a:0),
-            sum:width:_ = a:width:_ + b:width:_
-        )
-    );
-    sum
-);
-
-matrix_subtract(a, b) ->( //returns a new matrix whose values are the difference of the two input matrices (i.e a - b)
-    check_matrix(a);
-    check_matrix(b);
-
-    if(length(a)!=length(b) || length(a:0)!=length(b:0),
-        exit(print('Cannot subtract uneven matrices'))
-    );
-
-    dif = [];
-
-    loop(length(a),
-        width = _;
-        dif:width=[];
-        loop(length(a:0),
-            dif:width:_ = a:width:_ - b:width:_
-        )
-    );
-    dif
-);
-
-//This is complicated, because you can do many things here, depending if input is scalar, vector or matrix:
-//  scalar * scalar = error (y doin that op here)
-//  scalar * vector = error (y doin that op here)
-//  scalar * matrix = error (cannot do it in this order). Still gotta handle.
-//  vector * scalar = error (y doin that op here)
-//  vector * vector = matrix with rows same as length of first vector, columns same as that of second.
-//  vector * matrix = error unless vector length is equal to matrix rows (so treating vector as 1*m matrix, where m is rows of the matrix with which ur multiplying), in which case it's a vector
-//  matrix * scalar = matrix scaled by scalar
-//  matrix * vector = error unless vector length is equal to matrix columns (so treating vector as 1*n matrix, where n is columns of the matrix with which ur multiplying), in which case it's a vector
-//  matrix * matrix = regular matrix operation.
-
-matrix_multiply(a, b) ->(
-    if(type(a)=='list', //if not a list, must be a scalar
-        result = [];
-        if(is_vector(a), // vector * something
-            if(is_vector(b),//vector * vector = matrix
-                loop(length(a),
-                    width = _;
-                    result:_=[];
-                    loop(length(b),
-                        result:width:_ = a:width * b:_
-                    )
-                ),
-                is_matrix(b),//vector * matrix = vector
-                if(length(a)==length(b),
-                    loop(length(b),
-                        row=_;
-                        result:row = reduce(b:row, _a + (_ * a:row),0);
-                    ),
-                    exit(print(str('Cannot multiply vector %s by matrix %s in this order, they have mismatched sizes', a, b)))
-                ),
-                exit(print('Why are you doing that operation here?'))
-            ),//in case they inputted a list which wasn't a vector.
-            is_matrix(a), //matrix * something
-            if(is_vector(b), //matrix * vector = vector
-                
-            ),
-            exit(print(a + ' is not a valid vector or matrix'))
-        ),
-        exit(print(if(is_matrix(b),
-            'Cannot multiply a scalar by a matrix in that order (try the other way around)',
-            'Why are you doing that operation here?'
-        )))
-    );
-    result
-);
+matrix_data(outer(matrix_class), data)->new_object(matrix_class, data);
+matrix_empty(outer(matrix_class), rows, cols)->new_object(matrix_class, rows, cols)
