@@ -10,6 +10,7 @@ global_server_min_render_distance = 10;
 
 __config() -> {
     'scope' -> 'global',
+    'command_permission' -> 'ops',
     'commands' -> {
         'display maximumRenderDistance <max>' -> 'set_display_max_render_distance',
         'display mininumRenderDistance <min>' -> 'set_display_min_render_distance',
