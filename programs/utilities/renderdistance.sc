@@ -82,7 +82,7 @@ set_display_refresh_timer(seconds) -> (
 );
 
 state_current_settings() -> (
-    print(format(' The current display render distance min/max is ', str('l %d', global_server_min_render_distance), 'g -', str('l %d', global_server_max_render_distance), '  chunks, and current display refresh time is ', str('l %d', global_refresh_timer/20), '  seconds'));
+    print(format(' The current display render distance min/max is ', str('l %d', global_server_min_render_distance), 'g -', str('l %d', global_server_max_render_distance), '  chunks, and current display refresh time is ', str('l %d', global_refresh_time_in_ticks/20), '  seconds'));
 );
 
 
