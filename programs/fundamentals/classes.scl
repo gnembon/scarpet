@@ -1,8 +1,5 @@
 //Library functions which add classes to scarpet
 //
-//Only use this if you understand the syntax, and if you have little other choice, as it adds a lot of syntactic parameters
-//which may make your code harder to read.
-//
 //This implementation makes maps as classes, and each map has to have a __init__ function.
 //All functions must take at least one parameter (like in Python 'self'), and then any additional parameters.
 //If the function should return nothing, then return just the object itself (with any modifications that the function adds)
@@ -22,27 +19,47 @@
 //For an example of all this, see max_heap.scl
 //By: Ghoulboy
 
-
-//Mostly just a decorator function tbh, but it allows user to be sure that if it passes through here
-//then it's a valid class
-new_class(name, declarer)->(
-    if(!has(declarer, '__init__') || type(declarer:'__init__')!='function', throw('missing_constructor', 'value_exception', declarer));
+//Initializes a class with its parent classes, which are passed in as their classes, not their names
+//We need the classes to complete the declaration of the class by essentially filling in all the missing methods
+new_class(name, declarer, ...parents)->(
     declarer:'__name__' = name;
+    declarer:'__parents__' = {}; //Set to avoid duplicate parentage
+    for(parents,
+        class=_;
+        declarer:'__parents__'+=class:'__name__';
+        for(class,
+            member = _;
+            if(member=='__parents__',//Pushing parent' parents into child's parents
+                declarer:'__parents__' = declarer:'__parents__' + class:member,
+                !has(declarer, member), //stuff which the declarer doesn't override
+                declarer:member = class:member
+            );
+        )
+    );
+    //Checking for initializer here cos it could have been stolen from a parent class
+    if(!has(declarer, '__init__') || type(declarer:'__init__')!='function', throw('missing_constructor', 'value_exception', declarer));
     declarer
 );
 
+
+//Checks that a given input is a class.
+//NB: this only checks that it has a valid constructor and has a __name__ property
 is_class(class)->
     has(class, '__init__') && type(class:'__init__')=='function' && has(class, '__name__');
 
+//This throws an exception if a given input is not a valid class
 check_class(class)->
     if(!is_class(class), throw('invalid_class', 'value_exception', class));
 
-//object is literally the same as class, except we have called initializer
+//the object is literally the same as class, except we have called initializer
 new_object(class, ...args)->(
     check_class(class);
-    object = copy(class);
+    object = copy(class); //this is to avoid modifying the original map
     call(object:'__init__', object, ...args);
 );
+
+//Basically java instanceof operator
+instance_of(object, class_name)->has(object:'__parents__', class_name);
 
 //This is for calling public functions (which don't begin with _)
 //You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
