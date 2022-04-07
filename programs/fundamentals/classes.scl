@@ -59,7 +59,7 @@ new_object(class, ...args)->(
 );
 
 //Basically java instanceof operator
-instance_of(object, class_name)->has(object:'__parents__', class_name);
+instance_of(object, class_name)->object:'__name__'==class_name || has(object:'__parents__', class_name);
 
 //This is for calling public functions (which don't begin with _)
 //You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
