@@ -29,7 +29,7 @@ new_class(name, declarer, ...parents)->(
         declarer:'__parents__'+=class:'__name__';
         for(class,
             member = _;
-            if(member=='__parents__',//Pushing parent' parents into child's parents
+            if(member=='__parents__',//Pushing parents' parents into child's parents
                 declarer:'__parents__' = declarer:'__parents__' + class:member,
                 !has(declarer, member), //stuff which the declarer doesn't override
                 declarer:member = class:member
@@ -45,7 +45,7 @@ new_class(name, declarer, ...parents)->(
 //Checks that a given input is a class.
 //NB: this only checks that it has a valid constructor and has a __name__ property
 is_class(class)->
-    has(class, '__init__') && type(class:'__init__')=='function' && has(class, '__name__');
+    type(class)=='map' && has(class, '__init__') && type(class:'__init__')=='function' && has(class, '__name__') && has(class, '__parent__');
 
 //This throws an exception if a given input is not a valid class
 check_class(class)->
@@ -59,7 +59,7 @@ new_object(class, ...args)->(
 );
 
 //Basically java instanceof operator
-instance_of(object, class_name)->object:'__name__'==class_name || has(object:'__parents__', class_name);
+instance_of(object, class_name)->is_class(object)&&(object:'__name__'==class_name || has(object:'__parents__', class_name));
 
 //This is for calling public functions (which don't begin with _)
 //You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
