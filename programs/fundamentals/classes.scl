@@ -30,10 +30,19 @@ new_class(name, declarer, ...parents)->(
         for(class,
             member = _;
             if(member=='__parents__',//Pushing parents' parents into child's parents
-                declarer:'__parents__' = declarer:'__parents__' + class:member,
+                declarer:'__parents__' = declarer:'__parents__' + class:'__parents__',
                 !has(declarer, member), //stuff which the declarer doesn't override
                 declarer:member = class:member
             );
+        )
+    );
+    if(name!='Object',
+        object = object_class();
+        for(object,
+            member = _;
+            if(!has(declarer, member),
+                declarer:member = object:member
+            )
         )
     );
     //Checking for initializer here cos it could have been stolen from a parent class
@@ -76,3 +85,22 @@ call_function(object, function, ...args)->(
         throw('invalid_function_return', 'value_exception', cb)
     )
 );
+
+
+//This is a fundamental base class which all classes inherit from.
+//It contains base methods which we can guarantee will be in all classes
+//A bit of the code is copied from Value.java, and some from Object.java
+object_class()->new_class('Object', {
+    '__init__'->_(self)->throw('Cannot initialize class of Object'),
+    'str'->_(self)->[self, self:'__name__' + '@' + call_function(self, 'hash')],
+    'hash'->_(self)->[self, hash(self)],
+    'number'->_(self)->[self, length(call_function(self, 'str'))],
+    'class'->_(self)->[self, self:'__name__'],
+    'equals'->_(self, obj)->[self, self==obj],
+    'clone'->_(self)->[self, copy(self)],
+    'bool'->_(self)->[self, bool(call_function(self, 'number'))],
+    'compare'->_(self, other)->[self, call_function(self, 'number') - call_function(other, 'number')],
+    'length'->_(self)->[self, length(call_function(self, 'str'))],
+    'nbt'->_(self)->[self, nbt(call_function(self, 'str'))],
+    'json'->_(self)->[self, encode_json(call_function(self, 'str'))],
+});
