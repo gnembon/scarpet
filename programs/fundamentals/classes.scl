@@ -118,7 +118,6 @@ global_object_class = new_class('Object', {
 
 //This will be used to simulate interfaces, essentially.
 //Classes which want to be interfaces can inherit from this and not specify a constructor
-//If you don't want
 global_interface_class = new_class('Interface', {
     '__init__'->_(self)->throw('Cannot initialize an interface class'),
 });
