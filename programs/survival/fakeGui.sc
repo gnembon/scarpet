@@ -45,11 +45,11 @@ __page(type_, creativeplayer, fakeplayer) -> (
             screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'command_name'+' the menu', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if(
-                    slot > 9*3-1, null,
                     action == 'close', (
                         global_fakeplayersscreen:fakeplayer = null;
                         drop_item(screen, -1);
                     ),
+                    slot > 9*3-1, null,
                     action == 'pickup', (
                         newPage = command = null;
 
@@ -121,11 +121,11 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                 screen = create_screen(player, 'generic_9x4','Backpack', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
                                     slot = data:'slot';
                                     if (
-                                        slot >= 0 && slot < 9, return('cancel'),
                                         action == 'close', (
                                             global_fakeplayersscreen:fakeplayer = null;
                                             drop_item(screen, -1);
                                         ),
+                                        slot >= 0 && slot < 9, return('cancel'),
                                         action == 'slot_update', if (
                                             slot >= 9 && slot <= 35, setPlayerInventory(models, screen, fakeplayer),
                                             slot >= 36 && slot <= 62, setScreenInventory(models, screen, fakeplayer),
@@ -180,11 +180,11 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                 screen = create_screen(player, 'generic_9x2','equipment bar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
                                     slot = data:'slot';
                                     if (
-                                        slot >= 0 && slot <= 9*2 && !first(map(models, _:1), _ == slot), return('cancel'),
                                         action == 'close', (
                                             global_fakeplayersscreen:fakeplayer = null;
                                             drop_item(screen, -1);
                                         ),
+                                        slot >= 0 && slot <= 9*2 && !first(map(models, _:1), _ == slot), return('cancel'),
                                         action == 'slot_update', if (
                                             first(map(models, _:1), _ == slot), setPlayerInventory(models, screen, fakeplayer),
                                             slot >= 36 && slot <= 40, setScreenInventory(models, screen, fakeplayer),
