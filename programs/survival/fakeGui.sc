@@ -15,7 +15,7 @@ __config() -> {
             if (
                 fakeplayer~'player_type' == 'fake' && player() != fakeplayer,
                 __page('menu', player(), fakeplayer),
-                display_title(player(), 'actionbar', '§4§Lwait he\'s not a fake player...'),
+                display_title(player(), 'actionbar', '§4§LThe is not the fake player.'),
             );
         ),
     },
@@ -33,16 +33,16 @@ global_fakeplayers_selected_slot = m();
 global_fakeplayersscreen = m();
 global_counts = m();
 global_models = l(
-    nbt('{ name: \'once\', title: \'§f§Lone click\', item: \'minecraft:minecart\'}'),
-    nbt('{ name: \'continuous\', title: \'§f§Lkeep clicking\', item: \'minecraft:apple\'}'),
-    nbt('{ name: \'interval\', title: \'§f§Ltime click\', item: \'minecraft:repeater\'}'),
+    nbt('{ name: \'once\', title: \'§f§Click once\', item: \'minecraft:minecart\'}'),
+    nbt('{ name: \'continuous\', title: \'§f§LKeep clicking\', item: \'minecraft:apple\'}'),
+    nbt('{ name: \'interval\', title: \'§f§LTiming click\', item: \'minecraft:repeater\'}'),
 );
 
 __page(type_, creativeplayer, fakeplayer) -> (
     if (
         // 菜單
         type_ == 'menu', (
-            screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'command_name'+' the menu', _(screen, player, action, data, outer(fakeplayer)) -> (
+            screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'command_name'+'\'s menu', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if(
                     action == 'close', (
@@ -87,13 +87,13 @@ __page(type_, creativeplayer, fakeplayer) -> (
             global_fakeplayersscreen:fakeplayer = [screen, models];
 
             for (l(
-                nbt('{ title: \'§f§Luse left button\', item: \'minecraft:wooden_sword\'}'),
-                nbt('{ title: \'§f§Lright click\', item: \'minecraft:cooked_porkchop\'}'),
-                nbt('{ title: \'§f§LBackpack menu\', item: \'minecraft:chest\'}'),
-                nbt('{ title: \'§f§Lleft and right hand interchange\', item: \'minecraft:magenta_glazed_terracotta\'}'),
-                nbt('{ title: \'§f§Ljump\', item: \'minecraft:rabbit_foot\'}'),
-                nbt('{ title: \'§f§Lstop\', item: \'minecraft:barrier\'}'),
-                nbt('{ title: \'§f§Lremove fake plater\', item: \'minecraft:tnt\'}'),
+                nbt('{ title: \'§f§LLeft click\', item: \'minecraft:wooden_sword\'}'),
+                nbt('{ title: \'§f§LRight click\', item: \'minecraft:cooked_porkchop\'}'),
+                nbt('{ title: \'§f§LBackpack\', item: \'minecraft:chest\'}'),
+                nbt('{ title: \'§f§LSwitch off-hand items\', item: \'minecraft:magenta_glazed_terracotta\'}'),
+                nbt('{ title: \'§f§LJump\', item: \'minecraft:rabbit_foot\'}'),
+                nbt('{ title: \'§f§LStop\', item: \'minecraft:barrier\'}'),
+                nbt('{ title: \'§f§LRemove\', item: \'minecraft:tnt\'}'),
             ), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
             setAir(screen);
         ),
@@ -102,8 +102,8 @@ __page(type_, creativeplayer, fakeplayer) -> (
             // I18n
             models = [
                 nbt('{ slot: 0, item: \'white_shulker_box\', title: \'Backpack\' }'),
-                nbt('{ slot: 1, item: \'minecraft:wooden_pickaxe\', title: \'toolbar\' }'),
-                nbt('{ slot: 2, item: \'minecraft:leather_chestplate\', title: \'equipment bar\' }'),
+                nbt('{ slot: 1, item: \'minecraft:wooden_pickaxe\', title: \'Toolbar\' }'),
+                nbt('{ slot: 2, item: \'minecraft:leather_chestplate\', title: \'Equipment bar\' }'),
             ];
             // I18n
             screen = create_screen(creativeplayer, 'generic_9x3', 'Backpack menu', _(screen, player, action, data, outer(fakeplayer)) -> (
@@ -121,7 +121,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                 close_screen(screen);
                                 models = map(range(27), [_+9, _+9]);
                                 // I18n
-                                screen = create_screen(player, 'generic_9x4','Backpack', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                                screen = create_screen(player, 'generic_9x4', 'Toolbar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
                                     slot = data:'slot';
                                     if (
                                         action == 'close', (
@@ -145,7 +145,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                 close_screen(screen);
                                 models = map(range(9), [_, _+9]);
                                 // I18n
-                                screen = create_screen(player, 'generic_9x2','toolbar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                                screen = create_screen(player, 'generic_9x2', 'toolbar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
                                     slot = data:'slot';
                                     if (
                                         action == 'close', (
@@ -180,7 +180,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                     [36, 7, nbt('{ item: \'minecraft:leather_boots\' }')]
                                 ];
                                 // I18n
-                                screen = create_screen(player, 'generic_9x2','equipment bar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                                screen = create_screen(player, 'generic_9x2','Equipment bar', _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
                                     slot = data:'slot';
                                     if (
                                         action == 'close', (
@@ -214,7 +214,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
         // 使用
         type_ == 'use', (
             // I18n
-            screen = create_screen(creativeplayer,'generic_9x3','use mode', _(screen, player, action, data, outer(fakeplayer)) -> (
+            screen = create_screen(creativeplayer,'generic_9x3','Use mode', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if (
                     action == 'close', (
@@ -236,7 +236,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
         // 攻擊
         type_ == 'attack', (
             // I18n
-            screen = create_screen(creativeplayer, 'generic_9x3', 'attack mode', _(screen, player, action, data, outer(fakeplayer)) -> (
+            screen = create_screen(creativeplayer, 'generic_9x3', 'Attack mode', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if(
                     action == 'close', (
@@ -276,15 +276,15 @@ speedPage(creativeplayer, base_cmd) -> (
     global_counts:creativeplayer = 10;
     models = l(
         // I18n
-        nbt('{ title: \'§f§Ladd 10\', slot: 9, add: +10 }'),
-        nbt('{ title: \'§f§Ladd 1\', slot: 11, add: +1}'),
+        nbt('{ title: \'§f§LAdd 10\', slot: 9, add: +10 }'),
+        nbt('{ title: \'§f§LAdd 1\', slot: 11, add: +1}'),
         nbt('{ title: \''+global_counts:creativeplayer+'\', slot: 13 }'),
-        nbt('{ title: \'§f§Lremove1\', slot: 15, add: -1 }'),
-        nbt('{ title: \'§f§Lremove10\', slot: 17, add: -10 }'),
+        nbt('{ title: \'§f§LRemove1\', slot: 15, add: -1 }'),
+        nbt('{ title: \'§f§LRemove10\', slot: 17, add: -10 }'),
         nbt('{ title: \'§eDone\', slot: 22, item: \'minecraft:redstone_lamp\' }'),
     );
     // I18n
-    screen = create_screen(creativeplayer,'generic_9x3','set interval', _(screen, player, action, data, outer(models), outer(base_cmd)) -> (
+    screen = create_screen(creativeplayer,'generic_9x3','Set interval', _(screen, player, action, data, outer(models), outer(base_cmd)) -> (
         tick = global_counts:player;
         if (
             action == 'close', (
@@ -329,7 +329,7 @@ fromListSetAir(screen, listIndex) ->
     for (listIndex, if (
         inventory_get(screen, _) == null,
         // I18n
-        inventory_set(screen, _, 1, 'minecraft:light_gray_stained_glass_pane', nbt('{display:{Name:\'"you can not see me~~"\'},HideFlags:3}'))
+        inventory_set(screen, _, 1, 'minecraft:light_gray_stained_glass_pane', nbt('{display:{Name:\'""\'},HideFlags:3}'))
     ));
 setScreenInventory(models, screen, fakeplayer) -> if (models, for (models, (
     [playerSlot, screenSlot] = [_:0, _:1];
@@ -350,7 +350,7 @@ setSelected(screen, fakeplayer, slot) -> (
 create_datapack('invupd', 
     {
         // I18n
-        'readme.txt' -> ['This packet is built by carpet script','Original Author: scarlet', 'Remake: monkey'],
+        'readme.txt' -> ['This datapack is built by carpet script','Original Author: scarlet', 'Remake: monkey'],
         'data' -> {
             'chyx' -> {
                 'advancements' -> {
@@ -387,7 +387,7 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand) -> if (
     fakeplayer~'player_type' == 'fake',
     __page('menu', creativeplayer, fakeplayer),
     fakeplayer~'player_type' == 'singleplayer',
-    display_title(creativeplayer, 'actionbar', '§4§Lwait he\'s not a fake...')
+    display_title(creativeplayer, 'actionbar', '§4§LThe player is not the fake player.')
 );
 __on_tick() -> for(filter(player('all'), _~'player_type' == 'fake'),
     selected_slot = _~'selected_slot';
