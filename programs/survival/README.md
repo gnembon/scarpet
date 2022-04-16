@@ -392,6 +392,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	https://www.youtube.com/watch?v=TqgyvnjEAn4
 	Cos gnembon was too lazy to wait for amidst to update.
 
+### [fakeGui.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeGui.sc)
+#### By a3510377
+	Modify https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeplayer_inv_editor.sc Add instructions and update GUI
+
 ### Current content creators:
 	gnembonmc(obviously)
 	Pegasus Epsilon
@@ -414,4 +418,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	a3510377
 	(Many more hopefully!)
