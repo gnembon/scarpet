@@ -49,36 +49,39 @@ __page(type_, creativeplayer, fakeplayer) -> (
                         global_fakeplayersscreen:fakeplayer = null;
                         drop_item(screen, -1);
                     ),
-                    slot > 9*3-1, null,
-                    action == 'pickup', (
-                        newPage = command = null;
+                    action == 'pickup', 
+                    if (
+                        slot > 9*3-1, null,
+                        (
+                            newPage = command = null;
 
-                        if (
-                            slot == 16, command = 'kill',
-                            slot == 15, command = 'stop',
-                            slot == 14, command = 'jump',
-                            slot == 13, command = 'swapHands'
-                        );
+                            if (
+                                slot == 16, command = 'kill',
+                                slot == 15, command = 'stop',
+                                slot == 14, command = 'jump',
+                                slot == 13, command = 'swapHands'
+                            );
 
-                        if (
-                            command != null, (
-                                global_fakeplayersscreen:fakeplayer = null;
-                                run('player ' + (fakeplayer~'command_name') + ' ' + command);
+                            if (
+                                command != null, (
+                                    global_fakeplayersscreen:fakeplayer = null;
+                                    run('player ' + (fakeplayer~'command_name') + ' ' + command);
+                                    soundDell(player);
+                                    close_screen(screen);
+                                ),
+                                slot == 12, newPage = 'bag',
+                                slot == 11, newPage = 'use',
+                                slot == 10, newPage = 'attack',
+                            );
+
+                            if (newPage != null, (
                                 soundDell(player);
                                 close_screen(screen);
-                            ),
-                            slot == 12, newPage = 'bag',
-                            slot == 11, newPage = 'use',
-                            slot == 10, newPage = 'attack',
-                        );
-
-                        if (newPage != null, (
-                            soundDell(player);
-                            close_screen(screen);
-                            __page(newPage, player, fakeplayer);
-                        ));
+                                __page(newPage, player, fakeplayer);
+                            ));
+                            return('cancel'),
+                        ),
                     ),
-                    return('cancel'),
                 );
             ));
             global_fakeplayersscreen:fakeplayer = [screen, models];
@@ -200,8 +203,8 @@ __page(type_, creativeplayer, fakeplayer) -> (
                             )
                         );
                     ),
-                    return('cancel')
                 );
+                return('cancel');
             ));
             global_fakeplayersscreen:fakeplayer = [screen, models];
 
@@ -222,8 +225,8 @@ __page(type_, creativeplayer, fakeplayer) -> (
                         slot > 9*3-1, null,
                         getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' use '),
                     ),
-                    return('cancel')
                 );
+                return('cancel');
             ));
             global_fakeplayersscreen:fakeplayer = [screen, models];
 
@@ -233,7 +236,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
         // 攻擊
         type_ == 'attack', (
             // I18n
-            screen = create_screen(creativeplayer,'generic_9x3','attack mode', _(screen, player, action, data, outer(fakeplayer)) -> (
+            screen = create_screen(creativeplayer, 'generic_9x3', 'attack mode', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if(
                     action == 'close', (
@@ -244,9 +247,8 @@ __page(type_, creativeplayer, fakeplayer) -> (
                         slot > 9*3-1, null,
                         getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' attack ');
                     ),
-                    return('cancel'),
                 );
-
+                return('cancel');
             ));
             global_fakeplayersscreen:fakeplayer = [screen, models];
 
@@ -265,8 +267,8 @@ getClickType(slot, screen, creativeplayer, base_cmd) -> if (
             slot == 15, speedPage(creativeplayer, base_cmd),
         );
         if (type_ != null, (
-            close_screen(screen);
             run(base_cmd + type_);
+            close_screen(screen);
         ));
     ),
 );
@@ -309,11 +311,10 @@ speedPage(creativeplayer, base_cmd) -> (
                         inventory_set(screen, 13, 1, 'minecraft:structure_void', nbt('{display:{Name:\'"'+tick+'"\'},HideFlags:3}'));
                     ),
                 );
-            ), (
-                global_counts:player = tick;
-                return('cancel');
             ),
         );
+        global_counts:player = tick;
+        return('cancel');
     ));
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
@@ -382,7 +383,7 @@ __on_player_disconnects(fakeplayer, reason)->(
     ));
 );
 __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand) -> if (
-    creativeplayer == fakeplayer || creativeplayer~'player_type' != 'singleplayer' || hand != 'mainhand' || global_fakeplayersscreen:fakeplayer, null,
+    creativeplayer == fakeplayer || creativeplayer~'player_type' != 'singleplayer' || hand != 'mainhand', null,
     fakeplayer~'player_type' == 'fake',
     __page('menu', creativeplayer, fakeplayer),
     fakeplayer~'player_type' == 'singleplayer',
