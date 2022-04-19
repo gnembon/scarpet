@@ -42,7 +42,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
     if (
         // 菜單
         type_ == 'menu', (
-            screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'command_name'+'\'s menu', _(screen, player, action, data, outer(fakeplayer)) -> (
+            screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+'\'s menu', _(screen, player, action, data, outer(fakeplayer)) -> (
                 slot = data:'slot';
                 if(
                     action == 'close', (
@@ -137,7 +137,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
                                 ));
                                 global_fakeplayersscreen:fakeplayer = [screen, models];
                                 setScreenInventory(models, screen, fakeplayer);
-                                inventory_set(screen, 4, 1, 'minecraft:player_head', nbt('{SkullOwner:"'+fakeplayer+'",display:{Name:\'"'+fakeplayer+' 的包包"\'},HideFlags:3}'));
+                                inventory_set(screen, 4, 1, 'minecraft:player_head', nbt('{SkullOwner:"'+fakeplayer+'",display:{Name:\'"'+fakeplayer~'display_name'+' 的包包"\'},HideFlags:3}'));
                                 setAir(screen, 9*1);
                             ),
                             // 工具欄
