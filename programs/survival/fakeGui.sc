@@ -350,7 +350,7 @@ setSelected(screen, fakeplayer, slot) -> (
 create_datapack('invupd', 
     {
         // I18n
-        'readme.txt' -> ['This datapack is built by carpet script','Original Author: scarlet', 'Remake: monkey'],
+        'readme.txt' -> ['This datapack is built by carpet script','this data pack is created by scarpet','please dont touch it'],
         'data' -> {
             'chyx' -> {
                 'advancements' -> {
