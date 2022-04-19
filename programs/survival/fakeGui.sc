@@ -383,11 +383,8 @@ __on_player_disconnects(fakeplayer, reason)->(
     ));
 );
 __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand) -> if (
-    creativeplayer == fakeplayer || creativeplayer~'player_type' != 'singleplayer' || hand != 'mainhand', null,
-    fakeplayer~'player_type' == 'fake',
-    __page('menu', creativeplayer, fakeplayer),
-    fakeplayer~'player_type' == 'singleplayer',
-    display_title(creativeplayer, 'actionbar', '§4§LThe player is not the fake player.')
+    creativeplayer == fakeplayer || creativeplayer~'player_type' != 'fake' || hand != 'mainhand', null,
+    __page('menu', creativeplayer, fakeplayer)
 );
 __on_tick() -> for(filter(player('all'), _~'player_type' == 'fake'),
     selected_slot = _~'selected_slot';
