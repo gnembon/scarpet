@@ -10,7 +10,7 @@ __config() -> {
         'carpet' -> '>=1.4.57'
     },
     'commands' -> {
-        '' -> _() -> print(i18n(player(), 'help')),
+        '' -> _() -> print(i18n(player(), 'usage')),
         '<player>' -> _(fakeplayer) -> (
             fakeplayer = player(fakeplayer);
             if (
@@ -31,7 +31,7 @@ __config() -> {
 
 global_languages = {
     'zh_tw' -> {
-        'help' -> '\n如何使用:\n    右鍵點擊假人\n或是:\n    執行指令 /fakegui <player>',
+        'usage' -> '\n如何使用:\n    右鍵點擊假人\n或是:\n    執行指令 /fakegui <player>',
         'click_once' -> '點擊一次',
         'timing_click' -> '間隔點擊',
         'keep_clicking' -> '持續點擊',
@@ -54,30 +54,30 @@ global_languages = {
         'reduce' -> '減少',
     },
     'en_us' -> {
-        'help' -> '\nHow to use:\n    Right click on the fake player\nor:\n    Execute command /fakegui <player>',
-        'click_once' -> 'click one',
-        'timing_click' -> 'timeing click',
-        'keep_clicking' -> 'keep clicking',
-        'menu' -> 'menu',
+        'usage' -> '\nUsage:\n    Right click on the fake player\nor:\n    Execute command /fakegui <player>',
+        'click_once' -> 'Click once',
+        'timing_click' -> 'Timeing click',
+        'keep_clicking' -> 'Keeping click',
+        'menu' -> 'Menu',
         'who_menu' -> '\'s menu',
         'left_click' -> 'Left click',
         'right_click' -> 'Right click',
         'backpack' -> 'Backpack',
-        'switch_off-hand_items' -> 'switch off-hand items',
+        'switch_off-hand_items' -> 'Switch off-hand items',
         'jump' -> 'Jump',
-        'stop' -> 'stop the dummy',
-        'remove' -> 'remove the dummy',
-        'not_fake' -> 'The is not the fake player.',
+        'stop' -> 'Stop the Fake player',
+        'remove' -> 'remove the Fake player',
+        'not_fake' -> 'This player is not the Fake player.',
         'Toolbar' -> 'Toolbar',
         'equipment_bar' -> 'Equipment bar',
         'attack_mode' -> 'Attack mode',
         'use_mode' -> 'Use mode',
         'set_interval' -> 'Set interval',
-        'add' -> 'add',
-        'reduce' -> 'reduce',
+        'add' -> 'Add',
+        'reduce' -> 'Reduce',
     },
     'zh_cn' -> {
-        'help' -> '\n如何使用:\n    右键点击假人\n或是:\n    执行指令 /fakegui <player>',
+        'usage' -> '\n如何使用:\n    右键点击假人\n或是:\n    执行指令 /fakegui <player>',
         'click_once' -> '点击一次',
         'timing_click' -> '间隔点击',
         'keep_clicking' -> '持续点击',
