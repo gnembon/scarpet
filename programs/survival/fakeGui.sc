@@ -56,7 +56,7 @@ global_languages = {
     'en_us' -> {
         'usage' -> '\nUsage:\n    Right click on the fake player\nor:\n    Execute command /fakegui <player>',
         'click_once' -> 'Click once',
-        'timing_click' -> 'Timeing click',
+        'timing_click' -> 'Timing click',
         'keep_clicking' -> 'Keeping click',
         'menu' -> 'Menu',
         'who_menu' -> '\'s menu',
@@ -67,7 +67,7 @@ global_languages = {
         'jump' -> 'Jump',
         'stop' -> 'Stop the Fake player',
         'remove' -> 'remove the Fake player',
-        'not_fake' -> 'This player is not the Fake player.',
+        'not_fake' -> 'This player is not a Fake player.',
         'Toolbar' -> 'Toolbar',
         'equipment_bar' -> 'Equipment bar',
         'attack_mode' -> 'Attack mode',
