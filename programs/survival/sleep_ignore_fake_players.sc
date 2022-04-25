@@ -17,7 +17,7 @@ in_dimension('overworld',
             global_allPlayerSleep = false;
             l = day_time() + 24000;
             day_time(l - l % 24000);
-            run('weather clear');
+            weather('clear', round(rand(0xFFFFFFFF))
         );
     );
 
