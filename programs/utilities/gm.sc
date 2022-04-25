@@ -11,7 +11,7 @@
 __config() -> {'scope'->'global'};
 __command() -> '';
 
-c() -> (run('gamemode creative '+player()~'command_name');return('Set own game mode to Creative Mode'));
-s() -> (run('gamemode survival '+player()~'command_name');return('Set own game mode to Survival Mode'));
-sp() -> (run('gamemode spectator '+player()~'command_name');return('Set own game mode to Spectator Mode'));
-a() -> (run('gamemode adventure '+player()~'command_name');return('Set own game mode to Adventure Mode'))
+c() -> (run('gamemode creative '+player()~'command_name');'Set own game mode to Creative Mode');
+s() -> (run('gamemode survival '+player()~'command_name');'Set own game mode to Survival Mode');
+sp() -> (run('gamemode spectator '+player()~'command_name');'Set own game mode to Spectator Mode');
+a() -> (run('gamemode adventure '+player()~'command_name');'Set own game mode to Adventure Mode')
