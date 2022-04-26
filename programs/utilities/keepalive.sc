@@ -13,7 +13,8 @@ __on_server_starts() -> (
               str('gamemode %s %s', _:'gm', _:'name')],
             logger('warn', _);
             run(_);
-         )
+         );
+         modify(player(_:'name'), 'flying', _:'fly')
       )
    );
 );
@@ -31,6 +32,7 @@ __on_server_shuts_down() -> (
       pdata:'yaw' = _~'yaw';
       pdata:'pitch' = _~'pitch';
       pdata:'gm' = _~'gamemode';
+      pdata:'fly' = _~'flying';
       put(data, 'players', pdata, -1);
       saved += _~'name';
    );
