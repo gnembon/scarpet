@@ -22,11 +22,13 @@
 //Initializes a class with its parent classes, which are passed in as their classes, not their names
 //We need the classes to complete the declaration of the class by essentially filling in all the missing methods
 new_class(name, declarer, ...parents)->(
-    declarer:'__name__' = name;
+    //Also means a class called Anonymous won't work
+    declarer:'__name__' = if(name=='', 'Anonymous', name);
     declarer:'__parents__' = {}; //Using a set to avoid duplicate parentage
     declarer:'__member_data__' = {}; //Used to improve error messages
     for(parents,
         class=_;
+        if(class:'__name__'=='Anonymous', throw('Cannot inherit from an anonymous class'));
         declarer:'__parents__'+=class:'__name__';
         for(class,
             member = _;
@@ -134,5 +136,4 @@ global_iterator_class = new_class('Iterator', {
         self
     ),
 }, global_interface_class);
-
 
