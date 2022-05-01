@@ -254,10 +254,10 @@ _open_waypoint_screen(p, pos, uuid) -> (
         );
     );
 
-    // Clear player waypoints with missing waystone entires
+    // Clear player waypoints with missing waystone entries
     for(bad_keys, delete(global_waypoints:uuid:_));
 
-    // filter out entires in different dimensions.
+    // filter out entries in different dimensions.
     if(!global_settings:'dimensional_crossing', 
         dimension = current_dimension();
         icons = filter(icons, _:1:'dimension' == dimension);
