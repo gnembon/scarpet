@@ -40,7 +40,7 @@ __config()->{
         'setting clearWaypointsOnDeath'->['setting_read','clear_waypoints_on_death'],
         'setting enabledDimensions <dimensions>'->['setting_command','enabled_dimensions'],
         'setting enabledDimensions'->['setting_read','enabled_dimensions'],
-        'setting structureMaterial <dimensions>'->['setting_command','structure_material'],
+        'setting structureMaterial <term>'->['setting_command','structure_material'],
         'setting structureMaterial'->['setting_read','structure_material'],
         'setting structureSize <int>'->['setting_command','structure_size'],
         'setting structureSize'->['setting_read','structure_size'],
@@ -82,28 +82,34 @@ setting_read(key) -> (
 
 setting_command(val, key) -> (
     global_settings:key = val;
-    print(player(), str('%s: %s', key, global_settings:key));
+    print(player(), str('%s was set to %s', key, global_settings:key));
 );
 
 __on_player_places_block(p, item, hand, block)->(
     if(item:0=='lodestone',
         pos = pos(block);
+        _attempt_waystone_activation(p, pos, item);
+    );
+);
+
+_attempt_waystone_activation(p, pos, item)->(
+    if(_has_required_structure(pos),
         floor = str(block(pos:0, pos:1 - 1, pos:2));
-        if(_has_required_structure(pos),
-            global_waystones:pos = {
-                'icon'->floor,
-                'dimension'->current_dimension(),
-                'name'->_get_name_from_nbt(item:2) || floor+' Waypoint' 
-            };
-            _app_message(p, str('Activated %s Waystone', global_waystones:pos:'name'));
-            _write_waystones();
-            sound( 'block.enchantment_table.use', pos );
-            sound( 'minecraft:block.amethyst_block.hit', pos );
-        ,
-            _app_message(p, str('Waystone structure requires %d %s to activate',
-                global_settings:'structure_size',global_settings:'structure_material'));
-            sound( 'block.copper.step', pos );
-        );
+        name = floor+' Waypoint';
+        if(item, name = _get_name_from_nbt(item:2) || name); 
+        global_waystones:pos = {
+            'icon'->floor,
+            'dimension'->current_dimension(),
+            'name'-> name 
+        };
+        _app_message(p, str('Activated %s Waystone', global_waystones:pos:'name'));
+        _write_waystones();
+        sound( 'block.enchantment_table.use', pos );
+        sound( 'minecraft:block.amethyst_block.hit', pos );
+    ,
+        _app_message(p, str('Waystone structure requires %d %s to activate',
+            global_settings:'structure_size',global_settings:'structure_material'));
+        sound( 'block.copper.step', pos );
     );
 );
 
@@ -134,8 +140,7 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
                     _write_player_waypoints(uuid);
                 );
             ,
-                _app_message(p, str('Place the lodestone near a %d block %s structure to activate',
-                    global_settings:'structure_size',global_settings:'structure_material'));
+                _attempt_waystone_activation(p, pos, null);
             );
         ,
             _app_message(p, 'Waystones dont\'t work in this dimension');
@@ -168,17 +173,35 @@ _has_required_item(p) -> (
 
 _warp_player(p, pos, dimension, point)->(
     if(_has_required_item(p),
-        in_dimension(dimension, 
-            run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
-        );
-        schedule( 2, _(p, pos, dimension)->(
-            in_dimension(dimension, 
-                sound( 'item.trident.thunder', pos );
-                particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+        // load chucks for checking if waystone is broken
+        add_chunk_ticket(point, 'teleport', 1);
+        schedule(1, _(p, pos, dimension, point)->(
+            in_dimension(dimension,
+                if(_is_waystone_intact(point),
+                    run(str('tp %s %d %d %d', p~'command_name', ...(pos + [0.5, 0, 0.5]) ));
+                    _app_message(p, global_waystones:point:'name');
+                    schedule( 2, _(p, pos, dimension)->(
+                        in_dimension(dimension, 
+                            sound( 'item.trident.thunder', pos );
+                            particle('totem_of_undying', p~'pos'+[0,1,0], 100, 1, 0.1);
+                        );
+                    ), p, pos, dimension);
+                ,
+                    _app_message(p, str('The %s waystone has been broken!', global_waystones:pos:'name'));
+                    sound( 'minecraft:item.trident.thunder', p~'pos' );
+                    delete(global_waystones:point); 
+                ); 
             );
-        ), p, pos, dimension);
-        _app_message(p, global_waystones:point:'name');
+        ), p, pos, dimension, point);
     );
+);
+
+_is_waystone_intact(point)->(
+    // origin bug within screen callbacks offsets block() by players position.
+    // Making this check broken until version: 1.4.70
+    // at which point this method can be updated.
+    // block(point)=='lodestone'
+    true
 );
 
 __on_player_dies(p) -> (
