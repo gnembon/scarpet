@@ -31,7 +31,7 @@ __config() -> {
 
 global_data = {
 };
-global_slots = {
+global_slot_values = {
     'menu' -> {
         16 -> 'kill',
         15 -> 'stop',
@@ -41,6 +41,15 @@ global_slots = {
         12 -> 'bag',
         11 -> 'use',
         10 -> 'attack',
+    },
+    'bag' -> {
+
+    },
+    'use' -> {
+
+    },
+    'attack' -> {
+
     },
 };
 
@@ -130,9 +139,10 @@ global_models(player) -> l(
 );
 
 __page(type_, creativeplayer, fakeplayer) -> (
+    options = [creativeplayer, fakeplayer, global_slot_values:type_, type_];
     if (
         // 菜單
-        type_ == 'menu', null,
+        type_ == 'menu', menuPage(...options),
         // 背包菜單
         type_ == 'bag', null,
         // 使用
@@ -142,7 +152,7 @@ __page(type_, creativeplayer, fakeplayer) -> (
     );
 );
 // menu page
-menuPage(creativeplayer, fakeplayer) -> (
+menuPage(creativeplayer, fakeplayer, slotData, type_) -> (
     screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+i18n(creativeplayer, 'who_menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
         slot = data:'slot';
         if(
@@ -151,57 +161,39 @@ menuPage(creativeplayer, fakeplayer) -> (
                 drop_item(screen, -1);
             ),
             action == 'pickup', 
-            if (
-                slot > 9*3-1, null,
-                (
-                    print(slot);
-                    newPage = command = null;
-
-                    if (
-                        slot == 16, command = 'kill',
-                        slot == 15, command = 'stop',
-                        slot == 14, command = 'jump',
-                        slot == 13, command = 'swapHands'
-                    );
-
-                    if (
-                        command != null, (
-                            global_fakeplayersscreen:fakeplayer = null;
-                            run('player ' + (fakeplayer~'command_name') + ' ' + command);
-                            soundDell(player);
-                            close_screen(screen);
-                        ),
-                        slot == 12, newPage = 'bag',
-                        slot == 11, newPage = 'use',
-                        slot == 10, newPage = 'attack',
-                    );
-
-                    if (newPage != null, (
+            if (slot > 9*3-1, null, (
+                if (
+                    slot <= 16 && slot >= 13, (
+                        global_fakeplayersscreen:fakeplayer = null;
+                        run('player ' + (fakeplayer~'command_name') + ' ' + slotData:slot);
                         soundDell(player);
                         close_screen(screen);
-                        __page(newPage, player, fakeplayer);
-                    ));
-                    return('cancel'),
-                ),
-            ),
+                    ),
+                    slot <= 12 && slot >= 10, (
+                        soundDell(player);
+                        close_screen(screen);
+                        __page(slotData:slot, player, fakeplayer);
+                    ),
+                );
+                return('cancel'),
+            )),
         );
-    );
-);
-global_fakeplayersscreen:fakeplayer = [screen, models];
+    ));
+    global_fakeplayersscreen:fakeplayer = [screen, models];
 
-for (l(
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'left_click')+'\', item: \'minecraft:wooden_sword\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'right_click')+'\', item: \'minecraft:cooked_porkchop\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'backpack')+'\', item: \'minecraft:chest\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'switch_off-hand_items')+'\', item: \'minecraft:magenta_glazed_terracotta\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'jump')+'\', item: \'minecraft:rabbit_foot\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'stop')+'\', item: \'minecraft:barrier\'}'),
-    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'remove')+'\', item: \'minecraft:tnt\'}'),
-), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
-setAir(screen);
+    for (l(
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'left_click')+'\', item: \'minecraft:wooden_sword\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'right_click')+'\', item: \'minecraft:cooked_porkchop\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'backpack')+'\', item: \'minecraft:chest\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'switch_off-hand_items')+'\', item: \'minecraft:magenta_glazed_terracotta\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'jump')+'\', item: \'minecraft:rabbit_foot\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'stop')+'\', item: \'minecraft:barrier\'}'),
+        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'remove')+'\', item: \'minecraft:tnt\'}'),
+    ), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+    setAir(screen);
 );
 // bag page
-bagPage(creativeplayer, fakeplayer) -> (
+bagPage(creativeplayer, fakeplayer, slotData, type_) -> (
     // TODO 細分
     models = [
         nbt('{ slot: 0, item: \'white_shulker_box\', title: \''+i18n(creativeplayer, 'backpack')+'\' }'),
@@ -312,7 +304,7 @@ bagPage(creativeplayer, fakeplayer) -> (
 );
 
 // use page
-usePage(creativeplayer, fakeplayer) -> (
+usePage(creativeplayer, fakeplayer, slotData, type_) -> (
     screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'use_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
         slot = data:'slot';
         if (
@@ -334,7 +326,7 @@ usePage(creativeplayer, fakeplayer) -> (
 );
 
 // attack page
-attackPage(creativeplayer, fakeplayer) -> (
+attackPage(creativeplayer, fakeplayer, slotData, type_) -> (
     screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'attack_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
         slot = data:'slot';
         if(
