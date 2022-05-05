@@ -29,8 +29,6 @@ __config() -> {
     },
 };
 
-global_data = {
-};
 global_slot_values = {
     'menu' -> {
         16 -> 'kill',
@@ -288,16 +286,19 @@ bagPage(creativeplayer, fakeplayer, slotData, type_) -> (
                         for (models, inventory_set(screen, (_:1)+9, 1, (_:2):'item', null));
 
                         fromListSetAir(screen, filter(range(2*9), n=_;if (first(map(models, _:1), _ == n) == null, true, false)));
-                    )
+                    ),
+                    slot == 18, __page('menu', player(), fakeplayer),
                 );
             ),
         );
         return('cancel');
     ));
+    
+    setBackButton(screen, 18);
+
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
     for (models, inventory_set(screen, _:'slot'*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}')));
-    setBackButton(screen, 18);
     setAir(screen, 9*3);
 );
 
@@ -312,6 +313,7 @@ usePage(creativeplayer, fakeplayer, slotData, type_) -> (
             ),
             action == 'pickup', if (
                 slot > 9*3-1, null,
+                slot == 18, __page('menu', player(), fakeplayer),
                 getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' use '),
             ),
         );
@@ -335,15 +337,15 @@ attackPage(creativeplayer, fakeplayer, slotData, type_) -> (
             ),
             action == 'pickup', if (
                 slot > 9*3-1, null,
-                getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' attack ');
+                slot == 18, __page('menu', player(), fakeplayer),
+                getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' attack '),
             ),
         );
         return('cancel');
     ));
     global_fakeplayersscreen:fakeplayer = [screen, models];
-
-    for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
     setBackButton(screen, 18);
+    for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
     setAir(screen);
 );
 
@@ -376,6 +378,7 @@ speedPage(creativeplayer, base_cmd) -> (
                         ));
 
                         if (
+                            slot == 18, __page('menu', player(), fakeplayer),
                             slot == 22, (
                                 soundDell(player);
                                 run(base_cmd + 'interval ' + tick);
