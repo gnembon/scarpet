@@ -177,19 +177,18 @@ menuPage(creativeplayer, fakeplayer, slotData, type_) -> (
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
     for (l(
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'left_click')+'\', item: \'minecraft:wooden_sword\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'right_click')+'\', item: \'minecraft:cooked_porkchop\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'backpack')+'\', item: \'minecraft:chest\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'switch_off-hand_items')+'\', item: \'minecraft:magenta_glazed_terracotta\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'jump')+'\', item: \'minecraft:rabbit_foot\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'stop')+'\', item: \'minecraft:barrier\'}'),
-        nbt('{ title: \'§f§L'+i18n(creativeplayer, 'remove')+'\', item: \'minecraft:tnt\'}'),
+        _item_icon(creativeplayer, 'left_click', 'minecraft:wooden_sword'),
+        _item_icon(creativeplayer, 'right_click', 'minecraft:cooked_porkchop'),
+        _item_icon(creativeplayer, 'backpack', 'minecraft:chest'),
+        _item_icon(creativeplayer, 'switch_off-hand_items', 'minecraft:magenta_glazed_terracotta'),
+        _item_icon(creativeplayer, 'jump', 'minecraft:rabbit_foot'),
+        _item_icon(creativeplayer, 'stop', 'minecraft:barrier'),
+        _item_icon(creativeplayer, 'remove', 'minecraft:tnt'),
     ), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
     setAir(screen);
 );
 // bag page
 bagPage(creativeplayer, fakeplayer, slotData, type_) -> (
-    // TODO 細分
     models = [
         nbt('{ slot: 0, item: \'white_shulker_box\', title: \''+i18n(creativeplayer, 'backpack')+'\' }'),
         nbt('{ slot: 1, item: \'minecraft:wooden_pickaxe\', title: \''+i18n(creativeplayer, 'toolbar')+'\' }'),
@@ -430,6 +429,10 @@ setSelected(screen, fakeplayer, slot) -> (
     run('player ' + fakeplayer~'command_name' + ' hotbar ' + (number(slot)+1));
 );
 i18n(player, key) -> return(str((global_languages:(player~'language')):key || (global_languages:'en_us'):key) || key);
+setBackButton() -> (
+
+);
+_item_icon(player, i18n_key, item_name) -> return nbt('{ title: \'§f§L'+i18n(player, i18n_key)+'\', item: \''+item_name+'\'}');
 
 // --- setUp & events ---
 create_datapack('invupd', 
