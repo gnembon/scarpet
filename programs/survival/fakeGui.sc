@@ -409,7 +409,7 @@ setSelected(screen, fakeplayer, slot) -> (
     inventory_set(screen, slot, 1, 'minecraft:barrier', nbt('{Enchantments:[{id:void}]}'));
     run('player ' + fakeplayer~'command_name' + ' hotbar ' + (number(slot)+1));
 );
-i18n(player, key) -> return(str((global_languages:(player~'language')):key || (global_languages:'en_us'):key));
+i18n(player, key) -> str((global_languages:(player~'language')):key || (global_languages:'en_us'):key);
 create_datapack('invupd', 
     {
         'readme.txt' -> ['This datapack is built by carpet script','this data pack is created by scarpet','please dont touch it'],
