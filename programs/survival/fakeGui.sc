@@ -42,14 +42,9 @@ global_slot_values = {
         11 -> 'use',
         10 -> 'attack',
     },
-    'bag' -> {
-
-    },
-    'use' -> {
-
-    },
-    'attack' -> {
-
+    'clickType' -> {
+        11 -> 'once',
+        13 -> 'continuous',
     },
 };
 
@@ -144,16 +139,16 @@ __page(type_, creativeplayer, fakeplayer) -> (
         // 菜單
         type_ == 'menu', menuPage(...options),
         // 背包菜單
-        type_ == 'bag', null,
+        type_ == 'bag', bagPage(...options),
         // 使用
-        type_ == 'use', null,
+        type_ == 'use', usePage(...options),
         // 攻擊
-        type_ == 'attack', null,
+        type_ == 'attack', attackPage(...options),
     );
 );
 // menu page
 menuPage(creativeplayer, fakeplayer, slotData, type_) -> (
-    screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+i18n(creativeplayer, 'who_menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
+    screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+i18n(creativeplayer, 'who_menu'), _(screen, player, action, data, outer(fakeplayer), outer(slotData)) -> (
         slot = data:'slot';
         if(
             action == 'close', (
@@ -401,18 +396,15 @@ speedPage(creativeplayer, base_cmd) -> (
 // --- utils ---
 getClickType(slot, screen, creativeplayer, base_cmd) -> if (
     slot < 11 || slot > 15, null, (
-        type_ = null;
         soundDell(creativeplayer);
-        // TODO: add dict slot
+        slotValue = global_slot_values:'clickType':slot;
         if (
-            slot == 11, type_ = 'once',
-            slot == 13, type_ = 'continuous',
             slot == 15, speedPage(creativeplayer, base_cmd),
+            slotValue != null, (
+                run(base_cmd + slotValue);
+                close_screen(screen);
+            )
         );
-        if (type_ != null, (
-            run(base_cmd + type_);
-            close_screen(screen);
-        ));
     ),
 );
 soundDell(player) -> sound('block.note_block.bell', player~'pos');
