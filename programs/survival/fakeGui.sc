@@ -29,6 +29,21 @@ __config() -> {
     },
 };
 
+global_data = {
+};
+global_slots = {
+    'menu' -> {
+        16 -> 'kill',
+        15 -> 'stop',
+        14 -> 'jump',
+        13 -> 'swapHands',
+        // -----
+        12 -> 'bag',
+        11 -> 'use',
+        10 -> 'attack',
+    },
+};
+
 global_languages = {
     'zh_tw' -> {
         'usage' -> '\n如何使用:\n    右鍵點擊假人\n或是:\n    執行指令 /fakegui <player>',
@@ -52,6 +67,7 @@ global_languages = {
         'set_interval' -> '設定間隔',
         'add' -> '添加',
         'reduce' -> '減少',
+        'done' -> '完成',
     },
     'en_us' -> {
         'usage' -> '\nUsage:\n    Right click on the fake player\nor:\n    Execute command /fakegui <player>',
@@ -75,6 +91,7 @@ global_languages = {
         'set_interval' -> 'Set interval',
         'add' -> 'Add',
         'reduce' -> 'Reduce',
+        'done' -> 'done',
     },
     'zh_cn' -> {
         'usage' -> '\n如何使用:\n    右键点击假人\n或是:\n    执行指令 /fakegui <player>',
@@ -98,6 +115,7 @@ global_languages = {
         'set_interval' -> '设定间隔',
         'add' -> '添加',
         'reduce' -> '减少',
+        'done' -> '完成',
     },
 };
 
@@ -106,7 +124,7 @@ global_fakeplayers_selected_slot = m();
 global_fakeplayersscreen = m();
 global_counts = m();
 global_models(player) -> l(
-    nbt('{ name: \'once\', title: \'§f§'+i18n(player, 'click_once')+'\', item: \'minecraft:minecart\'}'),
+    nbt('{ name: \'once\', title: \'§f§L'+i18n(player, 'click_once')+'\', item: \'minecraft:minecart\'}'),
     nbt('{ name: \'continuous\', title: \'§f§L'+i18n(player, 'keep_clicking')+'\', item: \'minecraft:apple\'}'),
     nbt('{ name: \'interval\', title: \'§f§L'+i18n(player, 'timing_click')+'\', item: \'minecraft:repeater\'}'),
 );
@@ -114,230 +132,230 @@ global_models(player) -> l(
 __page(type_, creativeplayer, fakeplayer) -> (
     if (
         // 菜單
-        type_ == 'menu', (
-            screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+i18n(creativeplayer, 'who_menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
-                slot = data:'slot';
-                if(
-                    action == 'close', (
-                        global_fakeplayersscreen:fakeplayer = null;
-                        drop_item(screen, -1);
-                    ),
-                    action == 'pickup', 
-                    if (
-                        slot > 9*3-1, null,
-                        (
-                            newPage = command = null;
-
-                            if (
-                                slot == 16, command = 'kill',
-                                slot == 15, command = 'stop',
-                                slot == 14, command = 'jump',
-                                slot == 13, command = 'swapHands'
-                            );
-
-                            if (
-                                command != null, (
-                                    global_fakeplayersscreen:fakeplayer = null;
-                                    run('player ' + (fakeplayer~'command_name') + ' ' + command);
-                                    soundDell(player);
-                                    close_screen(screen);
-                                ),
-                                slot == 12, newPage = 'bag',
-                                slot == 11, newPage = 'use',
-                                slot == 10, newPage = 'attack',
-                            );
-
-                            if (newPage != null, (
-                                soundDell(player);
-                                close_screen(screen);
-                                __page(newPage, player, fakeplayer);
-                            ));
-                            return('cancel'),
-                        ),
-                    ),
-                );
-            ));
-            global_fakeplayersscreen:fakeplayer = [screen, models];
-
-            for (l(
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'left_click')+'\', item: \'minecraft:wooden_sword\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'right_click')+'\', item: \'minecraft:cooked_porkchop\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'backpack')+'\', item: \'minecraft:chest\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'switch_off-hand_items')+'\', item: \'minecraft:magenta_glazed_terracotta\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'jump')+'\', item: \'minecraft:rabbit_foot\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'stop')+'\', item: \'minecraft:barrier\'}'),
-                nbt('{ title: \'§f§L'+i18n(creativeplayer, 'remove')+'\', item: \'minecraft:tnt\'}'),
-            ), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
-            setAir(screen);
-        ),
+        type_ == 'menu', null,
         // 背包菜單
-        type_ == 'bag', (
-            models = [
-                nbt('{ slot: 0, item: \'white_shulker_box\', title: \''+i18n(creativeplayer, 'backpack')+'\' }'),
-                nbt('{ slot: 1, item: \'minecraft:wooden_pickaxe\', title: \''+i18n(creativeplayer, 'toolbar')+'\' }'),
-                nbt('{ slot: 2, item: \'minecraft:leather_chestplate\', title: \''+i18n(creativeplayer, 'equipment_bar')+'\' }'),
-            ];
-            screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'backpack')+i18n(creativeplayer, 'menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
-                if (
-                    action == 'close', (
-                        global_fakeplayersscreen:fakeplayer = null;
-                        drop_item(screen, -1);
-                    ), 
-                    action == 'pickup', (
-                        slot = data:'slot';
-                        if (
-                            slot > 9*3-1, null,
-                            // 背包
-                            slot == 11, (
-                                close_screen(screen);
-                                models = map(range(27), [_+9, _+9]);
-                                screen = create_screen(player, 'generic_9x4', i18n(creativeplayer, 'backpack'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
-                                    slot = data:'slot';
-                                    if (
-                                        action == 'close', (
-                                            global_fakeplayersscreen:fakeplayer = null;
-                                            drop_item(screen, -1);
-                                        ),
-                                        slot >= 0 && slot < 9, return('cancel'),
-                                        action == 'slot_update', if (
-                                            slot >= 9 && slot <= 35, setPlayerInventory(models, screen, fakeplayer),
-                                            slot >= 36 && slot <= 62, setScreenInventory(models, screen, fakeplayer),
-                                        );
-                                    );
-                                ));
-                                global_fakeplayersscreen:fakeplayer = [screen, models];
-                                setScreenInventory(models, screen, fakeplayer);
-                                inventory_set(screen, 4, 1, 'minecraft:player_head', nbt('{SkullOwner:"'+fakeplayer+'",display:{Name:\'"'+fakeplayer~'display_name'+'"\'},HideFlags:3}'));
-                                setAir(screen, 9*1);
-                            ),
-                            // 工具欄
-                            slot == 13, (
-                                close_screen(screen);
-                                models = map(range(9), [_, _+9]);
-                                screen = create_screen(player, 'generic_9x2', i18n(creativeplayer, 'toolbar'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
-                                    slot = data:'slot';
-                                    if (
-                                        action == 'close', (
-                                            global_fakeplayersscreen:fakeplayer = null;
-                                            drop_item(screen, -1);
-                                        ),
-                                        action == 'slot_update', if (
-                                            slot >= 9 && slot < 18, setPlayerInventory(models, screen, fakeplayer),
-                                            slot >= 45 && slot <= 53, setScreenInventory(models, screen, fakeplayer)
-                                        ),
-                                        action == 'pickup' && slot >= 0 && slot < 9, (
-                                            setSelected(screen, fakeplayer, slot);
-                                            return('cancel');
-                                        ),
-                                    );
-                                ));
-                                global_fakeplayersscreen:fakeplayer = [screen, models, 'toolbar'];
-
-                                setScreenInventory(models, screen, fakeplayer);
-                                for (range(9), inventory_set(screen, _, 1, 'minecraft:structure_void', null));
-                                global_fakeplayers_selected_slot:fakeplayer = -1;
-                            ),
-                            // 裝備欄
-                            slot == 15, (
-                                soundDell(player);
-                                close_screen(screen);
-                                models = [
-                                    [40, 1, nbt('{ item: \'minecraft:shield\' }')],
-                                    [39, 4, nbt('{ item: \'minecraft:leather_helmet\' }')],
-                                    [38, 5, nbt('{ item: \'minecraft:leather_chestplate\' }')],
-                                    [37, 6, nbt('{ item: \'minecraft:leather_leggings\' }')],
-                                    [36, 7, nbt('{ item: \'minecraft:leather_boots\' }')]
-                                ];
-                                screen = create_screen(player, 'generic_9x2', i18n(player, 'equipment_bar'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
-                                    slot = data:'slot';
-                                    if (
-                                        action == 'close', (
-                                            global_fakeplayersscreen:fakeplayer = null;
-                                            drop_item(screen, -1);
-                                        ),
-                                        slot >= 0 && slot <= 9*2 && !first(map(models, _:1), _ == slot), return('cancel'),
-                                        action == 'slot_update', if (
-                                            first(map(models, _:1), _ == slot), setPlayerInventory(models, screen, fakeplayer),
-                                            slot >= 36 && slot <= 40, setScreenInventory(models, screen, fakeplayer),
-                                        );
-                                    );
-                                ));
-                                global_fakeplayersscreen:fakeplayer = [screen, models];
-
-                                setScreenInventory(models, screen, fakeplayer);
-                                for (models, inventory_set(screen, (_:1)+9, 1, (_:2):'item', null));
-
-                                fromListSetAir(screen, filter(range(2*9), n=_;if (first(map(models, _:1), _ == n) == null, true, false)));
-                            )
-                        );
-                    ),
-                );
-                return('cancel');
-            ));
-            global_fakeplayersscreen:fakeplayer = [screen, models];
-
-            for (models, inventory_set(screen, _:'slot'*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}')));
-            setAir(screen, 9*3);
-        ),
+        type_ == 'bag', null,
         // 使用
-        type_ == 'use', (
-            screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'use_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
-                slot = data:'slot';
-                if (
-                    action == 'close', (
-                        global_fakeplayersscreen:fakeplayer = null;
-                        drop_item(screen, -1);
-                    ),
-                    action == 'pickup', if (
-                        slot > 9*3-1, null,
-                        getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' use '),
-                    ),
-                );
-                return('cancel');
-            ));
-            global_fakeplayersscreen:fakeplayer = [screen, models];
-
-            for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
-            setAir(screen);
-        ),
+        type_ == 'use', null,
         // 攻擊
-        type_ == 'attack', (
-            screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'attack_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
-                slot = data:'slot';
-                if(
-                    action == 'close', (
-                        global_fakeplayersscreen:fakeplayer = null;
-                        drop_item(screen, -1);
-                    ),
-                    action == 'pickup', if (
-                        slot > 9*3-1, null,
-                        getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' attack ');
-                    ),
-                );
-                return('cancel');
-            ));
-            global_fakeplayersscreen:fakeplayer = [screen, models];
-
-            for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
-            setAir(screen);
-        ),
+        type_ == 'attack', null,
     );
 );
-getClickType(slot, screen, creativeplayer, base_cmd) -> if (
-    slot < 11 || slot > 15, null, (
-        type_ = null;
-        soundDell(creativeplayer);
-        if (
-            slot == 11, type_ = 'once',
-            slot == 13, type_ = 'continuous',
-            slot == 15, speedPage(creativeplayer, base_cmd),
+// menu page
+menuPage(creativeplayer, fakeplayer) -> (
+    screen = create_screen(creativeplayer, 'generic_9x3', fakeplayer~'display_name'+i18n(creativeplayer, 'who_menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
+        slot = data:'slot';
+        if(
+            action == 'close', (
+                global_fakeplayersscreen:fakeplayer = null;
+                drop_item(screen, -1);
+            ),
+            action == 'pickup', 
+            if (
+                slot > 9*3-1, null,
+                (
+                    print(slot);
+                    newPage = command = null;
+
+                    if (
+                        slot == 16, command = 'kill',
+                        slot == 15, command = 'stop',
+                        slot == 14, command = 'jump',
+                        slot == 13, command = 'swapHands'
+                    );
+
+                    if (
+                        command != null, (
+                            global_fakeplayersscreen:fakeplayer = null;
+                            run('player ' + (fakeplayer~'command_name') + ' ' + command);
+                            soundDell(player);
+                            close_screen(screen);
+                        ),
+                        slot == 12, newPage = 'bag',
+                        slot == 11, newPage = 'use',
+                        slot == 10, newPage = 'attack',
+                    );
+
+                    if (newPage != null, (
+                        soundDell(player);
+                        close_screen(screen);
+                        __page(newPage, player, fakeplayer);
+                    ));
+                    return('cancel'),
+                ),
+            ),
         );
-        if (type_ != null, (
-            run(base_cmd + type_);
-            close_screen(screen);
-        ));
-    ),
+    );
 );
+global_fakeplayersscreen:fakeplayer = [screen, models];
+
+for (l(
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'left_click')+'\', item: \'minecraft:wooden_sword\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'right_click')+'\', item: \'minecraft:cooked_porkchop\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'backpack')+'\', item: \'minecraft:chest\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'switch_off-hand_items')+'\', item: \'minecraft:magenta_glazed_terracotta\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'jump')+'\', item: \'minecraft:rabbit_foot\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'stop')+'\', item: \'minecraft:barrier\'}'),
+    nbt('{ title: \'§f§L'+i18n(creativeplayer, 'remove')+'\', item: \'minecraft:tnt\'}'),
+), if (_ != null, inventory_set(screen, _i+9+1, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+setAir(screen);
+);
+// bag page
+bagPage(creativeplayer, fakeplayer) -> (
+    // TODO 細分
+    models = [
+        nbt('{ slot: 0, item: \'white_shulker_box\', title: \''+i18n(creativeplayer, 'backpack')+'\' }'),
+        nbt('{ slot: 1, item: \'minecraft:wooden_pickaxe\', title: \''+i18n(creativeplayer, 'toolbar')+'\' }'),
+        nbt('{ slot: 2, item: \'minecraft:leather_chestplate\', title: \''+i18n(creativeplayer, 'equipment_bar')+'\' }'),
+    ];
+    screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'backpack')+i18n(creativeplayer, 'menu'), _(screen, player, action, data, outer(fakeplayer)) -> (
+        if (
+            action == 'close', (
+                global_fakeplayersscreen:fakeplayer = null;
+                drop_item(screen, -1);
+            ), 
+            action == 'pickup', (
+                slot = data:'slot';
+                if (
+                    slot > 9*3-1, null,
+                    // 背包
+                    slot == 11, (
+                        close_screen(screen);
+                        models = map(range(27), [_+9, _+9]);
+                        screen = create_screen(player, 'generic_9x4', i18n(creativeplayer, 'backpack'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                            slot = data:'slot';
+                            if (
+                                action == 'close', (
+                                    global_fakeplayersscreen:fakeplayer = null;
+                                    drop_item(screen, -1);
+                                ),
+                                slot >= 0 && slot < 9, return('cancel'),
+                                action == 'slot_update', if (
+                                    slot >= 9 && slot <= 35, setPlayerInventory(models, screen, fakeplayer),
+                                    slot >= 36 && slot <= 62, setScreenInventory(models, screen, fakeplayer),
+                                );
+                            );
+                        ));
+                        global_fakeplayersscreen:fakeplayer = [screen, models];
+                        setScreenInventory(models, screen, fakeplayer);
+                        inventory_set(screen, 4, 1, 'minecraft:player_head', nbt('{SkullOwner:"'+fakeplayer+'",display:{Name:\'"'+fakeplayer~'display_name'+'"\'},HideFlags:3}'));
+                        setAir(screen, 9*1);
+                    ),
+                    // 工具欄
+                    slot == 13, (
+                        close_screen(screen);
+                        models = map(range(9), [_, _+9]);
+                        screen = create_screen(player, 'generic_9x2', i18n(creativeplayer, 'toolbar'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                            slot = data:'slot';
+                            if (
+                                action == 'close', (
+                                    global_fakeplayersscreen:fakeplayer = null;
+                                    drop_item(screen, -1);
+                                ),
+                                action == 'slot_update', if (
+                                    slot >= 9 && slot < 18, setPlayerInventory(models, screen, fakeplayer),
+                                    slot >= 45 && slot <= 53, setScreenInventory(models, screen, fakeplayer)
+                                ),
+                                action == 'pickup' && slot >= 0 && slot < 9, (
+                                    setSelected(screen, fakeplayer, slot);
+                                    return('cancel');
+                                ),
+                            );
+                        ));
+                        global_fakeplayersscreen:fakeplayer = [screen, models, 'toolbar'];
+
+                        setScreenInventory(models, screen, fakeplayer);
+                        for (range(9), inventory_set(screen, _, 1, 'minecraft:structure_void', null));
+                        global_fakeplayers_selected_slot:fakeplayer = -1;
+                    ),
+                    // 裝備欄
+                    slot == 15, (
+                        soundDell(player);
+                        close_screen(screen);
+                        models = [
+                            [40, 1, nbt('{ item: \'minecraft:shield\' }')],
+                            [39, 4, nbt('{ item: \'minecraft:leather_helmet\' }')],
+                            [38, 5, nbt('{ item: \'minecraft:leather_chestplate\' }')],
+                            [37, 6, nbt('{ item: \'minecraft:leather_leggings\' }')],
+                            [36, 7, nbt('{ item: \'minecraft:leather_boots\' }')]
+                        ];
+                        screen = create_screen(player, 'generic_9x2', i18n(player, 'equipment_bar'), _(screen, player, action, data, outer(fakeplayer), outer(models)) -> (
+                            slot = data:'slot';
+                            if (
+                                action == 'close', (
+                                    global_fakeplayersscreen:fakeplayer = null;
+                                    drop_item(screen, -1);
+                                ),
+                                slot >= 0 && slot <= 9*2 && !first(map(models, _:1), _ == slot), return('cancel'),
+                                action == 'slot_update', if (
+                                    first(map(models, _:1), _ == slot), setPlayerInventory(models, screen, fakeplayer),
+                                    slot >= 36 && slot <= 40, setScreenInventory(models, screen, fakeplayer),
+                                );
+                            );
+                        ));
+                        global_fakeplayersscreen:fakeplayer = [screen, models];
+
+                        setScreenInventory(models, screen, fakeplayer);
+                        for (models, inventory_set(screen, (_:1)+9, 1, (_:2):'item', null));
+
+                        fromListSetAir(screen, filter(range(2*9), n=_;if (first(map(models, _:1), _ == n) == null, true, false)));
+                    )
+                );
+            ),
+        );
+        return('cancel');
+    ));
+    global_fakeplayersscreen:fakeplayer = [screen, models];
+
+    for (models, inventory_set(screen, _:'slot'*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}')));
+    setAir(screen, 9*3);
+);
+
+// use page
+usePage(creativeplayer, fakeplayer) -> (
+    screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'use_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
+        slot = data:'slot';
+        if (
+            action == 'close', (
+                global_fakeplayersscreen:fakeplayer = null;
+                drop_item(screen, -1);
+            ),
+            action == 'pickup', if (
+                slot > 9*3-1, null,
+                getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' use '),
+            ),
+        );
+        return('cancel');
+    ));
+    global_fakeplayersscreen:fakeplayer = [screen, models];
+
+    for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+    setAir(screen);
+);
+
+// attack page
+attackPage(creativeplayer, fakeplayer) -> (
+    screen = create_screen(creativeplayer, 'generic_9x3', i18n(creativeplayer, 'attack_mode'), _(screen, player, action, data, outer(fakeplayer)) -> (
+        slot = data:'slot';
+        if(
+            action == 'close', (
+                global_fakeplayersscreen:fakeplayer = null;
+                drop_item(screen, -1);
+            ),
+            action == 'pickup', if (
+                slot > 9*3-1, null,
+                getClickType(slot, screen, player, 'player ' + (fakeplayer~'command_name') + ' attack ');
+            ),
+        );
+        return('cancel');
+    ));
+    global_fakeplayersscreen:fakeplayer = [screen, models];
+
+    for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+    setAir(screen);
+);
+
+// set speed page
 speedPage(creativeplayer, base_cmd) -> (
     global_counts:creativeplayer = 10;
     models = l(
@@ -387,6 +405,24 @@ speedPage(creativeplayer, base_cmd) -> (
     ));
     setAir(screen);
 );
+
+// --- utils ---
+getClickType(slot, screen, creativeplayer, base_cmd) -> if (
+    slot < 11 || slot > 15, null, (
+        type_ = null;
+        soundDell(creativeplayer);
+        // TODO: add dict slot
+        if (
+            slot == 11, type_ = 'once',
+            slot == 13, type_ = 'continuous',
+            slot == 15, speedPage(creativeplayer, base_cmd),
+        );
+        if (type_ != null, (
+            run(base_cmd + type_);
+            close_screen(screen);
+        ));
+    ),
+);
 soundDell(player) -> sound('block.note_block.bell', player~'pos');
 setAir(screen, ...options) -> fromListSetAir(screen, range(options:0 || 9*3));
 fromListSetAir(screen, listIndex) -> 
@@ -409,7 +445,9 @@ setSelected(screen, fakeplayer, slot) -> (
     inventory_set(screen, slot, 1, 'minecraft:barrier', nbt('{Enchantments:[{id:void}]}'));
     run('player ' + fakeplayer~'command_name' + ' hotbar ' + (number(slot)+1));
 );
-i18n(player, key) -> str((global_languages:(player~'language')):key || (global_languages:'en_us'):key);
+i18n(player, key) -> return(str((global_languages:(player~'language')):key || (global_languages:'en_us'):key) || key);
+
+// --- setUp & events ---
 create_datapack('invupd', 
     {
         'readme.txt' -> ['This datapack is built by carpet script','this data pack is created by scarpet','please dont touch it'],
