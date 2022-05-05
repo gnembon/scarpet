@@ -72,6 +72,7 @@ global_languages = {
         'add' -> '添加',
         'reduce' -> '減少',
         'done' -> '完成',
+        'back' -> '返回至菜單',
     },
     'en_us' -> {
         'usage' -> '\nUsage:\n    Right click on the fake player\nor:\n    Execute command /fakegui <player>',
@@ -95,7 +96,8 @@ global_languages = {
         'set_interval' -> 'Set interval',
         'add' -> 'Add',
         'reduce' -> 'Reduce',
-        'done' -> 'done',
+        'done' -> 'Done',
+        'back' -> 'Back to menu',
     },
     'zh_cn' -> {
         'usage' -> '\n如何使用:\n    右键点击假人\n或是:\n    执行指令 /fakegui <player>',
@@ -120,6 +122,7 @@ global_languages = {
         'add' -> '添加',
         'reduce' -> '减少',
         'done' -> '完成',
+        'back' -> '返回至菜单',
     },
 };
 
@@ -294,6 +297,7 @@ bagPage(creativeplayer, fakeplayer, slotData, type_) -> (
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
     for (models, inventory_set(screen, _:'slot'*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}')));
+    setBackButton(screen, 18);
     setAir(screen, 9*3);
 );
 
@@ -316,6 +320,7 @@ usePage(creativeplayer, fakeplayer, slotData, type_) -> (
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
     for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+    setBackButton(screen, 18);
     setAir(screen);
 );
 
@@ -338,6 +343,7 @@ attackPage(creativeplayer, fakeplayer, slotData, type_) -> (
     global_fakeplayersscreen:fakeplayer = [screen, models];
 
     for (global_models(creativeplayer), if (_ != null, inventory_set(screen, _i*2+9+2, 1, _:'item', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))));
+    setBackButton(screen, 18);
     setAir(screen);
 );
 
@@ -389,6 +395,7 @@ speedPage(creativeplayer, base_cmd) -> (
     for(models, if (_ != null,
         inventory_set(screen, _:'slot', 1, _:'item' || 'minecraft:structure_void', nbt('{display:{Name:\'"'+_:'title'+'"\'},HideFlags:3}'))
     ));
+    setBackButton(screen, 18);
     setAir(screen);
 );
 
@@ -429,10 +436,10 @@ setSelected(screen, fakeplayer, slot) -> (
     run('player ' + fakeplayer~'command_name' + ' hotbar ' + (number(slot)+1));
 );
 i18n(player, key) -> return(str((global_languages:(player~'language')):key || (global_languages:'en_us'):key) || key);
-setBackButton() -> (
-
+setBackButton(screen, slot) -> (
+    inventory_set(screen, slot, 1, 'minecraft:player_head', nbt('{SkullOwner:\'MHF_ArrowLeft\'}'))
 );
-_item_icon(player, i18n_key, item_name) -> return nbt('{ title: \'§f§L'+i18n(player, i18n_key)+'\', item: \''+item_name+'\'}');
+_item_icon(player, i18n_key, item_name) -> return(nbt('{ title: \'§f§L'+i18n(player, i18n_key)+'\', item: \''+item_name+'\'}'));
 
 // --- setUp & events ---
 create_datapack('invupd', 
