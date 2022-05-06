@@ -129,7 +129,7 @@ global_iterator_class = new_class('Iterator', {
     'has_next'->_(self)->null,
     'next'->_(self)->null,
     'for_each'->_(self, function)->(
-        while(call_function(self, 'has_next'),
+        while(call_function(self, 'has_next'), 0x7FFFFFFFFFFFFFFF,
             next = call_function(self, 'next');
             call(function, next)
         );
