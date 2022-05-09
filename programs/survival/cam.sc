@@ -30,6 +30,7 @@ __command() ->
    p = player();
    current_gamemode = p~'gamemode';
    if ( current_gamemode == 'spectator',
+      entity_event(p, 'on_move', null);
       if (config = __get_player_stored_takeoff_params(p~'name'),
          __remove_camera_effects(p);
          __restore_player_params(p, config);
@@ -57,6 +58,17 @@ __command() ->
             __store_player_takeoff_params(p);
             __turn_to_camera_mode(p);
             display_title(p, 'actionbar', format('y Entered camera mode'));
+            entity_event(p, 'on_move', _(p, vel, p1, pos) -> (
+    			   center = system_info('world_center');
+   				size = system_info('world_size');
+    			   positive = center + size;
+    			   negative = center - size;
+    			   pos = p ~ 'pos';
+    			   if (pos:0 > positive:0 || pos:0 < negative:0
+      			|| pos:2 > positive:2 || pos:2 < negative:2,
+                  __command();
+    			   );
+			   ));
          )
       ));
    );
