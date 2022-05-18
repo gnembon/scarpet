@@ -45,7 +45,16 @@ a parent specifies a field or a method then this class will imherit that unless 
 or method. Note, the last argument takes in the parent classes, not their names, because classes.scl does not 
 store classes, it just allows to manipulate them.
 
-To initialize an object, use the `new_object()` function. The first argument is the class variable (returned from the `new_class()` function). The next few arguments are the constructor of the class. This must be declared as an `__init__` method (see below) with any args you wish, except `classes.scl` will throw an error if it is not present. A class can also inherit an `__init__` method from its parent class. The `__init__` method will be called when running the `new_object()` function.
+To initialize an object, use the `new_object()` function. The first argument is the class variable (returned from 
+the `new_class()` function). The next few arguments are the constructor of the class. This must be declared as an 
+`__init__` method (see below) with any args you wish, except `classes.scl` will throw an error if it is not 
+present. A class can also inherit an `__init__` method from its parent class. The `__init__` method will be 
+called when running the `new_object()` function.
+
+If a class is not meant to be initialised, then you can initialise it as an interface. To do this, import 
+`global_interface_class` from `classes.scl` and put it as a parent class, and don't specify a constructor. If a 
+class chooses to implement your interface and doesn't implement a method, it will give an error message 
+describing which method they didn't override and where it came from.
 
 ### Declaring a method
 When creating a method, as mentioned previously it must take in at least one argument which is the object 
