@@ -37,6 +37,7 @@ making maps (or dicts) act as classes. Fields are regular map entries, and metho
 key and an anonymous function value. The important part is that the function always has at least 1 argument, 
 which is going to be the object itself, so that the function can handle it (see `self` in Python).
 
+### Declaring a class
 To register a new class, use `new_class()`. The first argument is the name of the class, which will later be 
 stored in the `__name__` field automatically by `classes.scl`. The second argument is the map representing the 
 class, its fields and its methods. The last argument is a vararg list of the parent classes of this class. If 
@@ -44,6 +45,9 @@ a parent specifies a field or a method then this class will imherit that unless 
 or method. Note, the last argument takes in the parent classes, not their names, because classes.scl does not 
 store classes, it just allows to manipulate them.
 
+To initialize an object, use the `new_object()` function. The first argument is the class variable (returned from the `new_class()` function). The next few arguments are the constructor of the class. This must be declared as an `__init__` method (see below) with any args you wish, except `classes.scl` will throw an error if it is not present. A class can also inherit an `__init__` method from its parent class. The `__init__` method will be called when running the `new_object()` function.
+
+### Declaring a method
 When creating a method, as mentioned previously it must take in at least one argument which is the object 
 (here referred to as `self`). The method can then do whatever it wants with its arguments. It must then return 
 either the `self` object, or a list with `self` as the first argument and a return value as the second. This 
@@ -55,8 +59,9 @@ To access a class' fields, you just do the same as with a normal map (`object:'f
 really allow for private fields, however methods will be considered private if they have a `_` prefix. This 
 will make `call_function` throw an error if the programmer tries to call them. If you need to call a private 
 method within a class, use `call(object:'private_method_name', object, args)`. Note that unlike with 
-`call_function`, this will not give neat return values, instead it will either return the object or 
+`call_function`, this will not give neat return values, instead it will either return the object or a list of the object and return value.
 
+### `Object` class
 Classes also have some built-in methods. Much like with Java, they all inherit from the `Object` class. This 
 gives them the following methods:
  - `str` : Returns a string representation of the object
@@ -74,4 +79,5 @@ gives them the following methods:
  - `length` : Returns the length of this object (by default the length of its `str` representation)
  - `nbt` : Returns a nbt representation of this object (by default an nbt of `str` representation)
  - `json` : Returns a json representation of this object (by default a json of `str` representation)
+
 
