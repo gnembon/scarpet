@@ -5,13 +5,23 @@ __config() -> {
     'scope' -> 'global',
 };
 
-// hardness, tools, drop block, require silktouch, save block nbt, sound
+debug = false;
+// Block Parameters
+// <float> hardness
+//      - this must be less than the default value currently or there's a good chance
+//        that the drop functionality won't trigger
+// <string or string list> tools
+// <list> [item dropped if silk touch, item droped normal]
+// save block nbt - currently works only with spawners;
+//                  will require edits to functions __break_block and __on_player_places_block
+//                  to properly support other nbt blocks
+// sound to play when broken
 global_blocks = {
-    'spawner' -> [1, ['diamond_pickaxe', 'netherite_pickaxe'], ['spawner', null], true, 'metal' ],
-    'budding_amethyst' -> [1.5, ['diamond_pickaxe', 'netherite_pickaxe'], ['budding_amethyst', null], false, 'amethyst_block' ],
-    'end_portal_frame' -> [25, ['diamond_pickaxe', 'netherite_pickaxe'], ['end_portal_frame', null], false, 'stone' ],
     'bedrock' -> [75, 'netherite_pickaxe', [null, null], false, 'stone' ],
+    'budding_amethyst' -> [1, ['diamond_pickaxe', 'netherite_pickaxe'], ['budding_amethyst', null], false, 'amethyst_block' ],
     'deepslate' -> [2, 'netherite_pickaxe', ['deepslate', 'cobbled_deepslate'], false, 'deepslate' ],
+    'end_portal_frame' -> [25, ['diamond_pickaxe', 'netherite_pickaxe'], ['end_portal_frame', null], false, 'stone' ],
+    'spawner' -> [1, ['diamond_pickaxe', 'netherite_pickaxe'], ['spawner', null], true, 'metal' ],
 };
 
 global_tool_speeds = {
@@ -73,7 +83,7 @@ __calculate_step (player, hardness) -> (
 
     efficiency_level = __get_enchantment_level(nbt, 'efficiency');
     efficiency_level && (
-        speedMultiplier = speedMultiplier + 1 + ((efficiency_level + 1) * (efficiency_level + 1));
+        speedMultiplier = speedMultiplier + 1 + (efficiency_level * efficiency_level);
     );
 
     haste_level = query(player,'effect','haste'):0;
@@ -112,12 +122,16 @@ __calculate_step (player, hardness) -> (
         speedMultiplier = speedMultiplier * 0.2;
     );
 
-    block_damage = (speedMultiplier / hardness) /30;
-    break_time = ceil(1 / block_damage) / 20;
+    block_damage = speedMultiplier / hardness;
+    block_damage = block_damage / 30;
+    break_ticks = ceil(1 / block_damage);
+
+    break_time = break_ticks / 20;
+    debug && print(break_time);
 
     if( break_time <= 0.08,
         step = 0,
-        step = break_time / 10;
+        step = break_ticks / 10;
     );
 
     return(step);
