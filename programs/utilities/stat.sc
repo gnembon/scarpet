@@ -1,83 +1,391 @@
-//Statistic Display by CommandLeo
+// Statistic Display by CommandLeo
 
+global_total_text = ' §lTotal';
+global_block_list = block_list();
+global_item_list = item_list();
+global_entity_list = entity_types('*');
+global_server_whitelisted = system_info('server_whitelisted') || length(system_info('server_whitelist')) > 0;
+global_app_name = system_info('app_name');
+global_hex_charset = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-//Addded levels -Jack
+pickaxes = filter(global_item_list, _~'_pickaxe');
+axes = filter(global_item_list, _~'_axe');
+shovels = filter(global_item_list, _~'_shovel');
+hoes = filter(global_item_list, _~'_hoe');
 
-
-
-
-
-global_blocks = {'air'->'Air','stone'->'Stone','granite'->'Granite','polished_granite'->'Polished Granite','diorite'->'Diorite','polished_diorite'->'Polished Diorite','andesite'->'Andesite','polished_andesite'->'Polished Andesite','grass_block'->'Grass Block','dirt'->'Dirt','coarse_dirt'->'Coarse Dirt','podzol'->'Podzol','cobblestone'->'Cobblestone','oak_planks'->'Oak Planks','spruce_planks'->'Spruce Planks','birch_planks'->'Birch Planks','jungle_planks'->'Jungle Planks','acacia_planks'->'Acacia Planks','dark_oak_planks'->'Dark Oak Planks','oak_sapling'->'Oak Sapling','spruce_sapling'->'Spruce Sapling','birch_sapling'->'Birch Sapling','jungle_sapling'->'Jungle Sapling','acacia_sapling'->'Acacia Sapling','dark_oak_sapling'->'Dark Oak Sapling','bedrock'->'Bedrock','water'->'Water','lava'->'Lava','sand'->'Sand','red_sand'->'Red Sand','gravel'->'Gravel','gold_ore'->'Gold Ore','iron_ore'->'Iron Ore','coal_ore'->'Coal Ore','nether_gold_ore'->'Nether Gold Ore','oak_log'->'Oak Log','spruce_log'->'Spruce Log','birch_log'->'Birch Log','jungle_log'->'Jungle Log','acacia_log'->'Acacia Log','dark_oak_log'->'Dark Oak Log','stripped_spruce_log'->'Stripped Spruce Log','stripped_birch_log'->'Stripped Birch Log','stripped_jungle_log'->'Stripped Jungle Log','stripped_acacia_log'->'Stripped Acacia Log','stripped_dark_oak_log'->'Stripped Dark Oak Log','stripped_oak_log'->'Stripped Oak Log','oak_wood'->'Oak Wood','spruce_wood'->'Spruce Wood','birch_wood'->'Birch Wood','jungle_wood'->'Jungle Wood','acacia_wood'->'Acacia Wood','dark_oak_wood'->'Dark Oak Wood','stripped_oak_wood'->'Stripped Oak Wood','stripped_spruce_wood'->'Stripped Spruce Wood','stripped_birch_wood'->'Stripped Birch Wood','stripped_jungle_wood'->'Stripped Jungle Wood','stripped_acacia_wood'->'Stripped Acacia Wood','stripped_dark_oak_wood'->'Stripped Dark Oak Wood','oak_leaves'->'Oak Leaves','spruce_leaves'->'Spruce Leaves','birch_leaves'->'Birch Leaves','jungle_leaves'->'Jungle Leaves','acacia_leaves'->'Acacia Leaves','dark_oak_leaves'->'Dark Oak Leaves','sponge'->'Sponge','wet_sponge'->'Wet Sponge','glass'->'Glass','lapis_ore'->'Lapis Lazuli Ore','lapis_block'->'Lapis Lazuli Block','dispenser'->'Dispenser','sandstone'->'Sandstone','chiseled_sandstone'->'Chiseled Sandstone','cut_sandstone'->'Cut Sandstone','note_block'->'Note Block','white_bed'->'White Bed','orange_bed'->'Orange Bed','magenta_bed'->'Magenta Bed','light_blue_bed'->'Light Blue Bed','yellow_bed'->'Yellow Bed','lime_bed'->'Lime Bed','pink_bed'->'Pink Bed','gray_bed'->'Gray Bed','light_gray_bed'->'Light Gray Bed','cyan_bed'->'Cyan Bed','purple_bed'->'Purple Bed','blue_bed'->'Blue Bed','brown_bed'->'Brown Bed','green_bed'->'Green Bed','red_bed'->'Red Bed','black_bed'->'Black Bed','powered_rail'->'Powered Rail','detector_rail'->'Detector Rail','sticky_piston'->'Sticky Piston','cobweb'->'Cobweb','grass'->'Grass','fern'->'Fern','dead_bush'->'Dead Bush','seagrass'->'Seagrass','tall_seagrass'->'Tall Seagrass','piston'->'Piston','piston_head'->'Piston Head','white_wool'->'White Wool','orange_wool'->'Orange Wool','magenta_wool'->'Magenta Wool','light_blue_wool'->'Light Blue Wool','yellow_wool'->'Yellow Wool','lime_wool'->'Lime Wool','pink_wool'->'Pink Wool','gray_wool'->'Gray Wool','light_gray_wool'->'Light Gray Wool','cyan_wool'->'Cyan Wool','purple_wool'->'Purple Wool','blue_wool'->'Blue Wool','brown_wool'->'Brown Wool','green_wool'->'Green Wool','red_wool'->'Red Wool','black_wool'->'Black Wool','moving_piston'->'Moving Piston','dandelion'->'Dandelion','poppy'->'Poppy','blue_orchid'->'Blue Orchid','allium'->'Allium','azure_bluet'->'Azure Bluet','red_tulip'->'Red Tulip','orange_tulip'->'Orange Tulip','white_tulip'->'White Tulip','pink_tulip'->'Pink Tulip','oxeye_daisy'->'Oxeye Daisy','cornflower'->'Cornflower','wither_rose'->'Wither Rose','lily_of_the_valley'->'Lily of the Valley','brown_mushroom'->'Brown Mushroom','red_mushroom'->'Red Mushroom','gold_block'->'Gold Block','iron_block'->'Iron Block','bricks'->'Bricks','tnt'->'TNT','bookshelf'->'Bookshelf','mossy_cobblestone'->'Mossy Cobblestone','obsidian'->'Obsidian','torch'->'Torch','wall_torch'->'Wall Torch','fire'->'Fire','soul_fire'->'Soul Fire','spawner'->'Spawner','oak_stairs'->'Oak Stairs','chest'->'Chest','redstone_wire'->'Redstone Wire','diamond_ore'->'Diamond Ore','diamond_block'->'Diamond Block','crafting_table'->'Crafting Table','wheat'->'Wheat Crops','farmland'->'Farmland','furnace'->'Furnace','oak_sign'->'Oak Sign','spruce_sign'->'Spruce Sign','birch_sign'->'Birch Sign','acacia_sign'->'Acacia Sign','jungle_sign'->'Jungle Sign','dark_oak_sign'->'Dark Oak Sign','oak_door'->'Oak Door','ladder'->'Ladder','rail'->'Rail','cobblestone_stairs'->'Cobblestone Stairs','oak_wall_sign'->'Oak Wall Sign','spruce_wall_sign'->'Spruce Wall Sign','birch_wall_sign'->'Birch Wall Sign','acacia_wall_sign'->'Acacia Wall Sign','jungle_wall_sign'->'Jungle Wall Sign','dark_oak_wall_sign'->'Dark Oak Wall Sign','lever'->'Lever','stone_pressure_plate'->'Stone Pressure Plate','iron_door'->'Iron Door','oak_pressure_plate'->'Oak Pressure Plate','spruce_pressure_plate'->'Spruce Pressure Plate','birch_pressure_plate'->'Birch Pressure Plate','jungle_pressure_plate'->'Jungle Pressure Plate','acacia_pressure_plate'->'Acacia Pressure Plate','dark_oak_pressure_plate'->'Dark Oak Pressure Plate','redstone_ore'->'Redstone Ore','redstone_torch'->'Redstone Torch','redstone_wall_torch'->'Redstone Wall Torch','stone_button'->'Stone Button','snow'->'Snow','ice'->'Ice','snow_block'->'Snow Block','cactus'->'Cactus','clay'->'Clay','sugar_cane'->'Sugar Cane','jukebox'->'Jukebox','oak_fence'->'Oak Fence','pumpkin'->'Pumpkin','netherrack'->'Netherrack','soul_sand'->'Soul Sand','soul_soil'->'Soul Soil','basalt'->'Basalt','polished_basalt'->'Polished Basalt','soul_torch'->'Soul Torch','soul_wall_torch'->'Soul Wall Torch','glowstone'->'Glowstone','nether_portal'->'Nether Portal','carved_pumpkin'->'Carved Pumpkin','jack_o_lantern'->'Jack o\'Lantern','cake'->'Cake','repeater'->'Redstone Repeater','white_stained_glass'->'White Stained Glass','orange_stained_glass'->'Orange Stained Glass','magenta_stained_glass'->'Magenta Stained Glass','light_blue_stained_glass'->'Light Blue Stained Glass','yellow_stained_glass'->'Yellow Stained Glass','lime_stained_glass'->'Lime Stained Glass','pink_stained_glass'->'Pink Stained Glass','gray_stained_glass'->'Gray Stained Glass','light_gray_stained_glass'->'Light Gray Stained Glass','cyan_stained_glass'->'Cyan Stained Glass','purple_stained_glass'->'Purple Stained Glass','blue_stained_glass'->'Blue Stained Glass','brown_stained_glass'->'Brown Stained Glass','green_stained_glass'->'Green Stained Glass','red_stained_glass'->'Red Stained Glass','black_stained_glass'->'Black Stained Glass','oak_trapdoor'->'Oak Trapdoor','spruce_trapdoor'->'Spruce Trapdoor','birch_trapdoor'->'Birch Trapdoor','jungle_trapdoor'->'Jungle Trapdoor','acacia_trapdoor'->'Acacia Trapdoor','dark_oak_trapdoor'->'Dark Oak Trapdoor','stone_bricks'->'Stone Bricks','mossy_stone_bricks'->'Mossy Stone Bricks','cracked_stone_bricks'->'Cracked Stone Bricks','chiseled_stone_bricks'->'Chiseled Stone Bricks','infested_stone'->'Infested Stone','infested_cobblestone'->'Infested Cobblestone','infested_stone_bricks'->'Infested Stone Bricks','infested_mossy_stone_bricks'->'Infested Mossy Stone Bricks','infested_cracked_stone_bricks'->'Infested Cracked Stone Bricks','infested_chiseled_stone_bricks'->'Infested Chiseled Stone Bricks','brown_mushroom_block'->'Brown Mushroom Block','red_mushroom_block'->'Red Mushroom Block','mushroom_stem'->'Mushroom Stem','iron_bars'->'Iron Bars','chain'->'Chain','glass_pane'->'Glass Pane','melon'->'Melon','attached_pumpkin_stem'->'Attached Pumpkin Stem','attached_melon_stem'->'Attached Melon Stem','pumpkin_stem'->'Pumpkin Stem','melon_stem'->'Melon Stem','vine'->'Vines','oak_fence_gate'->'Oak Fence Gate','brick_stairs'->'Brick Stairs','stone_brick_stairs'->'Stone Brick Stairs','mycelium'->'Mycelium','lily_pad'->'Lily Pad','nether_bricks'->'Nether Bricks','nether_brick_fence'->'Nether Brick Fence','nether_brick_stairs'->'Nether Brick Stairs','nether_wart'->'Nether Wart','enchanting_table'->'Enchanting Table','brewing_stand'->'Brewing Stand','cauldron'->'Cauldron','end_portal'->'End Portal','end_portal_frame'->'End Portal Frame','end_stone'->'End Stone','dragon_egg'->'Dragon Egg','redstone_lamp'->'Redstone Lamp','cocoa'->'Cocoa','sandstone_stairs'->'Sandstone Stairs','emerald_ore'->'Emerald Ore','ender_chest'->'Ender Chest','tripwire_hook'->'Tripwire Hook','tripwire'->'Tripwire','emerald_block'->'Emerald Block','spruce_stairs'->'Spruce Stairs','birch_stairs'->'Birch Stairs','jungle_stairs'->'Jungle Stairs','command_block'->'Command Block','beacon'->'Beacon','cobblestone_wall'->'Cobblestone Wall','mossy_cobblestone_wall'->'Mossy Cobblestone Wall','flower_pot'->'Flower Pot','potted_oak_sapling'->'Potted Oak Sapling','potted_spruce_sapling'->'Potted Spruce Sapling','potted_birch_sapling'->'Potted Birch Sapling','potted_jungle_sapling'->'Potted Jungle Sapling','potted_acacia_sapling'->'Potted Acacia Sapling','potted_dark_oak_sapling'->'Potted Dark Oak Sapling','potted_fern'->'Potted Fern','potted_dandelion'->'Potted Dandelion','potted_poppy'->'Potted Poppy','potted_blue_orchid'->'Potted Blue Orchid','potted_allium'->'Potted Allium','potted_azure_bluet'->'Potted Azure Bluet','potted_red_tulip'->'Potted Red Tulip','potted_orange_tulip'->'Potted Orange Tulip','potted_white_tulip'->'Potted White Tulip','potted_pink_tulip'->'Potted Pink Tulip','potted_oxeye_daisy'->'Potted Oxeye Daisy','potted_cornflower'->'Potted Cornflower','potted_lily_of_the_valley'->'Potted Lily of the Valley','potted_wither_rose'->'Potted Wither Rose','potted_red_mushroom'->'Potted Red Mushroom','potted_brown_mushroom'->'Potted Brown Mushroom','potted_dead_bush'->'Potted Dead Bush','potted_cactus'->'Potted Cactus','carrots'->'Carrots','potatoes'->'Potatoes','oak_button'->'Oak Button','spruce_button'->'Spruce Button','birch_button'->'Birch Button','jungle_button'->'Jungle Button','acacia_button'->'Acacia Button','dark_oak_button'->'Dark Oak Button','skeleton_skull'->'Skeleton Skull','skeleton_wall_skull'->'Skeleton Wall Skull','wither_skeleton_skull'->'Wither Skeleton Skull','wither_skeleton_wall_skull'->'Wither Skeleton Wall Skull','zombie_head'->'Zombie Head','zombie_wall_head'->'Zombie Wall Head','player_head'->'Player Head','player_wall_head'->'Player Wall Head','creeper_head'->'Creeper Head','creeper_wall_head'->'Creeper Wall Head','dragon_head'->'Dragon Head','dragon_wall_head'->'Dragon Wall Head','anvil'->'Anvil','chipped_anvil'->'Chipped Anvil','damaged_anvil'->'Damaged Anvil','trapped_chest'->'Trapped Chest','light_weighted_pressure_plate'->'Light Weighted Pressure Plate','heavy_weighted_pressure_plate'->'Heavy Weighted Pressure Plate','comparator'->'Redstone Comparator','daylight_detector'->'Daylight Detector','redstone_block'->'Redstone Block','nether_quartz_ore'->'Nether Quartz Ore','hopper'->'Hopper','quartz_block'->'Quartz Block','chiseled_quartz_block'->'Chiseled Quartz Block','quartz_pillar'->'Quartz Pillar','quartz_stairs'->'Quartz Stairs','activator_rail'->'Activator Rail','dropper'->'Dropper','white_terracotta'->'White Terracotta','orange_terracotta'->'Orange Terracotta','magenta_terracotta'->'Magenta Terracotta','light_blue_terracotta'->'Light Blue Terracotta','yellow_terracotta'->'Yellow Terracotta','lime_terracotta'->'Lime Terracotta','pink_terracotta'->'Pink Terracotta','gray_terracotta'->'Gray Terracotta','light_gray_terracotta'->'Light Gray Terracotta','cyan_terracotta'->'Cyan Terracotta','purple_terracotta'->'Purple Terracotta','blue_terracotta'->'Blue Terracotta','brown_terracotta'->'Brown Terracotta','green_terracotta'->'Green Terracotta','red_terracotta'->'Red Terracotta','black_terracotta'->'Black Terracotta','white_stained_glass_pane'->'White Stained Glass Pane','orange_stained_glass_pane'->'Orange Stained Glass Pane','magenta_stained_glass_pane'->'Magenta Stained Glass Pane','light_blue_stained_glass_pane'->'Light Blue Stained Glass Pane','yellow_stained_glass_pane'->'Yellow Stained Glass Pane','lime_stained_glass_pane'->'Lime Stained Glass Pane','pink_stained_glass_pane'->'Pink Stained Glass Pane','gray_stained_glass_pane'->'Gray Stained Glass Pane','light_gray_stained_glass_pane'->'Light Gray Stained Glass Pane','cyan_stained_glass_pane'->'Cyan Stained Glass Pane','purple_stained_glass_pane'->'Purple Stained Glass Pane','blue_stained_glass_pane'->'Blue Stained Glass Pane','brown_stained_glass_pane'->'Brown Stained Glass Pane','green_stained_glass_pane'->'Green Stained Glass Pane','red_stained_glass_pane'->'Red Stained Glass Pane','black_stained_glass_pane'->'Black Stained Glass Pane','acacia_stairs'->'Acacia Stairs','dark_oak_stairs'->'Dark Oak Stairs','slime_block'->'Slime Block','barrier'->'Barrier','iron_trapdoor'->'Iron Trapdoor','prismarine'->'Prismarine','prismarine_bricks'->'Prismarine Bricks','dark_prismarine'->'Dark Prismarine','prismarine_stairs'->'Prismarine Stairs','prismarine_brick_stairs'->'Prismarine Brick Stairs','dark_prismarine_stairs'->'Dark Prismarine Stairs','prismarine_slab'->'Prismarine Slab','prismarine_brick_slab'->'Prismarine Brick Slab','dark_prismarine_slab'->'Dark Prismarine Slab','sea_lantern'->'Sea Lantern','hay_block'->'Hay Bale','white_carpet'->'White Carpet','orange_carpet'->'Orange Carpet','magenta_carpet'->'Magenta Carpet','light_blue_carpet'->'Light Blue Carpet','yellow_carpet'->'Yellow Carpet','lime_carpet'->'Lime Carpet','pink_carpet'->'Pink Carpet','gray_carpet'->'Gray Carpet','light_gray_carpet'->'Light Gray Carpet','cyan_carpet'->'Cyan Carpet','purple_carpet'->'Purple Carpet','blue_carpet'->'Blue Carpet','brown_carpet'->'Brown Carpet','green_carpet'->'Green Carpet','red_carpet'->'Red Carpet','black_carpet'->'Black Carpet','terracotta'->'Terracotta','coal_block'->'Coal Block','packed_ice'->'Packed Ice','sunflower'->'Sunflower','lilac'->'Lilac','rose_bush'->'Rose Bush','peony'->'Peony','tall_grass'->'Tall Grass','large_fern'->'Large Fern','white_banner'->'White Banner','orange_banner'->'Orange Banner','magenta_banner'->'Magenta Banner','light_blue_banner'->'Light Blue Banner','yellow_banner'->'Yellow Banner','lime_banner'->'Lime Banner','pink_banner'->'Pink Banner','gray_banner'->'Gray Banner','light_gray_banner'->'Light Gray Banner','cyan_banner'->'Cyan Banner','purple_banner'->'Purple Banner','blue_banner'->'Blue Banner','brown_banner'->'Brown Banner','green_banner'->'Green Banner','red_banner'->'Red Banner','black_banner'->'Black Banner','white_wall_banner'->'White wall banner','orange_wall_banner'->'Orange wall banner','magenta_wall_banner'->'Magenta wall banner','light_blue_wall_banner'->'Light blue wall banner','yellow_wall_banner'->'Yellow wall banner','lime_wall_banner'->'Lime wall banner','pink_wall_banner'->'Pink wall banner','gray_wall_banner'->'Gray wall banner','light_gray_wall_banner'->'Light gray wall banner','cyan_wall_banner'->'Cyan wall banner','purple_wall_banner'->'Purple wall banner','blue_wall_banner'->'Blue wall banner','brown_wall_banner'->'Brown wall banner','green_wall_banner'->'Green wall banner','red_wall_banner'->'Red wall banner','black_wall_banner'->'Black wall banner','red_sandstone'->'Red Sandstone','chiseled_red_sandstone'->'Chiseled Red Sandstone','cut_red_sandstone'->'Cut Red Sandstone','red_sandstone_stairs'->'Red Sandstone Stairs','oak_slab'->'Oak Slab','spruce_slab'->'Spruce Slab','birch_slab'->'Birch Slab','jungle_slab'->'Jungle Slab','acacia_slab'->'Acacia Slab','dark_oak_slab'->'Dark Oak Slab','stone_slab'->'Stone Slab','smooth_stone_slab'->'Smooth Stone Slab','sandstone_slab'->'Sandstone Slab','cut_sandstone_slab'->'Cut Sandstone Slab','petrified_oak_slab'->'Petrified Oak Slab','cobblestone_slab'->'Cobblestone Slab','brick_slab'->'Brick Slab','stone_brick_slab'->'Stone Brick Slab','nether_brick_slab'->'Nether Brick Slab','quartz_slab'->'Quartz Slab','red_sandstone_slab'->'Red Sandstone Slab','cut_red_sandstone_slab'->'Cut Red Sandstone Slab','purpur_slab'->'Purpur Slab','smooth_stone'->'Smooth Stone','smooth_sandstone'->'Smooth Sandstone','smooth_quartz'->'Smooth Quartz Block','smooth_red_sandstone'->'Smooth Red Sandstone','spruce_fence_gate'->'Spruce Fence Gate','birch_fence_gate'->'Birch Fence Gate','jungle_fence_gate'->'Jungle Fence Gate','acacia_fence_gate'->'Acacia Fence Gate','dark_oak_fence_gate'->'Dark Oak Fence Gate','spruce_fence'->'Spruce Fence','birch_fence'->'Birch Fence','jungle_fence'->'Jungle Fence','acacia_fence'->'Acacia Fence','dark_oak_fence'->'Dark Oak Fence','spruce_door'->'Spruce Door','birch_door'->'Birch Door','jungle_door'->'Jungle Door','acacia_door'->'Acacia Door','dark_oak_door'->'Dark Oak Door','end_rod'->'End Rod','chorus_plant'->'Chorus Plant','chorus_flower'->'Chorus Flower','purpur_block'->'Purpur Block','purpur_pillar'->'Purpur Pillar','purpur_stairs'->'Purpur Stairs','end_stone_bricks'->'End Stone Bricks','beetroots'->'Beetroots','grass_path'->'Grass Path','end_gateway'->'End Gateway','repeating_command_block'->'Repeating Command Block','chain_command_block'->'Chain Command Block','frosted_ice'->'Frosted Ice','magma_block'->'Magma Block','nether_wart_block'->'Nether Wart Block','red_nether_bricks'->'Red Nether Bricks','bone_block'->'Bone Block','structure_void'->'Structure Void','observer'->'Observer','shulker_box'->'Shulker Box','white_shulker_box'->'White Shulker Box','orange_shulker_box'->'Orange Shulker Box','magenta_shulker_box'->'Magenta Shulker Box','light_blue_shulker_box'->'Light Blue Shulker Box','yellow_shulker_box'->'Yellow Shulker Box','lime_shulker_box'->'Lime Shulker Box','pink_shulker_box'->'Pink Shulker Box','gray_shulker_box'->'Gray Shulker Box','light_gray_shulker_box'->'Light Gray Shulker Box','cyan_shulker_box'->'Cyan Shulker Box','purple_shulker_box'->'Purple Shulker Box','blue_shulker_box'->'Blue Shulker Box','brown_shulker_box'->'Brown Shulker Box','green_shulker_box'->'Green Shulker Box','red_shulker_box'->'Red Shulker Box','black_shulker_box'->'Black Shulker Box','white_glazed_terracotta'->'White Glazed Terracotta','orange_glazed_terracotta'->'Orange Glazed Terracotta','magenta_glazed_terracotta'->'Magenta Glazed Terracotta','light_blue_glazed_terracotta'->'Light Blue Glazed Terracotta','yellow_glazed_terracotta'->'Yellow Glazed Terracotta','lime_glazed_terracotta'->'Lime Glazed Terracotta','pink_glazed_terracotta'->'Pink Glazed Terracotta','gray_glazed_terracotta'->'Gray Glazed Terracotta','light_gray_glazed_terracotta'->'Light Gray Glazed Terracotta','cyan_glazed_terracotta'->'Cyan Glazed Terracotta','purple_glazed_terracotta'->'Purple Glazed Terracotta','blue_glazed_terracotta'->'Blue Glazed Terracotta','brown_glazed_terracotta'->'Brown Glazed Terracotta','green_glazed_terracotta'->'Green Glazed Terracotta','red_glazed_terracotta'->'Red Glazed Terracotta','black_glazed_terracotta'->'Black Glazed Terracotta','white_concrete'->'White Concrete','orange_concrete'->'Orange Concrete','magenta_concrete'->'Magenta Concrete','light_blue_concrete'->'Light Blue Concrete','yellow_concrete'->'Yellow Concrete','lime_concrete'->'Lime Concrete','pink_concrete'->'Pink Concrete','gray_concrete'->'Gray Concrete','light_gray_concrete'->'Light Gray Concrete','cyan_concrete'->'Cyan Concrete','purple_concrete'->'Purple Concrete','blue_concrete'->'Blue Concrete','brown_concrete'->'Brown Concrete','green_concrete'->'Green Concrete','red_concrete'->'Red Concrete','black_concrete'->'Black Concrete','white_concrete_powder'->'White Concrete Powder','orange_concrete_powder'->'Orange Concrete Powder','magenta_concrete_powder'->'Magenta Concrete Powder','light_blue_concrete_powder'->'Light Blue Concrete Powder','yellow_concrete_powder'->'Yellow Concrete Powder','lime_concrete_powder'->'Lime Concrete Powder','pink_concrete_powder'->'Pink Concrete Powder','gray_concrete_powder'->'Gray Concrete Powder','light_gray_concrete_powder'->'Light Gray Concrete Powder','cyan_concrete_powder'->'Cyan Concrete Powder','purple_concrete_powder'->'Purple Concrete Powder','blue_concrete_powder'->'Blue Concrete Powder','brown_concrete_powder'->'Brown Concrete Powder','green_concrete_powder'->'Green Concrete Powder','red_concrete_powder'->'Red Concrete Powder','black_concrete_powder'->'Black Concrete Powder','kelp'->'Kelp','kelp_plant'->'Kelp Plant','dried_kelp_block'->'Dried Kelp Block','turtle_egg'->'Turtle Egg','dead_tube_coral_block'->'Dead Tube Coral Block','dead_brain_coral_block'->'Dead Brain Coral Block','dead_bubble_coral_block'->'Dead Bubble Coral Block','dead_fire_coral_block'->'Dead Fire Coral Block','dead_horn_coral_block'->'Dead Horn Coral Block','tube_coral_block'->'Tube Coral Block','brain_coral_block'->'Brain Coral Block','bubble_coral_block'->'Bubble Coral Block','fire_coral_block'->'Fire Coral Block','horn_coral_block'->'Horn Coral Block','dead_tube_coral'->'Dead Tube Coral','dead_brain_coral'->'Dead Brain Coral','dead_bubble_coral'->'Dead Bubble Coral','dead_fire_coral'->'Dead Fire Coral','dead_horn_coral'->'Dead Horn Coral','tube_coral'->'Tube Coral','brain_coral'->'Brain Coral','bubble_coral'->'Bubble Coral','fire_coral'->'Fire Coral','horn_coral'->'Horn Coral','dead_tube_coral_fan'->'Dead Tube Coral Fan','dead_brain_coral_fan'->'Dead Brain Coral Fan','dead_bubble_coral_fan'->'Dead Bubble Coral Fan','dead_fire_coral_fan'->'Dead Fire Coral Fan','dead_horn_coral_fan'->'Dead Horn Coral Fan','tube_coral_fan'->'Tube Coral Fan','brain_coral_fan'->'Brain Coral Fan','bubble_coral_fan'->'Bubble Coral Fan','fire_coral_fan'->'Fire Coral Fan','horn_coral_fan'->'Horn Coral Fan','dead_tube_coral_wall_fan'->'Dead Tube Coral Wall Fan','dead_brain_coral_wall_fan'->'Dead Brain Coral Wall Fan','dead_bubble_coral_wall_fan'->'Dead Bubble Coral Wall Fan','dead_fire_coral_wall_fan'->'Dead Fire Coral Wall Fan','dead_horn_coral_wall_fan'->'Dead Horn Coral Wall Fan','tube_coral_wall_fan'->'Tube Coral Wall Fan','brain_coral_wall_fan'->'Brain Coral Wall Fan','bubble_coral_wall_fan'->'Bubble Coral Wall Fan','fire_coral_wall_fan'->'Fire Coral Wall Fan','horn_coral_wall_fan'->'Horn Coral Wall Fan','sea_pickle'->'Sea Pickle','blue_ice'->'Blue Ice','conduit'->'Conduit','bamboo_sapling'->'Bamboo Shoot','bamboo'->'Bamboo','potted_bamboo'->'Potted Bamboo','void_air'->'Void Air','cave_air'->'Cave Air','bubble_column'->'Bubble Column','polished_granite_stairs'->'Polished Granite Stairs','smooth_red_sandstone_stairs'->'Smooth Red Sandstone Stairs','mossy_stone_brick_stairs'->'Mossy Stone Brick Stairs','polished_diorite_stairs'->'Polished Diorite Stairs','mossy_cobblestone_stairs'->'Mossy Cobblestone Stairs','end_stone_brick_stairs'->'End Stone Brick Stairs','stone_stairs'->'Stone Stairs','smooth_sandstone_stairs'->'Smooth Sandstone Stairs','smooth_quartz_stairs'->'Smooth Quartz Stairs','granite_stairs'->'Granite Stairs','andesite_stairs'->'Andesite Stairs','red_nether_brick_stairs'->'Red Nether Brick Stairs','polished_andesite_stairs'->'Polished Andesite Stairs','diorite_stairs'->'Diorite Stairs','polished_granite_slab'->'Polished Granite Slab','smooth_red_sandstone_slab'->'Smooth Red Sandstone Slab','mossy_stone_brick_slab'->'Mossy Stone Brick Slab','polished_diorite_slab'->'Polished Diorite Slab','mossy_cobblestone_slab'->'Mossy Cobblestone Slab','end_stone_brick_slab'->'End Stone Brick Slab','smooth_sandstone_slab'->'Smooth Sandstone Slab','smooth_quartz_slab'->'Smooth Quartz Slab','granite_slab'->'Granite Slab','andesite_slab'->'Andesite Slab','red_nether_brick_slab'->'Red Nether Brick Slab','polished_andesite_slab'->'Polished Andesite Slab','diorite_slab'->'Diorite Slab','brick_wall'->'Brick Wall','prismarine_wall'->'Prismarine Wall','red_sandstone_wall'->'Red Sandstone Wall','mossy_stone_brick_wall'->'Mossy Stone Brick Wall','granite_wall'->'Granite Wall','stone_brick_wall'->'Stone Brick Wall','nether_brick_wall'->'Nether Brick Wall','andesite_wall'->'Andesite Wall','red_nether_brick_wall'->'Red Nether Brick Wall','sandstone_wall'->'Sandstone Wall','end_stone_brick_wall'->'End Stone Brick Wall','diorite_wall'->'Diorite Wall','scaffolding'->'Scaffolding','loom'->'Loom','barrel'->'Barrel','smoker'->'Smoker','blast_furnace'->'Blast Furnace','cartography_table'->'Cartography Table','fletching_table'->'Fletching Table','grindstone'->'Grindstone','lectern'->'Lectern','smithing_table'->'Smithing Table','stonecutter'->'Stonecutter','bell'->'Bell','lantern'->'Lantern','soul_lantern'->'Soul Lantern','campfire'->'Campfire','soul_campfire'->'Soul Campfire','sweet_berry_bush'->'Sweet Berry Bush','warped_stem'->'Warped Stem','stripped_warped_stem'->'Stripped Warped Stem','warped_hyphae'->'Warped Hyphae','stripped_warped_hyphae'->'Stripped Warped Hyphae','warped_nylium'->'Warped Nylium','warped_fungus'->'Warped Fungus','warped_wart_block'->'Warped Wart Block','warped_roots'->'Warped Roots','nether_sprouts'->'Nether Sprouts','crimson_stem'->'Crimson Stem','stripped_crimson_stem'->'Stripped Crimson Stem','crimson_hyphae'->'Crimson Hyphae','stripped_crimson_hyphae'->'Stripped Crimson Hyphae','crimson_nylium'->'Crimson Nylium','crimson_fungus'->'Crimson Fungus','shroomlight'->'Shroomlight','weeping_vines'->'Weeping Vines','weeping_vines_plant'->'Weeping Vines Plant','twisting_vines'->'Twisting Vines','twisting_vines_plant'->'Twisting Vines Plant','crimson_roots'->'Crimson Roots','crimson_planks'->'Crimson Planks','warped_planks'->'Warped Planks','crimson_slab'->'Crimson Slab','warped_slab'->'Warped Slab','crimson_pressure_plate'->'Crimson Pressure Plate','warped_pressure_plate'->'Warped Pressure Plate','crimson_fence'->'Crimson Fence','warped_fence'->'Warped Fence','crimson_trapdoor'->'Crimson Trapdoor','warped_trapdoor'->'Warped Trapdoor','crimson_fence_gate'->'Crimson Fence Gate','warped_fence_gate'->'Warped Fence Gate','crimson_stairs'->'Crimson Stairs','warped_stairs'->'Warped Stairs','crimson_button'->'Crimson Button','warped_button'->'Warped Button','crimson_door'->'Crimson Door','warped_door'->'Warped Door','crimson_sign'->'Crimson Sign','warped_sign'->'Warped Sign','crimson_wall_sign'->'Crimson Wall Sign','warped_wall_sign'->'Warped Wall Sign','structure_block'->'Structure Block','jigsaw'->'Jigsaw Block','composter'->'Composter','target'->'Target','bee_nest'->'Bee Nest','beehive'->'Beehive','honey_block'->'Honey Block','honeycomb_block'->'Honeycomb Block','netherite_block'->'Netherite Block','ancient_debris'->'Ancient Debris','crying_obsidian'->'Crying Obsidian','respawn_anchor'->'Respawn Anchor','potted_crimson_fungus'->'Potted Crimson Fungus','potted_warped_fungus'->'Potted Warped Fungus','potted_crimson_roots'->'Potted Crimson Roots','potted_warped_roots'->'Potted Warped Roots','lodestone'->'Lodestone','blackstone'->'Blackstone','blackstone_stairs'->'Blackstone Stairs','blackstone_wall'->'Blackstone Wall','blackstone_slab'->'Blackstone Slab','polished_blackstone'->'Polished Blackstone','polished_blackstone_bricks'->'Polished Blackstone Bricks','cracked_polished_blackstone_bricks'->'Cracked Polished Blackstone Bricks','chiseled_polished_blackstone'->'Chiseled Polished Blackstone','polished_blackstone_brick_slab'->'Polished Blackstone Brick Slab','polished_blackstone_brick_stairs'->'Polished Blackstone Brick Stairs','polished_blackstone_brick_wall'->'Polished Blackstone Brick Wall','gilded_blackstone'->'Gilded Blackstone','polished_blackstone_stairs'->'Polished Blackstone Stairs','polished_blackstone_slab'->'Polished Blackstone Slab','polished_blackstone_pressure_plate'->'Polished Blackstone Pressure Plate','polished_blackstone_button'->'Polished Blackstone Button','polished_blackstone_wall'->'Polished Blackstone Wall','chiseled_nether_bricks'->'Chiseled Nether Bricks','cracked_nether_bricks'->'Cracked Nether Bricks','quartz_bricks'->'Quartz Bricks'};
-
-global_items = {'air'->'Air','stone'->'Stone','granite'->'Granite','polished_granite'->'Polished Granite','diorite'->'Diorite','polished_diorite'->'Polished Diorite','andesite'->'Andesite','polished_andesite'->'Polished Andesite','grass_block'->'Grass Block','dirt'->'Dirt','coarse_dirt'->'Coarse Dirt','podzol'->'Podzol','crimson_nylium'->'Crimson Nylium','warped_nylium'->'Warped Nylium','cobblestone'->'Cobblestone','oak_planks'->'Oak Planks','spruce_planks'->'Spruce Planks','birch_planks'->'Birch Planks','jungle_planks'->'Jungle Planks','acacia_planks'->'Acacia Planks','dark_oak_planks'->'Dark Oak Planks','crimson_planks'->'Crimson Planks','warped_planks'->'Warped Planks','oak_sapling'->'Oak Sapling','spruce_sapling'->'Spruce Sapling','birch_sapling'->'Birch Sapling','jungle_sapling'->'Jungle Sapling','acacia_sapling'->'Acacia Sapling','dark_oak_sapling'->'Dark Oak Sapling','bedrock'->'Bedrock','sand'->'Sand','red_sand'->'Red Sand','gravel'->'Gravel','gold_ore'->'Gold Ore','iron_ore'->'Iron Ore','coal_ore'->'Coal Ore','nether_gold_ore'->'Nether Gold Ore','oak_log'->'Oak Log','spruce_log'->'Spruce Log','birch_log'->'Birch Log','jungle_log'->'Jungle Log','acacia_log'->'Acacia Log','dark_oak_log'->'Dark Oak Log','crimson_stem'->'Crimson Stem','warped_stem'->'Warped Stem','stripped_oak_log'->'Stripped Oak Log','stripped_spruce_log'->'Stripped Spruce Log','stripped_birch_log'->'Stripped Birch Log','stripped_jungle_log'->'Stripped Jungle Log','stripped_acacia_log'->'Stripped Acacia Log','stripped_dark_oak_log'->'Stripped Dark Oak Log','stripped_crimson_stem'->'Stripped Crimson Stem','stripped_warped_stem'->'Stripped Warped Stem','stripped_oak_wood'->'Stripped Oak Wood','stripped_spruce_wood'->'Stripped Spruce Wood','stripped_birch_wood'->'Stripped Birch Wood','stripped_jungle_wood'->'Stripped Jungle Wood','stripped_acacia_wood'->'Stripped Acacia Wood','stripped_dark_oak_wood'->'Stripped Dark Oak Wood','stripped_crimson_hyphae'->'Stripped Crimson Hyphae','stripped_warped_hyphae'->'Stripped Warped Hyphae','oak_wood'->'Oak Wood','spruce_wood'->'Spruce Wood','birch_wood'->'Birch Wood','jungle_wood'->'Jungle Wood','acacia_wood'->'Acacia Wood','dark_oak_wood'->'Dark Oak Wood','crimson_hyphae'->'Crimson Hyphae','warped_hyphae'->'Warped Hyphae','oak_leaves'->'Oak Leaves','spruce_leaves'->'Spruce Leaves','birch_leaves'->'Birch Leaves','jungle_leaves'->'Jungle Leaves','acacia_leaves'->'Acacia Leaves','dark_oak_leaves'->'Dark Oak Leaves','sponge'->'Sponge','wet_sponge'->'Wet Sponge','glass'->'Glass','lapis_ore'->'Lapis Lazuli Ore','lapis_block'->'Lapis Lazuli Block','dispenser'->'Dispenser','sandstone'->'Sandstone','chiseled_sandstone'->'Chiseled Sandstone','cut_sandstone'->'Cut Sandstone','note_block'->'Note Block','powered_rail'->'Powered Rail','detector_rail'->'Detector Rail','sticky_piston'->'Sticky Piston','cobweb'->'Cobweb','grass'->'Grass','fern'->'Fern','dead_bush'->'Dead Bush','seagrass'->'Seagrass','sea_pickle'->'Sea Pickle','piston'->'Piston','white_wool'->'White Wool','orange_wool'->'Orange Wool','magenta_wool'->'Magenta Wool','light_blue_wool'->'Light Blue Wool','yellow_wool'->'Yellow Wool','lime_wool'->'Lime Wool','pink_wool'->'Pink Wool','gray_wool'->'Gray Wool','light_gray_wool'->'Light Gray Wool','cyan_wool'->'Cyan Wool','purple_wool'->'Purple Wool','blue_wool'->'Blue Wool','brown_wool'->'Brown Wool','green_wool'->'Green Wool','red_wool'->'Red Wool','black_wool'->'Black Wool','dandelion'->'Dandelion','poppy'->'Poppy','blue_orchid'->'Blue Orchid','allium'->'Allium','azure_bluet'->'Azure Bluet','red_tulip'->'Red Tulip','orange_tulip'->'Orange Tulip','white_tulip'->'White Tulip','pink_tulip'->'Pink Tulip','oxeye_daisy'->'Oxeye Daisy','cornflower'->'Cornflower','lily_of_the_valley'->'Lily of the Valley','wither_rose'->'Wither Rose','brown_mushroom'->'Brown Mushroom','red_mushroom'->'Red Mushroom','crimson_fungus'->'Crimson Fungus','warped_fungus'->'Warped Fungus','crimson_roots'->'Crimson Roots','warped_roots'->'Warped Roots','nether_sprouts'->'Nether Sprouts','weeping_vines'->'Weeping Vines','twisting_vines'->'Twisting Vines','sugar_cane'->'Sugar Cane','kelp'->'Kelp','bamboo'->'Bamboo','gold_block'->'Gold Block','iron_block'->'Iron Block','oak_slab'->'Oak Slab','spruce_slab'->'Spruce Slab','birch_slab'->'Birch Slab','jungle_slab'->'Jungle Slab','acacia_slab'->'Acacia Slab','dark_oak_slab'->'Dark Oak Slab','crimson_slab'->'Crimson Slab','warped_slab'->'Warped Slab','stone_slab'->'Stone Slab','smooth_stone_slab'->'Smooth Stone Slab','sandstone_slab'->'Sandstone Slab','cut_sandstone_slab'->'Cut Sandstone Slab','petrified_oak_slab'->'Petrified Oak Slab','cobblestone_slab'->'Cobblestone Slab','brick_slab'->'Brick Slab','stone_brick_slab'->'Stone Brick Slab','nether_brick_slab'->'Nether Brick Slab','quartz_slab'->'Quartz Slab','red_sandstone_slab'->'Red Sandstone Slab','cut_red_sandstone_slab'->'Cut Red Sandstone Slab','purpur_slab'->'Purpur Slab','prismarine_slab'->'Prismarine Slab','prismarine_brick_slab'->'Prismarine Brick Slab','dark_prismarine_slab'->'Dark Prismarine Slab','smooth_quartz'->'Smooth Quartz Block','smooth_red_sandstone'->'Smooth Red Sandstone','smooth_sandstone'->'Smooth Sandstone','smooth_stone'->'Smooth Stone','bricks'->'Bricks','tnt'->'TNT','bookshelf'->'Bookshelf','mossy_cobblestone'->'Mossy Cobblestone','obsidian'->'Obsidian','torch'->'Torch','end_rod'->'End Rod','chorus_plant'->'Chorus Plant','chorus_flower'->'Chorus Flower','purpur_block'->'Purpur Block','purpur_pillar'->'Purpur Pillar','purpur_stairs'->'Purpur Stairs','spawner'->'Spawner','oak_stairs'->'Oak Stairs','chest'->'Chest','diamond_ore'->'Diamond Ore','diamond_block'->'Diamond Block','crafting_table'->'Crafting Table','farmland'->'Farmland','furnace'->'Furnace','ladder'->'Ladder','rail'->'Rail','cobblestone_stairs'->'Cobblestone Stairs','lever'->'Lever','stone_pressure_plate'->'Stone Pressure Plate','oak_pressure_plate'->'Oak Pressure Plate','spruce_pressure_plate'->'Spruce Pressure Plate','birch_pressure_plate'->'Birch Pressure Plate','jungle_pressure_plate'->'Jungle Pressure Plate','acacia_pressure_plate'->'Acacia Pressure Plate','dark_oak_pressure_plate'->'Dark Oak Pressure Plate','crimson_pressure_plate'->'Crimson Pressure Plate','warped_pressure_plate'->'Warped Pressure Plate','polished_blackstone_pressure_plate'->'Polished Blackstone Pressure Plate','redstone_ore'->'Redstone Ore','redstone_torch'->'Redstone Torch','snow'->'Snow','ice'->'Ice','snow_block'->'Snow Block','cactus'->'Cactus','clay'->'Clay','jukebox'->'Jukebox','oak_fence'->'Oak Fence','spruce_fence'->'Spruce Fence','birch_fence'->'Birch Fence','jungle_fence'->'Jungle Fence','acacia_fence'->'Acacia Fence','dark_oak_fence'->'Dark Oak Fence','crimson_fence'->'Crimson Fence','warped_fence'->'Warped Fence','pumpkin'->'Pumpkin','carved_pumpkin'->'Carved Pumpkin','netherrack'->'Netherrack','soul_sand'->'Soul Sand','soul_soil'->'Soul Soil','basalt'->'Basalt','polished_basalt'->'Polished Basalt','soul_torch'->'Soul Torch','glowstone'->'Glowstone','jack_o_lantern'->'Jack o\'Lantern','oak_trapdoor'->'Oak Trapdoor','spruce_trapdoor'->'Spruce Trapdoor','birch_trapdoor'->'Birch Trapdoor','jungle_trapdoor'->'Jungle Trapdoor','acacia_trapdoor'->'Acacia Trapdoor','dark_oak_trapdoor'->'Dark Oak Trapdoor','crimson_trapdoor'->'Crimson Trapdoor','warped_trapdoor'->'Warped Trapdoor','infested_stone'->'Infested Stone','infested_cobblestone'->'Infested Cobblestone','infested_stone_bricks'->'Infested Stone Bricks','infested_mossy_stone_bricks'->'Infested Mossy Stone Bricks','infested_cracked_stone_bricks'->'Infested Cracked Stone Bricks','infested_chiseled_stone_bricks'->'Infested Chiseled Stone Bricks','stone_bricks'->'Stone Bricks','mossy_stone_bricks'->'Mossy Stone Bricks','cracked_stone_bricks'->'Cracked Stone Bricks','chiseled_stone_bricks'->'Chiseled Stone Bricks','brown_mushroom_block'->'Brown Mushroom Block','red_mushroom_block'->'Red Mushroom Block','mushroom_stem'->'Mushroom Stem','iron_bars'->'Iron Bars','chain'->'Chain','glass_pane'->'Glass Pane','melon'->'Melon','vine'->'Vines','oak_fence_gate'->'Oak Fence Gate','spruce_fence_gate'->'Spruce Fence Gate','birch_fence_gate'->'Birch Fence Gate','jungle_fence_gate'->'Jungle Fence Gate','acacia_fence_gate'->'Acacia Fence Gate','dark_oak_fence_gate'->'Dark Oak Fence Gate','crimson_fence_gate'->'Crimson Fence Gate','warped_fence_gate'->'Warped Fence Gate','brick_stairs'->'Brick Stairs','stone_brick_stairs'->'Stone Brick Stairs','mycelium'->'Mycelium','lily_pad'->'Lily Pad','nether_bricks'->'Nether Bricks','cracked_nether_bricks'->'Cracked Nether Bricks','chiseled_nether_bricks'->'Chiseled Nether Bricks','nether_brick_fence'->'Nether Brick Fence','nether_brick_stairs'->'Nether Brick Stairs','enchanting_table'->'Enchanting Table','end_portal_frame'->'End Portal Frame','end_stone'->'End Stone','end_stone_bricks'->'End Stone Bricks','dragon_egg'->'Dragon Egg','redstone_lamp'->'Redstone Lamp','sandstone_stairs'->'Sandstone Stairs','emerald_ore'->'Emerald Ore','ender_chest'->'Ender Chest','tripwire_hook'->'Tripwire Hook','emerald_block'->'Emerald Block','spruce_stairs'->'Spruce Stairs','birch_stairs'->'Birch Stairs','jungle_stairs'->'Jungle Stairs','crimson_stairs'->'Crimson Stairs','warped_stairs'->'Warped Stairs','command_block'->'Command Block','beacon'->'Beacon','cobblestone_wall'->'Cobblestone Wall','mossy_cobblestone_wall'->'Mossy Cobblestone Wall','brick_wall'->'Brick Wall','prismarine_wall'->'Prismarine Wall','red_sandstone_wall'->'Red Sandstone Wall','mossy_stone_brick_wall'->'Mossy Stone Brick Wall','granite_wall'->'Granite Wall','stone_brick_wall'->'Stone Brick Wall','nether_brick_wall'->'Nether Brick Wall','andesite_wall'->'Andesite Wall','red_nether_brick_wall'->'Red Nether Brick Wall','sandstone_wall'->'Sandstone Wall','end_stone_brick_wall'->'End Stone Brick Wall','diorite_wall'->'Diorite Wall','blackstone_wall'->'Blackstone Wall','polished_blackstone_wall'->'Polished Blackstone Wall','polished_blackstone_brick_wall'->'Polished Blackstone Brick Wall','stone_button'->'Stone Button','oak_button'->'Oak Button','spruce_button'->'Spruce Button','birch_button'->'Birch Button','jungle_button'->'Jungle Button','acacia_button'->'Acacia Button','dark_oak_button'->'Dark Oak Button','crimson_button'->'Crimson Button','warped_button'->'Warped Button','polished_blackstone_button'->'Polished Blackstone Button','anvil'->'Anvil','chipped_anvil'->'Chipped Anvil','damaged_anvil'->'Damaged Anvil','trapped_chest'->'Trapped Chest','light_weighted_pressure_plate'->'Light Weighted Pressure Plate','heavy_weighted_pressure_plate'->'Heavy Weighted Pressure Plate','daylight_detector'->'Daylight Detector','redstone_block'->'Redstone Block','nether_quartz_ore'->'Nether Quartz Ore','hopper'->'Hopper','chiseled_quartz_block'->'Chiseled Quartz Block','quartz_block'->'Quartz Block','quartz_bricks'->'Quartz Bricks','quartz_pillar'->'Quartz Pillar','quartz_stairs'->'Quartz Stairs','activator_rail'->'Activator Rail','dropper'->'Dropper','white_terracotta'->'White Terracotta','orange_terracotta'->'Orange Terracotta','magenta_terracotta'->'Magenta Terracotta','light_blue_terracotta'->'Light Blue Terracotta','yellow_terracotta'->'Yellow Terracotta','lime_terracotta'->'Lime Terracotta','pink_terracotta'->'Pink Terracotta','gray_terracotta'->'Gray Terracotta','light_gray_terracotta'->'Light Gray Terracotta','cyan_terracotta'->'Cyan Terracotta','purple_terracotta'->'Purple Terracotta','blue_terracotta'->'Blue Terracotta','brown_terracotta'->'Brown Terracotta','green_terracotta'->'Green Terracotta','red_terracotta'->'Red Terracotta','black_terracotta'->'Black Terracotta','barrier'->'Barrier','iron_trapdoor'->'Iron Trapdoor','hay_block'->'Hay Bale','white_carpet'->'White Carpet','orange_carpet'->'Orange Carpet','magenta_carpet'->'Magenta Carpet','light_blue_carpet'->'Light Blue Carpet','yellow_carpet'->'Yellow Carpet','lime_carpet'->'Lime Carpet','pink_carpet'->'Pink Carpet','gray_carpet'->'Gray Carpet','light_gray_carpet'->'Light Gray Carpet','cyan_carpet'->'Cyan Carpet','purple_carpet'->'Purple Carpet','blue_carpet'->'Blue Carpet','brown_carpet'->'Brown Carpet','green_carpet'->'Green Carpet','red_carpet'->'Red Carpet','black_carpet'->'Black Carpet','terracotta'->'Terracotta','coal_block'->'Coal Block','packed_ice'->'Packed Ice','acacia_stairs'->'Acacia Stairs','dark_oak_stairs'->'Dark Oak Stairs','slime_block'->'Slime Block','grass_path'->'Grass Path','sunflower'->'Sunflower','lilac'->'Lilac','rose_bush'->'Rose Bush','peony'->'Peony','tall_grass'->'Tall Grass','large_fern'->'Large Fern','white_stained_glass'->'White Stained Glass','orange_stained_glass'->'Orange Stained Glass','magenta_stained_glass'->'Magenta Stained Glass','light_blue_stained_glass'->'Light Blue Stained Glass','yellow_stained_glass'->'Yellow Stained Glass','lime_stained_glass'->'Lime Stained Glass','pink_stained_glass'->'Pink Stained Glass','gray_stained_glass'->'Gray Stained Glass','light_gray_stained_glass'->'Light Gray Stained Glass','cyan_stained_glass'->'Cyan Stained Glass','purple_stained_glass'->'Purple Stained Glass','blue_stained_glass'->'Blue Stained Glass','brown_stained_glass'->'Brown Stained Glass','green_stained_glass'->'Green Stained Glass','red_stained_glass'->'Red Stained Glass','black_stained_glass'->'Black Stained Glass','white_stained_glass_pane'->'White Stained Glass Pane','orange_stained_glass_pane'->'Orange Stained Glass Pane','magenta_stained_glass_pane'->'Magenta Stained Glass Pane','light_blue_stained_glass_pane'->'Light Blue Stained Glass Pane','yellow_stained_glass_pane'->'Yellow Stained Glass Pane','lime_stained_glass_pane'->'Lime Stained Glass Pane','pink_stained_glass_pane'->'Pink Stained Glass Pane','gray_stained_glass_pane'->'Gray Stained Glass Pane','light_gray_stained_glass_pane'->'Light Gray Stained Glass Pane','cyan_stained_glass_pane'->'Cyan Stained Glass Pane','purple_stained_glass_pane'->'Purple Stained Glass Pane','blue_stained_glass_pane'->'Blue Stained Glass Pane','brown_stained_glass_pane'->'Brown Stained Glass Pane','green_stained_glass_pane'->'Green Stained Glass Pane','red_stained_glass_pane'->'Red Stained Glass Pane','black_stained_glass_pane'->'Black Stained Glass Pane','prismarine'->'Prismarine','prismarine_bricks'->'Prismarine Bricks','dark_prismarine'->'Dark Prismarine','prismarine_stairs'->'Prismarine Stairs','prismarine_brick_stairs'->'Prismarine Brick Stairs','dark_prismarine_stairs'->'Dark Prismarine Stairs','sea_lantern'->'Sea Lantern','red_sandstone'->'Red Sandstone','chiseled_red_sandstone'->'Chiseled Red Sandstone','cut_red_sandstone'->'Cut Red Sandstone','red_sandstone_stairs'->'Red Sandstone Stairs','repeating_command_block'->'Repeating Command Block','chain_command_block'->'Chain Command Block','magma_block'->'Magma Block','nether_wart_block'->'Nether Wart Block','warped_wart_block'->'Warped Wart Block','red_nether_bricks'->'Red Nether Bricks','bone_block'->'Bone Block','structure_void'->'Structure Void','observer'->'Observer','shulker_box'->'Shulker Box','white_shulker_box'->'White Shulker Box','orange_shulker_box'->'Orange Shulker Box','magenta_shulker_box'->'Magenta Shulker Box','light_blue_shulker_box'->'Light Blue Shulker Box','yellow_shulker_box'->'Yellow Shulker Box','lime_shulker_box'->'Lime Shulker Box','pink_shulker_box'->'Pink Shulker Box','gray_shulker_box'->'Gray Shulker Box','light_gray_shulker_box'->'Light Gray Shulker Box','cyan_shulker_box'->'Cyan Shulker Box','purple_shulker_box'->'Purple Shulker Box','blue_shulker_box'->'Blue Shulker Box','brown_shulker_box'->'Brown Shulker Box','green_shulker_box'->'Green Shulker Box','red_shulker_box'->'Red Shulker Box','black_shulker_box'->'Black Shulker Box','white_glazed_terracotta'->'White Glazed Terracotta','orange_glazed_terracotta'->'Orange Glazed Terracotta','magenta_glazed_terracotta'->'Magenta Glazed Terracotta','light_blue_glazed_terracotta'->'Light Blue Glazed Terracotta','yellow_glazed_terracotta'->'Yellow Glazed Terracotta','lime_glazed_terracotta'->'Lime Glazed Terracotta','pink_glazed_terracotta'->'Pink Glazed Terracotta','gray_glazed_terracotta'->'Gray Glazed Terracotta','light_gray_glazed_terracotta'->'Light Gray Glazed Terracotta','cyan_glazed_terracotta'->'Cyan Glazed Terracotta','purple_glazed_terracotta'->'Purple Glazed Terracotta','blue_glazed_terracotta'->'Blue Glazed Terracotta','brown_glazed_terracotta'->'Brown Glazed Terracotta','green_glazed_terracotta'->'Green Glazed Terracotta','red_glazed_terracotta'->'Red Glazed Terracotta','black_glazed_terracotta'->'Black Glazed Terracotta','white_concrete'->'White Concrete','orange_concrete'->'Orange Concrete','magenta_concrete'->'Magenta Concrete','light_blue_concrete'->'Light Blue Concrete','yellow_concrete'->'Yellow Concrete','lime_concrete'->'Lime Concrete','pink_concrete'->'Pink Concrete','gray_concrete'->'Gray Concrete','light_gray_concrete'->'Light Gray Concrete','cyan_concrete'->'Cyan Concrete','purple_concrete'->'Purple Concrete','blue_concrete'->'Blue Concrete','brown_concrete'->'Brown Concrete','green_concrete'->'Green Concrete','red_concrete'->'Red Concrete','black_concrete'->'Black Concrete','white_concrete_powder'->'White Concrete Powder','orange_concrete_powder'->'Orange Concrete Powder','magenta_concrete_powder'->'Magenta Concrete Powder','light_blue_concrete_powder'->'Light Blue Concrete Powder','yellow_concrete_powder'->'Yellow Concrete Powder','lime_concrete_powder'->'Lime Concrete Powder','pink_concrete_powder'->'Pink Concrete Powder','gray_concrete_powder'->'Gray Concrete Powder','light_gray_concrete_powder'->'Light Gray Concrete Powder','cyan_concrete_powder'->'Cyan Concrete Powder','purple_concrete_powder'->'Purple Concrete Powder','blue_concrete_powder'->'Blue Concrete Powder','brown_concrete_powder'->'Brown Concrete Powder','green_concrete_powder'->'Green Concrete Powder','red_concrete_powder'->'Red Concrete Powder','black_concrete_powder'->'Black Concrete Powder','turtle_egg'->'Turtle Egg','dead_tube_coral_block'->'Dead Tube Coral Block','dead_brain_coral_block'->'Dead Brain Coral Block','dead_bubble_coral_block'->'Dead Bubble Coral Block','dead_fire_coral_block'->'Dead Fire Coral Block','dead_horn_coral_block'->'Dead Horn Coral Block','tube_coral_block'->'Tube Coral Block','brain_coral_block'->'Brain Coral Block','bubble_coral_block'->'Bubble Coral Block','fire_coral_block'->'Fire Coral Block','horn_coral_block'->'Horn Coral Block','tube_coral'->'Tube Coral','brain_coral'->'Brain Coral','bubble_coral'->'Bubble Coral','fire_coral'->'Fire Coral','horn_coral'->'Horn Coral','dead_brain_coral'->'Dead Brain Coral','dead_bubble_coral'->'Dead Bubble Coral','dead_fire_coral'->'Dead Fire Coral','dead_horn_coral'->'Dead Horn Coral','dead_tube_coral'->'Dead Tube Coral','tube_coral_fan'->'Tube Coral Fan','brain_coral_fan'->'Brain Coral Fan','bubble_coral_fan'->'Bubble Coral Fan','fire_coral_fan'->'Fire Coral Fan','horn_coral_fan'->'Horn Coral Fan','dead_tube_coral_fan'->'Dead Tube Coral Fan','dead_brain_coral_fan'->'Dead Brain Coral Fan','dead_bubble_coral_fan'->'Dead Bubble Coral Fan','dead_fire_coral_fan'->'Dead Fire Coral Fan','dead_horn_coral_fan'->'Dead Horn Coral Fan','blue_ice'->'Blue Ice','conduit'->'Conduit','polished_granite_stairs'->'Polished Granite Stairs','smooth_red_sandstone_stairs'->'Smooth Red Sandstone Stairs','mossy_stone_brick_stairs'->'Mossy Stone Brick Stairs','polished_diorite_stairs'->'Polished Diorite Stairs','mossy_cobblestone_stairs'->'Mossy Cobblestone Stairs','end_stone_brick_stairs'->'End Stone Brick Stairs','stone_stairs'->'Stone Stairs','smooth_sandstone_stairs'->'Smooth Sandstone Stairs','smooth_quartz_stairs'->'Smooth Quartz Stairs','granite_stairs'->'Granite Stairs','andesite_stairs'->'Andesite Stairs','red_nether_brick_stairs'->'Red Nether Brick Stairs','polished_andesite_stairs'->'Polished Andesite Stairs','diorite_stairs'->'Diorite Stairs','polished_granite_slab'->'Polished Granite Slab','smooth_red_sandstone_slab'->'Smooth Red Sandstone Slab','mossy_stone_brick_slab'->'Mossy Stone Brick Slab','polished_diorite_slab'->'Polished Diorite Slab','mossy_cobblestone_slab'->'Mossy Cobblestone Slab','end_stone_brick_slab'->'End Stone Brick Slab','smooth_sandstone_slab'->'Smooth Sandstone Slab','smooth_quartz_slab'->'Smooth Quartz Slab','granite_slab'->'Granite Slab','andesite_slab'->'Andesite Slab','red_nether_brick_slab'->'Red Nether Brick Slab','polished_andesite_slab'->'Polished Andesite Slab','diorite_slab'->'Diorite Slab','scaffolding'->'Scaffolding','iron_door'->'Iron Door','oak_door'->'Oak Door','spruce_door'->'Spruce Door','birch_door'->'Birch Door','jungle_door'->'Jungle Door','acacia_door'->'Acacia Door','dark_oak_door'->'Dark Oak Door','crimson_door'->'Crimson Door','warped_door'->'Warped Door','repeater'->'Redstone Repeater','comparator'->'Redstone Comparator','structure_block'->'Structure Block','jigsaw'->'Jigsaw Block','turtle_helmet'->'Turtle Shell','scute'->'Scute','flint_and_steel'->'Flint and Steel','apple'->'Apple','bow'->'Bow','arrow'->'Arrow','coal'->'Coal','charcoal'->'Charcoal','diamond'->'Diamond','iron_ingot'->'Iron Ingot','gold_ingot'->'Gold Ingot','netherite_ingot'->'Netherite Ingot','netherite_scrap'->'Netherite Scrap','wooden_sword'->'Wooden Sword','wooden_shovel'->'Wooden Shovel','wooden_pickaxe'->'Wooden Pickaxe','wooden_axe'->'Wooden Axe','wooden_hoe'->'Wooden Hoe','stone_sword'->'Stone Sword','stone_shovel'->'Stone Shovel','stone_pickaxe'->'Stone Pickaxe','stone_axe'->'Stone Axe','stone_hoe'->'Stone Hoe','golden_sword'->'Golden Sword','golden_shovel'->'Golden Shovel','golden_pickaxe'->'Golden Pickaxe','golden_axe'->'Golden Axe','golden_hoe'->'Golden Hoe','iron_sword'->'Iron Sword','iron_shovel'->'Iron Shovel','iron_pickaxe'->'Iron Pickaxe','iron_axe'->'Iron Axe','iron_hoe'->'Iron Hoe','diamond_sword'->'Diamond Sword','diamond_shovel'->'Diamond Shovel','diamond_pickaxe'->'Diamond Pickaxe','diamond_axe'->'Diamond Axe','diamond_hoe'->'Diamond Hoe','netherite_sword'->'Netherite Sword','netherite_shovel'->'Netherite Shovel','netherite_pickaxe'->'Netherite Pickaxe','netherite_axe'->'Netherite Axe','netherite_hoe'->'Netherite Hoe','stick'->'Stick','bowl'->'Bowl','mushroom_stew'->'Mushroom Stew','string'->'String','feather'->'Feather','gunpowder'->'Gunpowder','wheat_seeds'->'Wheat Seeds','wheat'->'Wheat','bread'->'Bread','leather_helmet'->'Leather Cap','leather_chestplate'->'Leather Tunic','leather_leggings'->'Leather Pants','leather_boots'->'Leather Boots','chainmail_helmet'->'Chainmail Helmet','chainmail_chestplate'->'Chainmail Chestplate','chainmail_leggings'->'Chainmail Leggings','chainmail_boots'->'Chainmail Boots','iron_helmet'->'Iron Helmet','iron_chestplate'->'Iron Chestplate','iron_leggings'->'Iron Leggings','iron_boots'->'Iron Boots','diamond_helmet'->'Diamond Helmet','diamond_chestplate'->'Diamond Chestplate','diamond_leggings'->'Diamond Leggings','diamond_boots'->'Diamond Boots','golden_helmet'->'Golden Helmet','golden_chestplate'->'Golden Chestplate','golden_leggings'->'Golden Leggings','golden_boots'->'Golden Boots','netherite_helmet'->'Netherite Helmet','netherite_chestplate'->'Netherite Chestplate','netherite_leggings'->'Netherite Leggings','netherite_boots'->'Netherite Boots','flint'->'Flint','porkchop'->'Raw Porkchop','cooked_porkchop'->'Cooked Porkchop','painting'->'Painting','golden_apple'->'Golden Apple','enchanted_golden_apple'->'Enchanted Golden Apple','oak_sign'->'Oak Sign','spruce_sign'->'Spruce Sign','birch_sign'->'Birch Sign','jungle_sign'->'Jungle Sign','acacia_sign'->'Acacia Sign','dark_oak_sign'->'Dark Oak Sign','crimson_sign'->'Crimson Sign','warped_sign'->'Warped Sign','bucket'->'Bucket','water_bucket'->'Water Bucket','lava_bucket'->'Lava Bucket','minecart'->'Minecart','saddle'->'Saddle','redstone'->'Redstone Dust','snowball'->'Snowball','oak_boat'->'Oak Boat','leather'->'Leather','milk_bucket'->'Milk Bucket','pufferfish_bucket'->'Pufferfish Bucket','salmon_bucket'->'Salmon Bucket','cod_bucket'->'Cod Bucket','tropical_fish_bucket'->'Tropical Fish Bucket','brick'->'Brick','clay_ball'->'Clay Ball','dried_kelp_block'->'Dried Kelp Block','paper'->'Paper','book'->'Book','slime_ball'->'Slimeball','chest_minecart'->'Chest Minecart','furnace_minecart'->'Furnace Minecart','egg'->'Egg','compass'->'Compass','fishing_rod'->'Fishing Rod','clock'->'Clock','glowstone_dust'->'Glowstone Dust','cod'->'Raw Cod','salmon'->'Raw Salmon','tropical_fish'->'Tropical Fish','pufferfish'->'Pufferfish','cooked_cod'->'Cooked Cod','cooked_salmon'->'Cooked Salmon','ink_sac'->'Ink Sac','cocoa_beans'->'Cocoa Beans','lapis_lazuli'->'Lapis Lazuli','white_dye'->'White Dye','orange_dye'->'Orange Dye','magenta_dye'->'Magenta Dye','light_blue_dye'->'Light Blue Dye','yellow_dye'->'Yellow Dye','lime_dye'->'Lime Dye','pink_dye'->'Pink Dye','gray_dye'->'Gray Dye','light_gray_dye'->'Light Gray Dye','cyan_dye'->'Cyan Dye','purple_dye'->'Purple Dye','blue_dye'->'Blue Dye','brown_dye'->'Brown Dye','green_dye'->'Green Dye','red_dye'->'Red Dye','black_dye'->'Black Dye','bone_meal'->'Bone Meal','bone'->'Bone','sugar'->'Sugar','cake'->'Cake','white_bed'->'White Bed','orange_bed'->'Orange Bed','magenta_bed'->'Magenta Bed','light_blue_bed'->'Light Blue Bed','yellow_bed'->'Yellow Bed','lime_bed'->'Lime Bed','pink_bed'->'Pink Bed','gray_bed'->'Gray Bed','light_gray_bed'->'Light Gray Bed','cyan_bed'->'Cyan Bed','purple_bed'->'Purple Bed','blue_bed'->'Blue Bed','brown_bed'->'Brown Bed','green_bed'->'Green Bed','red_bed'->'Red Bed','black_bed'->'Black Bed','cookie'->'Cookie','filled_map'->'Map','shears'->'Shears','melon_slice'->'Melon Slice','dried_kelp'->'Dried Kelp','pumpkin_seeds'->'Pumpkin Seeds','melon_seeds'->'Melon Seeds','beef'->'Raw Beef','cooked_beef'->'Steak','chicken'->'Raw Chicken','cooked_chicken'->'Cooked Chicken','rotten_flesh'->'Rotten Flesh','ender_pearl'->'Ender Pearl','blaze_rod'->'Blaze Rod','ghast_tear'->'Ghast Tear','gold_nugget'->'Gold Nugget','nether_wart'->'Nether Wart','potion'->'Potion','glass_bottle'->'Glass Bottle','spider_eye'->'Spider Eye','fermented_spider_eye'->'Fermented Spider Eye','blaze_powder'->'Blaze Powder','magma_cream'->'Magma Cream','brewing_stand'->'Brewing Stand','cauldron'->'Cauldron','ender_eye'->'Eye of Ender','glistering_melon_slice'->'Glistering Melon Slice','bat_spawn_egg'->'Bat Spawn Egg','bee_spawn_egg'->'Bee Spawn Egg','blaze_spawn_egg'->'Blaze Spawn Egg','cat_spawn_egg'->'Cat Spawn Egg','cave_spider_spawn_egg'->'Cave Spider Spawn Egg','chicken_spawn_egg'->'Chicken Spawn Egg','cod_spawn_egg'->'Cod Spawn Egg','cow_spawn_egg'->'Cow Spawn Egg','creeper_spawn_egg'->'Creeper Spawn Egg','dolphin_spawn_egg'->'Dolphin Spawn Egg','donkey_spawn_egg'->'Donkey Spawn Egg','drowned_spawn_egg'->'Drowned Spawn Egg','elder_guardian_spawn_egg'->'Elder Guardian Spawn Egg','enderman_spawn_egg'->'Enderman Spawn Egg','endermite_spawn_egg'->'Endermite Spawn Egg','evoker_spawn_egg'->'Evoker Spawn Egg','fox_spawn_egg'->'Fox Spawn Egg','ghast_spawn_egg'->'Ghast Spawn Egg','guardian_spawn_egg'->'Guardian Spawn Egg','hoglin_spawn_egg'->'Hoglin Spawn Egg','horse_spawn_egg'->'Horse Spawn Egg','husk_spawn_egg'->'Husk Spawn Egg','llama_spawn_egg'->'Llama Spawn Egg','magma_cube_spawn_egg'->'Magma Cube Spawn Egg','mooshroom_spawn_egg'->'Mooshroom Spawn Egg','mule_spawn_egg'->'Mule Spawn Egg','ocelot_spawn_egg'->'Ocelot Spawn Egg','panda_spawn_egg'->'Panda Spawn Egg','parrot_spawn_egg'->'Parrot Spawn Egg','phantom_spawn_egg'->'Phantom Spawn Egg','pig_spawn_egg'->'Pig Spawn Egg','piglin_spawn_egg'->'Piglin Spawn Egg','piglin_brute_spawn_egg'->'Piglin Brute Spawn Egg','pillager_spawn_egg'->'Pillager Spawn Egg','polar_bear_spawn_egg'->'Polar Bear Spawn Egg','pufferfish_spawn_egg'->'Pufferfish Spawn Egg','rabbit_spawn_egg'->'Rabbit Spawn Egg','ravager_spawn_egg'->'Ravager Spawn Egg','salmon_spawn_egg'->'Salmon Spawn Egg','sheep_spawn_egg'->'Sheep Spawn Egg','shulker_spawn_egg'->'Shulker Spawn Egg','silverfish_spawn_egg'->'Silverfish Spawn Egg','skeleton_spawn_egg'->'Skeleton Spawn Egg','skeleton_horse_spawn_egg'->'Skeleton Horse Spawn Egg','slime_spawn_egg'->'Slime Spawn Egg','spider_spawn_egg'->'Spider Spawn Egg','squid_spawn_egg'->'Squid Spawn Egg','stray_spawn_egg'->'Stray Spawn Egg','strider_spawn_egg'->'Strider Spawn Egg','trader_llama_spawn_egg'->'Trader Llama Spawn Egg','tropical_fish_spawn_egg'->'Tropical Fish Spawn Egg','turtle_spawn_egg'->'Turtle Spawn Egg','vex_spawn_egg'->'Vex Spawn Egg','villager_spawn_egg'->'Villager Spawn Egg','vindicator_spawn_egg'->'Vindicator Spawn Egg','wandering_trader_spawn_egg'->'Wandering Trader Spawn Egg','witch_spawn_egg'->'Witch Spawn Egg','wither_skeleton_spawn_egg'->'Wither Skeleton Spawn Egg','wolf_spawn_egg'->'Wolf Spawn Egg','zoglin_spawn_egg'->'Zoglin Spawn Egg','zombie_spawn_egg'->'Zombie Spawn Egg','zombie_horse_spawn_egg'->'Zombie Horse Spawn Egg','zombie_villager_spawn_egg'->'Zombie Villager Spawn Egg','zombified_piglin_spawn_egg'->'Zombified Piglin Spawn Egg','experience_bottle'->'Bottle o\' Enchanting','fire_charge'->'Fire Charge','writable_book'->'Book and Quill','written_book'->'Written Book','emerald'->'Emerald','item_frame'->'Item Frame','flower_pot'->'Flower Pot','carrot'->'Carrot','potato'->'Potato','baked_potato'->'Baked Potato','poisonous_potato'->'Poisonous Potato','map'->'Empty Map','golden_carrot'->'Golden Carrot','skeleton_skull'->'Skeleton Skull','wither_skeleton_skull'->'Wither Skeleton Skull','player_head'->'Player Head','zombie_head'->'Zombie Head','creeper_head'->'Creeper Head','dragon_head'->'Dragon Head','carrot_on_a_stick'->'Carrot on a Stick','warped_fungus_on_a_stick'->'Warped Fungus on a Stick','nether_star'->'Nether Star','pumpkin_pie'->'Pumpkin Pie','firework_rocket'->'Firework Rocket','firework_star'->'Firework Star','enchanted_book'->'Enchanted Book','nether_brick'->'Nether Brick','quartz'->'Nether Quartz','tnt_minecart'->'TNT Minecart','hopper_minecart'->'Hopper Minecart','prismarine_shard'->'Prismarine Shard','prismarine_crystals'->'Prismarine Crystals','rabbit'->'Raw Rabbit','cooked_rabbit'->'Cooked Rabbit','rabbit_stew'->'Rabbit Stew','rabbit_foot'->'Rabbit\'s Foot','rabbit_hide'->'Rabbit Hide','armor_stand'->'Armor Stand','iron_horse_armor'->'Iron Horse Armor','golden_horse_armor'->'Golden Horse Armor','diamond_horse_armor'->'Diamond Horse Armor','leather_horse_armor'->'Leather Horse Armor','lead'->'Lead','name_tag'->'Name Tag','command_block_minecart'->'Command Block Minecart','mutton'->'Raw Mutton','cooked_mutton'->'Cooked Mutton','white_banner'->'White Banner','orange_banner'->'Orange Banner','magenta_banner'->'Magenta Banner','light_blue_banner'->'Light Blue Banner','yellow_banner'->'Yellow Banner','lime_banner'->'Lime Banner','pink_banner'->'Pink Banner','gray_banner'->'Gray Banner','light_gray_banner'->'Light Gray Banner','cyan_banner'->'Cyan Banner','purple_banner'->'Purple Banner','blue_banner'->'Blue Banner','brown_banner'->'Brown Banner','green_banner'->'Green Banner','red_banner'->'Red Banner','black_banner'->'Black Banner','end_crystal'->'End Crystal','chorus_fruit'->'Chorus Fruit','popped_chorus_fruit'->'Popped Chorus Fruit','beetroot'->'Beetroot','beetroot_seeds'->'Beetroot Seeds','beetroot_soup'->'Beetroot Soup','dragon_breath'->'Dragon\'s Breath','splash_potion'->'Splash Potion','spectral_arrow'->'Spectral Arrow','tipped_arrow'->'Tipped Arrow','lingering_potion'->'Lingering Potion','shield'->'Shield','elytra'->'Elytra','spruce_boat'->'Spruce Boat','birch_boat'->'Birch Boat','jungle_boat'->'Jungle Boat','acacia_boat'->'Acacia Boat','dark_oak_boat'->'Dark Oak Boat','totem_of_undying'->'Totem of Undying','shulker_shell'->'Shulker Shell','iron_nugget'->'Iron Nugget','knowledge_book'->'Knowledge Book','debug_stick'->'Debug Stick','music_disc_13'->'13 Disc','music_disc_cat'->'Cat Disc','music_disc_blocks'->'Blocks Disc','music_disc_chirp'->'Chirp Disc','music_disc_far'->'Far Disc','music_disc_mall'->'Mall Disc','music_disc_mellohi'->'Mellohi Disc','music_disc_stal'->'Stal Disc','music_disc_strad'->'Strad Disc','music_disc_ward'->'Ward Disc','music_disc_11'->'11 Disc','music_disc_wait'->'Wait Disc','music_disc_pigstep'->'Music Disc','trident'->'Trident','phantom_membrane'->'Phantom Membrane','nautilus_shell'->'Nautilus Shell','heart_of_the_sea'->'Heart of the Sea','crossbow'->'Crossbow','suspicious_stew'->'Suspicious Stew','loom'->'Loom','flower_banner_pattern'->'Banner Pattern','creeper_banner_pattern'->'Banner Pattern','skull_banner_pattern'->'Banner Pattern','mojang_banner_pattern'->'Banner Pattern','globe_banner_pattern'->'Banner Pattern','piglin_banner_pattern'->'Banner Pattern','composter'->'Composter','barrel'->'Barrel','smoker'->'Smoker','blast_furnace'->'Blast Furnace','cartography_table'->'Cartography Table','fletching_table'->'Fletching Table','grindstone'->'Grindstone','lectern'->'Lectern','smithing_table'->'Smithing Table','stonecutter'->'Stonecutter','bell'->'Bell','lantern'->'Lantern','soul_lantern'->'Soul Lantern','sweet_berries'->'Sweet Berries','campfire'->'Campfire','soul_campfire'->'Soul Campfire','shroomlight'->'Shroomlight','honeycomb'->'Honeycomb','bee_nest'->'Bee Nest','beehive'->'Beehive','honey_bottle'->'Honey Bottle','honey_block'->'Honey Block','honeycomb_block'->'Honeycomb Block','lodestone'->'Lodestone','netherite_block'->'Netherite Block','ancient_debris'->'Ancient Debris','target'->'Target','crying_obsidian'->'Crying Obsidian','blackstone'->'Blackstone','blackstone_slab'->'Blackstone Slab','blackstone_stairs'->'Blackstone Stairs','gilded_blackstone'->'Gilded Blackstone','polished_blackstone'->'Polished Blackstone','polished_blackstone_slab'->'Polished Blackstone Slab','polished_blackstone_stairs'->'Polished Blackstone Stairs','chiseled_polished_blackstone'->'Chiseled Polished Blackstone','polished_blackstone_bricks'->'Polished Blackstone Bricks','polished_blackstone_brick_slab'->'Polished Blackstone Brick Slab','polished_blackstone_brick_stairs'->'Polished Blackstone Brick Stairs','cracked_polished_blackstone_bricks'->'Cracked Polished Blackstone Bricks','respawn_anchor'->'Respawn Anchor'};
-
-global_entities = {'area_effect_cloud'->'Area Effect Cloud','armor_stand'->'Armor Stand','arrow'->'Arrow','bat'->'Bat','bee'->'Bee','blaze'->'Blaze','boat'->'Boat','cat'->'Cat','cave_spider'->'Cave Spider','chicken'->'Chicken','cod'->'Cod','cow'->'Cow','creeper'->'Creeper','dolphin'->'Dolphin','donkey'->'Donkey','dragon_fireball'->'Dragon Fireball','drowned'->'Drowned','elder_guardian'->'Elder Guardian','end_crystal'->'End Crystal','ender_dragon'->'Ender Dragon','enderman'->'Enderman','endermite'->'Endermite','evoker'->'Evoker','evoker_fangs'->'Evoker Fangs','experience_orb'->'Experience Orb','eye_of_ender'->'Eye of Ender','falling_block'->'Falling Block','firework_rocket'->'Firework Rocket','fox'->'Fox','ghast'->'Ghast','giant'->'Giant','guardian'->'Guardian','hoglin'->'Hoglin','horse'->'Horse','husk'->'Husk','illusioner'->'Illusioner','iron_golem'->'Iron Golem','item'->'Item','item_frame'->'Item Frame','fireball'->'Fireball','leash_knot'->'Leash Knot','lightning_bolt'->'Lightning Bolt','llama'->'Llama','llama_spit'->'Llama Spit','magma_cube'->'Magma Cube','minecart'->'Minecart','chest_minecart'->'Minecart with Chest','command_block_minecart'->'Minecart with Command Block','furnace_minecart'->'Minecart with Furnace','hopper_minecart'->'Minecart with Hopper','spawner_minecart'->'Minecart with Spawner','tnt_minecart'->'Minecart with TNT','mule'->'Mule','mooshroom'->'Mooshroom','ocelot'->'Ocelot','painting'->'Painting','panda'->'Panda','parrot'->'Parrot','phantom'->'Phantom','pig'->'Pig','piglin'->'Piglin','piglin_brute'->'Piglin Brute','pillager'->'Pillager','polar_bear'->'Polar Bear','tnt'->'Primed TNT','pufferfish'->'Pufferfish','rabbit'->'Rabbit','ravager'->'Ravager','salmon'->'Salmon','sheep'->'Sheep','shulker'->'Shulker','shulker_bullet'->'Shulker Bullet','silverfish'->'Silverfish','skeleton'->'Skeleton','skeleton_horse'->'Skeleton Horse','slime'->'Slime','small_fireball'->'Small Fireball','snow_golem'->'Snow Golem','snowball'->'Snowball','spectral_arrow'->'Spectral Arrow','spider'->'Spider','squid'->'Squid','stray'->'Stray','strider'->'Strider','egg'->'Thrown Egg','ender_pearl'->'Thrown Ender Pearl','experience_bottle'->'Thrown Bottle o\' Enchanting','potion'->'Potion','trident'->'Trident','trader_llama'->'Trader Llama','tropical_fish'->'Tropical Fish','turtle'->'Turtle','vex'->'Vex','villager'->'Villager','vindicator'->'Vindicator','wandering_trader'->'Wandering Trader','witch'->'Witch','wither'->'Wither','wither_skeleton'->'Wither Skeleton','wither_skull'->'Wither Skull','wolf'->'Wolf','zoglin'->'Zoglin','zombie'->'Zombie','zombie_horse'->'Zombie Horse','zombie_villager'->'Zombie Villager','zombified_piglin'->'Zombified Piglin'};
-
-global_custom_stats = {'animals_bred'->'Animals Bred','clean_armor'->'Armor Pieces Cleaned','clean_banner'->'Banners Cleaned','open_barrel'->'Barrels Opened','bell_ring'->'Bells rung','eat_cake_slice'->'Cake Slices Eaten','fill_cauldron'->'Cauldrons Filled','open_chest'->'Chests Opened','damage_absorbed'->'Damage Absorbed','damage_blocked_by_shield'->'Damage Blocked by Shield','damage_dealt'->'Damage Dealt','damage_dealt_absorbed'->'Damage Dealt Absorbed','damage_dealt_resisted'->'Damage Dealt Resisted','damage_resisted'->'Damage Resisted','damage_taken'->'Damage Taken','inspect_dispenser'->'Dispensers Inspected','climb_one_cm'->'Distance Climbed','crouch_one_cm'->'Distance Crouched','fall_one_cm'->'Distance Fallen','fly_one_cm'->'Distance Flown','sprint_one_cm'->'Distance Sprinted','swim_one_cm'->'Distance Swum','walk_one_cm'->'Distance Walked','walk_on_water_one_cm'->'Distance Walked on Water','walk_under_water_one_cm'->'Distance Walked under Water','boat_one_cm'->'Distance by Boat','aviate_one_cm'->'Distance by Elytra','horse_one_cm'->'Distance by Horse','minecart_one_cm'->'Distance by Minecart','pig_one_cm'->'Distance by Pig','strider_one_cm'->'Distance by Strider','inspect_dropper'->'Droppers Inspected','open_enderchest'->'Enderchests Opened','fish_caught'->'Fish Caught','leave_game'->'Games Quit','inspect_hopper'->'Hoppers Inspected','interact_with_anvil'->'Interactions with anvils','interact_with_beacon'->'Interactions with Beacons','interact_with_blast_furnace'->'Interactions with Blast Furnaces','interact_with_brewingstand'->'Interactions with Brewing Stands','interact_with_campfire'->'Interactions with Campfires','interact_with_cartography_table'->'Interactions with Cartography Tables','interact_with_crafting_table'->'Interactions with Crafting Tables','interact_with_furnace'->'Interactions with Furnaces','interact_with_grindstone'->'Interactions with Grindstones','interact_with_lectern'->'Interactions with Lecterns','interact_with_loom'->'Interactions with Looms','interact_with_smithing_table'->'Interactions with Smithing Tables','interact_with_smoker'->'Interactions with Smokers','interact_with_stonecutter'->'Interactions with Stonecutters','drop'->'Items Dropped','enchant_item'->'Items Enchanted','jump'->'Jumps','mob_kills'->'Mob Kills','play_record'->'Music Discs Played','play_noteblock'->'Noteblocks Played','tune_noteblock'->'Noteblocks Tuned','deaths'->'Deaths','pot_flower'->'Plants Potted','player_kills'->'Player Kills','raid_trigger'->'Raids Triggered','raid_win'->'Raids Won','clean_shulker_box'->'Shulker Boxes Cleaned','open_shulker_box'->'Shulker Boxes Opened','sneak_time'->'Sneak Time','talked_to_villager'->'Talks to Villagers','target_hit'->'Targets Hit','play_one_minute'->'Playtime','time_since_death'->'Time Since Last Death','time_since_rest'->'Time Since Last Rest','sleep_in_bed'->'Times Slept in a Bed','traded_with_villager'->'Trades with Villagers','trigger_trapped_chest'->'Trapped Chests Triggered','use_cauldron'->'Water Taken from Cauldrons'};
-
-global_categories = {'mined' -> 'Mined', 'crafted' -> 'Crafted', 'used' -> 'Used', 'broken' -> 'Broken', 'picked_up' -> 'Picked Up', 'dropped' -> 'Dropped', 'killed' -> 'Killed', 'killed_by' -> 'Killed by', 'custom' -> ''};
-
-global_dig_names = {'total' -> 'Total', 'pick' -> 'Pickaxe', 'shovel' -> 'Shovel', 'pickshovel' -> 'Pickaxe & Shovel'};
-
-global_tools = filter(item_list(), _~'pickaxe' || _~'shovel' || _~'axe' || _~'hoe' || _ == 'shears');
+display_names = read_file('display_names', 'json');
+global_misc_stats = display_names:'misc';
+global_block_names = display_names:'blocks';
+global_item_names = display_names:'items';
+global_entity_names = display_names:'entities';
+global_categories = {'mined' -> '%s Mined', 'crafted' -> '%s Crafted', 'used' -> '%s Used', 'broken' -> '%s Broken', 'picked_up' -> '%s Picked Up', 'dropped' -> '%s Dropped', 'killed' -> '%s Killed', 'killed_by' -> 'Killed by %s', 'custom' -> '%s', 'extra' -> '%s', 'digs' -> 'Digs [%s]'};
+global_extra_stats = {'bedrock_removed' -> 'Bedrock Removed', 'ping' -> 'Ping', 'health' -> 'Health', 'xp_level' -> 'Levels of Experience', 'hunger' -> 'Hunger', 'saturation' -> 'Saturation', 'air' -> 'Remaining Air'};
+global_dig_data = {'combined_blocks' -> ['Combined Blocks', null], 'total' -> ['Total', [...pickaxes, ...shovels, ...axes, ...hoes, 'shears']], 'pick' -> ['Pickaxe', pickaxes], 'shovel' -> ['Shovel', shovels], 'pickshovel' -> ['Pickaxe & Shovel', [...pickaxes, ...shovels]], 'axe' -> ['Axe', axes], 'hoe' -> ['Hoe', hoes]};
 
 global_bedrock_removed = read_file('bedrock_removed', 'json') || {};
-global_digs = read_file('digs', 'json') || {};
+global_digs = {};
+for(list_files('digs', 'json'), global_digs:slice(_, length('digs') + 1) = read_file(_, 'json'));
+global_carousel_data = read_file('carousel', 'json') || {'interval' -> 200, 'entries' -> []};
 
-global_total_text = '§lTotal';
+settings = read_file('settings', 'json');
+global_stat = settings:'stat' || [];
+global_bots_included = settings:'bots_included';
+global_offline_digs = if(settings:'offline_digs' != null, settings:'offline_digs', true);
+global_dig_display = settings:'dig_display' || {};
+global_dig_display_color = settings:'dig_display_color' || {};
+global_stat_color = settings:'stat_color' || 'FFEE44';
+global_default_dig = settings:'default_dig' || 'combined_blocks';
+
+global_help_pages = [
+    [
+        '%color% /%app_name% mined <block> ', 'f ｜ ', 'g Amount of <block> mined', ' \n',
+        '%color% /%app_name% used <item> ', 'f ｜ ', 'g Amount of <item> used or placed', ' \n',
+        '%color% /%app_name% crafted <item> ', 'f ｜ ', 'g Amount of <item> crafted', ' \n',
+        '%color% /%app_name% dropped <item> ', 'f ｜ ', 'g Amount of <item> dropped', ' \n',
+        '%color% /%app_name% picked_up <item> ', 'f ｜ ', 'g Amount of <item> picked up', ' \n',
+        '%color% /%app_name% broken <item> ', 'f ｜ ', 'g Amount of <item> broken', '^g (that ran out of durability)', ' \n',
+        '%color% /%app_name% killed <entity> ', 'f ｜ ', 'g Amount of <entity> killed', ' \n',
+        '%color% /%app_name% killed_by <entity> ', 'f ｜ ', 'g Amount of times <entity> killed you', ' \n',
+        '%color% /%app_name% misc <misc_stat> ', 'f ｜ ', 'g Misc statistics, e.g. play_time, deaths, mob_kills, aviate_one_cm', ' \n',
+        '%color% /%app_name% extra <extra_stat> ', 'f ｜ ', 'g Extra statistics that are not normally in the game, e.g. xp_level, ping, health, hunger', ' \n',
+        '%color% /%app_name% bedrock_removed ', 'f ｜ ', 'g Amount of bedrock removed by hand using pistons and tnt', ' \n',
+        '%color% /%app_name% digs <dig> ', 'f ｜ ', 'g Amount of digs (%default_dig% by default)', ' \n',
+        '%color% /%app_name% combined <combined_stat> ', 'f ｜ ', 'g Multiple statistics combined together', ' \n',
+    ],
+    [
+        '%color% /%app_name% print <category> <entry> [<player>] ', 'f ｜ ', 'g Prints the value of a stat of a player', ' \n',
+        '%color% /%app_name% hide ', 'f ｜ ', 'g Hides the scoreboard', ' \n',
+        '%color% /%app_name% show ', 'f ｜ ', 'g Shows the scoreboard', '  \n',
+        '%color% /%app_name% bots (on|off|toggle) ', 'f ｜ ', 'g A shortcut for /%app_name% settings bots_included', '  \n',
+        '%color% /%app_name% settings bots_included [on|off|toggle] ', 'f ｜ ', 'g Includes or excludes bots in the scoreboard', ' \n',
+        '%color% /%app_name% settings default_dig <dig> ', 'f ｜ ', 'g Sets the default dig type ', 'f *', '^g For server operators only', '  \n',
+        '%color% /%app_name% settings offline_digs [on|off|toggle] ', 'f ｜ ', 'g Includes or excludes digs of offline whitelisted players in the scoreboard', ' \n',
+        '%color% /%app_name% settings dig_display [on|off|toggle] ', 'f ｜ ', 'g Shows or hides digs in the player list footer', ' \n',
+        '%color% /%app_name% settings dig_display_color <hex_color> ', 'f ｜ ', 'g Changes the color of digs display for yourself; leave empty to reset', ' \n',
+        '%color% /%app_name% settings stat_color <hex_color> ', 'f ｜ ', 'g Changes the color of the scoreboard name for everyone; leave empty to reset ', 'f *', '^g For server operators only', ' \n'
+    ],
+    [
+        '%color% /%app_name% settings combined_stats list ', 'f ｜ ', 'g Lists combined statistics ', ' \n',
+        '%color% /%app_name% settings combined_stats info <combined_stat> ', 'f ｜ ', 'g Prints the entries of a combined statistic ', ' \n',
+        '%color% /%app_name% settings combined_stats create <name> <display_name> <category> <entries> ', 'f ｜ ', 'g Creates a combined statistic ', 'f *', '^g For server operators only', ' \n',
+        '%color% /%app_name% settings combined_stats delete <combined_stat> ', 'f ｜ ', 'g Deletes a combined statistic ', 'f *', '^g For server operators only', ' \n\n',
+        '%color% /%app_name% carousel start ', 'f ｜ ', 'g Starts a carousel of statistics', ' \n',
+        '%color% /%app_name% carousel stop ', 'f ｜ ', 'g Stops the carousel', ' \n',
+        '%color% /%app_name% carousel interval [<seconds>] ', 'f ｜ ', 'g Gets or sets the interval of the carousel', ' \n',
+        '%color% /%app_name% carousel list ', 'f ｜ ', 'g Lists carousel entries', ' \n',
+        '%color% /%app_name% carousel add <category> <entry> ', 'f ｜ ', 'g Adds an entry to the carousel', ' \n',
+        '%color% /%app_name% carousel remove <index> ', 'f ｜ ', 'g Removes an entry from the carousel', ' \n',
+    ]
+];
 
 __config() -> {
+    'resources' -> [
+        // Display names
+        {
+        'source' -> str('https://raw.githubusercontent.com/CommandLeo/scarpet/main/resources/stat/display_names/%d.json', system_info('game_major_target')),
+        'target' -> 'display_names.json'
+        },
+        // Default combined stats
+        {
+            'source' -> 'https://raw.githubusercontent.com/CommandLeo/scarpet/main/resources/stat/combined/concrete_placed.txt',
+            'target' -> 'combined/concrete_placed.txt'
+        },
+        {
+            'source' -> 'https://raw.githubusercontent.com/CommandLeo/scarpet/main/resources/stat/combined/ores_mined.txt',
+            'target' -> 'combined/ores_mined.txt'
+        }
+    ],
     'commands' -> {
-        '' -> 'help',
+        '' -> 'menu',
         'hide' -> 'hide',
         'show' -> 'show',
-        'bots' -> 'toggleBots',
-        'mined <block>' -> ['showStat', 'mined'],
-        'crafted <item>' -> ['showStat', 'crafted'],
-        'used <item>' -> ['showStat', 'used'],
-        'broken <item>' -> ['showStat', 'broken'],
-        'picked_up <item>' -> ['showStat', 'picked_up'],
-        'dropped <item>' -> ['showStat', 'dropped'],
-        'killed <entitytype>' -> ['showStat', 'killed'],
-        'killed_by <entitytype>' -> ['showStat', 'killed_by'],
-        'level' -> 'showlevels',
-        'digs' -> ['showDigs', 'total'],
-        'digs total' -> ['showDigs', 'total'],
-        'digs pick' -> ['showDigs', 'pick'],
-        'digs shovel' -> ['showDigs', 'shovel'],
-        'digs pickshovel' -> ['showDigs', 'pickshovel'],
-        'bedrockRemoved' -> 'showBedrockRemoved',
-        'custom <custom>' -> ['showStat', 'custom']
+        'help' -> ['help', 1],
+        'help <page>' -> 'help',
+
+        'bots' -> ['toggleBots', null],
+        'bots on' -> ['toggleBots', true],
+        'bots off' -> ['toggleBots', false],
+        'bots toggle' -> ['toggleBots', null],
+        'settings bots_included' -> ['toggleBots', null],
+        'settings bots_included on' -> ['toggleBots', true],
+        'settings bots_included off' -> ['toggleBots', false],
+        'settings bots_included toggle' -> ['toggleBots', null],
+        'settings offline_digs' -> ['toggleOfflineDigs', null],
+        'settings offline_digs on' -> ['toggleOfflineDigs', true],
+        'settings offline_digs off' -> ['toggleOfflineDigs', false],
+        'settings offline_digs toggle' -> ['toggleOfflineDigs', null],
+        'settings dig_display' -> ['toggleDigDisplay', null],
+        'settings dig_display on' -> ['toggleDigDisplay', true],
+        'settings dig_display off' -> ['toggleDigDisplay', false],
+        'settings dig_display toggle' -> ['toggleDigDisplay', null],
+        'settings dig_display_color' -> ['setDigDisplayColor', null],
+        'settings dig_display_color <hex_color>' -> 'setDigDisplayColor',
+        'settings stat_color' -> ['setStatColor', null],
+        'settings stat_color <hex_color>' -> 'setStatColor',
+        'settings default_dig <dig>' -> 'setDefaultDig',
+        'settings combined_stats list' -> 'listCombinedStats',
+        'settings combined_stats info <combined_stat>' -> 'combinedStatInfo',
+        'settings combined_stats create <name> <display_name> <category> <entries>' -> 'createCombinedStat',
+        'settings combined_stats delete <combined_stat>' -> 'deleteCombinedStat',
+
+        'mined <block>' -> ['changeStat', 'mined'],
+        'crafted <item>' -> ['changeStat', 'crafted'],
+        'used <item>' -> ['changeStat', 'used'],
+        'broken <item>' -> ['changeStat', 'broken'],
+        'picked_up <item>' -> ['changeStat', 'picked_up'],
+        'dropped <item>' -> ['changeStat', 'dropped'],
+        'killed <entity>' -> ['changeStat', 'killed'],
+        'killed_by <entity>' -> ['changeStat', 'killed_by'],
+        'misc <misc_stat>' -> ['changeStat', 'custom'],
+        'extra <extra_stat>' -> ['changeStat', 'extra'],
+        'bedrock_removed' -> ['changeStat', 'bedrock_removed', 'extra'],
+        'digs <dig>' -> ['changeStat', 'digs'],
+        'digs' -> ['changeStat', null, 'digs'],
+        'combined <combined_stat>' -> ['changeStat', 'combined'],
+
+        'print mined <block>' -> ['printStatValue', null, 'mined'],
+        'print crafted <item>' -> ['printStatValue', null, 'crafted'],
+        'print used <item>' -> ['printStatValue', null, 'used'],
+        'print broken <item>' -> ['printStatValue', null, 'broken'],
+        'print picked_up <item>' -> ['printStatValue', null, 'picked_up'],
+        'print dropped <item>' -> ['printStatValue', null, 'dropped'],
+        'print killed <entity>' -> ['printStatValue', null, 'killed'],
+        'print killed_by <entity>' -> ['printStatValue', null, 'killed_by'],
+        'print misc <misc_stat>' -> ['printStatValue', null, 'custom'],
+        'print extra <extra_stat>' -> ['printStatValue', null, 'extra'],
+        'print digs <dig>' -> ['printStatValue', null, 'digs'],
+        'print combined <combined_stat>' -> ['printStatValue', 'combined', null],
+        'print mined <block> <player>' -> ['printStatValue', 'mined'],
+        'print crafted <item> <player>' -> ['printStatValue', 'crafted'],
+        'print used <item> <player>' -> ['printStatValue', 'used'],
+        'print broken <item> <player>' -> ['printStatValue', 'broken'],
+        'print picked_up <item> <player>' -> ['printStatValue', 'picked_up'],
+        'print dropped <item> <player>' -> ['printStatValue', 'dropped'],
+        'print killed <entity> <player>' -> ['printStatValue', 'killed'],
+        'print killed_by <entity> <player>' -> ['printStatValue', 'killed_by'],
+        'print misc <misc_stat> <player>' -> ['printStatValue', 'custom'],
+        'print extra <extra_stat> <player>' -> ['printStatValue', 'extra'],
+        'print digs <dig> <player>' -> ['printStatValue', 'digs'],
+        'print combined <combined_stat> <player>' -> ['printStatValue', 'combined'],
+
+        'carousel start' -> 'startCarousel',
+        'carousel stop' -> 'stopCarousel',
+        'carousel interval' -> ['carouselInterval', null],
+        'carousel interval <seconds>' -> 'carouselInterval',
+        'carousel remove <index>' -> 'removeCarouselEntry',
+        'carousel add mined <block>' -> ['addCarouselEntry', 'mined'],
+        'carousel add crafted <item>' -> ['addCarouselEntry', 'crafted'],
+        'carousel add used <item>' -> ['addCarouselEntry', 'used'],
+        'carousel add broken <item>' -> ['addCarouselEntry', 'broken'],
+        'carousel add picked_up <item>' -> ['addCarouselEntry', 'picked_up'],
+        'carousel add dropped <item>' -> ['addCarouselEntry', 'dropped'],
+        'carousel add killed <entity>' -> ['addCarouselEntry', 'killed'],
+        'carousel add killed_by <entity>' -> ['addCarouselEntry', 'killed_by'],
+        'carousel add misc <misc_stat>' -> ['addCarouselEntry', 'custom'],
+        'carousel add extra <extra_stat>' -> ['addCarouselEntry', 'extra'],
+        'carousel add digs <dig>' -> ['addCarouselEntry', 'digs'],
+        'carousel add combined <combined_stat>' -> ['addCarouselEntry', 'combined'],
+        'carousel list' -> 'listCarouselEntries'
     },
     'arguments' -> {
-        'custom' -> {
+        'block' -> {
             'type' -> 'term',
-            'options' -> keys(global_custom_stats),
-            'suggestions' -> keys(global_custom_stats)
+            'suggestions' -> global_block_list,
+            'options' -> global_block_list,
+            'case_sensitive' -> false
+        },
+        'item' -> {
+            'type' -> 'term',
+            'suggestions' -> global_item_list,
+            'options' -> global_item_list,
+            'case_sensitive' -> false
+        },
+        'entity' -> {
+            'type' -> 'term',
+            'suggestions' -> global_entity_list,
+            'options' -> global_entity_list,
+            'case_sensitive' -> false
+        },
+        'misc_stat' -> {
+            'type' -> 'term',
+            'suggestions' -> keys(global_misc_stats),
+            'options' -> keys(global_misc_stats),
+            'case_sensitive' -> false
+        },
+        'extra_stat' -> {
+            'type' -> 'term',
+            'suggestions' -> keys(global_extra_stats),
+            'options' -> keys(global_extra_stats),
+            'case_sensitive' -> false
+        },
+        'dig' -> {
+            'type' -> 'term',
+            'suggestions' -> keys(global_dig_data),
+            'options' -> keys(global_dig_data),
+            'case_sensitive' -> false
+        },
+        'combined_stat' -> {
+            'type' -> 'term',
+            'suggester' -> _(args) -> map(list_files('combined', 'text'), slice(_, length('combined') + 1)),
+            'case_sensitive' -> false
+        },
+        'category' -> {
+            'type' -> 'term',
+            'suggest' -> keys(global_categories),
+            'options' -> keys(global_categories),
+            'case_sensitive' -> false
+        },
+        'player' -> {
+            'type' -> 'players',
+            'single' -> true
+        },
+        'entries' -> {
+            'type' -> 'text',
+            'suggester' -> _(args) -> (
+                entries_string = args:'entries' || ' ';
+                category = args:'category';
+                list = if(
+                    category == 'used' || category == 'broken' || category == 'crafted' || category == 'dropped' || category == 'picked_up', global_item_list, 
+                    category == 'mined', global_block_list,
+                    category == 'killed' || category == 'killed_by', global_entity_list,
+                    category == 'custom', keys(global_misc_stats),
+                    category == 'extra', keys(global_extra_stats),
+                    category == 'digs', keys(global_dig_data)
+                );
+                entries = split(' ', entries_string);
+                if(length(entries) && slice(entries_string, -1) != ' ', delete(entries, -1));
+                if(entries, map(list, str('%s %s', join(' ', entries), _)), list);
+            ),
+            'case_sensitive' -> false
+        },      
+        'hex_color' -> {
+            'type' -> 'term',
+            'suggester' -> _(args) -> (
+                color = upper(args:'hex_color' || '');
+                if(!color || (length(color) < 6 && all(split(color), has(global_hex_charset, _))), map(global_hex_charset, color + _), []);
+            ),
+            'case_sensitive' -> false
+        },
+        'name' -> {
+            'type' -> 'term',
+            'suggest' -> []
+        },
+        'display_name' -> {
+            'type' -> 'string',
+            'suggest' -> []
+        },
+        'page' -> {
+            'type' -> 'int',
+            'min' -> 1,
+            'max' -> length(global_help_pages),
+            'suggest' -> [range(length(global_help_pages))] + 1
+        },
+        'seconds' -> {
+            'type' -> 'int',
+            'min' -> 1,
+            'max' -> 3600,
+            'suggest' -> []
+        },
+        'index' -> {
+            'type' -> 'int',
+            'suggest' -> []
         }
+    },
+    'requires' -> {
+        'carpet' -> '>=1.4.44'
     },
     'scope' -> 'global'
 };
 
-help() -> (
-	print(replace('§8§m-----------------------------------------------------
-§6§lStatistic Display§e by §e§lCommandLeo\n
-§e/app_name hide §8｜ §7Hides the scoreboard
-§e/app_name show §8｜ §7Shows the scoreboard
-§e/app_name bots §8｜ §7Includes/excludes bots in the scoreboard\n
-§e/app_name mined <block> §8｜ §7Amount of <block> mined
-§e/app_name used <item/block> §8｜ §7Amount of <item> right-clicked or <block> placed
-§e/app_name crafted <item> §8｜ §7Amount of <item> crafted
-§e/app_name dropped <item> §8｜ §7Amount of <item> dropped
-§e/app_name picked_up <item> §8｜ §7Amount of <item> picked up
-§e/app_name broken <item> §8｜ §7Amount of <item> broken, that ran out of durability
-§e/app_name killed <entity> §8｜ §7Amount of <entity> killed
-§e/app_name killed_by <entity> §8｜ §7Amount of times you were killed by <entity>
-§e/app_name custom <custom> §8｜ §7Misc statistics, examples: player_kills, deaths, play_one_minute
-§e/app_name bedrockRemoved §8｜ §7Amount of bedrock removed by hand using pistons and tnt
-§e/app_name digs <tool> §8｜ §7Amount of digs with <tool> (total, pick, shovel, pickshovel)
-§e/app_name levels §8｜ §7Amount of Levels all players have
-§8§m-----------------------------------------------------', 'app_name', system_info('app_name')));
+// HELPER FUNCTIONS
+
+_error(error) -> exit(print(format(str('r %s', error))));
+
+isInvalidEntry(entry) -> (
+    if(entry == global_total_text, return(false));
+    if(global_stat:0 == 'digs' && global_server_whitelisted && global_offline_digs, return(!has(system_info('server_whitelist'), str(entry))));
+    return(!player(entry) || (!global_bots_included && player(entry)~'player_type' == 'fake'));
+);
+
+removeInvalidEntries() -> (
+    for(scoreboard('stats'), if(isInvalidEntry(_), scoreboard_remove('stats', _)));
+);
+
+parseCombinedFile(name) -> (
+    file = read_file('combined/' + name, 'text');
+    display_name = file:0;
+    category = if(length(file) > 1, file:1);
+    loop(2, delete(file, 0));
+    return([display_name, category, file]);
+);
+
+calculateTotal() -> (
+    if(!global_stat, return());
+    for(scoreboard('stats'), if(_ != global_total_text, total += scoreboard('stats', _)));
+    scoreboard('stats', global_total_text, total);
+);
+
+getDisplayName(category, event) -> (
+    return(str(global_categories:category, if(
+        category == 'used' || category == 'broken' || category == 'crafted' || category == 'dropped' || category == 'picked_up', global_item_names, 
+        category == 'mined', global_block_names,
+        category == 'killed' || category == 'killed_by', global_entity_names,
+        category == 'custom', global_misc_stats,
+        category == 'extra', global_extra_stats,
+        category == 'digs', global_dig_data
+    ):event || event));
+);
+
+getStat(player, category, event) -> (
+    if(category == 'digs',
+        if(!player(player), return(global_digs:event:str(player)));
+        if(event == 'combined_blocks',
+            return(reduce(global_block_list, _a + statistic(player, 'mined', _), 0)),
+            tools = global_dig_data:event:1;
+            return(if(tools, reduce(tools, _a + statistic(player, 'used', _), 0)));
+        );
+    );
+    if(category == 'combined',
+        if(event == global_stat:1 && global_combined, [category, entries] = global_combined, [display_name, category, entries] = parseCombinedFile(event));
+        return(if(entries, reduce(entries, _a + statistic(player, category, _), 0)));
+    );
+    if(category == 'extra',
+        if(event == 'bedrock_removed', return(global_bedrock_removed:(player(player)~'uuid')));
+        return(player(player)~event);
+    );
+    return(statistic(player, category, event));
+);
+
+displayDigs(player) -> (
+    uuid = player~'uuid';
+    if(global_dig_display:uuid == false || !player(player), return());
+    color = global_dig_display_color:uuid || global_stat_color;
+    display_title(player, 'player_list_footer', format(str('#%s ⬛ %s', color, getStat(player, 'digs', 'combined_blocks')), '#343A40  ｜ ', str('#%s ⚒ %s', color, getStat(player, 'digs', 'total')), '#343A40  ｜ ', str('#%s ⛏ %s', color, getStat(player, 'digs', 'pick'))));
+);
+
+// MAIN FUNCTIONS
+
+menu() -> (
+    texts = [
+        'fs ' + ' ' * 80, ' \n',
+        '#FED330b Statistic Display ', 'g by ', '%color%b CommandLeo', '^g https://github.com/CommandLeo', ' \n\n',
+        'g An app to easily display statistics on the scoreboard.', '  \n',
+        'g Run ', '%color% /%app_name% help', '!/%app_name% help', '^g Click to run the command', 'g  to see a list of all the commands.', '  \n',
+        'fs ' + ' ' * 80
+    ];
+    replacement_map = {'%app_name%' -> global_app_name, '%color%' -> '#FFEE44'};
+    print(format(map(texts, reduce(pairs(replacement_map), replace(_a, ..._), _))));
+);
+
+help(page) -> (
+    length = length(global_help_pages);
+    if(page < 1 || page > length, _error('Invalid page number'));
+    page = page - 1;
+    previous_page = (page - 1) % length + 1;
+    next_page = ((page + 1) % length + 1);
+    texts = ['fs ' + ' ' * 80, ' \n', ...global_help_pages:page, 'fs ' + ' ' * 31, '  ', 'fb «', '^g Previous page', '!/%app_name% help ' + previous_page, str('g \ Page %d/%d ', page + 1, length), 'fb »', '^g Next page', '!/%app_name% help ' + next_page, '  ', 'fs ' + ' ' * 31];
+    replacement_map = {'%app_name%' -> global_app_name, '%color%' -> '#FFEE44', '%default_dig%' -> global_default_dig};
+    print(format(map(texts, reduce(pairs(replacement_map), replace(_a, ..._), _))));
 );
 
 hide() -> (
@@ -88,120 +396,260 @@ show() -> (
     scoreboard_display('sidebar', 'stats');
 );
 
-toggleBots() -> (
-    print(str('§eBots are now %s§e in scoreboard', if(global_display_bots = !global_display_bots, '§aincluded', '§cexcluded')));
-    _updateScore();
+toggleBots(value) -> (
+    global_bots_included = if(value == null, !global_bots_included, value);
+    print(format('f » ', 'g Bots are now ', ...if(global_bots_included, ['l included', 'g  in '], ['r excluded', 'g  from ']), 'g the scoreboard'));
+    bots = filter(player('all'), _~'player_type' == 'fake');
+    for(bots, updateStat(_));
+    calculateTotal();
 );
 
-showStat(id, category) -> (
-    event = id:0 || str(id);
-    display_name = global_custom_stats:event || global_entities:event || global_items:event || global_blocks:event || event;
-    scoreboard_property('stats', 'display_name', str('§e%s %s', if(category == 'killed_by', [global_categories:category, display_name], [display_name, global_categories:category])));
-    global_stat = [category, event];
-    updateStat();
-    show();
+toggleOfflineDigs(value) -> (
+    global_offline_digs = if(value == null, !global_offline_digs, value);
+    print(format('f » ', 'g Offline digs are now ', if(global_offline_digs, 'l enabled', 'r disabled')));
+    if(global_stat:0 != 'digs' || !global_server_whitelisted, exit());
+    for(if(global_offline_digs, system_info('server_whitelist'), player('all')), updateStat(_));
+    removeInvalidEntries();
+    calculateTotal();
 );
 
-showlevels() -> (
-
-    global_stat = 'level';
-    scoreboard_property('stats', 'display_name', '§eLevels');
-    updatelevels();
-    show(); 
+toggleDigDisplay(value) -> (
+    uuid = player()~'uuid';
+    global_dig_display:uuid = if(value == null, global_dig_display:uuid == false, value);
+    print(format('f » ', 'g Digs are now ', if(global_dig_display:uuid, 'l displayed', 'r hidden'), 'g  in the player list footer'));
+    if(global_dig_display:uuid, displayDigs(player()), display_title(player(), 'player_list_footer'));
 );
 
-
-
-updatelevels() -> (
-    for(scoreboard('stats'), if(_ != global_total_text && !player(_), scoreboard_remove('stats', _)));
-    for(player('all'), if(!global_display_bots && _~'player_type' == 'fake', continue(scoreboard_remove('stats', _))); stat = query(_,'xp_level'); total += stat; if(stat, scoreboard('stats', _, stat), scoreboard_remove('stats', _)));
-    scoreboard('stats', global_total_text, total);
-);
-
-
-
-
-
-showDigs(type) -> (
-    global_stat = 'digs';
-    global_dig = type;
-    scoreboard_property('stats', 'display_name', str('§eDigs [%s]', global_dig_names:type));
-    updateDigs();
-    show();
-);
-
-showBedrockRemoved() -> (
-    global_stat = 'bedrockRemoved';
-    scoreboard_property('stats', 'display_name', '§eBedrock Removed');
-    bedrockRemoved();
-    show(); 
-);
-
-updateStat() -> (
-    [category, event] = global_stat;
-    for(scoreboard('stats'), if(_ != global_total_text && !player(_), scoreboard_remove('stats', _)));
-    for(player('all'), if(!global_display_bots && _~'player_type' == 'fake', continue(scoreboard_remove('stats', _))); stat = statistic(_, category, event); total += stat; if(stat, scoreboard('stats', _, stat), scoreboard_remove('stats', _)));
-    scoreboard('stats', global_total_text, total);
-);
-
-updateDigs() -> (
-    whitelist = system_info('server_whitelist');
-    tools = if(global_dig == 'total', global_tools, global_dig == 'pickshovel', filter(global_tools, _~'pickaxe' || _~'shovel'), filter(global_tools, _~global_dig));
-    if(whitelist && global_dig == 'total',
-        for(whitelist, p = player(_); stat = if(p, reduce(tools, _a + statistic(p, 'used', _), 0), global_dig == 'total', global_digs:_); total += stat; if(stat, scoreboard('stats', p || _, stat), scoreboard_remove('stats', _))),
-        for(scoreboard('stats'), if(_ != global_total_text && !player(_), scoreboard_remove('stats', _)));
-        for(player('all'), if(!global_display_bots && _~'player_type' == 'fake', continue(scoreboard_remove('stats', _))); p = _; stat = reduce(tools, _a + statistic(p, 'used', _), 0); total += stat; if(stat, scoreboard('stats', _, stat), scoreboard_remove('stats', _)));
+setDigDisplayColor(color) -> (
+    uuid = player()~'uuid';
+    if(!color,
+        delete(global_dig_display_color:uuid);
+        print(format('f » ', 'g Dig display color has been ', 'r reset')),
+        color = upper(replace(color, '#'));
+        if(length(color) != 6 || !all(split(color), has(global_hex_charset, _ )), _error('Invalid hex color'));
+        global_dig_display_color:uuid = color;
+        print(format('f » ', 'g Dig display color has been set to ', str('#%s #%s', global_dig_display_color:uuid, global_dig_display_color:uuid)));
     );
-    scoreboard('stats', global_total_text, total);
+    if(global_dig_display:uuid != false, displayDigs(player()));
 );
 
-totalDigs(player) -> (
-    stat = reduce(global_tools, _a + statistic(player, 'used', _), 0);
-    global_digs:(player~'name') = stat;
-    scoreboard('digs', player, stat);
+setStatColor(color) -> (
+    if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
+    if(!color,
+        global_stat_color = 'FFEE44';
+        print(format('f » ', 'g Stat color has been ', 'r reset')),
+        color = upper(replace(color, '#', ''));
+        if(length(color) != 6 || !all(split(color), has(global_hex_charset, _ )), _error('Invalid hex color'));
+        global_stat_color = color;
+        print(format('f » ', 'g Stat color has been set to ', str('#%s #%s', global_stat_color, global_stat_color)));
+    );
+    scoreboard_property('stats', 'display_name', format(str('#%s %s', global_stat_color, scoreboard_property('stats', 'display_name'))));
+    for(player('all'), displayDigs(_));
 );
 
-bedrockRemoved() -> (
-    for(scoreboard('stats'), if(_ != global_total_text && !player(_), scoreboard_remove('stats', _)));
-    for(player('all'), if(!global_display_bots && _~'player_type' == 'fake', continue(scoreboard_remove('stats', _))); stat = global_bedrock_removed:(_~'uuid'); total += stat; if(stat, scoreboard('stats', _, stat), scoreboard_remove('stats', _)));
-    scoreboard('stats', global_total_text, total);
+setDefaultDig(dig) -> (
+    if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
+    if(!has(global_dig_data, dig), _error('Invalid dig type'));
+    global_default_dig = dig;
+    for(player('all'), updateDigs(_));
+    print(format('f » ', 'g The default dig type is now ', str('#%s %s', 'FFEE44', global_default_dig)));
 );
 
-_updateScore() -> (
-    if(global_stat == 'digs', schedule(0, 'updateDigs'), global_stat == 'bedrockRemoved', schedule(0, 'bedrockRemoved'), global_stat == 'level', schedule(0, 'updatelevels'), global_stat, schedule(0, 'updateStat'));
+printStatValue(event, player, category) -> (
+    player = player || player();
+    value = getStat(player, category, event);
+    if(!value, _error('No value was found'));
+    print(format('f » ', str('g Value of \'%s\' for %s is ', getDisplayName(category, event), player), '#FFEE44 ' + value));
 );
+
+changeStat(event, category) -> (
+    if(global_carousel_active, _error('Couldn\'t change the displayed statistic, a carousel is currently active'));
+    if(category == 'combined' && !parseCombinedFile(event):0, _error('Combined statistic not found'));
+    showStat(category, if(category == 'digs' && !event, global_default_dig, event));
+    show();
+    logger(str('[Stat] Stat Change | %s -> %s.%s', player(), category, event));
+);
+
+showStat(category, event) -> (
+    if(category == 'combined', 
+        [display_name, combined_category, entries] = parseCombinedFile(event);
+        global_combined = [combined_category, entries];
+    );
+    global_stat = [category, event];
+    scoreboard_property('stats', 'display_name', format(str('#%s %s', global_stat_color, display_name || getDisplayName(category, event))));
+    for(if(category == 'digs' && global_server_whitelisted && global_offline_digs, system_info('server_whitelist'), player('all')), updateStat(_));
+    removeInvalidEntries();
+    calculateTotal();
+);
+
+updateStat(player) -> (
+    if(!global_stat, return());
+    if(isInvalidEntry(str(player)), return(scoreboard_remove('stats', player)));
+    value = getStat(player, ...global_stat);
+    if(value, scoreboard('stats', player, value), scoreboard_remove('stats', player));
+);
+
+updateDigs(player) -> (
+    if(!player(player), return());
+    if(!global_server_whitelisted || has(system_info('server_whitelist'), str(player)),
+        for(global_dig_data,
+            global_digs:_ = global_digs:_ || {};
+            amount = getStat(player, 'digs', _);
+            if(amount > 0, global_digs:_:str(player) = amount);
+        );
+    );
+    displayDigs(player(player));
+    scoreboard('digs', player, getStat(player, 'digs', global_default_dig));
+);
+
+// COMBINED STATS MANAGING
+
+listCombinedStats() -> (
+    combined_stats = map(list_files('combined', 'text'), slice(_, length('combined') + 1));
+    texts = reduce(combined_stats, [..._a, if(_i == 0, '', 'g , '), str('#FFEE44 %s', _), str('?/%s settings combined_stats info %s', global_app_name, _)], ['f » ', 'g Available combined stats: ']);
+    print(format(texts));
+);
+
+combinedStatInfo(name) -> (
+    [display_name, category, entries] = parseCombinedFile(name);
+    if(!display_name && !category && !entries, _error('Combined statistic not found'));
+    print(format('f » ', str('#FFEE44 %s', display_name), str('^g %s', name), 'g  ｜ Entries:\n', 'g ' + join('\n', map(entries, str('    %s.%s', category, _)))));
+);
+
+createCombinedStat(name, display_name, category, entries_string) -> (
+    if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
+    filename = 'combined/' + name;
+    if(read_file(filename, 'text'), _error('There\'s already a combined statistic with that name'));
+    if(!has(global_categories, category), _error('Invalid category'));
+    entries = split(' ', entries_string);
+    if(!entries, _error('No entries provided'));
+    write_file(filename, 'text', display_name, category, ...entries);
+    print(format('f » ', 'g Successfully created the combined stat'));
+);
+
+deleteCombinedStat(name) -> (
+    if(player()~'permission_level' == 0, _error('You must be an operator to run this command'));
+    if(delete_file('combined/' + name, 'text'), print(format('f » ', 'g Successfully deleted the combined stat')), _error('Combined stat not found'));
+);
+
+// CAROUSEL
+
+startCarousel() -> (
+    if(global_carousel_active, _error('There\'s already a carousel active'));
+    interval = global_carousel_data:'interval';
+    entries = global_carousel_data:'entries';
+    if(!entries, _error('No entries were found'));
+    if(!interval, _error('No interval was provided'));
+    print(format('f » ', 'g You ', 'l started ', 'g the carousel'));
+    logger(str('[Stat] Carousel Start | %s', player()));
+    global_carousel_active = true;
+    show();
+    carousel(entries, 0);
+);
+
+stopCarousel() -> (
+    if(!global_carousel_active, _error('There is no carousel active'));
+    print(format('f » ', 'g You ', 'r stopped ', 'g the carousel'));
+    logger(str('[Stat] Carousel Stop | %s', player()));
+    global_carousel_active = false;
+);
+
+carouselInterval(seconds) -> (
+    if(!seconds, exit(print(format('f » ', 'g Carousel interval is currently set to ', str('d %d ', global_carousel_data:'interval' / 20), 'g seconds'))));
+    if(type(seconds) != 'number', _error('The interval provided is not a number'));
+    global_carousel_data:'interval' = seconds * 20;
+    print(format('f » ', 'g Carousel interval was set to ', str('d %d ', seconds), 'g seconds'));
+    logger(str('[Stat] Carousel Interval Change | %s -> %d', player(), seconds));
+);
+
+addCarouselEntry(entry, category) -> (
+    global_carousel_data:'entries' += [category, entry];
+    print(format('f » ', 'g Successfully added an entry to the carousel'));
+);
+
+removeCarouselEntry(index) -> (
+    entries = global_carousel_data:'entries';
+    if(index >= length(entries), _error('Invalid index'));
+    delete(entries, index);
+    print(format('f » ', 'g The entry was removed from the carousel'));
+);
+
+listCarouselEntries() -> (
+    entries = global_carousel_data:'entries';
+    if(!length(entries), exit(print(format('f » ', 'g No entries to show, the carousel is empty'))));
+    print(format(reduce(entries, [..._a, ' \n  ', '#EB4D4Bb ❌', '^r Remove entry', str('?/%s carousel remove %d', global_app_name, _i), '  ', str('g %s.%s', _)], ['f » ', 'g Carousel entries: ', '#26DE81b (+)', '^l Add more entries', str('?/%s carousel add ', global_app_name)])));
+);
+
+carousel(entries, i) -> (
+    if(global_carousel_active,
+        stat = entries:i;
+        showStat(...stat);
+        schedule(global_carousel_data:'interval', 'carousel', entries, (i + 1) % length(entries));
+    );
+);
+
+// EVENTS
 
 __on_statistic(player, category, event, value) -> (
-    if(category == 'used' && global_tools~event != null, schedule(0, 'totalDigs', player));
-    if(global_stat == 'bedrockRemoved', exit());
-    if(global_stat == 'digs' && category == 'used' && global_tools~event != null, exit(schedule(0, 'updateDigs')));
-    if(global_stat == 'level', exit(schedule(0, 'updatelevels')));
-    if([category, event] == global_stat, schedule(0, 'updateStat'));
+    if(category == 'mined' || (category == 'used' && global_dig_data:'total':1~event != null), schedule(0, 'updateDigs', player));
+    if(!global_stat || global_stat:0 == 'extra', exit());
+    if(global_stat == [category, event] || (global_stat == ['digs', 'combined_blocks'] && category == 'mined') || (category == 'used' && global_stat:0 == 'digs' && global_dig_data:'total':1~event != null) || (global_stat:0 == 'combined' && global_combined:0 == category && global_combined:1~event != null), schedule(0, 'updateStat', player); schedule(0, 'calculateTotal'));
 );
 
+// Bedrock breaking detection
 __on_player_places_block(player, item_tuple, hand, block) -> (
     if(!block~'piston', exit());
     facing_pos = pos_offset(block, block_state(block, 'facing'));
     facing_block = block(facing_pos);
     if(facing_block != 'bedrock', exit());
-    schedule(2, _(outer(facing_pos), outer(facing_block), outer(player)) -> if(facing_block != block(facing_pos), global_bedrock_removed:(player~'uuid') += 1; if(global_stat == 'bedrockRemoved', bedrockRemoved())));
+    schedule(2, _(outer(facing_pos), outer(player)) -> 
+        if(block(facing_pos) != 'bedrock',
+            global_bedrock_removed:(player~'uuid') += 1;
+            scoreboard('bedrock_removed', player, global_bedrock_removed:(player~'uuid'));
+            if(global_stat == ['extra', 'bedrock_removed'], updateStat(player); calculateTotal());
+        );
+    );
+);
+
+__on_tick() -> (
+    if((global_stat:0 == 'extra' && global_stat:1 != 'bedrock_removed') || (global_stat:0 == 'custom' && has({'play_one_minute', 'play_time', 'time_since_death', 'time_since_rest', 'total_world_time'}, global_stat:1)), for(player('all'), updateStat(_)); calculateTotal());
 );
 
 __on_player_connects(player) -> (
-    totalDigs(player);
-    _updateScore();
+    schedule(0, 'updateDigs', player);
+    schedule(0, 'updateStat', player);
+    schedule(0, 'calculateTotal');
 );
 
 __on_player_disconnects(player, reason) -> (
-    _updateScore();
+    schedule(0, 'updateStat', player);
+    schedule(0, 'calculateTotal');
 );
 
 __on_close() -> (
     write_file('bedrock_removed', 'json', global_bedrock_removed);
-    write_file('digs', 'json', global_digs);
+    write_file('carousel', 'json', global_carousel_data);
+    settings = {
+        'stat' -> global_stat,
+        'bots_included' -> global_bots_included,
+        'offline_digs' -> global_offline_digs,
+        'dig_display' -> global_dig_display,
+        'dig_display_color' -> global_dig_display_color,
+        'stat_color' -> global_stat_color,
+        'default_dig' -> global_default_dig
+    };
+    write_file('settings', 'json', settings);
+    for(global_digs, write_file(str('digs/%s', _), 'json', global_digs:_));
 );
 
-if(scoreboard('stats') == null, scoreboard_add('stats'), for(scoreboard('stats'), scoreboard_remove('stats', _)));
-if(scoreboard('digs') == null, scoreboard_add('digs'));
-scoreboard_display('list', 'digs');
-for(player('all'), totalDigs(_));
+// INITIALIZATION
+
+__on_start() -> (
+    for(['stats', 'bedrock_removed', 'digs'], if(scoreboard()~_ == null, scoreboard_add(_)));
+    scoreboard_display('list', 'digs');
+
+    if(global_stat:0 == 'combined', [display_name, combined_category, entries] = parseCombinedFile(global_stat:1); global_combined = [combined_category, entries]);
+    for(player('all'), updateDigs(_); updateStat(_));
+    removeInvalidEntries();
+    calculateTotal();
+);

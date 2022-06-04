@@ -5,7 +5,7 @@
 //
 // Simple command that allows deopped players to change their own gamemode.
 //
-// /gm <s|s|sp|a>
+// /gm <c|s|sp|a>
 ///
 
 __config() -> {'scope'->'global'};

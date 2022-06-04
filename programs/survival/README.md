@@ -82,6 +82,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
+	
+### [enchanting_table_bottling.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/enchanting_table_bottling.sc):
+#### By Firigion
+	Shift right clicking on an enchanting table with an empty glass bottle consumes it and generates a
+	bottle o' enchanting at the cost of a bit more xp that you would gain from using the bottle.
 
 ### [eyeremover.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/eyeremover.sc):
 #### By rv3r
@@ -89,6 +94,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	existing portal will break.
 
 	Only really useful in peaceful.
+
+### [fakeplayer_inv_editor.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeplayer_inv_editor.sc):
+#### By Chen_yu_xuan
+	Right click fakeplayers to edit their inventorys.
 
 ### [hammer.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
 #### By gnembonmc
@@ -109,6 +118,10 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By KingOfTheClouds
 	The command /horse_stats prints the health, speed and jump attributes of the horse/donkey/mule the player is looking at.
 
+### [instamine_deepslate.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/instamine_deepslate.sc):
+#### By manyrandomthings
+	Allows players to instamine deepslate if they have an efficiency 5 netherite pick and haste 2
+
 ### [inventory_refill.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/inventory_refill.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -125,6 +138,17 @@ Various scripts that modify various game elements, often replicating popular mod
 	This will allow you to see how many blocks of a specific type there are in an area around a point.
 	locate will tell you first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat.
 	hist will print a histogram like in gnembon's ancient debris video, but this will accept any block, and if there are less than 	40 blocks for that y level, it will print a nice looking histogram.
+
+
+### [lodestone_chunk_loader.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lodestone_chunk_loader.sc)
+#### By Opsaaaaa
+	Lodestones are Loadstones aka chunk loaders.
+	When a player clicks on a lodestone while sneaking it marks that chunk to be force loaded
+	and if they click on it again the unmarks that chunk.
+	Breaking the loadstone also unmarks the chunk.
+	
+	Note that with this script players can unmark forceload chunks set by admins.
+
 
 ### [magic_doors.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/magic_doors.sc):
 #### By gnembonmc
@@ -143,7 +167,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 
 ### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
-### By Opsaaaaa
+#### By Opsaaaaa
 	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
 	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
 
@@ -172,6 +196,14 @@ Various scripts that modify various game elements, often replicating popular mod
 	/portalorient air   - makes player face toward side with more air blocks
 	/portalorient solid - makes player face toward side with fewer solid blocks
 	In the event that each side of the portal has a matching number of valid blocks, does not reorient player.
+
+
+### [postmortem_death_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/postmortem_death_count.sc):
+#### By Opsaaaaa
+	Adds a scoreboard death count to a server after players have already died.
+	When players connect it sets their scoreboard death count to their statistic death count.
+	You can make the counter visible in the player list with `/scoreboard objectives setdisplay list Deaths`
+
 
 ### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
 #### By Opsaaaaa
@@ -381,4 +413,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	_GieR
 	Opsaaaaa
 	Xendergo
+	ch-yx
 	(Many more hopefully!)
