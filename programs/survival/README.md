@@ -26,16 +26,6 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Xendergo
 	Slowly heals bees, so you can have them on an island or near water without them drowning as much
 
-### [break_all_blocks.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/break_all_blocks.sc):
-#### By "Scott Gudeman" (DragonCrafted87)
-	Merge and extend the scripts: silk_spawners, silk_budding_amethyst
-	configurable scipt that lets you:
-		- lower the hardness of blocks
-		- set the tool(s) this applies to
-		- change what they drop and properly obeys enchantments
-		- save the nbt data of spawners
-		- set the sound that plays when the block breaks
-
 ### [bridge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge.sc):
 #### By Aplet123
 	When holding golden sword(configurable), sneaking and clicking on a block, the blocks in the offhand will be placed.
@@ -292,6 +282,16 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By BisUmTo
 	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
 	It doesn't apply to containers and blacklisted blocks.
+
+### [silk_breakables.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/break_all_blocks.sc):
+#### By "Scott Gudeman" (DragonCrafted87)
+	Merge and extend the scripts: silk_spawners, silk_budding_amethyst
+	configurable scipt that lets you:
+		- lower the hardness of blocks
+		- set the tool(s) this applies to
+		- change what they drop and properly obeys enchantments
+		- save the nbt data of spawners
+		- set the sound that plays when the block breaks
 
 ### [silk_budding_amethyst.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/silk_budding_amethyst.sc):
 #### By "Scott Gudeman" (DragonCrafted87)
