@@ -24,7 +24,8 @@ global_item_to_block = {
   'oak_sign'-> 'oak_wall_sign',
   'spruce_sign'-> 'spruce_wall_sign',
   'crimson_sign'-> 'crimson_wall_sign',
-  'warped_sign'-> 'warped_wall_sign'
+  'warped_sign'-> 'warped_wall_sign',
+  'mangrove_sign'-> 'mangrove_wall_sign'
 };
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->(
