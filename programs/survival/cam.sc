@@ -19,6 +19,8 @@ __assert_player_can_cam_out(player) ->
 // none of your business below
 
 
+global_exit_messages = ['y Exited camera mode', 'r You tried to '];
+global_exit_message = 0;
 
 
 __config() -> {
@@ -35,11 +37,11 @@ __command() ->
          __remove_camera_effects(p);
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
-         display_title(p, 'actionbar', format('y Exited camera mode'));
+         display_title(p, 'actionbar', format(global_exit_messages:global_exit_message));
       ,
          if (__survival_defaults(p), 
             __remove_camera_effects(p);
-            display_title(p, 'actionbar', format('y Exited camera mode'));
+            display_title(p, 'actionbar', format(global_exit_messages:global_exit_message));
          );
       );
    , current_gamemode == 'survival' && !global_is_in_switching, // else if survival - switch to spectator
@@ -66,7 +68,9 @@ __command() ->
     			   pos = p ~ 'pos';
     			   if (pos:0 > positive:0 || pos:0 < negative:0
       			|| pos:2 > positive:2 || pos:2 < negative:2,
+		  global_exit_message = 1;
                   __command();
+		  global_exit_message = 0;
     			   );
 			   ));
          )
