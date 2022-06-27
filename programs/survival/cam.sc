@@ -19,7 +19,7 @@ __assert_player_can_cam_out(player) ->
 // none of your business below
 
 
-global_exit_messages = ['y Exited camera mode', 'r You tried to '];
+global_exit_messages = ['y Exited camera mode', 'r You tried to exit the world border'];
 global_exit_message = 0;
 
 
