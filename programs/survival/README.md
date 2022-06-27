@@ -133,6 +133,12 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By _GieR
     Make sponge work on lava like water.
 
+### [light_level_overlay.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/light_level_overlay.sc):
+#### By Ghoulboy
+	Does the same thing as MiniHUD's light level overlay, i.e, displays block light level over all solid spawnable blocks (so not bedrock or redstone)
+	Numbers are green if block light is above minimum light level for mob spawning, yellow if sky light level is above minimum light level, and red if overall light level is below minimum light level
+	NB: On servers only works for carpet clients.
+
 ### [locate_block.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/locate_block.sc):
 #### By Ghoulboy
 	This will allow you to see how many blocks of a specific type there are in an area around a point.
