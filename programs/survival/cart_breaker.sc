@@ -7,8 +7,8 @@ __on_player_attacks_entity(player, entity) ->(
   mainhand=query(player,'holds','mainhand');
   // checks that an axe is held and player has right clicked
   if(query(player, 'sneaking') && mainhand:0 ~ '_axe',
-    entity_name=str(entity);
-    if(entity_name ~ 'Minecart with ' || entity_name ~ 'Boat with Chest',
+    entity_type=entity~'type';
+    if(entity_type~ '_minecart' || entity_type~ '_chest_boat',
       // drops all items in inventory 
       loop(inventory_size(entity), drop_item(entity, _));
       ep = pos(entity);
