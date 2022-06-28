@@ -15,11 +15,7 @@ __on_player_attacks_entity(player, entity) ->(
       ep = pos(entity);
       // removes cart
       modify(entity,'remove');
-<<<<<<< HEAD
       if(entity_type~ '_minecart' ,
-=======
-      if(entity_type~'_minecart',
->>>>>>> 41cad42c57130d6aeaf2761a84b604e96f345613
         // makes it so dropped items fall a short distance      
         ep:1 =ep:1+0.5;
         // cart case
