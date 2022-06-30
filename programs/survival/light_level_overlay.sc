@@ -67,7 +67,7 @@ schedule_overlay()->(
     pos = pos(player);
     batch = [];
     scan(pos, [global_range, global_range, global_range],
-        if(air(_) && valid_spawnable(block(pos_offset(_, 'down'))),
+        if(air(_) && valid_spawnable(block(pos_offset(_, 'down'))) && air(pos_offset(_, 'up')),
             batch += [
                 'label', global_refresh_rate, 
                 'pos', [_x+0.5,_y,_z+0.5], 
