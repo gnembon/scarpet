@@ -9,7 +9,7 @@ __on_player_attacks_entity(player, entity) ->(
   if(query(player, 'sneaking') && mainhand:0 ~ '_axe',
     entity_type=entity~'type';
     //checks if entity is seprable
-    if(entity_type~ '_minecart' || entity_type~ 'chest_boat',
+    if(entity_type~ '_minecart' || entity_type == 'chest_boat',
       // drops all items in inventory 
       loop(inventory_size(entity), drop_item(entity, _));
       ep = pos(entity);
