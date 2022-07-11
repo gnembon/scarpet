@@ -118,6 +118,19 @@ Various scripts that modify various game elements, often replicating popular mod
 	falling block entities.
 	The higher the power, the further back the blocks go.
 
+  
+### [horse_buddy.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/horse_buddy.sc):
+#### By Opsaaaaa
+	No player likes killing minecraft horses,
+	I know the excess caused by breeding is a lag trap but it just feels bad.
+	This script is trying to give players a fun alternative by allowing them to roll
+	changes to an existing horses stats.
+	That can be done by feeding the horse the food it's currently craving.
+	You can increase the chances of getting good stats by either: 
+	riding them a lot,
+	or using potions like swiftness or jumpboost.
+
+
 ### [horse_stats.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/horse_stats.sc):
 #### By KingOfTheClouds
 	The command /horse_stats prints the health, speed and jump attributes of the horse/donkey/mule the player is looking at.
