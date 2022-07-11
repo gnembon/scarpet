@@ -101,15 +101,15 @@ chr(a_num,outer(__rmap))->(
 
 );
 
-if(0,//test
+//test
 
-__test()->(
-    [ord('a'),ord('A'),ord_string('我'),ord('🚣'),ord('ř'),ord_string('1️⃣')];
-);
-__test2()->(
-    [ord_string('😊'),ord_string('❤️'),ord('🤎'),ord_string('💚'),ord_string('🇧🇷'),ord_string('👩‍❤️‍💋‍👨')]
-);
-__test3()->(
-    [chr(ord('🤎'))=='🤎',chr(ord('🚣'))=='🚣',chr(ord('ř'))=='ř',chr(ord('A')),chr(ord('a')),chr(ord('我')),chr(ord('😊'))=='😊']
-)
-)
+//__test()->(
+//    [ord('a'),ord('A'),ord_string('我'),ord('🚣'),ord('ř'),ord_string('1️⃣')];
+//);
+//__test2()->(
+//    [ord_string('😊'),ord_string('❤️'),ord('🤎'),ord_string('💚'),ord_string('🇧🇷'),ord_string('👩‍❤️‍💋‍👨')]
+//);
+//__test3()->(
+//    [chr(ord('🤎'))=='🤎',chr(ord('🚣'))=='🚣',chr(ord('ř'))=='ř',chr(ord('A')),chr(ord('a')),chr(ord('我')),chr(ord('😊'))=='😊']
+//)
+
