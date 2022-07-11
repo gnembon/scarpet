@@ -51,6 +51,10 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By KingOfTheClouds
 	A Totem of Undying anywhere in the inventory (except in shulker boxes etc.) can activate as if it were held.
 
+### [cart_breaker.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cart_breaker.sc)
+#### By nsluhrs 
+  When holding an axe and sneak left clicking a combined minecart (Minecart with chest, TNT etc) or boat with chest will drop inventory and the component parts of the combined entity as items.
+
 ### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
 #### By Xendergo
 	https://youtu.be/q1muVOFOM-k

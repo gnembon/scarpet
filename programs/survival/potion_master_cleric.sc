@@ -28,7 +28,7 @@ global_potion_trades = [
 	// Dolphins Grace
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:9600, Id: 30, Amplifier: 3}], 
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:9600, Id: 30, Amplifier: 3}], 
 			CustomPotionColor: 5592575, display: {Name:\'{ "text":"Potion of Grace"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
@@ -55,7 +55,7 @@ global_potion_trades = [
 	// Haste
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:9600, Id: 3, Amplifier: 1}], 
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:9600, Id: 3, Amplifier: 1}], 
 			CustomPotionColor: 16755200, display: {Name:\'{ "text":"Potion of Haste"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
@@ -70,7 +70,7 @@ global_potion_trades = [
 	// Levitation
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:300, Id: 25, Amplifier: 3}], 
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:300, Id: 25, Amplifier: 3}], 
 			CustomPotionColor: 16777215, display: {Name:\'{ "text":"Potion of Levitation"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
@@ -82,11 +82,11 @@ global_potion_trades = [
 		rewardExp: 1,
 		xp: 1
 	}',
-	// Wither
+	// Decay
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:170, Id: 20, Amplifier: 3}], 
-			CustomPotionColor: 0, display: {Name:\'{ "text":"Potion of Wither"}\'}}
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:170, Id: 20, Amplifier: 3}], 
+			CustomPotionColor: 0, display: {Name:\'{ "text":"Potion of Decay"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
 		buyB: {id: "minecraft:wither_rose", Count: 1},
@@ -100,7 +100,7 @@ global_potion_trades = [
 	// Mining Fatigue
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:2800, Id: 4, Amplifier: 0}], 
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:2800, Id: 4, Amplifier: 0}], 
 			CustomPotionColor: 5592405, display: {Name:\'{ "text":"Potion of Mining Fatigue"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
@@ -115,7 +115,7 @@ global_potion_trades = [
 	// Blindness
 	'{
 		sell: {id: "minecraft:%s", Count:1, tag:{
-			CustomPotionEffects:[{Duration:330, Id: 15, Amplifier: 0}], 
+			Potion:"minecraft:water", CustomPotionEffects:[{Duration:330, Id: 15, Amplifier: 0}], 
 			CustomPotionColor: 70000, display: {Name:\'{ "text":"Potion of Blindness"}\'}}
 		},
 		buy: {id: "minecraft:emerald", Count: %d},
