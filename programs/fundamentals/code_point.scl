@@ -48,6 +48,20 @@ ord_string(str)->(
     )
 );
 
+string_iter(str)->(
+    if (length(str)<=1,return(map(split(str),ord(_))));
+
+    c_for(i=1,i<=length(str),i+=1,
+
+    o=ord(slice(str,0,i));
+
+    if (type(o)=='number' && (ch=chr(o))==slice(str,0,i),
+        res=[ch];
+        if(i<length(str),put(res, null, string_iter(slice(str,i)), 'extend'));
+        return(res)
+    );
+    )
+);
 
 //chr
 //based on the base64 standard
