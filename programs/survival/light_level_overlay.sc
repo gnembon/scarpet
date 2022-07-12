@@ -12,13 +12,15 @@ global_range = 20;
 //The number of ticks until the display is refreshed, and updated for changes in position and light level
 //Use longer delays if you know your connection is poor
 global_refresh_rate = 50;
+
+global_resolution = 50;
 //Change this if your server has a datapack which changes the minimum light level for mob spawning
 //TODO replace this with system_info to get it automatically
 global_min_light_level = 1;
 
 __config()->{
     //not gonna work for vanilla players anyways
-    'stay_loaded' -> bool(player()~'client_brand'~'carpet'),
+    'stay_loaded' -> true,
     'commands'->{
         ''->'toggle',
         'range <range>'->'set_range',
@@ -29,6 +31,8 @@ __config()->{
         'rate'->{'type'->'int','min'->0, 'suggest'->[50, 20, 100]},
     }
 };
+
+global_armour_stand = null;
 
 set_range(range)->(
     global_range = range;
@@ -43,9 +47,13 @@ set_refresh_rate(rate)->(
 toggle()->(
     global_active = !global_active;
     if(global_active,
-        display_title(player(), 'actionbar', format('y Turned on light level overlay'));
+        player = player();
+        display_title(player, 'actionbar', format('y Turned on light level overlay'));
+        global_armour_stand = spawn('armor_stand', pos(player) + [0, player~'eye_height', 0], {'Marker'->true, 'Invisible'->true});
         schedule_overlay(),
         display_title(player(), 'actionbar', format('y Turned off light level overlay'));
+        modify(global_armour_stand, 'remove');
+        global_armour_stand = null;
     );
     null
 );
@@ -61,6 +69,43 @@ block_colour(pos)->if(
 );
 
 valid_spawnable(block)->solid(block) && block!='bedrock' && block!='redstone_block';
+
+schedule_overlay_new()->(
+    if(!global_armour_stand, return());
+    player = player();
+    pos = pos(player);
+    //Tp armour stand to player to it can rotate and look at blocks
+    modify(global_armour_stand, 'pos', pos(player) + [0, player~'eye_height', 0]);
+    batch = [];
+    c_for(yaw = -180, yaw < 180, yaw += 360/global_resolution,
+        s_yaw = sin(yaw);
+        c_yaw = cos(yaw);
+        c_for(pitch = -90, pitch < 90, pitch += 180/global_resolution,
+            s_pitch = sin(pitch);
+            c_pitch = cos(pitch);
+            look = [s_yaw*c_pitch, s_pitch, c_yaw*c_pitch];
+            modify(global_armour_stand, 'look', look);
+            block = query(global_armour_stand, 'trace', global_range, 'blocks', 'liquids');
+            if(block!=null,
+                pos = pos(block);
+                if(valid_spawnable(block) && air(pos_offset(pos, 'up')) && air(pos_offset(pos, 'up', 2)),
+                    [x, y, z] = pos;
+                    print(pos);
+                    batch += [
+                        'label', global_refresh_rate, 
+                        'pos', [x+0.5, y, z+0.5], 
+                        'text', block_light(x, y, z), 
+                        'size', 20, 
+                        'player', player, 
+                        'color', block_colour(block)
+                    ]
+                )
+            )
+        )
+    );
+    draw_shape(batch);
+    if(global_active, schedule(global_refresh_rate, 'schedule_overlay'))
+);
 
 schedule_overlay()->(
     player = player();
@@ -82,3 +127,4 @@ schedule_overlay()->(
     if(global_active, schedule(global_refresh_rate, 'schedule_overlay'))
 );
 
+__on_close()->if(global_armour_stand!=null, modify(global_armour_stand, 'remove'); global_armour_stand = null)
