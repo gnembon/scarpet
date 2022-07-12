@@ -1,4 +1,5 @@
 //this script provides conversion between code points and strings.
+//By Chen_yu_xuan
 
 //ord
 //based on the base64 standard
@@ -57,8 +58,9 @@ __rmap={[0, 0, 0, 0, 0, 0]-> 'A', [0, 0, 0, 0, 0, 1]-> 'B', [0, 0, 0, 0, 1, 0]->
 // 2048 … 65535 | 1110xxxx 10xxxxxx 10xxxxxx 
 // 65536 … 1114111 | 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx 
 chr(a_num,outer(__rmap))->(
-    bin(a_num)->(
-    if (a_num<=0,return([0]));
+    a_num_=a_num;
+    digs=(
+    if (a_num<=0,[0],
     res=[];
     while(a_num,4000,(
         //print(a_num);
@@ -69,8 +71,8 @@ chr(a_num,outer(__rmap))->(
     );
     );
     res
-    );
-    digs=bin(a_num);
+    ));
+    a_num=a_num_;
     if(a_num<=2047,(
         if(a_num<=127,(
             res=[0,0,0,0,0,0,0,0];p=[7,6,5,4,3,2,1]
