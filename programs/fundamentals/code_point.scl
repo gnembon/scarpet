@@ -40,7 +40,7 @@ ord_string(str)->(
 
     o=ord(slice(str,0,i));
 
-    if (chr(o)==slice(str,0,i),
+    if (type(o)=='number' && chr(o)==slice(str,0,i),
         res=[o];
         if(i<length(str),put(res, null, ord_string(slice(str,i)), 'extend'));
         return(res)
