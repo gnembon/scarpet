@@ -49,7 +49,7 @@ ord_string(str)->(
 );
 
 string_iter(str)->(
-    if (length(str)<=1,return(map(split(str),ord(_))));
+    if (length(str)<=1,return((split(str))));
 
     c_for(i=1,i<=length(str),i+=1,
 
