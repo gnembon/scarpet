@@ -170,6 +170,7 @@ _food_strengths() -> ({
 __on_player_rides(p, forward, strafe, jumping, sneaking) -> (
   global_training:'horse.jump_strength' += number(jumping);
   global_training:'generic.movement_speed' += ceil(forward) + ceil(strafe);
+  print(p, global_training);
 );
 
 __on_player_interacts_with_entity(p, horse, hand) -> (
@@ -197,11 +198,12 @@ _horse_logic(p, horse) -> (
 
 
     item = p~'holds';
+    global_training:'generic.max_health' += _food_strengths():(item:0);
+    
     // when you feed the demanding horse what it wants
     if(item:0 == global_training:'food',
 
       // Pick a new craving
-      global_training:'generic.max_health' += _food_strengths():(item:0);
       global_training:'food' = _random_food();
 
       particle('happy_villager', horse~'pos'+[0,1.5,0], 8, 0.5);
@@ -229,11 +231,14 @@ _roll_new_stats(horse) -> (
   effect_mod = _effect_stat_mods(reduce(horse~'effect', _a += _:0, []));
   attributes = horse~'attribute';
 
-  // these are the magic numbers that try to balance out the training
-  // we need to turn numbers like 500 and 6000 into reasonable stat modifiers no larger than 1.
-  global_training:'horse.jump_strength' = global_training:'horse.jump_strength' * 0.2 * 0.002;
-  global_training:'generic.movement_speed' = global_training:'horse.jump_strength' * 0.125 * 0.002;
-  global_training:'generic.max_health' = global_training:'horse.jump_strength' * 0.33 * 0.002;
+  // min effect stats (-0.1 0.6) 
+  // easy training speed, 1500, jump 500, health 50
+  // easy should be 0.05
+
+  // (stat - easy_stat) / hard_stat
+  _morph_training_stat('horse.jump_strength', 200, 2000)
+  _morph_training_stat('generic.movement_speed', 1000, 18000)
+  _morph_training_stat('generic.max_health', 20,  200)
 
   // build the new horse attributes
   new_attrs = [];
@@ -241,7 +246,7 @@ _roll_new_stats(horse) -> (
     new_attrs += {
       'Name' -> _:0,
       'Base' -> _clamp( _:1:0, _:1:1, attributes:(_:0) + _roll_stat_for(_:0, 
-        effect_mod:(_:0)+min(0.4,global_training:(_:0))
+        effect_mod:(_:0)+_clamp(-0.05,0.6,global_training:(_:0))
       ))
     }
   );
@@ -254,6 +259,10 @@ _roll_new_stats(horse) -> (
   // reset the horses training and remove the effects
   _rest_training(horse~'uuid');
   modify(horse, 'effect');
+);
+
+_morph_training_stat(stat, easy_val, hard_val) -> (
+  global_training:stat = clamp(-0.05, 0.6,((global_training:stat - easy_val) / hard_val) * 0.5)
 );
 
 
