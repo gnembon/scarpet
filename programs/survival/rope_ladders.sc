@@ -1,21 +1,24 @@
-///
+
 // Rope Ladders
 // by BisUmTo and Opsaaaaa
 // (Carpet Mod 1.4.79)
 //
-// Right clicking on a ladder with an other one, will extend the existing one down.
+// Right clicking on a ladder with another one, will extend the existing one down.
 // Easy dismantle while holding shift destroys connected ladders
 // Easy pickup will teleport nearby ladder items to the player
 // Skyropes allows you to extend ropes into the sky while holding shift
 
+
+
 global_settings = {
   'easy_dismantle'->true,
   'easy_pickup'->true,
+  'sky_ropes'->true,
   'pickup_range'->24,
   'height_limit'->384,
-  'sky_ropes'->true,
   'water_ladders'->true
 };
+
 
 __config() -> {'stay_loaded'->true};
 
