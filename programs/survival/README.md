@@ -260,7 +260,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
   `easy_dismantle` while holding shift destroys connected ladders
   `easy_pickup` will teleport nearby ladder items to the player
-  `skyropes` allows you to extend ropes into the sky while holding shift
+  `sky_ropes` allows you to extend ropes into the sky while holding shift
 
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
