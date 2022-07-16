@@ -1,17 +1,17 @@
 ///
 // Rope Ladders
 // by BisUmTo and Opsaaaaa
-// (Carpet Mod 1.4.9)
+// (Carpet Mod 1.4.79)
 //
 // Right clicking on a ladder with an other one, will extend the existing one down.
-
-// 'Updated' by opsaaaaa for 1.19
-// added break unsupported ladder fearue
+// Easy dismantle while holding shift destroys connected ladders
+// Easy pickup will teleport nearby ladder items to the player
+// Skyropes allows you to extend ropes into the sky while holding shift
 
 global_settings = {
   'easy_dismantle'->true,
   'easy_pickup'->true,
-  'pickup_range'->20,
+  'pickup_range'->24,
   'height_limit'->384,
   'sky_ropes'->true,
   'water_ladders'->true
@@ -24,16 +24,19 @@ __config() -> {'stay_loaded'->true};
 
 __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
   if(_rope_should_start(p, item, block),
-    if( _attempt_place_ladder(_loop_to_ladder_base(block), block) &&
-        p~'gamemode' != 'creative',
-
+    if((_attempt_place_ladder(_loop_to_ladder_end(block,'down'), block) ||
+        if(_should_sky_rope(p,block),
+          _attempt_place_ladder(_loop_to_ladder_end(block, 'up'), block)
+        )
+      ) &&
+      p~'gamemode' != 'creative'
+    ,// do
       _useup_ladder(p, item, hand);
     );
   );
 );
 
 __on_player_breaks_block(p, block) -> (
-  print('woop');
   if(_rope_should_dismantle(p, block),
     _dismantle_connected_ladders(block);
     if(global_settings:'easy_pickup',
@@ -100,37 +103,34 @@ _rope_should_dismantle(p, block) -> (
   p~'sneaking'
 );
 
+_should_sky_rope(p, ladder) -> (
+  global_settings:'sky_ropes' &&
+  (p~'sneaking' || solid(_under_ladder(ladder)))
+);
+
 
 //--- Get Nearby Blocks ---//
 
-_loop_to_ladder_base(ladder) -> (
-    under = _under_ladder(ladder);
+_loop_to_ladder_end(ladder, direction) -> (
+    connected = _connected_ladder(ladder, direction);
 
     while(
-      under == 'ladder' &&
-      block_state(under,'facing') == block_state(ladder, 'facing'),
+      connected == 'ladder' &&
+      block_state(connected,'facing') == block_state(ladder, 'facing'),
       global_settings:'height_limit',
 
-      under = _under_ladder(under);
+      connected = _connected_ladder(connected, direction);
     );
 
-    return(under)
+    return(connected)
 );
 
-_support_is_solid(ladder) -> (
-  solid(_ladder_support(ladder));
-);
+_above_ladder(ladder) -> _connected_ladder(ladder, 'up');
 
-_ladder_support(ladder) -> (
-  pos_offset(ladder, block_state(ladder, 'facing'), -1)
-);
+_under_ladder(ladder) -> _connected_ladder(ladder, 'down');
 
-_above_ladder(ladder) -> (
-  block(pos_offset(ladder, 'up', 1));
-);
-
-_under_ladder(ladder) -> (
-  block(pos_offset(ladder, 'down', 1));
+_connected_ladder(ladder, direction) -> (
+  block(pos_offset(ladder, direction, 1));
 );
 
 
