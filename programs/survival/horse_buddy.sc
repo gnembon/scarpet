@@ -170,7 +170,6 @@ _food_strengths() -> ({
 __on_player_rides(p, forward, strafe, jumping, sneaking) -> (
   global_training:'horse.jump_strength' += number(jumping);
   global_training:'generic.movement_speed' += ceil(forward) + ceil(strafe);
-  print(p, global_training);
 );
 
 __on_player_interacts_with_entity(p, horse, hand) -> (
@@ -301,17 +300,17 @@ _i18n(code) -> ({
     'food.apple.1'        -> 'red apple yummy',
     'food.apple.2'        -> 'dum dum give me...apple',
     'food.golden_apple.0' -> 'nom nom, apple yellow nom.',
-    'food.golden_apple.1' -> 'Fancy Horse! Fancy Apple!',
+    'food.golden_apple.1' -> 'Fancy Steed! Fancy Apple!',
     'food.golden_apple.2' -> 'ill eat your wallet.',
     'food.golden_carrot.0'-> 'wana...fancy...snowman...nose!',
     'food.golden_carrot.1'-> 'giv\'me da carrot.',
     'food.golden_carrot.2'-> 'dum dum give me...golden carrot',
     'food.hay_block.0'    -> 'hay hey hay hey hay',
-    'food.hay_block.1'    -> 'horsey wana square meal',
+    'food.hay_block.1'    -> 'buddy wana square meal',
     'food.hay_block.2'    -> 'so I can talk, now feed me a block!',
     'food.wheat.0'        -> 'grain yum',
     'food.wheat.1'        -> 'hungry for...yella\' dried grass',
-    'food.wheat.2'        -> 'horse is wheat-eater'
+    'food.wheat.2'        -> 'ima wheat-eater'
   }
 }:global_lang:code);
 
