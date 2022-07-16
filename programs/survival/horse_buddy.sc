@@ -173,9 +173,7 @@ __on_player_rides(p, forward, strafe, jumping, sneaking) -> (
 );
 
 __on_player_interacts_with_entity(p, horse, hand) -> (
-  print('issuee 1');
   if(_is_a_horse(horse),
-    print('issuee 2');
     _horse_logic(p, horse);
   );
 );
