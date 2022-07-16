@@ -231,14 +231,11 @@ _roll_new_stats(horse) -> (
   effect_mod = _effect_stat_mods(reduce(horse~'effect', _a += _:0, []));
   attributes = horse~'attribute';
 
-  // min effect stats (-0.1 0.6) 
-  // easy training speed, 1500, jump 500, health 50
-  // easy should be 0.05
-
+  // morph training values into useable attribute modifiers.
   // (stat - easy_stat) / hard_stat
-  _morph_training_stat('horse.jump_strength', 200, 2000)
-  _morph_training_stat('generic.movement_speed', 1000, 18000)
-  _morph_training_stat('generic.max_health', 20,  200)
+  _morph_training_stat('horse.jump_strength', 200, 2000);
+  _morph_training_stat('generic.movement_speed', 1000, 18000);
+  _morph_training_stat('generic.max_health', 20,  200);
 
   // build the new horse attributes
   new_attrs = [];
