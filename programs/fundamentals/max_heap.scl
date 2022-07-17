@@ -13,7 +13,7 @@ max_heap_class = new_class('MaxHeap', {
         self:'max_size' = max_size;
         self:'size' = 0;
         _Heap = [];
-        loop(max_size, _Heap+=0);
+        loop(max_size, _Heap+=-1/0); //Negative infinity
         self:'_Heap' = _Heap;
         self:'_FRONT' = 0;
         self
@@ -50,7 +50,7 @@ max_heap_class = new_class('MaxHeap', {
             while(self:'_Heap':current > self:'_Heap':(call(self:'_parent', self, current):1), self:'max_size',
                 call(self:'_swap', self, current, call(self:'_parent', self, current):1);
                 current = call(self:'_parent', self, current):1
-            );
+            )
         );
         self
     ),
@@ -65,22 +65,34 @@ max_heap_class = new_class('MaxHeap', {
 
 max_heap(outer(max_heap_class), maxsize) -> new_object(max_heap_class, maxsize);
 
-//This is an example of using a MaxHeap
-//heap = new_object(max_heap, 5);
-//print(heap:'_Heap');					=> [0, 0, 0, 0, 0]
-//call_function(heap, 'insert', 1);
-//print(heap:'_Heap');					=> [1, 0, 0, 0, 0]
-//call_function(heap, 'insert', 3);
-//print(heap:'_Heap');					=> [3, 1, 0, 0, 0]
-//call_function(heap, 'insert', 3);
-//print(heap:'_Heap');					=> [3, 3, 0, 1, 0]
-//print(call_function(heap, 'remove')); => 3
-//print(heap:'_Heap');					=> [3, 1, 0, 1, 0] //The extra 1 here is becase we don't remove it from the list, rather overwrite it later
-//call_function(heap, 'insert', 5);
-//print(heap:'_Heap');					=> [5, 3, 0, 1, 0] //The first 1 from before has overwritten the trailing 1
-//call_function(heap, 'insert', 6);
-//print(heap:'_Heap');					=> [6, 5, 3, 1, 0]
-//print(call_function(heap, 'remove'));
-//print(heap:'_Heap');					=> [5, 3, 0, 1, 0]
+//This is an example of using a MaxHeap in another app
 //
-//print(heap); => {remove: _, __name__: MaxHeap, _Heap: [5, 3, 0, 1, 0], _leftChild: _, _isLeaf: _, _rightChild: _, _maxHeapify: _, __init__: _, _swap: _, insert: _, _parent: _, _FRONT: 0, size: 3, max_size: 5}
+//      The reason why we can import call_function from this app is because we have already imported it into this app.
+//import('max_heap', 'max_heap', 'call_function');
+//
+//heap = max_heap(5);
+//print(heap:'_Heap');                  => [-INFINITY, -INFINITY, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 1);
+//print(heap:'_Heap');                  => [1, -INFINITY, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 3);
+//print(heap:'_Heap');                  => [3, 1, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 3);
+//print(heap:'_Heap');                  => [3, 3, -INFINITY, 1, -INFINITY]
+//call_function(heap, 'insert', 5);
+//print(heap:'_Heap');                  => [5, 3, 3, 1, -INFINITY]
+//call_function(heap, 'insert', 1);
+//print(heap:'_Heap');                  => [5, 3, 3, 1, -INFINITY, 1]
+//print(call_function(heap, 'remove')); => 5
+//      The extra 1 at the end below is here becase we don't remove it from the list, rather overwrite it later
+//print(heap:'_Heap');                  => [3, 3, 1, 1, -INFINITY, 1]
+//call_function(heap, 'insert', 7);
+//      The first 1 from before has overwritten the trailing 1
+//print(heap:'_Heap');                  => [7, 3, 3, 1, -INFINITY, 1]
+//      This gets ignored because the maximum size is 5
+//call_function(heap, 'insert', 6);
+//print(heap:'_Heap');                  => [7, 3, 3, 1, -INFINITY, 1]
+//print(call_function(heap, 'remove')); => 7
+//      Again we have a trailing 1 which the heap ignores, and will overwrite later
+//print(heap:'_Heap');                  => [3, 3, 1, 1, -INFINITY, 1]
+//
+//print(heap);                          => {remove: _, __name__: MaxHeap, _Heap: [3, 3, 1, 1, -INFINITY, 1], hash: _, class: _, equals: _, _leftChild: _, _isLeaf: _, _rightChild: _, _maxHeapify: _, nbt: _, __member_data__: {length: Object, hash: Object, class: Object, equals: Object, str: Object, nbt: Object, clone: Object, number: Object, compare: Object, json: Object, bool: Object}, compare: _, json: _, bool: _, length: _, __parents__: {}, str: _, clone: _, __init__: _, _swap: _, insert: _, _parent: _, _FRONT: 0, number: _, size: 4, max_size: 5}
