@@ -4,7 +4,7 @@ Programs for calculating math and other programming operations.
 ## `hashmap.sc`
 #### By: LucunJi(禄存)
 An implementation of hash maps, which predates native scarpet maps and sets. Contains functions to create and 
-modify maps, which are stored as lists. This implementation onlny works for numbers, however you can add your 
+modify maps, which are stored as lists. This implementation only works for numbers, however you can add your 
 own `_hash` function  to make it work for all types.
 
 ## `hashset.sc`
@@ -13,21 +13,24 @@ Same deal as with `hashmap.sc`, except for hash sets. You can currently use nati
 these also give a good insight into how hash sets and hash maps work.
 
 ## `math.scl`
-#### By: gnembom
+#### By: gnembon
 A bunch of useful maths functions, such as `sum()`, `bin()` and `hex()`, as well as the distance functions 
 from the math.scl built into carpet mod.
 
 ## `min_heap.sc`
 #### By: LucunJi(禄存)
 An implementation of min heaps in scarpet. This approach shows very well how min heaps work. Heaps are stored 
-as lists, and the functions in the library can be used to manipulate them as if they were hash set objects.
+as lists, and the functions in the library can be used to manipulate them as if they were min heap objects.
+You can simply input a list of numbers, and it will treat it as a min heap.
 
 ## `max_heap.scl`
 #### By: Ghoulboy
 An implementation of max heaps using `classes.scl`. This implementation works very differently to 
-`min_heap.scl`, as here the heap is stored as a map, which represents the object. To use it, you need to 
-import the `max_heap()` function from here as well as (at the very least `call_function` from `classes.scl`. 
+`min_heap.scl`, as here the heap is stored as a map, which represents the object.
+To use it, you must import the `max_heap(max_size)` and `call_function()` functions from here.
+The `max_size` parameters determines the maximum size of the resultant max heap.
 You can use it by calling the `'insert'` and `'remove'` methods on the object.
+Examples of usage can be found in the comments at the bottom of `max_heap.scl`.
 For more information on how these work, see below for `classes.scl`.
 
 ## `classes.scl`
@@ -88,5 +91,3 @@ gives them the following methods:
  - `length` : Returns the length of this object (by default the length of its `str` representation)
  - `nbt` : Returns a nbt representation of this object (by default an nbt of `str` representation)
  - `json` : Returns a json representation of this object (by default a json of `str` representation)
-
-
