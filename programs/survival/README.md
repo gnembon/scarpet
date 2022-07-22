@@ -303,6 +303,14 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Gnottero
 	Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
 
+### [single_bedrock.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/skip_night.sc):
+#### By ysc3839
+	Find single bedrock on top of the nether.
+	Just like the "Bedrock Ceiling" feature of [BoundingBoxOutlineReloaded](https://github.com/irtimaled/BoundingBoxOutlineReloaded).
+	Type `/single_bedrock` to turn on rendering, and type again to turn off.
+	It seems that carpet shapes can be occluded by blocks.
+	So if the boxes are occluded, type `/single_bedrock bottom` to make it from y=0 to y=127, type again to turn off.
+
 ### [skip_night.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/skip_night.sc):
 #### By Firigion
 	Allows the player to automatically skip the night witout the use of a bed bot. Can be used in bed
@@ -418,4 +426,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	ysc3839
 	(Many more hopefully!)
