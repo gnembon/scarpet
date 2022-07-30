@@ -424,4 +424,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	SurfingDude
 	(Many more hopefully!)
