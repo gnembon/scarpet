@@ -1,3 +1,10 @@
+//Graves.sc
+//Pretty much a 1 to 1 copy of Universal Graves mod by PatBox except some features like holograms and ability to telport to graves.
+//Provides all major functions like, auto collect, grave locking, gui interface to pick items
+//Please use debug subcommand if a grave suddenly disappears on you 
+//By SurfingDude_
+
+
 // Tweak Stuff
     global_request_time = 60;   //Time between 2 requests, if requests is turned on (in seconds)
     global_allow_request = true;   //If enabled, does not send unlocking request to player
@@ -14,7 +21,11 @@ __config()->{
     }
 };
 
-__command() -> null;
+__command() -> (
+
+    print(player(),format('cu Graves\n','e Makes a grave when you die.\nThe two subcommands are: \n','m debug: Use it when a grave/player head is missing from world.\n','y resetData: Only allowed by admins. Deletes all available grave data.'));
+    null;
+);
 
 gdata_file = read_file('gdata','JSON');
 if(gdata_file == null,
@@ -115,7 +126,11 @@ _not_owner_clicked(player,block) -> (
     if(global_gdata:str(pos(block)):'locked' && global_gdata:str(pos(block)):'canRequest' && global_allow_request,
     
         global_gdata:str(pos(block)):'canRequest'=false;
-        schedule( global_request_time*20 , '_request' , global_gdata,block);
+
+        schedule( global_request_time*20 ,_(outer(block)) -> 
+            global_gdata:str(pos(block)):'canRequest'= true
+        );
+
         gdata=global_gdata:str(pos(block));
 
         requestScreen=create_screen(owner,'generic_3x3',str('%s\'s Request',player), _(screen,player,action,data,outer(gdata)) -> (
@@ -229,12 +244,6 @@ _owner_clicked(player,block) -> (
 
 //Utility Functions
 
-_request(global_gdata,block) -> (
-
-    global_gdata:str(pos(block)):'canRequest'=true;
-
-);
-
 _place_head(player,nbt) -> (
 
     if(player~'gamemode'!='survival', return());
@@ -337,13 +346,16 @@ resetData() -> (
         return();
     );
 
-    print(player, format('r Are you sure you want to delete all grave data?'));
-    print(player, format('e [YES]','^ri Just checking again, are you absolutely sure. This data can not be recovered',str('!/%s confirmDelete',system_info('app_name'))));
-    null;
-);
-
-confirmDelete() -> (
-    global_gdata = {};
-    delete_file('gdata','JSON');
-    _saveGData();
+    screen=create_screen(player,'generic_3x3',format('r Confirm Deletion'), _(screen,player,action,data) -> (
+            if(action=='pickup' && data:'slot'==4,
+                global_gdata = {};
+                delete_file('gdata','JSON');
+                _saveGData();
+                close_screen(screen);
+            );
+        ));
+    if(screen_property(screen,'open'),
+            item='red_concrete{display:{Name:\'{"text":"Beware, this will result in permanent loss of data","color":"red","italic":"false","bold":"true"}\'}}';
+            inventory_set(screen,4,1,item);  
+    );
 );
