@@ -102,6 +102,12 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [fakeplayer_inv_editor.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeplayer_inv_editor.sc):
 #### By Chen_yu_xuan
 	Right click fakeplayers to edit their inventorys.
+	
+### [graves.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
+#### By SurfingDude
+	Scarpet app for graves inspired by universal graves mod (by patbox).
+	To know about all available settings, please check the first few lines.
+	debug and resetData sub-commands for more control over the grave data.
 
 ### [hammer.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
 #### By gnembonmc
