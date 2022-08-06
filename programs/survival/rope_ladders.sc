@@ -85,7 +85,7 @@ _attempt_place_ladder(base, root) -> (
 _useup_ladder(p, item, hand) -> (
   inventory_set(
     p,
-    if(hand=='mainhand',player~'selected_slot',-1), 
+    inventory_find(p, 'ladder'),
     item:1 - 1, 
     item:0,
     item:2
