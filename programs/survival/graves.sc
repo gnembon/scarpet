@@ -83,20 +83,16 @@ __on_player_breaks_block(player, block)->(
     ));
 
     //Delete the player head item that will drop as entity
-    schedule(0, _(outer(player),outer(pos(block))) -> (
-        
+    schedule(0, _(outer(pos(block))) -> (
+	    
         coords = pos(block);
         //Found 2 to be reliable experimentally, needs more testing
         dx = 2;
         dy = 2;
-        dz = 2; 
-        if(query(player,'gamemode')=='creative',return());
-        selector_item = str('@e[type=item,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]',coords:0,coords:1,coords:2,dx,dy,dz);
+        dz = 2;
+        selector_item = str('@e[type=item,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,nbt={Item:{id:"minecraft:player_head",Count:1b}}]',coords:0,coords:1,coords:2,dx,dy,dz);
         item = entity_selector(selector_item); 
-        selector_xp = str('@e[type=experience_orb,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]',coords:0,coords:1,coords:2,dx,dy,dz);
-        xp = entity_selector(selector_xp);
-        if(length(item)!=0, modify(entity_selector(selector_item):0,'remove'));    
-        if(length(xp)!=0, modify(entity_selector(selector_xp):0,'remove'));
+        if(length(item)!=0, modify(entity_selector(selector_item):0,'remove'));
 
     ));
 );
@@ -112,7 +108,7 @@ __on_explosion_outcome(pos, power, source, causer, mode, fire, blocks, entities)
                 set(posG,'air');
                 run(str('setblock %s %s %s minecraft:player_head{ExtraType:"%s"}',posG:0,posG:1,posG:2,global_gdata:str(posG):'name'));
             ));
-        ))
+	   ))
 );
 
 __on_player_dies(player)->(
