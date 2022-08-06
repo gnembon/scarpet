@@ -34,7 +34,7 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
       ) &&
       p~'gamemode' != 'creative'
     ,// do
-      _useup_ladder(p, item, hand);
+      _useup_ladder(p, hand);
     );
   );
 );
@@ -82,14 +82,26 @@ _attempt_place_ladder(base, root) -> (
   );
 );
 
-_useup_ladder(p, item, hand) -> (
+_useup_ladder(p, hand) -> (
+  slot = _get_placing_slot(p, hand, 'ladder');
+  item = inventory_get(p, slot);
   inventory_set(
     p,
-    inventory_find(p, 'ladder'),
-    item:1 - 1, 
+    slot,
+    item:1 - 1,
     item:0,
     item:2
   );
+);
+
+_get_placing_slot(p, hand, item_name) -> if(
+  hand=='mainhand' &&
+  query(p,'holds','mainhand'):0 == item_name,// if
+    p~'selected_slot'
+  ,query(p,'holds','offhand'):0 == item_name, // elif
+    -1
+  ,// else
+    inventory_find(p, item_name);
 );
 
 //--- Conditionals ---//
