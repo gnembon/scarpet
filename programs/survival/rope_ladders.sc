@@ -35,6 +35,7 @@ __on_player_right_clicks_block(p, item, hand, block, face, hitvec) -> (
       p~'gamemode' != 'creative'
     ,// do
       _useup_ladder(p, hand);
+      sound('block.ladder.place', block);
     );
   );
 );
