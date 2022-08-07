@@ -41,25 +41,34 @@ __config()->{
     }
 };
 
-gdata_file = read_file('gdata','JSON');
-if(gdata_file == null,
-    global_gdata = {},
-    //else when file already exists
-    global_gdata = gdata_file;
+
+// All things to do with data storage and accessing
+
+data = read_file('dataFile','JSON');
+if(has(data,'gdata'),
+    global_gdata = data:'gdata',
+    global_gdata = {}
 );
 
-settings_file = read_file('settings','JSON');
-if(settings_file == null,
+if(has(data,'settings'),
+    global_settings = data:'settings',
     global_settings = {
         'requestTime' -> 30,
         'allowRequests' -> true,
         'allowOnlyOwner' -> false,
         'operatorPermissionLevel' -> 2
-    },
-    //else when settings exist
-    global_settings = settings_file;
+    } 
 );
 
+__on_close()->(
+    //If write_file overwrites I can remove this line later
+    delete_file('dataFile','JSON');
+    data = {
+        'gdata' -> global_gdata,
+        'settings' -> global_settings
+    };
+    write_file('dataFile','JSON',data);
+);
 
 //Player Events
 
@@ -83,17 +92,10 @@ __on_player_breaks_block(player, block)->(
     ));
 
     //Delete the player head item that will drop as entity
-    schedule(0, _(outer(pos(block))) -> (
-	    
-        coords = pos(block);
-        //Found 2 to be reliable experimentally, needs more testing
-        dx = 2;
-        dy = 2;
-        dz = 2;
-        selector_item = str('@e[type=item,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,nbt={Item:{id:"minecraft:player_head",Count:1b}}]',coords:0,coords:1,coords:2,dx,dy,dz);
+    schedule(0, _(outer(block)) -> (
+        selector_item = str('@e[type=item,x=%d,y=%d,z=%d,dx=2,dy=2,dz=2,nbt={Item:{id:"minecraft:player_head",Count:1b}}]',pos(block));
         item = entity_selector(selector_item); 
         if(length(item)!=0, modify(entity_selector(selector_item):0,'remove'));
-
     ));
 );
 
@@ -101,13 +103,17 @@ __on_explosion_outcome(pos, power, source, causer, mode, fire, blocks, entities)
     for(blocks,
         if(_ == 'player_head',
             posG = pos(_);
-            posG:0 = floor(posG:0);
-            posG:1 = floor(posG:1);
-            posG:2 = floor(posG:2);
-            schedule(50, _(outer(posG)) -> (
+	    //Replace the broken player head
+            schedule(30, _(outer(posG)) -> (
                 set(posG,'air');
                 run(str('setblock %s %s %s minecraft:player_head{ExtraType:"%s"}',posG:0,posG:1,posG:2,global_gdata:str(posG):'name'));
             ));
+	    //Delete the player head item that will drop as entity
+            schedule(0, _(outer(posG)) -> (
+                selector_item = str('@e[type=item,x=%d,y=%d,z=%d,dx=2,dy=2,dz=2,nbt={Item:{id:"minecraft:player_head",Count:1b}}]',posG);
+                item = entity_selector(selector_item);
+                if(length(item)!=0, modify(entity_selector(selector_item):0,'remove'));
+            ))
 	   ))
 );
 
@@ -138,12 +144,9 @@ __on_player_dies(player)->(
     c_for(i=0,i<inventory_size(player),i+=1,
 
         if(inventory_get(player,i)!=null,
-
             slotItem= inventory_get(player,i);
             global_gdata:str(gravepos):str(i) = slotItem;
-            item_count+=1;
-            _saveGData();
-        
+            item_count+=1;     
         );
     
     );
@@ -155,7 +158,6 @@ __on_player_dies(player)->(
     global_gdata:str(gravepos):'item_count'= item_count;
     global_gdata:str(gravepos):'canRequest'= true;
     global_gdata:str(gravepos):'dimension' = player~'dimension';
-    _saveGData();
 
     run(str('clear %s', player));
     modify(player,'xp_level',0);
@@ -175,10 +177,9 @@ _not_owner_clicked(player,block) -> (
     if(global_gdata:str(pos(block)):'locked' && global_gdata:str(pos(block)):'canRequest' && global_settings:'allowRequests',
     
         global_gdata:str(pos(block)):'canRequest'=false;
-
+	
+        //Enable requesting again only after some time
         schedule( global_settings:'requestTime' *20 ,_(outer(block)) -> 
-
-            //Enable requesting again only after some specefic time
             global_gdata:str(pos(block)):'canRequest'= true
         );
 
@@ -293,34 +294,14 @@ _owner_clicked(player,block) -> (
 );
 
 
-
-
 //Utility Functions
 
-_saveGData() -> (
-    delete_file('gdata','JSON');
-    write_file('gdata','JSON',global_gdata);
-);
-
-_saveSData() -> (
-    delete_file('settings','JSON');
-    write_file('settings','JSON',global_settings);
-);
-
 _delete_data(pos) -> (
-
     delete(global_gdata,str(pos));
-    delete_file('gdata','JSON');
-    _saveGData();
-
 );
 
 _delete_data_slot(data,slotNum) -> (
-
     delete(data,str(slotNum));
-    delete_file('gdata','JSON');
-    _saveGData();
-
 );
 
 _checkPermLevel(player) -> (
@@ -339,10 +320,11 @@ _debug() -> (
 
     player = player(); 
 
-    print(player,format('r Debuging started. The user is also requested to claim any grave they have, reagardless of how many items it contains. Any graves that were destroyed for one reason or other will be replaced. Coordinates of all non claimed graves: \n'));
+    print(player,format('r Debuging started. Please claim any grave you have, regardless of how many items it contains. Any graves that were destroyed for one reason or other will be replaced.\nCoordinates of all non claimed graves: \n'));
 
     locationStrings=keys(global_gdata);
     coordsList=[];
+    graveFound = false;
     for(locationStrings,
 
         s= replace(str(_),'\\[','');
@@ -357,12 +339,21 @@ _debug() -> (
         owner= global_gdata:str(pos):'name';
         dim = global_gdata:str(pos):'dimension';
 
+        if( dim == 'overworld', c = 'e';  dim = 'Overworld',
+            dim == 'the_nether', c = 'r'; dim = 'Nether',
+            c = 'y'; dim = 'End'
+        );
+
         if(owner == player()~'name',
+            graveFound = true;
             run(str('setblock %s %s %s minecraft:air',x,y,z));
             run(str('setblock %s %s %s minecraft:player_head{ExtraType : "%s"}',x,y,z,owner));
-            print(player,format(str('e %s,%s,%s in %s\n',x,y,z,dim)));
+            print(player,format(str('%s %s,%s,%s in %s\n',c,x,y,z,dim)));
         );
     );
+
+    if(!graveFound, print(player,'No grave of yours has been found. \n'));
+
     print(player,format('c If you know why the head disappeared. Please make an issue on github.'));
     null;
 );
@@ -374,8 +365,6 @@ _resetData() -> (
     screen=create_screen(player,'generic_3x3',format('r Confirm Deletion'), _(screen,player,action,data) -> (
             if(action=='pickup' && data:'slot'==4,
                 global_gdata = {};
-                delete_file('gdata','JSON');
-                _saveGData();
                 close_screen(screen);
                 print(player,format('rb Grave Data has been deleted....'))
             );
@@ -390,26 +379,22 @@ _reqTime(time) -> (
     if(!_checkPermLevel(player()), return());
     global_settings:'requestTime' = time;
     print(player(),format('e Changed Request Time to: ',time));
-    _saveSData();
 );
 
 _allowReq(value) -> (
     if(!_checkPermLevel(player()), return());
     global_settings:'allowRequests' = value;
     print(player(),format('e Changed Allow Request to: ',value));
-    _saveSData();
 );
 
 _ownerOnly(value) -> (
     if(!_checkPermLevel(player()), return());
     global_settings:'allowOnlyOwner' = value;
     print(player(),format('e Changed Allow Owner Only to: ',value));
-    _saveSData();
 );
 
 _opPerms(level) -> (
     if(!_checkPermLevel(player()), return());
     global_settings:'operatorPermissionLevel' = level;
     print(player(),format('e Changed Operator Permission Level to: ',level));
-    _saveSData();
 );
