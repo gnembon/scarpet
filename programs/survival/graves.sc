@@ -41,7 +41,6 @@ __config()->{
     }
 };
 
-
 // All things to do with data storage and accessing
 
 data = read_file('dataFile','JSON');
@@ -57,12 +56,10 @@ if(has(data,'settings'),
         'allowRequests' -> true,
         'allowOnlyOwner' -> false,
         'operatorPermissionLevel' -> 2
-    } 
+    }
 );
 
 __on_close()->(
-    //If write_file overwrites I can remove this line later
-    delete_file('dataFile','JSON');
     data = {
         'gdata' -> global_gdata,
         'settings' -> global_settings
@@ -165,7 +162,6 @@ __on_player_dies(player)->(
 );
 
 
-
 //Grave Click Functions
 
 _not_owner_clicked(player,block) -> (
@@ -227,7 +223,7 @@ _not_owner_clicked(player,block) -> (
 
                 if(datafound==false,
                     _delete_data(pos(block));
-                    run(str('setblock %d %d %d minecraft:air',pos(block):0, pos(block):1, pos(block):2)); //for some reason /set doesnt seem to work. I might be doing bonk stuff somewhere
+                    run(str('setblock %d %d %d minecraft:air',pos(block))); //for some reason /set doesnt seem to work. I might be doing bonk stuff somewhere
                 );
             );
         ));
@@ -278,21 +274,18 @@ _owner_clicked(player,block) -> (
             _delete_data(pos(block));
             modify(player,'xp_level',gdata:'xp_level');
             modify(player,'xp_progress',gdata:'xp_progress');
-            run(str('setblock %d %d %d minecraft:air',pos(block):0, pos(block):1, pos(block):2));
+            run(str('setblock %d %d %d minecraft:air',pos(block)));
             );
             );
 
         ));
 
     if(screen_property(deathCrate,'open'),
-
             c_for(i=0,i<41,i+=1,
                 item=gdata:str(i);
                 inventory_set(deathCrate,i,item:1,item:0,item:2);
-            );      
-        );
+    ))
 );
-
 
 //Utility Functions
 
