@@ -275,9 +275,6 @@ _screenCheck() -> (
 
     sVersion= split('\\+',system_info('scarpet_version')):0; //fetches first part before the +, eg 1.4.57
     vNumbers=split('\\.',sVersion);
-    if(number(vNumbers:0)>=1 && number(vNumbers:1)>=4 && number(vNumbers:2)>=57,
-        return (true);,
-    //Cant make screen
-        return(false);
+    number(vNumbers:0)>=1 && number(vNumbers:1)>=4 && number(vNumbers:2)>=57
     )
 );
