@@ -1,3 +1,7 @@
+//tpUtils.sc
+//Adds homes and warps for quick teleportation.
+//By SurfingDude_
+
 global_max_homes = 20; //Edit to allow more/less homes
 global_operator_permission_level = 2;
 
@@ -50,20 +54,24 @@ __config()->{
     }
 };
 
-
 //Initializing homes and warps data
-
-if(read_file('hdata','JSON') == null,
-    global_hdata = {},
-    //else when file already exists
-    global_hdata = read_file('hdata','JSON');;
+data = read_file('dataFile','JSON');
+if(has(data,'hdata'),
+    global_hdata = data:'hdata',
+    global_hdata = {}
 );
-if(read_file('wdata','JSON') == null,
-    global_wdata = {},
-    //else when file already exists
-    global_wdata = read_file('wdata','JSON');;
+if(has(data,'wdata'),
+    global_wdata = data:'wdata',
+    global_wdata = {}
 );
 
+__on_close()->(
+    data = {
+        'hdata' -> global_hdata,
+        'wdata' -> global_wdata
+    };
+    write_file('dataFile','JSON',data);
+);
 
 
 //Home functions
@@ -86,7 +94,6 @@ _hadd(name) -> (
     global_hdata:uuid:name:'pitch' = player~'pitch';
     global_hdata:uuid:name:'yaw' = player~'yaw';
     global_hdata:uuid:name:'dimension' = player~'dimension';
-    _saveHData();
     print(player,format('e Succesfully saved home to location with name: '+name));
 );
 
@@ -112,7 +119,6 @@ _hremove(name) -> (
         return();
     );
     delete(global_hdata:str(player()~'uuid'),name);
-    _saveHData();
     print(player(),format(str('e \n%s was succesfully removed from your home list.',name)));
 );
 
@@ -124,9 +130,7 @@ _hlist() -> (
     for(keys(info),
 
         loc = info:_:'location';
-        x = round(loc:0);
-        y = round(loc:1);
-        z = round(loc:2);
+        [x, y, z] = map(loc, floor(_));
         dim = info:_:'dimension';
         if(dim=='the_end',
             dim='End';
@@ -168,7 +172,6 @@ _wadd(name,description)->(
     if(_screenCheck(),
         global_wdata:name:'item'= query(player,'holds','mainhand'):0;
     );
-    _saveWData();
     print(player,format('e Succesfully saved warp to location with name: '+name));
 
 );
@@ -186,7 +189,6 @@ _wremove(name)->(
         return();
     );
     delete(global_wdata,name);
-    _saveWData();
     print(player,format(str('e \n%s was succesfully removed from warp list.',name)));
 
 );
@@ -235,9 +237,7 @@ _wmenu() -> (
                 if(iType==null,iType='barrier');
                 des=info:'description';
                 loc=info:'location';
-                x= floor(loc:0);
-                y= floor(loc:1);
-                z= floor(loc:2);
+                [x, y, z] = map(loc, floor(_));
                 dim= info:'dimension';
                 if(dim=='the_end',
                     color='magenta',
@@ -261,20 +261,19 @@ _wmenu() -> (
 
 
 //utility
-_saveHData()->(
-    delete_file('hdata','JSON');
-    write_file('hdata','JSON',global_hdata);
-);
-
-_saveWData()->(
-    delete_file('wdata','JSON');
-    write_file('wdata','JSON',global_wdata);
-);
-
 _screenCheck() -> (
-
     sVersion= split('\\+',system_info('scarpet_version')):0; //fetches first part before the +, eg 1.4.57
     vNumbers=split('\\.',sVersion);
-    number(vNumbers:0)>=1 && number(vNumbers:1)>=4 && number(vNumbers:2)>=57
-    )
+    [main, sub, x] = map(vNumbers,number(_));
+    if(main>1, 
+  true,
+  main == 1,
+  if(sub>4,
+    true,
+    sub==4,
+    x >= 56,
+    false
+  ),
+  false
+)
 );
