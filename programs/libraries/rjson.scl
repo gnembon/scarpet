@@ -1,4 +1,5 @@
 //raw-json string to text
+if(0,
 rjson(rj)->(
 barname='chyxrjson:rjson'+(rand(0.9)-'.');
 if(bossbar(barname)==false,return(rjson(rj)));
@@ -8,12 +9,22 @@ bossbar(barname,'remove');
 if (command:1,res,throw('not valid r-json'))
 );
 
+
+,
+rjson(rj)->(
+r1=item_display_name(['apple',1,encode_nbt({'display'->{'Name'->rj}})]);
+r2=item_display_name(['stone',1,encode_nbt({'display'->{'Name'->rj}})]);
+if(r1==r2,r1,throw('not valid r-json'))
+);
+);
+
 //turns text-like values to a real text
 //will accept a [id, count, nbt] in the future
 __argument_rcv=(_(value)->(
 if(type(value)=='string',pure_text(value),
 type(value)=='text',value,
 type(value)=='entity',value~'display_name',
+type(value)=='list',item_display_name(value),
 throw('not a text-like value'))
 ));
 
