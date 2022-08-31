@@ -1,5 +1,5 @@
 //raw-json string to text
-if(0,
+if(0,    //if you are using an old version, change it to 1
 rjson(rj)->(
 barname='chyxrjson:rjson'+(rand(0.9)-'.');
 if(bossbar(barname)==false,return(rjson(rj)));
