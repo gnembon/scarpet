@@ -6,10 +6,17 @@
 __config()->{
 	'commands'->{
 		''->_()->print('Root call'),
-		'locate <radius_int> <block>'->['locate',null],
-		'locate <radius_int> <block> <pos>'->'locate',
-		'hist <radius_int> <block>'->['hist',null],
-		'hist <radius_int> <block> <pos>'->'hist',
+		'locate <radius> <block>'->['locate',null],
+		'locate <radius> <block> <pos>'->'locate',
+		'hist <radius> <block>'->['hist',null],
+		'hist <radius> <block> <pos>'->'hist',
+	},
+	'arguments'->{
+		'radius'->{
+			'type' -> 'int',
+			'min' -> 0,
+			'suggest' -> [10, 50, 100]
+		},
 	}
 };
 
