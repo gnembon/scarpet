@@ -36,7 +36,8 @@ new_class(name, declarer, ...parents)->(
                 declarer:'__parents__' = declarer:'__parents__' + class:'__parents__',
                 !has(declarer, member), //stuff which the declarer doesn't override
                 declarer:member = class:member;
-                declarer:'__member_data__':member = class:'__name__'
+                //Cos methods beginning with __init are for initialisation, so we don't save those
+                if(!(member ~ '^__init'), declarer:'__member_data__':member = class:'__name__')
             );
         )
     );
@@ -70,10 +71,11 @@ new_object(class, ...args)->(
     check_class(class);
     object = copy(class); //this is to avoid modifying the original map
     call(object:'__init__', object, ...args);
+    
 );
 
 //Basically java instanceof operator
-instance_of(object, class_name)->is_class(object)&&(object:'__name__'==class_name || has(object:'__parents__', class_name));
+instance_of(object, class_name)->is_class(object)&&(class_name=='Object' || object:'__name__'==class_name || has(object:'__parents__', class_name));
 
 //This is for calling public functions (which don't begin with _)
 //You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
@@ -104,7 +106,7 @@ call_function(object, function, ...args)->(
 //It contains base methods which we can guarantee will be in all classes
 //A bit of the code is copied from Value.java, and some from Object.java
 global_object_class = new_class('Object', {
-    '__init__'->_(self)->throw('Cannot initialize class of Object'),
+    '__init__'->_(self)->throw('Cannot initialize class of '+self:'__name__'),
     'str'->_(self)->[self, self:'__name__' + '@' + call_function(self, 'hash')],
     'hash'->_(self)->[self, hash(self)],
     'number'->_(self)->[self, length(call_function(self, 'str'))],
