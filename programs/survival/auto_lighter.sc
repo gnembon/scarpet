@@ -57,7 +57,7 @@ spread_torches(player, initial_gamemode) ->
 		loop(4000,
 			lpos = cpos+l(rand(d), rand(d), rand(d)) - d/2;
 			if (__distance_sq(cpos, lpos) <= dd  
-					&& air(lpos) && light(lpos) < global_min_light_level && (!global_light_ground || sky_light(lpos) < global_min_light_level)
+					&& air(lpos) && block_light(lpos) < global_min_light_level && (global_light_ground || light(lpos) < global_min_light_level)
 					&& solid(pos_offset(lpos, 'down')),
 				if (is_survival && not_able_loose_torch(player),
 					//running out of torches as survival
