@@ -19,7 +19,7 @@ debug = false;
 global_blocks = {
     'bedrock' -> [75, 'netherite_pickaxe', [null, null], false, 'stone' ],
     'budding_amethyst' -> [1, ['diamond_pickaxe', 'netherite_pickaxe'], ['budding_amethyst', null], false, 'amethyst_block' ],
-    'deepslate' -> [2, 'netherite_pickaxe', ['deepslate', 'cobbled_deepslate'], false, 'deepslate' ],
+    'deepslate' -> [1.63, 'netherite_pickaxe', ['deepslate', 'cobbled_deepslate'], false, 'deepslate' ],
     'end_portal_frame' -> [25, ['diamond_pickaxe', 'netherite_pickaxe'], ['end_portal_frame', null], false, 'stone' ],
     'spawner' -> [1, ['diamond_pickaxe', 'netherite_pickaxe'], ['spawner', null], true, 'metal' ],
 };
@@ -51,7 +51,7 @@ global_tool_speeds = {
     'golden_hoe' -> 12,
 };
 
-__check_tool (player, tools) -> (
+__check_tool (debug, player, tools) -> (
     [tool, count, nbt] = player ~ 'holds' || ['None', 0, null];
 
     type(tools) !='list' && (tools = l(tools));
@@ -62,12 +62,13 @@ __check_tool (player, tools) -> (
     return(valid_tool);
 );
 
-__get_enchantment_level(tool_nbt, enchantment) -> (
+__get_enchantment_level(debug, tool_nbt, enchantment) -> (
     level = 0;
 	if ((enchantments = get(tool_nbt,'Enchantments[]')),
+        debug && print(enchantments);
 		if (type(enchantments)!='list', enchantments = l(enchantments));
 		for (enchantments,
-			if ( get(_,'id') == 'minecraft:'+enchantment,
+            if ( get(_,'id') == 'minecraft:' + enchantment,
 				level = max(level, get(_,'lvl'))
 			)
 		)
@@ -75,21 +76,24 @@ __get_enchantment_level(tool_nbt, enchantment) -> (
 	level
 );
 
-__calculate_step (player, hardness) -> (
+__calculate_step(debug, player, hardness) -> (
 
     [tool, count, nbt] = player ~ 'holds' || ['None', 0, null];
 
     speedMultiplier = global_tool_speeds:str(tool);
+    debug && print(speedMultiplier);
 
-    efficiency_level = __get_enchantment_level(nbt, 'efficiency');
+    efficiency_level = __get_enchantment_level(debug, nbt, 'efficiency');
     efficiency_level && (
         speedMultiplier = speedMultiplier + 1 + (efficiency_level * efficiency_level);
     );
+    debug && print(efficiency_level) && print(speedMultiplier);
 
     haste_level = query(player,'effect','haste'):0;
     haste_level && (
         speedMultiplier = speedMultiplier * (1 + (0.2 * (haste_level + 1)))
     );
+    debug && print(haste_level) && print(speedMultiplier);
 
     mining_fatigue_level = query(player,'effect','mining_fatigue'):0 || -1;
     if (mining_fatigue_level == 0,
@@ -112,15 +116,18 @@ __calculate_step (player, hardness) -> (
             speedMultiplier = speedMultiplier * 0.00081;
         )
     );
+    debug && print(speedMultiplier);
 
     aqua_affinity = bool(query(player, 'holds', 'head'):2 ~ 'aqua_affinity');
     query(player, 'swimming') && !aqua_affinity && (
         speedMultiplier = speedMultiplier * 0.2;
     );
+    debug && print(speedMultiplier);
 
     !query(player, 'on_ground') && (
         speedMultiplier = speedMultiplier * 0.2;
     );
+    debug && print(speedMultiplier);
 
     block_damage = speedMultiplier / hardness;
     block_damage = block_damage / 30;
@@ -151,7 +158,6 @@ __break_block(player, block_pos, block_name) -> (
     );
 
     drop_block && (
-
         item_nbt = nbt(str('{Item:{id:"minecraft:%s",Count:1b}}',drop_block));
         save_nbt && (
             block_entity_data = block_data(block_pos);
@@ -170,10 +176,11 @@ __break_block(player, block_pos, block_name) -> (
     );
     break_sound && sound(str('minecraft:block.%s.break',break_sound), block_pos,1.0,1.0,'block');
     set(block_pos, 'air');
+    update(block_pos);
 
     slot = player~'selected_slot';
 
-    unbreaking_chance = 100.0 / (__get_enchantment_level(tool_nbt,'unbreaking') + 1);
+    unbreaking_chance = 100.0 / (__get_enchantment_level(debug, tool_nbt,'unbreaking') + 1);
     tool_damage = get(tool_nbt,'Damage') || 0;
 
     unbreaking_chance > rand(100.0) && (
@@ -184,27 +191,50 @@ __break_block(player, block_pos, block_name) -> (
 
 __on_player_clicks_block(player, block, face) ->
 (
+    debug = false;
     block_name = str(block);
     block_pos = pos(block);
 
+    debug && print(block_name);
+
     [hardness, tools, drop_block_list, save_nbt, break_sound] = global_blocks:block_name || [9999, null, null, false, null];
 
-    valid_tool = __check_tool(player, tools);
+    valid_tool = __check_tool(debug, player, tools);
+    debug && print(valid_tool);
 
     valid_tool && hardness != 9999 && (
-        step = __calculate_step(player, hardness);
+        step = __calculate_step(debug, player, hardness);
         if (step == 0, // instamine
             (
-                __break_block(player, block_pos, block_name)
+                __break_block(debug, player, block_pos, block_name)
             ),
             (
-                schedule(step, '_break', player, block_pos, block_name, step, 1);
+                schedule(step, '_break', debug, player, block_pos, block_name, step, 1);
             )
         );
     );
 );
 
-_break(player, block_pos, block_name, step, lvl) ->
+__on_player_breaks_block(player, block) ->
+(
+    debug = false;
+    block_name = str(block);
+    block_pos = pos(block);
+
+    debug && print(block_name);
+
+    [hardness, tools, drop_block_list, save_nbt, break_sound] = global_blocks:block_name || [9999, null, null, false, null];
+
+    valid_tool = __check_tool(debug, player, tools);
+    debug && print(valid_tool);
+
+    valid_tool && hardness != 9999 && (
+        __break_block(debug, player, block_pos, block_name);
+        return('cancel')
+    );
+);
+
+_break(debug, player, block_pos, block_name, step, lvl) ->
 (
     active_block = player~'active_block';
     if (active_block != block_name || pos(active_block) != block_pos,
@@ -215,10 +245,10 @@ _break(player, block_pos, block_name, step, lvl) ->
             modify(player, 'breaking_progress', lvl);
             if(lvl >= 10,
                 (
-                    __break_block(player, block_pos, block_name);
+                    __break_block(debug, player, block_pos, block_name);
                 ),
                 (
-                    schedule(step, '_break', player, block_pos, block_name, step, lvl+1);
+                    schedule(step, '_break', debug, player, block_pos, block_name, step, lvl+1);
                 )
             )
         )
