@@ -56,7 +56,7 @@ __check_tool (debug, player, tools) -> (
 
     type(tools) !='list' && (tools = l(tools));
     for (tools,
-    	str(tool) == _ && (valid_tool = true);
+        str(tool) == _ && (valid_tool = true);
     );
 
     return(valid_tool);
@@ -64,16 +64,16 @@ __check_tool (debug, player, tools) -> (
 
 __get_enchantment_level(debug, tool_nbt, enchantment) -> (
     level = 0;
-	if ((enchantments = get(tool_nbt,'Enchantments[]')),
+    if ((enchantments = get(tool_nbt,'Enchantments[]')),
         debug && print(enchantments);
-		if (type(enchantments)!='list', enchantments = l(enchantments));
-		for (enchantments,
+        if (type(enchantments)!='list', enchantments = l(enchantments));
+        for (enchantments,
             if ( get(_,'id') == 'minecraft:' + enchantment,
-				level = max(level, get(_,'lvl'))
-			)
-		)
-	);
-	level
+                level = max(level, get(_,'lvl'))
+            )
+        )
+    );
+    level
 );
 
 __calculate_step(debug, player, hardness) -> (
@@ -145,14 +145,14 @@ __calculate_step(debug, player, hardness) -> (
 );
 
 
-__break_block(player, block_pos, block_name) -> (
+__break_block(debug, player, block_pos, block_name) -> (
 
     [hardness, tools, drop_block_list, save_nbt, break_sound] = global_blocks:block_name;
     [tool, count, tool_nbt] = player ~ 'holds' || ['None', 0, null];
 
     drop_block = get(drop_block_list, 1);
 
-    silk_touch = __get_enchantment_level(tool_nbt, 'silk_touch');
+    silk_touch = __get_enchantment_level(debug, tool_nbt, 'silk_touch');
     silk_touch && (
         drop_block = get(drop_block_list, 0);
     );
@@ -164,9 +164,9 @@ __break_block(player, block_pos, block_name) -> (
             put(item_nbt, 'Item.tag.BlockEntityTag', block_entity_data);
             block_name == 'spawner' && (
                 spawner_type = title(get(split(':', block_entity_data:'SpawnData.entity.id'), 1));
-        		put(item_nbt,'Item.tag.Enchantments','[{}]');
-        		put(item_nbt,'Item.tag.display.Name', str('\'[{"text":"%s Spawner","italic":false}]\'', spawner_type));
-        		put(item_nbt,'Item.tag.BlockEntityTag.Delay', '5s');
+                put(item_nbt,'Item.tag.Enchantments','[{}]');
+                put(item_nbt,'Item.tag.display.Name', str('\'[{"text":"%s Spawner","italic":false}]\'', spawner_type));
+                put(item_nbt,'Item.tag.BlockEntityTag.Delay', '5s');
             );
         );
 
