@@ -14,9 +14,7 @@ global_range = 20;
 global_refresh_rate = 50;
 
 global_resolution = 50;
-//Change this if your server has a datapack which changes the minimum light level for mob spawning
-//TODO replace this with system_info to get it automatically
-global_min_light_level = 1;
+global_min_light_level = system_info('world_mob_spawn_min_light_level'); //Gets minimum light level for mobspawning, even if it's changd by a datapack
 
 __config()->{
     //not gonna work for vanilla players anyways
@@ -70,6 +68,8 @@ block_colour(pos)->if(
 
 valid_spawnable(block)->solid(block) && block!='bedrock' && block!='redstone_block';
 
+//TEST CODE
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 schedule_overlay_new()->(
     if(!global_armour_stand, return());
     player = player();
@@ -106,6 +106,7 @@ schedule_overlay_new()->(
     draw_shape(batch);
     if(global_active, schedule(global_refresh_rate, 'schedule_overlay'))
 );
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
 schedule_overlay()->(
     player = player();
