@@ -1,5 +1,5 @@
 //A library script which contains the class of max heaps, implemented using classes.scl
-//If you want to know how a max heap works, see documentation of min_heaps.sc (which works very differently)
+//If you want to know how a max heap works, see documentation of min_heaps.sc (which is implemented very differently)
 //
 //To use this, import it into your script, and then import 'call_function' from classes.scl, so you can use the methods
 //At the bottom, commented out, is an example script showing how it works and how to use it.
