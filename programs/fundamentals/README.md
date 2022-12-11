@@ -58,7 +58,7 @@ called when running the `new_object()` function.
 
 If a class is not meant to be initialised, then you can initialise it as an interface. To do this, import 
 `global_interface_class` from `classes.scl` and put it as a parent class, and don't specify a constructor. If a 
-class chooses to implement your interface and doesn't implement a method, it will give an error message 
+class chooses to implement your interface and doesn't implement an abstract method, it will give an error message 
 describing which method they didn't override and where it came from.
 
 ### Declaring a method
@@ -71,9 +71,10 @@ modified after you're done with it.
 
 To create an abstract method within an interface, simply make the function return null, which is how classes.scl
 detects if an inheritor class has failed to overwrite the method. Note, however, that this detection will not happen
-at compiletime, instead it will happen at runtime when the programmer tries to run the abstract function, and program
-will crash loudly. Unfortunately, there is no real way to check for them, so recommendation is always to thoroughly
-check that all abstract methods have been declared.
+at compiletime like with normal programming languages, instead it will happen at runtime when the programmer tries
+to run the abstract function, and program will crash loudly. Unfortunately, there is no real way to check for
+unimplemented abstract classes besides crashing when we detect null, so recommendation is always to thoroughly check
+that all abstract methods have been declared.
 
 To access a class' fields, you just do the same as with a normal map (`object:'field_name'`). This doesn't 
 really allow for private fields, however methods will be considered private if they have a `_` prefix. This 
@@ -102,6 +103,9 @@ gives them the following methods:
  - `length` : Returns the length of this object (by default the length of its `str` representation)
  - `nbt` : Returns a nbt representation of this object (by default an nbt of `str` representation)
  - `json` : Returns a json representation of this object (by default a json of `str` representation)
+
+Feel free to overwrite any of these with functions which are more specific to your class
+(for example, replacing `str` with an actual string representation of the contents of your object) 
 
 #### `Interface` class
 
