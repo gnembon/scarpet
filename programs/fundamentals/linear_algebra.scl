@@ -107,8 +107,7 @@ matrix_class = new_class('Matrix', {
         );
     ),
     'add'->_(self, matrix)->(
-        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
-        check_matrix(matrix:'data');
+        check_matrix(matrix);
         if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
             throw('Cannot add uneven matrices')
         );
@@ -117,8 +116,7 @@ matrix_class = new_class('Matrix', {
         [self, result]
     ),
     'subtract'->_(self, matrix)->(
-        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
-        check_matrix(matrix:'data');
+        check_matrix(matrix);
         if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
             throw('Cannot subtract uneven matrices')
         );
@@ -127,8 +125,7 @@ matrix_class = new_class('Matrix', {
         [self, result]
     ),
     'multiply'->_(self, matrix)->(
-        if(matrix:'__name__'!=self:'__name__', throw('invalid_matrix', 'value_exception', matrix));
-        check_matrix(matrix:'data');
+        check_matrix(matrix);
         if(matrix:'rows'!=self:'cols',
             throw('The first matrix\'s columns must equal the second\'s rows')
         );
