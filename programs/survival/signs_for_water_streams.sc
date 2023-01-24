@@ -43,7 +43,7 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
       clicked_block_pos = map(pos(block), str('%.2f',_));
       offset_by_one = pos_offset(block,face,1); // Without the offset, the block you clicked on will be turned into a sign.
       // Make sure there's a replaceable block there, otherwise you could auto-destroy blocks with this.
-      replaceable_materials = m ('air', 'water', 'lava', 'grass', 'sea_grass');
+      replaceable_materials = m('air', 'water', 'lava', 'vegetation', 'sea_grass');
       if( has(replaceable_materials:(material(offset_by_one))),
         sign = wood+'_wall_sign';
         set(offset_by_one, sign, 'facing', face); // place the sign
