@@ -337,6 +337,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	There is a video on his channel about this.
 	https://www.youtube.com/watch?v=g7Ku73ElDBs
 	Cos im too lazy to write all the shit down.
+	
+### [tpUtils.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/tpUtils.sc):
+#### By SurfingDude
+	Adds homes and warps. All tasks(like adding, deleting, teleporting, etc) can be done via commands.
+	Additionally listing and teleporting to other warps/homes can be done through a gui.
 
 ### [updater.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/updater.sc):
 #### By Firigion
@@ -418,4 +423,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	SurfingDude
 	(Many more hopefully!)
