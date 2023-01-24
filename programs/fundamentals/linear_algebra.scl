@@ -166,5 +166,72 @@ _iterate(data, func)->(
     _data
 );
 
+//Vectors
+
+vector_class = new_class('Vector', {
+    'size'->0,
+    '__init__'->_(self, ...args)->(
+        if(length(args)==1,
+            call(self:'__init_empty', self, args:0),
+            call(self:'__init_data', self, args)
+        );
+    ),
+    '__init_data'->_(self, data)->(
+        if(!is_vector(data), throw('Must initialize a vector with a list of numbers'));
+        self:'data' = data;
+        self:'size'=length(data);
+        self
+    ),
+    '__init_empty'->_(self, size)->(
+        data = [];
+        loop(size, data+=0);
+        self:'data' = data;
+        self:'size'=size;
+        self
+    ),
+    'str'->_(self)->[self, str(self:'data')],
+    //'transpose'->_(self)->( // Goes from row matrix to column matrix
+    //    result = matrix_empty(self:'cols', self:'rows');
+    //    result:'data' = _iterate(result:'data', _(outer(self), v, r, c)->
+    //        self:'data':c:r
+    //    );
+    //    [self, result]
+    //),
+    'data_point'->_(self, pos)->[self, self:'data':pos], //todo new name for this
+    'add'->_(self, vector)->( //todo add matrix compatibility
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot add uneven vectors'));
+        result = copy(self);
+        result:'data' = self:'data' + vector:'data';
+        [self, result]
+    ),
+    'subtract'->_(self, vector)->( //todo add matrix compatibility
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot subtract uneven vectors'));
+        result = copy(self);
+        result:'data' = self:'data' - vector:'data';
+        [self, result]
+    ),
+    //'multiply'->_(self, matrix)->( //todo separate into dot product, cross product, and multiplication into a matrix
+    //    check_vector(matrix); 
+    //    if(matrix:'rows'!=self:'cols',
+    //        throw('The first matrix\'s columns must equal the second\'s rows')
+    //    );
+    //    result = matrix_empty(self:'rows', matrix:'cols');
+    //    result:'data'=_iterate(result:'data', _(outer(self), outer(matrix), v, r, c)->(
+    //        sum(...(call_function(self, 'row', r)*call_function(matrix, 'column', c))) 
+    //    ));
+    //    [self, result]
+    //),
+}, matrix_class);
+
+is_vector(data)-> instance_of(data, 'Vector') || (type(data)=='list' && all(data, type(_)=='number'));
+
+//If it's not a vector, throws an error
+check_vector(data)->if(!is_vector(data), throw('invalid_vector', 'value_exception', data));
+
+
+//Constructor functions
+
 matrix_data(outer(matrix_class), data)->new_object(matrix_class, data);
 matrix_empty(outer(matrix_class), rows, cols)->new_object(matrix_class, rows, cols)
