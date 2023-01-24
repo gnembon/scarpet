@@ -15,7 +15,9 @@
 //
 //By: Ghoulboy
 
-import('classes', 'new_class', 'call_function', 'new_object');
+import('classes', 'new_class', 'call_function', 'new_object', 'instance_of');
+
+//Matrices
 
 //class code taken from https://gist.github.com/hallazzang/4e6abbb05ff2d3e168a87cf10691c4fb
 matrix_class = new_class('Matrix', {
@@ -139,7 +141,7 @@ matrix_class = new_class('Matrix', {
 });
 
 //Checks for a list of lists of numbers
-is_matrix(data)-> (type(data)=='list' && (
+is_matrix(data)-> instance_of(data, 'Matrix') || (type(data)=='list' && (
     init_length = length(data:0);
     d = for(data,
         l=_;
