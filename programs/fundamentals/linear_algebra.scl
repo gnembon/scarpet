@@ -212,6 +212,21 @@ vector_class = new_class('Vector', {
         result:'data' = self:'data' - vector:'data';
         [self, result]
     ),
+    'dot_product'->_(self, vector)->(
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot calculate a dot product with uneven vectors'));
+        [self, sum(...(self:'data'*vector:'data'))]
+    ),
+    'cross_product'->_(self, vector)->(
+        if(self:'size'!=3, throw(str('Tried to calculate cross product with vector of length %s, instead of 3', self:'size')));
+        check_vector(vector);
+        if(vector:'size'!=3, throw(str('Tried to calculate cross product with vector of length %s, instead of 3', vector:'size')));
+        [self, vector_data(
+            self:'data':1*vector:'data':2 - self:'data':2*vector:'data':1,
+            self:'data':2*vector:'data':0 - self:'data':0*vector:'data':2,
+            self:'data':0*vector:'data':1 - self:'data':1*vector:'data':0,
+        )]
+    ),
     //'multiply'->_(self, matrix)->( //todo separate into dot product, cross product, and multiplication into a matrix
     //    check_vector(matrix); 
     //    if(matrix:'rows'!=self:'cols',
