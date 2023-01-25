@@ -235,3 +235,6 @@ check_vector(data)->if(!is_vector(data), throw('invalid_vector', 'value_exceptio
 
 matrix_data(outer(matrix_class), data)->new_object(matrix_class, data);
 matrix_empty(outer(matrix_class), rows, cols)->new_object(matrix_class, rows, cols)
+
+vector_data(outer(vector_class), ...data)->new_object(vector_class, ...data);
+vector_empty(outer(vector_class), size)->new_object(vector_class, size);
