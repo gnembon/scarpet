@@ -6,12 +6,10 @@ __config() -> (
 );
 
 __on_tick() -> (
-	_sneak_grow();
-	in_dimension('nether',
-		_sneak_grow();
-	);
-	in_dimension('end',
-		_sneak_grow();
+	for (system_info('world_dimensions'),
+		in_dimension(_,
+			_sneak_grow();
+		);
 	);
 );
 
