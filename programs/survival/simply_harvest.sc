@@ -48,9 +48,9 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
                     // reset hand slot to prevent using up blocks
                     // apparently mainhand can get checked right away
                     // harvesting was just set to true, no need to check
-                    if(hand=='mainhand',
+                    if(hand == 'mainhand',
                         // visually update inventory
-                        inventory_set(player,slot=player~'selected_slot',inventory_get(player,slot):1);
+                        inventory_set(player, slot = player~'selected_slot', inventory_get(player, slot):1);
                         // cancel the rest of the event to prevent the item from being used
                         return('cancel')
                     )
@@ -62,12 +62,12 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
 
 // reset hand slot to prevent using up blocks
 // offhand requires this event for some reason
-__on_player_placing_block(p,i,h,b) ->
+__on_player_placing_block(player, item_tuple, hand, block) ->
 (
     // only applies while harvesting
-    if(global_harvesting && h=='offhand',
+    if(global_harvesting && hand == 'offhand',
         // visually update inventory
-        inventory_set(p,slot=40,inventory_get(p,slot):1);
+        inventory_set(player, slot = 40, inventory_get(player, slot):1);
         // cancel the rest of the event to prevent the item from being used
         return('cancel')
     );
