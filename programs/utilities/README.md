@@ -94,5 +94,4 @@ You can find more info in-game with the help command',
 #### By CommandLeo
 
 CommandLeo's Statistics Display script. Makes tracking and displaying a lot of statistics really simple.
-
-_Deserves a more detailed description!_
+They are displayed on the scoreboard. You can find more info at [the app's wiki](https://github.com/CommandLeo/scarpet/wiki/Statistic-Display).
