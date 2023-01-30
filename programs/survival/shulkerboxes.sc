@@ -34,6 +34,7 @@ will restock player inventory
 ';
 
 global_vacuum = 'collision';
+global_arrow_slot = null;
 
 toggle_vacuum() -> 
 (
@@ -174,9 +175,45 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
 ///
 // restock
 ///
-__on_player_uses_item(player, item, hand)                   -> __refill(player, hand, item);
+
+// arrow slot still contains arrow on use (but not on release),
+// so note the arrow slot now before it gets used up
+__on_player_uses_item(player, item, hand)                   ->
+(
+	// always do usual refill check
+	__refill(player, hand, item);
+	// if it was any kind of bow, an arrow might have been used
+	if(item:0 == 'bow' || item:0 == 'crossbow',
+		inv = inventory_get(player);
+		// reorder player inventory slots to check offhand before hotbar
+		// to properly check default arrow priority
+		slot = first(map([range(inventory_size(player))],(_ + 40) % 41),
+				inv:_:0 ~ 'arrow'
+		);
+		if(slot != null,
+			tuple = inv:slot;
+			global_arrow = [slot, tuple],
+			global_arrow = null
+		),
+		global_arrow = null
+	);
+);
+
 __on_player_right_clicks_block(player, item, hand, b, f, h) -> __refill(player, hand, item);
-__on_player_releases_item(player, item, hand)               -> __refill(player, hand, item);
+
+// arrow gets used up on release and slot no longer contains arrow,
+// so if you're out the script can't find the slot
+// so check the arrow slot variable to find where it was
+__on_player_releases_item(player, item, hand)               ->
+(
+	// always do usual refill check
+	__refill(player, hand, item);
+	// if it was any kind of bow, an arrow might have been used
+	if(inventory_get(player, global_arrow:0) == null,
+		__refill_slot(player, ...global_arrow)
+	);
+);
+
 __on_player_finishes_using_item(player, item, hand)         -> __refill(player, hand, item);
 
 __on_player_breaks_block(player, block)            -> __check_hand(player, 'mainhand');
@@ -200,6 +237,15 @@ __refill(player, hand, item) ->
       if (!has(global_tick_actions, slot), global_tick_actions:slot = item);
       schedule(0, '__refill_endtick', player);
    );
+);
+
+// circumvents regular refill() to allow for refilling of any slot, not just hand
+__refill_slot(player, slot, item) ->
+(
+   if(item,
+      if (!has(global_tick_actions, slot), global_tick_actions:slot = item);
+      schedule(0, '__refill_endtick', player);
+   )
 );
 
 // checks slots that may have changed that tick due to player actions
@@ -291,11 +337,11 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
             if (type(shulker_stacks)=='nbt', shulker_stacks = [shulker_stacks]);
             sb_item_count = length(shulker_stacks);
             for( shulker_stacks,
-               // item matches and not a potion or matching potion effect as well as same and keep
-               if( _:'id' == item_fqdn && ( !(previous_item ~ 'potion$') || ( (idx_choice == 'same' || idx_choice == 'keep') && ( _:'tag':'Potion' == tag:'Potion' ) ) ),
+               // item matches and (not a potion or tipped arrow) or (matching potion effect or arrow effect) and (same or keep)
+               if( _:'id' == item_fqdn && ( !(previous_item ~ 'potion$' || previous_item == '^tipped_arrow$') || ( (idx_choice == 'same' || idx_choice == 'keep') && ( _:'tag':'Potion' == tag:'Potion' ) ) ),
                   replacement_index = if (
-                     // either not a potion or matches potion effect
-                     (idx_choice == 'same' || idx_choice == 'keep') && ( !(previous_item ~ 'potion$') || _:'tag':'Potion' == tag:'Potion' ),
+                     // either (same or keep and not a potion or tipped arrow) or (matches potion effect or arrow effect)
+                     (idx_choice == 'same' || idx_choice == 'keep') && ( !(previous_item ~ 'potion$' || previous_item == '^tipped_arrow$') || _:'tag':'Potion' == tag:'Potion' ),
                         _i,
                      idx_choice == 'random', 
                         floor(rand(sb_item_count)),
@@ -353,11 +399,11 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
 // almost exact copy of totem usage detection from carried_totem.sc
 // totems have a stack size of 1, so they won't restock from a "keep" box
 __on_player_takes_damage(player, amount, source, source_entity) -> (
-	totem = 'totem_of_undying';
-	if(player~'health' <= amount
-		&& source != 'outOfWorld'
-		&& (if(player~'holds':0 == totem, hand = 'mainhand'; item = player~'holds'; true, false) || if(query(player, 'holds', 'offhand'):0 == totem, hand = 'offhand';item = query(player, 'holds', 'offhand'); true, false)),
-		// call refill for the totem item (it'll get used before the tick is over)
-		__refill(player, hand, item)
-	);
+   totem = 'totem_of_undying';
+   if(player~'health' <= amount
+      && source != 'outOfWorld'
+      && (if(player~'holds':0 == totem, hand = 'mainhand'; item = player~'holds'; true, false) || if(query(player, 'holds', 'offhand'):0 == totem, hand = 'offhand';item = query(player, 'holds', 'offhand'); true, false)),
+      // call refill for the totem item (it'll get used before the tick is over)
+      __refill(player, hand, item)
+   );
 );
