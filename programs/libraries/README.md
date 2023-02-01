@@ -3,7 +3,7 @@ Programs for adding helpful features not in native scarpet
 
 ## Libraries in alphabetical order with creator:
 
-### pretty_print.sc:
+### [pretty_print.sc](https://github.com/gnembon/scarpet/blob/master/programs/libraries/pretty_print.sc):
 #### By Xendergo
 ```
 Adds a pretty_print() function which is equivalent to print(), but color codes things by type. Helpful for distinguishing between null & 'null', or maps, nbts, and stringified nbts
