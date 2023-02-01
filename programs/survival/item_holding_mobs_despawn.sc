@@ -8,7 +8,7 @@ __config() -> {
 };
 
 entity_load_handler('monster', 
-    _(e) -> entity_event(e, 'on_tick', 
+    _(e, new) -> entity_event(e, 'on_tick', 
         _(e) -> ( 
             if(e ~ 'persistence' && e ~ 'holds' && ! e ~ 'custom_name', 
                 modify(e, 'persistence', false)
