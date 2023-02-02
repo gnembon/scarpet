@@ -27,7 +27,7 @@ __on_player_clicks_block(player, block, face) -> (
     if(global_instamine_blocks ~ str(block) != null && global_required_pickaxes ~ (held_item:0) != null,
       // check if player has haste 2 and efficiency 5
       if(__has_haste_2(player) && __has_efficiency_5(held_item:2),
-        harvest(player, block);
+        harvest(player, block); signal_event('block_broken', player, pos(block))
       );
     );
   );
