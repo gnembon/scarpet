@@ -19,7 +19,7 @@ A tool to help you create helixes, spirals, waves, curvy circles stars _and much
 
 Lets you replace blocks in an area with other blocks, preserving their block properties. This way, you can create a beautiful build out of slabs, stairs and log blocks and midway through the design process, change your pallette. See [here](https://github.com/Firigion/scarpets#soft-replace) for more info on how to use it.
 
-### [shapes.sc](https://github.com/gnembon/scarpet/blob/master/programs/building/shapes.sc):
+### [sshapes.sc](https://github.com/gnembon/scarpet/blob/master/programs/building/sshapes.sc):
 #### By Firigion
 
 A set of tools to define simple shapes (spheres, discs, circles, lines and planes) in 3D space by setting three points in the world and fitting the shape to those. Also has a fun eraser tool to delete blobs of connected blocks. [Here](https://github.com/Firigion/scarpets#shapes) you can find more specifi information.
