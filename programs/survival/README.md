@@ -287,6 +287,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	Basically a less op & survival friendly version of holy_hand_grenades
 	Killing something with this counts as a player kill, as if you redirected a fireball shot by an actual ghast
 
+### [show_bees_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/show_bees_count.sc)
+#### By Crec0
+	Right click with an empty while sneaking on a beehive or beenest to show the count of bees in that specific block.
+
 ### [showbiome.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/showbiome.sc)
 #### By Crec0
 	Shows biome name on the blocks around the player. useful for marking out rivers, beaches, soul sand valley and stuff.
