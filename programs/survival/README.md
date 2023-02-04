@@ -55,6 +55,12 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By nsluhrs 
   When holding an axe and sneak left clicking a combined minecart (Minecart with chest, TNT etc) or boat with chest will drop inventory and the component parts of the combined entity as items.
 
+### [combine_xp_orbs.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/combine_xp_orbs.sc)
+#### By Ghoulboy 
+  Scarpet app with same functionality as the old Carpet rule combineXPOrbs
+  Distance at which orbs combine, frequency of orb merging, and the number of orbs which can merge at the same time can all be configured.
+
+
 ### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
 #### By Xendergo
 	https://youtu.be/q1muVOFOM-k
