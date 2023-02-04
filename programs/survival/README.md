@@ -26,8 +26,8 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Xendergo
 	Slowly heals bees, so you can have them on an island or near water without them drowning as much
 
-### [bridge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge.sc):
-#### By Aplet123
+### [bridge_maker.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge_maker.sc):
+#### By Aplet123 and Ghoulboy
 	When holding golden sword(configurable), sneaking and clicking on a block, the blocks in the offhand will be placed.
 	Also comes with useful funcs, __set_nbt_in_slot(player, slot, tag_name, tag_value)
 	and __get_nbt_value_in_slot(player, slot, tag_name)
