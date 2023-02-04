@@ -109,6 +109,11 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Chen_yu_xuan
 	Right click fakeplayers to edit their inventorys.
 
+### [flippin_cactus.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/flippin_cactus.sc):
+#### By Ghoulboy
+	Flippin Cactus rule implemented in scarpet.
+	Contains a few more bells and whistles, like a command to change specifics of how certain blocks get flipped or rotated.
+
 ### [hammer.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
