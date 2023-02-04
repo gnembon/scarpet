@@ -144,6 +144,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Left clicking will send your items to any unfilled slots in the inventory.
 	(Please add a better descreption as right now it just sounds like a less laggy storage_drawers.sc)
 
+### [item_holding_mobs_despawn.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/item_holding_mobs_despawn.sc):
+#### By altrisi
+	Changes despawn rule for monsters, making mobs who hold items despawnable as opposed to vanilla where they will never despawn.
+	Mobs can only be made persistent when they are given a custom name using nametags.
+
 ### [lava_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lava_sponge.sc):
 #### By _GieR
     Make sponge work on lava like water.
@@ -429,4 +434,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	altrisi
 	(Many more hopefully!)

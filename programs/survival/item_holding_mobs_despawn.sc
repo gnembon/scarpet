@@ -1,6 +1,7 @@
 // changes despawn rule for monster mobs. 
 // makes mobs who hold items despawnable as opposed to vanilla where they will never despawn.
-// mobs can only be made despawnable when they are given a custom name using nametags
+// mobs can only be made persistent when they are given a custom name using nametags
+// By: altrisi
 
 __config() -> {
     'stay_loaded' -> true,
