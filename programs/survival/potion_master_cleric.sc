@@ -23,7 +23,7 @@ global_max_potion_trades = 3;
 // this code does not handle cycling villager trades. 
 global_potion_master_level = 3;
 
-// Nbt data for each avalible trade.
+// Nbt data for each available trade.
 global_potion_trades = [
 	// Dolphins Grace
 	'{
@@ -130,15 +130,60 @@ global_potion_trades = [
 	
 ];
 
+// potentially override chosen max trades to prevent duplicates
+global_max_potion_trades = min(global_max_potion_trades,length(global_potion_trades) * length(global_potion_types));
+
 _add_trades(cleric, p, nbt) -> (
+	trades = {};
+	effects = copy(global_potion_trades);
 	// add 0-max number of potion trades
 	loop(rand(1 + global_max_potion_trades),
-
+		i = _;
+		mapped_effects = map(effects, _ ~ '(?<=Potion of )\\w*');
 		trade = nbt(str(
 			// select a random trade from the list above
-			global_potion_trades:rand(length(global_potion_trades)),
-			// Randomize the potion type 
-			global_potion_types:rand(length(global_potion_types)),
+			count = {...mapped_effects};
+			// count how many of each potion have been chosen
+			for(
+				filter(
+					pairs(trades),
+					mapped_effects ~ (_:1:'potion') != null
+				),
+				count:(_:1:'potion') += 1;
+			);
+			// delete options that will produce duplicates
+			for(
+				filter(
+					pairs(count),
+					_:1 >= length(global_potion_types)
+				),
+				if(mapped_effects ~ (_:0) != null,
+					delete(effects,mapped_effects ~ (_:0));
+				);
+			);
+			trade_choice = effects:rand(length(effects));
+			// note potion effect choice for later
+			trades:_ = {
+				['potion', trade_choice ~ '(?<=Potion of )\\w*'],
+				['type', null]
+			};
+			// here we actually give the potion effect to str()
+			trade_choice,
+			types = copy(global_potion_types);
+			// if same potion effect, delete potion type options to prevent duplicates
+			for(filter(pairs(trades),
+					_:0 < i &&
+					_:1:'potion' == trades:i:'potion' &&
+					types ~ (_:1:'type') != null
+				),
+				delete(types,types ~ (_:1:'type'));
+			);
+			// Randomize the potion type with the leftover options
+			type_choice = types:rand(length(types));
+			// note potion type choice for later
+			trades:_:'type' = type_choice;
+			// here we actually give the potion type to str()
+			type_choice,
 			// randomize the cost of each trade
 			rand((global_potion_emerald_cost:1) - global_potion_emerald_cost:0) + global_potion_emerald_cost:0
 		));
@@ -165,4 +210,3 @@ __on_player_interacts_with_entity(player, entity, hand) -> (
 		);
 	)
 );
-
