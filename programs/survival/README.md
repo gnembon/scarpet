@@ -86,7 +86,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By RubberDuck55
 	When a player is killed there is a 33% chance of a head to be dropped
 
-### [easier_renweable_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/easier_renweable_sponge.sc):
+### [easier_renewable_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/easier_renewable_sponge.sc):
 #### By Ghoulboy
 	If you kill one of each type of fish(Pufferfish, tropical fish, salmon, cod)
 	you have a 1/50 chance of getting a wet sponge.
