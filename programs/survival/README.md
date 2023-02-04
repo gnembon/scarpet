@@ -289,7 +289,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [show_bees_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/show_bees_count.sc)
 #### By Crec0
-	Right click with an empty while sneaking on a beehive or beenest to show the count of bees in that specific block.
+	Right click with an empty hand while sneaking on a beehive or beenest to show the count of bees in that specific block.
 
 ### [showbiome.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/showbiome.sc)
 #### By Crec0
