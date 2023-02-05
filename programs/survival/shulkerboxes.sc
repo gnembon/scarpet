@@ -209,7 +209,7 @@ __on_player_releases_item(player, item, hand)               ->
 	// always do usual refill check
 	__refill(player, hand, item);
 	// if it was any kind of bow, an arrow might have been used
-	if(inventory_get(player, global_arrow:0) == null,
+	if((item:0 == 'bow' || item:0 == 'crossbow') && inventory_get(player, global_arrow:0) == null,
 		__refill_slot(player, ...global_arrow)
 	);
 );
