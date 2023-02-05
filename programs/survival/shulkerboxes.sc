@@ -188,7 +188,7 @@ __on_player_uses_item(player, item, hand)                   ->
 		// reorder player inventory slots to check offhand before hotbar
 		// to properly check default arrow priority
 		slot = first(map([range(inventory_size(player))],(_ + 40) % 41),
-				inv:_:0 ~ 'arrow'
+				inv:_:0 ~ 'arrow$'
 		);
 		if(slot != null,
 			tuple = inv:slot;
