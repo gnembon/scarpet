@@ -86,7 +86,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
-	
+
+### [elytra_swap.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/elytra_swap.sc):
+#### By IceWolf23
+	By right-clicking with an elytra or any chestplate this script will swap the items
+
 ### [enchanting_table_bottling.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/enchanting_table_bottling.sc):
 #### By Firigion
 	Shift right clicking on an enchanting table with an empty glass bottle consumes it and generates a
@@ -163,6 +167,11 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [milkable_sheeps.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/milkable_sheeps.sc):
 #### By Gnottero
 	Allows the player to milk sheeps using a bucket.
+
+### [mob_display_health.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/mob_display_health.sc):
+#### By IceWolf23
+	When a player hits any entity, the Mob Type is displayed with the remaining life (in HP) in the actionbar
+
 
 ### [nether_poi.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/nether_poi.sc):
 #### By Firigion
@@ -418,4 +427,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	IceWolf23
 	(Many more hopefully!)
