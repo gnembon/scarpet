@@ -14,7 +14,7 @@ global_range = 20;
 global_refresh_rate = 50;
 
 global_resolution = 50;
-global_min_light_level = system_info('world_mob_spawn_min_light_level'); //Gets minimum light level for mobspawning, even if it's changd by a datapack
+global_min_light_level = system_info('world_min_spawning_light'); //Gets minimum light level for mobspawning, even if it's changd by a datapack
 
 __config()->{
     //not gonna work for vanilla players anyways
