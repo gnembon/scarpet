@@ -5,8 +5,8 @@ global_swappable_items = {'netherite_chestplate','diamond_chestplate','iron_ches
 
 
 __on_player_uses_item(player, item_tuple, hand) -> (
-	if ( hand == 'mainhand' && (inventory_get(player, 38)) != null,
-		if ( global_swappable_items:(item_tuple:0) != null, (			
+	if ( hand == 'mainhand' && inventory_get(player, 38) != null,
+		if ( global_swappable_items:(item_tuple:0) != null,			
 			playerArmorDressed = inventory_get(player, 38);
 			handSlot = query(player, 'selected_slot');
 			
