@@ -53,7 +53,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [cart_breaker.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cart_breaker.sc)
 #### By nsluhrs 
-  When holding an axe and sneak left clicking a combined minecart (Minecart with chest, TNT etc) or boat with chest will drop inventory and the component parts of the combined entity as items.
+  	When holding an axe and sneak left clicking a combined minecart (Minecart with chest, TNT etc) or boat with chest will drop inventory and the component parts of the combined entity as items.
 
 ### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
 #### By Xendergo
@@ -136,6 +136,12 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [lava_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lava_sponge.sc):
 #### By _GieR
     Make sponge work on lava like water.
+
+### [light_level_overlay.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/light_level_overlay.sc):
+#### By Ghoulboy
+	Does the same thing as MiniHUD's light level overlay, i.e, displays block light level over all solid spawnable blocks (so not bedrock or redstone)
+	Numbers are green if block light is above minimum light level for mob spawning, yellow if sky light level is above minimum light level, and red if overall light level is below minimum light level
+	NB: On servers only works for carpet clients.
 
 ### [locate_block.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/locate_block.sc):
 #### By Ghoulboy
@@ -418,4 +424,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	nsluhrs
 	(Many more hopefully!)
