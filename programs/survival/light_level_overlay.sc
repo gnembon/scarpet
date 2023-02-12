@@ -89,7 +89,7 @@ schedule_overlay_new()->(
             if(block!=null,
                 pos = pos(block);
                 if(valid_spawnable(block) && air(pos_offset(pos, 'up')) && air(pos_offset(pos, 'up', 2)),
-                    [x, y, z] = pos;
+                    [x, y, z] = pos_offset(pos, 'up');
                     print(pos);
                     batch += [
                         'label', global_refresh_rate, 
@@ -97,7 +97,7 @@ schedule_overlay_new()->(
                         'text', block_light(x, y, z), 
                         'size', 20, 
                         'player', player, 
-                        'color', block_colour(block)
+                        'color', block_colour([x, y, z])
                     ]
                 )
             )
