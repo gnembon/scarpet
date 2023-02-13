@@ -16,6 +16,9 @@ global_seeds = {
     'nether_wart' -> 'nether_wart'
 };
 
+// variable indicating that harvesting occurred
+global_harvesting = false;
+
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) -> (
     if(hand=='offhand' || player~'gamemode_id' == 3, return());
     if(block_tags(block,'crops') || block == 'nether_wart',
@@ -28,7 +31,9 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
                     if(player~'gamemode_id' == 2 && can_destroy~('minecraft:' + block) == null, return());
                     harvest(player, pos(block));
                     if(player~'gamemode_id' == 1, set(pos(block), block, 'age', 0); return());
+                    global_harvesting = true;
                     schedule(0,_(outer(block)) -> (
+                            global_harvesting = false;
                             for(entity_area('item', pos(block), [2, 2, 2]),
                                 if(query(_, 'age') <= 1 && query(_, 'item'):0 == global_seeds:str(block),
                                     nbt = query(_, 'nbt');
@@ -40,8 +45,30 @@ __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) ->
                             );
                         )
                     );
+                    // reset hand slot to prevent using up blocks
+                    // apparently mainhand can get checked right away
+                    // harvesting was just set to true, no need to check
+                    if(hand == 'mainhand',
+                        // visually update inventory
+                        inventory_set(player, slot = player~'selected_slot', inventory_get(player, slot):1);
+                        // cancel the rest of the event to prevent the item from being used
+                        return('cancel')
+                    )
                 );
             );
         );
+    );
+);
+
+// reset hand slot to prevent using up blocks
+// offhand requires this event for some reason
+__on_player_placing_block(player, item_tuple, hand, block) ->
+(
+    // only applies while harvesting
+    if(global_harvesting && hand == 'offhand',
+        // visually update inventory
+        inventory_set(player, slot = 40, inventory_get(player, slot):1);
+        // cancel the rest of the event to prevent the item from being used
+        return('cancel')
     );
 );

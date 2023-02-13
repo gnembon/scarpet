@@ -1,4 +1,5 @@
-//Replacement of carpet rule with scarpet app which is more flexible
+//Scarpet app with same functionality as the old Carpet rule combineXPOrbs
+//By: Ghoulboy
 
 __command()->null;
 
