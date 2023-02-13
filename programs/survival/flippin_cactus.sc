@@ -1,4 +1,6 @@
 //FlippinCactus rule implemented in scarpet
+//By: Ghoulboy
+
 __command()->(
     if(global_flip_type=='flip',global_flip_type='rotate',global_flip_type='flip');
     print('Toggled cactus flipping mode to '+global_flip_type+' blocks');null

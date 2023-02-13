@@ -26,8 +26,8 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By Xendergo
 	Slowly heals bees, so you can have them on an island or near water without them drowning as much
 
-### [bridge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge.sc):
-#### By Aplet123
+### [bridge_maker.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/bridge_maker.sc):
+#### By Aplet123 and Ghoulboy
 	When holding golden sword(configurable), sneaking and clicking on a block, the blocks in the offhand will be placed.
 	Also comes with useful funcs, __set_nbt_in_slot(player, slot, tag_name, tag_value)
 	and __get_nbt_value_in_slot(player, slot, tag_name)
@@ -55,6 +55,12 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By nsluhrs 
   When holding an axe and sneak left clicking a combined minecart (Minecart with chest, TNT etc) or boat with chest will drop inventory and the component parts of the combined entity as items.
 
+### [combine_xp_orbs.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/combine_xp_orbs.sc)
+#### By Ghoulboy 
+  Scarpet app with same functionality as the old Carpet rule combineXPOrbs
+  Distance at which orbs combine, frequency of orb merging, and the number of orbs which can merge at the same time can all be configured.
+
+
 ### [compass.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/compass.sc)
 #### By Xendergo
 	https://youtu.be/q1muVOFOM-k
@@ -80,7 +86,7 @@ Various scripts that modify various game elements, often replicating popular mod
 #### By RubberDuck55
 	When a player is killed there is a 33% chance of a head to be dropped
 
-### [easier_renweable_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/easier_renweable_sponge.sc):
+### [easier_renewable_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/easier_renewable_sponge.sc):
 #### By Ghoulboy
 	If you kill one of each type of fish(Pufferfish, tropical fish, salmon, cod)
 	you have a 1/50 chance of getting a wet sponge.
@@ -102,6 +108,11 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [fakeplayer_inv_editor.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/fakeplayer_inv_editor.sc):
 #### By Chen_yu_xuan
 	Right click fakeplayers to edit their inventorys.
+
+### [flippin_cactus.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/flippin_cactus.sc):
+#### By Ghoulboy
+	Flippin Cactus rule implemented in scarpet.
+	Contains a few more bells and whistles, like a command to change specifics of how certain blocks get flipped or rotated.
 
 ### [hammer.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/hammer.sc):
 #### By gnembonmc
@@ -132,6 +143,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	Right clicking on an inventory and having partially empty slots in your inventory will refill them from the inventory.
 	Left clicking will send your items to any unfilled slots in the inventory.
 	(Please add a better descreption as right now it just sounds like a less laggy storage_drawers.sc)
+
+### [item_holding_mobs_despawn.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/item_holding_mobs_despawn.sc):
+#### By Crec0
+	Changes despawn rule for monsters, making mobs who hold items despawnable as opposed to vanilla where they will never despawn.
+	Mobs can only be made persistent when they are given a custom name using nametags.
 
 ### [lava_sponge.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lava_sponge.sc):
 #### By _GieR
@@ -170,7 +186,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Useful when slicing portals, update supressing and debugging stuff.
 	Run /nether_poi to toggle on or off for each player. Refresh rate and radius are customizable.
 
-### [no_useless_llamas](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
+### [no_useless_llamas.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
 #### By Opsaaaaa
 	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
 	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
@@ -270,6 +286,14 @@ Various scripts that modify various game elements, often replicating popular mod
 	Right clicking with a fire charge shoots a regular ghast fireball
 	Basically a less op & survival friendly version of holy_hand_grenades
 	Killing something with this counts as a player kill, as if you redirected a fireball shot by an actual ghast
+
+### [show_bees_count.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/show_bees_count.sc)
+#### By Crec0
+	Right click with an empty hand while sneaking on a beehive or beenest to show the count of bees in that specific block.
+
+### [showbiome.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/showbiome.sc)
+#### By Crec0
+	Shows biome name on the blocks around the player. useful for marking out rivers, beaches, soul sand valley and stuff.
 
 ### [shulkerboxes.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shulkerboxes.sc):
 #### By gnembon
@@ -418,4 +442,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Opsaaaaa
 	Xendergo
 	ch-yx
+	Crec0
 	(Many more hopefully!)

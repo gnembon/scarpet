@@ -1,5 +1,6 @@
 // shows the count of bees on that specific block
 // right click while sneaking on a beehive or beenest
+// By: Crec0
 
 __config() -> { 'stay_loaded' -> true };
 
