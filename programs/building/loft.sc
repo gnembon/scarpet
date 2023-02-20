@@ -51,11 +51,17 @@ __on_player_breaks_block(player, block)->( //starts a new spline
 
             [spline_cursor,point_cursor]=_get_cursor_position();
             l=length(global_loft:'sets');
+            //shifting splines in the sets array
             c_for(j=l,j>spline_cursor,j=j-1,
                 global_loft:'sets':j=global_loft:'sets':(j-1)
             );
+            //create the new spline
             global_loft:'sets':spline_cursor=[pos(block)];
-            global_loft:'cursor'=global_loft:'cursor'+2
+            //bring cursor position at the beginning of the new spline
+            global_loft:'cursor'=1;
+            c_for(j=0,j<spline_cursor,j=j+1,
+                global_loft:'cursor'+=1+length(global_loft:'sets':j);
+            );
         );
         _normalise_set();
         if(global_loft:'sets'==[[pos(block)]],
@@ -272,8 +278,8 @@ _draw_spline(points,number_of_tick,color)->( //a function used to render a splin
 );
 
 _draw_surf(number_of_tick)->( //function used to render the surface created
-    if(length(global_loft:'sets'==0),return);
-    if(length(global_loft:'cset'==0),return);
+    if(length(global_loft:'sets'==0),return());
+    if(length(global_loft:'cset'==0),return());
     m=length(global_loft:'cset');
     n=length(global_loft:'cset':0);
     c_for(j=0,j<m,j=j+1,
@@ -398,14 +404,14 @@ paste(Block,replace)->(
     )
 );
 _add_to_history()->(
-	if(length(global_loft:'affected_blocks')==0,return);
+	if(length(global_loft:'affected_blocks')==0,return());
 	operation={'affected_position'->global_loft:'affected_blocks'};
 	global_loft:'history'+=operation;
 	global_loft:'affected_blocks'=[];
     print('done');
 );
 undo()->(
-	if(length(global_loft:'history')==0,print('no mooves to undo');return);
+	if(length(global_loft:'history')==0,print('no mooves to undo');return());
 	operation=global_loft:'history':(length(global_loft:'history')-1);
 	affected_block=operation:'affected_position';
 	c_for(i=0,i<length(affected_block),i=i+1,
