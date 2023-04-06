@@ -1,4 +1,5 @@
 // shows biome name on the blocks around the player. useful for marking out rivers, beaches, soul sand valley and stuff.
+// By: Crec0
 
 // if the script crashes your multiplayer world, do one of the two
 // 1. update carpet to latest version

@@ -2,30 +2,30 @@ __command() -> null;
 
 // to store marker positions and object handles
 global_settings = {
-						 'show_pos' -> true ,
-						 'paste_with_air' -> false ,
-						 'circle_axis' -> 'y' ,
-						 'wave_axis' -> 'xy' ,
-						 'replace_block' -> false ,
-						 'rotate' -> false , //TODO
-						 'slope_mode' -> false ,
-						 'max_template_size' -> 100 ,
-						 'preview_enabled' -> false , //TODO
-						 'undo_history_size' -> 100 ,
-						 'max_operations_per_tick' -> 10000 ,
-					};
+	'show_pos' -> true ,
+	'paste_with_air' -> false ,
+	'circle_axis' -> 'y' ,
+	'wave_axis' -> 'xy' ,
+	'replace_block' -> false ,
+	'rotate' -> false , //TODO
+	'slope_mode' -> false ,
+	'max_template_size' -> 100 ,
+	'preview_enabled' -> false , //TODO
+	'undo_history_size' -> 100 ,
+	'max_operations_per_tick' -> 10000 ,
+};
 global_block_alias = {
-						'water_bucket' -> 'water' ,
-						'lava_bucket' -> 'lava' ,
-						'feather' -> 'air' ,
-						'ender_eye' -> 'end_portal' ,
-						'flint_and_steel' -> 'nether_portal',
-					};
+	'water_bucket' -> 'water' ,
+	'lava_bucket' -> 'lava' ,
+	'feather' -> 'air' ,
+	'ender_eye' -> 'end_portal' ,
+	'flint_and_steel' -> 'nether_portal',
+};
 global_history = {
-					'overworld' -> [] ,
-					'the_nether' -> [] ,
-					'the_end' -> [] ,
-				};
+	'overworld' -> [] ,
+	'the_nether' -> [] ,
+	'the_end' -> [] ,
+};
 
 // keeps track of how many blocks have been set this tick
 global_set_count = 0;
