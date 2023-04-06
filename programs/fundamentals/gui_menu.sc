@@ -1,8 +1,7 @@
 
-
-__command() -> (
+__on_player_swings_hand(player, hand)-> (
     gui = new_gui_menu(global_Test);
-    call_gui_menu(gui, player());
+    call_gui_menu(gui, player);
 );
 
 //Config
