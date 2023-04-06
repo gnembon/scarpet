@@ -19,13 +19,26 @@ global_inventory_sizes={
 
 //Certain names are subject to change, so instead I'll store them in global variables while I'm still fiddling with exact nomenclature
 global_static_buttons='buttons';
+global_dynamic_buttons='dynamic_buttons';
 
 global_Test={
     'inventory_shape'->'generic_3x3',
     'title'->format('db Test GUI menu!'),
     global_static_buttons->{
-        0->['red_stained_glass', _(button)->print('Pressed the red button!')],
-        4->['green_stained_glass', _(button)->print(str('Clicked with %s button', if(button, 'Right', 'Left')))]
+        0->['red_stained_glass_pane', _(button)->print('Pressed the red button!')],
+        4->['green_stained_glass_pane', _(button)->print(str('Clicked with %s button', if(button, 'Right', 'Left')))]
+    },
+    global_dynamic_buttons->{
+        1->{ //Blue button to black button
+            'icon'->'blue_stained_glass_pane',
+            'action'->_(screen)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
+        },
+        6->{ //Turns the slot above purple
+            'icon'->'lime_stained_glass_pane',
+            'action'->_(screen)->(
+                inventory_set(screen, 3, 1, if(inventory_get(screen, 3)==null, 'purple_stained_glass_pane', 'air'));
+            )
+        }
     }
 };
 
@@ -50,6 +63,9 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
             for(gui_screen:global_static_buttons,
                 inventory_set(screen, _, 1, gui_screen:global_static_buttons:_:0)
             );
+            for(gui_screen:global_dynamic_buttons,
+                inventory_set(screen, _, 1, gui_screen:global_dynamic_buttons:_:'icon')
+            );
         ),
         'callback'->_(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(//This is where most of the action happens
             if(action=='quick_move', //disabling quick move cos it messes up the GUI, and there's no reason to allow it
@@ -61,7 +77,9 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
             if(action=='pickup', //This is equivalent of clicking (button action)
 
                 if(has(gui_screen:global_static_buttons, slot), //Plain, vanilla button
-                    call(gui_screen:global_static_buttons:slot:1, data:'button')
+                    call(gui_screen:global_static_buttons:slot:1, data:'button'),
+                    has(gui_screen:global_dynamic_buttons, slot), //A more exciting button
+                    call(gui_screen:global_dynamic_buttons:slot:'action', screen)
                 );
             );
 
