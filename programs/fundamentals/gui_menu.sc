@@ -5,22 +5,6 @@ __command() -> (
     call_gui_menu(gui, player());
 );
 
-test()->(
-    screen = create_screen(player(),'generic_9x6',format('db Button Screen'),_(screen, player, action, data) -> (
-        //print(str('Action:\nAction: %s\nData: %s',action,data));
-        if(action=='quick_move'&&data:'slot'>=54,
-            return('cancel')
-        );
-        if(action=='pickup',
-            print(str('Action:\nAction: %s\nData: %s',action,data)); //for testing
-        );
-        //print(data);
-        if(data:'slot'==10,
-            'cancel'//prevent tampering with slot 10
-        );
-    ));
-    inventory_set(screen, 10, 1, 'stone')
-);
 
 global_inventory_sizes={
     'generic_3x3'->9,
