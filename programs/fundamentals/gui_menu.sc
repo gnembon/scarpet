@@ -30,16 +30,17 @@ global_Test={
         4->['green_stained_glass_pane', _(player, button)->print(player, str('Clicked with %s button', if(button, 'Right', 'Left')))]
     },
     global_dynamic_buttons->{
-        1->{ //Blue button to black button
-            'icon'->'blue_stained_glass_pane',
-            'action'->_(screen, player, button)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
-        },
-        6->{ //Turns the slot above purple
-            'icon'->'lime_stained_glass_pane',
-            'action'->_(screen, player, button)->(
+        1->[ //Blue button to black button
+            'blue_stained_glass_pane',
+            _(screen, player, button)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
+        ],
+        
+        6->[ //Turns the slot above purple
+            'lime_stained_glass_pane',
+            _(screen, player, button)->(
                 inventory_set(screen, 3, 1, if(inventory_get(screen, 3)==null, 'purple_stained_glass_pane', 'air'));
             )
-        }
+        ],
     },
     global_storage_slots->{ //These slots can be used for storage by the player
         8->['stone', 4, null], //This is simply the first item that will be available in the slot, it will subsequently be overwritten by whatever the player places in that slot
@@ -68,7 +69,7 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
                 inventory_set(screen, _, 1, gui_screen:global_static_buttons:_:0)
             );
             for(gui_screen:global_dynamic_buttons,
-                inventory_set(screen, _, 1, gui_screen:global_dynamic_buttons:_:'icon')
+                inventory_set(screen, _, 1, gui_screen:global_dynamic_buttons:_:0)
             );
             for(gui_screen:global_storage_slots,
                 [item, count, nbt] = gui_screen:global_storage_slots:_ || ['air', 0, null];
@@ -82,7 +83,7 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
                 if(has(gui_screen:global_static_buttons, slot), //Plain, vanilla button
                     call(gui_screen:global_static_buttons:slot:1, player, data:'button'),
                     has(gui_screen:global_dynamic_buttons, slot), //A more exciting button
-                    call(gui_screen:global_dynamic_buttons:slot:'action', screen, player, data:'button')
+                    call(gui_screen:global_dynamic_buttons:slot:1, screen, player, data:'button')
                 );
             );
 
