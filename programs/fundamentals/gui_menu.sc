@@ -70,7 +70,7 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
                 inventory_set(screen, _, 1, gui_screen:global_dynamic_buttons:_:'icon')
             );
             for(gui_screen:global_storage_slots,
-                [item, count, nbt] = gui_screen:global_storage_slots:_;
+                [item, count, nbt] = gui_screen:global_storage_slots:_ || ['air', 0, null];
                 inventory_set(screen, _, count, item, nbt)
             );
         ),
@@ -85,24 +85,24 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
                 );
             );
 
-            //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
-            //Also preventing the player from tampering with button slots
-            //Unless the slot is marked as a storage slot, in which case we allow it
-            if((action=='quick_move'||slot<inventory_size)&&!has(gui_screen:global_storage_slots,slot),
-                'cancel'
-            );
-
             //Saving items in storage slots when closing
             if(action=='close',
                 for(gui_screen:global_storage_slots,
                     gui_screen:global_storage_slots:_ = inventory_get(screen, _);
                 );
             );
+
+            //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
+            //Also preventing the player from tampering with button slots
+            //Unless the slot is marked as a storage slot, in which case we allow it
+            if((action=='quick_move'||slot<inventory_size)&&!has(gui_screen:global_storage_slots,slot),
+                'cancel'
+            );
         )
     }
 );
 
-call_gui_menu(gui_menu, player)->(
+call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns screen for further manipulation
     screen = create_screen(player, gui_menu:'inventory_shape', gui_menu:'title', gui_menu:'callback');
     call(gui_menu:'on_created', screen);
     screen
