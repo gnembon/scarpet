@@ -36,6 +36,7 @@ global_pages='pages';
 global_main_page='main_page_title';
 global_current_page='current_page';
 global_page_switcher='navigation_buttons';
+global_anvil_rename_item='anvil_rename_item';
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
     if(type(gui_screen)!='map',
@@ -109,6 +110,16 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
             __create_gui_screen(new_screen, gui_screen)
         );
     );
+
+    //Special effects for special GUI types
+    inventory_shape = __get_screen_shape(gui_screen);
+    if(inventory_shape == 'anvil',
+        if(has(gui_page, global_anvil_rename_item) && action=='slot_update' && slot==2 && has(data, 'stack'),
+            call(gui_page:global_anvil_rename_item, player, item_display_name(data:'stack'))
+        ),
+        
+    );
+
 
     //Saving items in storage slots when closing
     if(action=='close',
