@@ -36,7 +36,8 @@ global_pages='pages';
 global_main_page='main_page_title';
 global_current_page='current_page';
 global_page_switcher='navigation_buttons';
-global_anvil_rename_item='anvil_modify_item';
+global_anvil_rename_item='on_anvil_modify_item';
+global_crafting_recipe_select='on_select_crafting_recipe';
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
     if(type(gui_screen)!='map',
@@ -115,9 +116,12 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
     inventory_shape = __get_screen_shape(gui_screen);
     if(inventory_shape == 'anvil',
         if(has(gui_page, global_anvil_rename_item) && action=='slot_update' && slot==2 && has(data, 'stack') && data:'stack',
-            call(gui_page:global_anvil_rename_item, player, item_display_name(data:'stack'), screen_property(screen, 'level_cost'))
+            call(gui_page:global_anvil_rename_item, player, screen, item_display_name(data:'stack'), screen_property(screen, 'level_cost'))
         ),
-
+        has({'crafting_table', 'furnace', 'blast_furnace', 'smoker'}, inventory_shape), //If it is an inventory with green crafting book item in GUI
+        if(has(gui_page, global_crafting_recipe_select) && action=='select_recipe',
+            call(gui_page:global_crafting_recipe_select, player, screen, data:'recipe', data:'craft_all')
+        )
     );
 
 
