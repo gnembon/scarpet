@@ -45,7 +45,7 @@ global_Test={
         ],
         
         6->[ //Turns the slot above purple
-            'lime_stained_glass_pane',
+            ['lime_stained_glass_pane', 'Flicky!'],
             _(screen, player, button)->(
                 inventory_set(screen, 3, 1, if(inventory_get(screen, 3)==null, 'purple_stained_glass_pane', 'air'));
             )
@@ -86,10 +86,10 @@ global_Test_pages={
                     _(screen, player, button)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
                 ],
 
-                6->[ //Turns the slot above purple
-                    'lime_stained_glass_pane',
+                6->[ //Turns the slot below purple
+                    ['lime_stained_glass_pane', 'Flicky!'],
                     _(screen, player, button)->(
-                        inventory_set(screen, 3, 1, if(inventory_get(screen, 3)==null, 'purple_stained_glass_pane', 'air'));
+                        inventory_set(screen, 15, 1, if(inventory_get(screen, 15)==null, 'purple_stained_glass_pane', 'air'));
                     )
                 ],
             },
@@ -132,19 +132,21 @@ call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns scr
 
 __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right after it's made to add fancy visual bits
     gui_page=__get_gui_page(gui_screen);
-
     for(gui_page:global_static_buttons,
-        inventory_set(screen, _, 1, gui_page:global_static_buttons:_:0)
+        [item, count, nbt] = __parse_icon(gui_page:global_static_buttons:_:0);
+        inventory_set(screen, _, count, item, nbt)
     );
     for(gui_page:global_dynamic_buttons,
-        inventory_set(screen, _, 1, gui_page:global_dynamic_buttons:_:0)
+        [item, count, nbt] = __parse_icon(gui_page:global_dynamic_buttons:_:0);
+        inventory_set(screen, _, count, item, nbt)
     );
     for(gui_page:global_storage_slots,
         [item, count, nbt] = gui_page:global_storage_slots:_ || ['air', 0, null];
         inventory_set(screen, _, count, item, nbt)
     );
     for(gui_page:global_page_switcher,
-        inventory_set(screen, _, 1, gui_page:global_page_switcher:_:0)
+        [item, count, nbt] = __parse_icon(gui_page:global_page_switcher:_:0);
+        inventory_set(screen, _, count, item, nbt)
     );
 );
 
@@ -235,6 +237,25 @@ __get_screen_shape(gui_screen)->(
         throw('Invalid gui creation: Must be one of '+keys(global_inventory_sizes)+', not '+inventory_shape)
     );
     inventory_shape
+);
+
+//Parses the item used as slot icon
+//If it's a string, returns [item_name, 1, null],
+//If it's a list of length 2, second item is the name of the item
+//If it's a triplet, then return that (making the assumption that it's a triplet of [item, count, nbt])
+//IF it's a list of length 4, first three arguments are [item, count, nbt], fourth is item name.
+__parse_icon(icon)->if(type(icon)=='string',
+    [icon, 1, null],
+    type(icon)=='list',
+    if(length(icon)==2,
+        [icon:0, 1, str('{display:{Name:\'{"text":"%s"}\'}}', icon:1)],
+        length(icon)==3,
+        icon,
+        length(icon)==4,
+        icon:2 = icon:2 || nbt({}); //JIC input nbt was null
+        put(icon:2, 'display', nbt(str('{display:{Name:\'{"text":"%s"}\'}}', icon:1)));
+        icon
+    )
 );
 
 global_Test_GUI = new_gui_menu(global_Test);
