@@ -64,6 +64,7 @@ global_Test_pages={
     global_current_page->null,
     global_pages->{
         'main_page'->{
+            'title'->format('cb Test GUI menu first page!'),
             global_static_buttons->{
                 0->['red_stained_glass_pane', _(player, button)->print(player, 'Pressed the red button!')],
                 4->['green_stained_glass_pane', _(player, button)->print(player, str('Clicked with %s button', if(button, 'Right', 'Left')))]
@@ -77,6 +78,7 @@ global_Test_pages={
             }
         },
         'second_page'->{
+            'title'->format('c Test GUI menu second page'),
             global_dynamic_buttons->{
                 1->[ //Blue button to black button
                     'blue_stained_glass_pane',
@@ -118,46 +120,10 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
 
     {
         'inventory_shape'->inventory_shape, //shape of the inventory, copied from above
-        'title'->gui_screen:'title', //Fancy GUI title
+        'title'->__get_screen_title(gui_screen), //Fancy GUI title
         'on_created'->_(screen, outer(gui_screen))->__create_gui_screen(screen, gui_screen),
         'callback'->_(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
-            gui_page=if(has(gui_screen, global_pages),
-                gui_screen:global_pages:(gui_screen:global_current_page),
-                gui_screen //If there is no page functionality, just use the screen map as the page
-            );
-
-            slot = data:'slot'; //Grabbing slot, this is the focus of the action
-
-            if(action=='pickup', //This is equivalent of clicking (button action)
-                if(has(gui_page:global_static_buttons, slot), //Plain, vanilla button
-                    call(gui_page:global_static_buttons:slot:1, player, data:'button'),
-                    has(gui_page:global_dynamic_buttons, slot), //A more exciting button
-                    call(gui_page:global_dynamic_buttons:slot:1, screen, player, data:'button'),
-                    has(gui_page:global_page_switcher, slot), //Switching screens
-                    gui_screen:global_current_page = gui_page:global_page_switcher:slot:1;
-                    for(gui_page:global_storage_slots, //Saving storage slots when switching screens
-                        gui_page:global_storage_slots:_ = inventory_get(screen, _);
-                    );
-                    loop(inventory_size, //Clearing inventory before switching
-                        inventory_set(screen, _, 0)
-                    );
-                    __create_gui_screen(screen, gui_screen)
-                );
-            );
-
-            //Saving items in storage slots when closing
-            if(action=='close',
-                for(gui_page:global_storage_slots,
-                    gui_page:global_storage_slots:_ = inventory_get(screen, _);
-                );
-            );
-
-            //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
-            //Also preventing the player from tampering with button slots
-            //Unless the slot is marked as a storage slot, in which case we allow it
-            if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot),
-                'cancel'
-            );
+            __screen_callback(screen, player, action, data, gui_screen, inventory_size)
         ),
     }
 );
@@ -169,10 +135,8 @@ call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns scr
 );
 
 __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right after it's made to add fancy visual bits
-    gui_page=if(has(gui_screen, global_pages),
-        gui_screen:global_pages:(gui_screen:global_current_page),
-        gui_screen //If there is no page functionality, just use the screen map as the page
-    );
+    gui_page=__get_gui_page(gui_screen);
+
     for(gui_page:global_static_buttons,
         inventory_set(screen, _, 1, gui_page:global_static_buttons:_:0)
     );
@@ -186,6 +150,74 @@ __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right afte
     for(gui_page:global_page_switcher,
         inventory_set(screen, _, 1, gui_page:global_page_switcher:_:0)
     );
+);
+
+__screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
+    gui_page=__get_gui_page(gui_screen);
+
+    slot = data:'slot'; //Grabbing slot, this is the focus of the action
+
+    if(action=='pickup', //This is equivalent of clicking (button action)
+        if(has(gui_page:global_static_buttons, slot), //Plain, vanilla button
+            call(gui_page:global_static_buttons:slot:1, player, data:'button'),
+            has(gui_page:global_dynamic_buttons, slot), //A more exciting button
+            call(gui_page:global_dynamic_buttons:slot:1, screen, player, data:'button'),
+            has(gui_page:global_page_switcher, slot), //Switching screens
+            gui_screen:global_current_page = gui_page:global_page_switcher:slot:1;
+            for(gui_page:global_storage_slots, //Saving storage slots when switching screens
+                gui_page:global_storage_slots:_ = inventory_get(screen, _);
+            );
+            loop(inventory_size, //Clearing inventory before switching
+                inventory_set(screen, _, 0)
+            );
+            close_screen(screen);
+            new_screen = create_screen(player, gui_screen:'inventory_shape', __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
+                __screen_callback(screen, player, action, data, gui_screen, inventory_size)
+            ));
+            __create_gui_screen(new_screen, gui_screen)
+        );
+    );
+
+    //Saving items in storage slots when closing
+    if(action=='close',
+        for(gui_page:global_storage_slots,
+            gui_page:global_storage_slots:_ = inventory_get(screen, _);
+        );
+    );
+
+    //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
+    //Also preventing the player from tampering with button slots
+    //Unless the slot is marked as a storage slot, in which case we allow it
+    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot),
+        'cancel'
+    );
+);
+
+
+//If gui supports page functionality, returns current page, else returns the gui screen
+__get_gui_page(gui_screen)->if(has(gui_screen, global_pages),
+    gui_screen:global_pages:(gui_screen:global_current_page),
+    gui_screen
+);
+
+
+//Gets the title for the current page of the screen.
+//A title within the page gets first priority, if not, then use the title defined in the outermost map,
+//And if that is not there, then the same title as the main page.
+//And failing that, throw an error
+__get_screen_title(gui_screen)->(
+    gui_page=__get_gui_page(gui_screen);
+
+    if(!has(gui_screen, global_pages),
+        gui_screen:'title',
+        has(gui_page, 'title'),
+        gui_page:'title',
+        has(gui_screen, 'title'),
+        gui_screen:'title',
+        has(gui_screen:global_pages:(gui_screen:global_main_page), 'title'),
+        gui_screen:global_pages:(gui_screen:global_main_page):'title',
+        throw('No title defined!')
+    )
 );
 
 
