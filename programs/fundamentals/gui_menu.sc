@@ -79,7 +79,7 @@ global_Test_pages={
         },
         'second_page'->{
             'title'->format('c Test GUI menu second page'),
-            'inventory_shape'->'generic_9x3',
+            'inventory_shape'->'generic_9x2',
             global_dynamic_buttons->{
                 1->[ //Blue button to black button
                     'blue_stained_glass_pane',
@@ -101,31 +101,28 @@ global_Test_pages={
 };
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
-    if(type(gui_screen)!='map' || !has(gui_screen, 'inventory_shape'),
+    if(type(gui_screen)!='map',
         throw('Invalid gui creation: '+gui_screen)
     );
 
-    inventory_shape = __get_screen_shape(gui_screen);
-    inventory_size = global_inventory_sizes:inventory_shape;
-
     if(has(gui_screen, global_pages) && !has(gui_screen:global_pages, gui_screen:global_main_page),
-        throw('Tried to create a GUI Menu, but did not find a main page with the name '+gui_screen:global_main_page)
+        throw('Tried to create a GUI Menu with page functionality, but did not find a main page with the name '+gui_screen:global_main_page)
     );
 
     gui_screen:global_current_page = gui_screen:global_main_page;
 
     {
-        'inventory_shape'->inventory_shape, //shape of the inventory, copied from above
+        'inventory_shape'->_(outer(gui_screen))->__get_screen_shape(gui_screen), //shape of the inventory, copied from above
         'title'->__get_screen_title(gui_screen), //Fancy GUI title
         'on_created'->_(screen, outer(gui_screen))->__create_gui_screen(screen, gui_screen),
-        'callback'->_(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
-            __screen_callback(screen, player, action, data, gui_screen, inventory_size)
+        'callback'->_(screen, player, action, data, outer(gui_screen))->(
+            __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
         ),
     }
 );
 
 call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns screen for further manipulation
-    screen = create_screen(player, gui_menu:'inventory_shape', gui_menu:'title', gui_menu:'callback');
+    screen = create_screen(player, call(gui_menu:'inventory_shape'), gui_menu:'title', gui_menu:'callback');
     call(gui_menu:'on_created', screen);
     screen
 );
@@ -169,8 +166,8 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
                 inventory_set(screen, _, 0)
             );
             close_screen(screen);
-            new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
-                __screen_callback(screen, player, action, data, gui_screen, inventory_size)
+            new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen))->(
+                __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
             ));
             __create_gui_screen(new_screen, gui_screen)
         );
