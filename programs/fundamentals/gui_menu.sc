@@ -106,6 +106,7 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
     );
 
     inventory_shape = __get_screen_shape(gui_screen);
+    inventory_size = global_inventory_sizes:inventory_shape;
 
     if(has(gui_screen, global_pages) && !has(gui_screen:global_pages, gui_screen:global_main_page),
         throw('Tried to create a GUI Menu, but did not find a main page with the name '+gui_screen:global_main_page)
@@ -230,9 +231,7 @@ __get_screen_shape(gui_screen)->(
         throw('No GUI shape defined!')
     );
 
-    inventory_size = global_inventory_sizes:inventory_shape;
-
-    if(!inventory_size,
+    if(!has(global_inventory_sizes, inventory_shape),
         throw('Invalid gui creation: Must be one of '+keys(global_inventory_sizes)+', not '+inventory_shape)
     );
     inventory_shape
