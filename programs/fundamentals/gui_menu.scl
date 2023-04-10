@@ -1,25 +1,31 @@
 
-__on_player_swings_hand(player, hand)-> (
-    item = player~'holds':0;
-    if(hand=='mainhand',
-        if(item=='brewing_stand',
-            call_gui_menu(global_Test_GUI, player),
-            item=='stick',
-            call_gui_menu(global_Test_pages_GUI, player)
-        )        
-    )
-);
- 
 //Config
 
 global_inventory_sizes={
+    'anvil'->3,
+    'beacon'->1,
+    'blast_furnace'->3,
+    'brewing_stand'->5,
+    'cartography_table'->3,
+    'crafting'->10,
+    'enchantment'->2,
+    'furnace'->3,
     'generic_3x3'->9,
     'generic_9x1'->9,
     'generic_9x2'->18,
     'generic_9x3'->27,
     'generic_9x4'->36,
     'generic_9x5'->45,
-    'generic_9x6'->54
+    'generic_9x6'->54,
+    'grindstone'->3
+    'hopper'->5,
+    'lectern'->1,
+    'loom'->4,
+    'merchant'->3,
+    'shulker_box'->27,
+    'smithing'->4
+    'smoker'->3,
+    'stonecutter'->2,
 };
 
 //Certain names are subject to change, so instead I'll store them in global variables while I'm still fiddling with exact nomenclature
@@ -30,75 +36,6 @@ global_pages='pages';
 global_main_page='main_page_title';
 global_current_page='current_page';
 global_page_switcher='navigation_buttons';
-
-global_Test={
-    'inventory_shape'->'generic_3x3',
-    'title'->format('db Test GUI menu!'),
-    global_static_buttons->{
-        0->['red_stained_glass_pane', _(player, button)->print(player, 'Pressed the red button!')],
-        4->['green_stained_glass_pane', _(player, button)->print(player, str('Clicked with %s button', if(button, 'Right', 'Left')))]
-    },
-    global_dynamic_buttons->{
-        1->[ //Blue button to black button
-            'blue_stained_glass_pane',
-            _(screen, player, button)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
-        ],
-        
-        6->[ //Turns the slot above purple
-            ['lime_stained_glass_pane', 'Flicky!'],
-            _(screen, player, button)->(
-                inventory_set(screen, 3, 1, if(inventory_get(screen, 3)==null, 'purple_stained_glass_pane', 'air'));
-            )
-        ],
-    },
-    global_storage_slots->{ //These slots can be used for storage by the player
-        8->['stone', 4, null], //This is simply the first item that will be available in the slot, it will subsequently be overwritten by whatever the player places in that slot
-        5, 2 //leaving this blank makes the slot blank
-    }
-};
-
-global_Test_pages={
-    'inventory_shape'->'generic_3x3',
-    'title'->format('db Test GUI with pages!'),
-    global_main_page->'main_page',
-    global_current_page->null,
-    global_pages->{
-        'main_page'->{
-            'title'->format('cb Test GUI menu first page!'),
-            global_static_buttons->{
-                0->['red_stained_glass_pane', _(player, button)->print(player, 'Pressed the red button!')],
-                4->['green_stained_glass_pane', _(player, button)->print(player, str('Clicked with %s button', if(button, 'Right', 'Left')))]
-            },
-            global_storage_slots->{ //These slots can be used for storage by the player
-                8->['stone', 4, null], //This is simply the first item that will be available in the slot, it will subsequently be overwritten by whatever the player places in that slot
-                5, 2 //leaving this blank makes the slot blank
-            },
-            global_page_switcher->{
-                3->['cyan_stained_glass', 'second_page']
-            }
-        },
-        'second_page'->{
-            'title'->format('c Test GUI menu second page'),
-            'inventory_shape'->'generic_9x2',
-            global_dynamic_buttons->{
-                1->[ //Blue button to black button
-                    'blue_stained_glass_pane',
-                    _(screen, player, button)->inventory_set(screen, 1, 1, if(inventory_get(screen, 1):0=='blue_stained_glass_pane', 'black_stained_glass_pane', 'blue_stained_glass_pane'));
-                ],
-
-                6->[ //Turns the slot below purple
-                    ['lime_stained_glass_pane', 'Flicky!'],
-                    _(screen, player, button)->(
-                        inventory_set(screen, 15, 1, if(inventory_get(screen, 15)==null, 'purple_stained_glass_pane', 'air'));
-                    )
-                ],
-            },
-            global_page_switcher->{
-                4->['cyan_stained_glass', 'main_page']
-            }
-        }
-    }
-};
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
     if(type(gui_screen)!='map',
@@ -254,6 +191,3 @@ __parse_icon(icon)->if(type(icon)=='string',
         icon
     )
 );
-
-global_Test_GUI = new_gui_menu(global_Test);
-global_Test_pages_GUI = new_gui_menu(global_Test_pages);
