@@ -29,7 +29,7 @@ global_storage_slots='storage_slots';
 global_pages='pages';
 global_main_page='main_page_title';
 global_current_page='current_page';
-global_page_switcher='change_page_buttons';
+global_page_switcher='navigation_buttons';
 
 global_Test={
     'inventory_shape'->'generic_3x3',
@@ -79,6 +79,7 @@ global_Test_pages={
         },
         'second_page'->{
             'title'->format('c Test GUI menu second page'),
+            'inventory_shape'->'generic_9x3',
             global_dynamic_buttons->{
                 1->[ //Blue button to black button
                     'blue_stained_glass_pane',
@@ -104,13 +105,7 @@ new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the p
         throw('Invalid gui creation: '+gui_screen)
     );
 
-    inventory_shape = gui_screen:'inventory_shape';
-
-    inventory_size = global_inventory_sizes:inventory_shape;
-
-    if(inventory_size==0,
-        throw('Invalid gui creation: Must be one of '+keys(global_inventory_sizes)+', not '+inventory_shape)
-    );
+    inventory_shape = __get_screen_shape(gui_screen);
 
     if(has(gui_screen, global_pages) && !has(gui_screen:global_pages, gui_screen:global_main_page),
         throw('Tried to create a GUI Menu, but did not find a main page with the name '+gui_screen:global_main_page)
@@ -171,7 +166,7 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
                 inventory_set(screen, _, 0)
             );
             close_screen(screen);
-            new_screen = create_screen(player, gui_screen:'inventory_shape', __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
+            new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen), outer(inventory_size))->(
                 __screen_callback(screen, player, action, data, gui_screen, inventory_size)
             ));
             __create_gui_screen(new_screen, gui_screen)
@@ -220,6 +215,28 @@ __get_screen_title(gui_screen)->(
     )
 );
 
+//Same as above, but for inventory shapes
+__get_screen_shape(gui_screen)->(
+    gui_page=__get_gui_page(gui_screen);
+
+    inventory_shape = if(!has(gui_screen, global_pages),
+        gui_screen:'inventory_shape',
+        has(gui_page, 'inventory_shape'),
+        gui_page:'inventory_shape',
+        has(gui_screen, 'inventory_shape'),
+        gui_screen:'inventory_shape',
+        has(gui_screen:global_pages:(gui_screen:global_main_page), 'inventory_shape'),
+        gui_screen:global_pages:(gui_screen:global_main_page):'inventory_shape',
+        throw('No GUI shape defined!')
+    );
+
+    inventory_size = global_inventory_sizes:inventory_shape;
+
+    if(!inventory_size,
+        throw('Invalid gui creation: Must be one of '+keys(global_inventory_sizes)+', not '+inventory_shape)
+    );
+    inventory_shape
+);
 
 global_Test_GUI = new_gui_menu(global_Test);
 global_Test_pages_GUI = new_gui_menu(global_Test_pages);
