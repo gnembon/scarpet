@@ -17,13 +17,13 @@ global_inventory_sizes={
     'generic_9x4'->36,
     'generic_9x5'->45,
     'generic_9x6'->54,
-    'grindstone'->3
+    'grindstone'->3,
     'hopper'->5,
     'lectern'->1,
     'loom'->4,
     'merchant'->3,
     'shulker_box'->27,
-    'smithing'->4
+    'smithing'->4,
     'smoker'->3,
     'stonecutter'->2,
 };
