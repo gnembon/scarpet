@@ -42,6 +42,8 @@ global_anvil_rename_item='on_anvil_modify_item';
 global_crafting_recipe_select='on_select_crafting_recipe';
 global_loom_pattern_select='on_select_banner_pattern';
 global_stonecutter_pattern_select='on_select_stonecutting_pattern';
+global_lectern_flip_page='on_flip_page';
+global_lectern_take_book='on_take_book';
 
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
@@ -72,7 +74,7 @@ call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns scr
 );
 
 __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right after it's made to add fancy visual bits
-    gui_page=__get_gui_page(gui_screen);
+    gui_page=_get_gui_page(gui_screen);
     for(gui_page:global_static_buttons,
         [item, count, nbt] = __parse_icon(gui_page:global_static_buttons:_:0);
         inventory_set(screen, _, count, item, nbt)
@@ -96,7 +98,7 @@ __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right afte
 );
 
 __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
-    gui_page=__get_gui_page(gui_screen);
+    gui_page=_get_gui_page(gui_screen);
 
     slot = data:'slot'; //Grabbing slot, this is the focus of the action
 
@@ -106,7 +108,7 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
             has(gui_page:global_dynamic_buttons, slot), //A more exciting button
             call(gui_page:global_dynamic_buttons:slot:1, screen, player, data:'button'),
             has(gui_page:global_page_switcher, slot), //Switching screens
-            __switch_page(gui_screen, gui_page, gui_page:global_page_switcher:slot:1, screen, player)
+            _switch_page(gui_screen, gui_page, gui_page:global_page_switcher:slot:1, screen, player)
         );
     );
 
@@ -123,6 +125,17 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         has({'crafting_table', 'furnace', 'blast_furnace', 'smoker'}, inventory_shape), //If it is an inventory with green crafting book item in GUI
         if(has(gui_page, global_crafting_recipe_select) && action=='select_recipe',
             call(gui_page:global_crafting_recipe_select, player, screen, data:'recipe', data:'craft_all')
+        ),
+        inventory_shape=='lectern',
+        if(action=='button',
+            button = data:'button';
+            if(has(gui_page, global_lectern_take_book) && button==3,
+                call(gui_page:global_lectern_take_book, player, screen)
+            );
+            if(has(gui_page, global_lectern_flip_page) && button < 3,
+                page = screen_property(screen, 'page');
+                call(gui_page:global_lectern_flip_page, player, screen, button, 2*button-3+page) //This looks silly, but the page number is not immediately updated, so I modify it instead
+            )
         ),
         inventory_shape=='loom',
         if(has(gui_page, global_loom_pattern_select),
@@ -166,9 +179,9 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
     //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
     //Also preventing the player from tampering with button slots
     //Unless the slot is marked as a storage slot, in which case we allow it
-    //Also unless the action cache is active, in which case we're listening for any feedback which will get lost if we cancel
+    //Also unless the action is clicking a button within the GUI, cos it has useful functionality
     //But if the programmer decided to cancel event using the additional screen callback, it will be cancelled regardless
-    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:global_storage_slots,slot)||has(gui_page:global_dynamic_slots,slot)) && !global_action_cache:'active' || acb=='cancel',
+    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:global_storage_slots,slot)||has(gui_page:global_dynamic_slots,slot)) && action!='button' || acb=='cancel',
         'cancel'
     );
 );
@@ -179,7 +192,7 @@ global_action_cache={ //Sometimes a slot_update with important information comes
 };
 
 //If gui supports page functionality, returns current page, else returns the gui screen
-__get_gui_page(gui_screen)->if(has(gui_screen, global_pages),
+_get_gui_page(gui_screen)->if(has(gui_screen, global_pages),
     gui_screen:global_pages:(gui_screen:global_current_page),
     gui_screen
 );
@@ -190,7 +203,7 @@ __get_gui_page(gui_screen)->if(has(gui_screen, global_pages),
 //And if that is not there, then the same title as the main page.
 //And failing that, throw an error
 __get_screen_title(gui_screen)->(
-    gui_page=__get_gui_page(gui_screen);
+    gui_page=_get_gui_page(gui_screen);
 
     if(!has(gui_screen, global_pages),
         gui_screen:'title',
@@ -206,7 +219,7 @@ __get_screen_title(gui_screen)->(
 
 //Same as above, but for inventory shapes
 __get_screen_shape(gui_screen)->(
-    gui_page=__get_gui_page(gui_screen);
+    gui_page=_get_gui_page(gui_screen);
 
     inventory_shape = if(!has(gui_screen, global_pages),
         gui_screen:'inventory_shape',
@@ -244,7 +257,7 @@ __parse_icon(icon)->if(type(icon)=='string',
     )
 );
 
-__switch_page(gui_screen, gui_page, new_page_name, old_screen, player)->(
+_switch_page(gui_screen, gui_page, new_page_name, old_screen, player)->(
     gui_screen:global_current_page = new_page_name; //Changing current page
     for(gui_page:global_storage_slots, //Saving storage slots when switching screens
         gui_page:global_storage_slots:_ = inventory_get(old_screen, _);
