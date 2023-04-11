@@ -41,6 +41,8 @@ global_page_switcher='navigation_buttons';
 global_anvil_rename_item='on_anvil_modify_item';
 global_crafting_recipe_select='on_select_crafting_recipe';
 global_loom_pattern_select='on_select_banner_pattern';
+global_stonecutter_pattern_select='on_select_stonecutting_pattern';
+
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
     if(type(gui_screen)!='map',
@@ -130,8 +132,28 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
             call(gui_page:global_crafting_recipe_select, player, screen, data:'recipe', data:'craft_all')
         ),
         inventory_shape=='loom',
-        if(has(gui_page, global_loom_pattern_select) && action=='button',
-            call(gui_page:global_loom_pattern_select, player, screen, data:'button')
+        if(has(gui_page, global_loom_pattern_select),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                call(gui_page:global_loom_pattern_select, player, screen, global_action_cache:'data':'button', parse_nbt(data:'stack':2):'BlockEntityTag':'Patterns':(-1):'Pattern');
+                global_action_cache:'active'=false
+            )
+        ),
+        inventory_shape=='stonecutter',
+        if(has(gui_page, global_stonecutter_pattern_select),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                call(gui_page:global_stonecutter_pattern_select, player, screen, global_action_cache:'data':'button', data:'stack');
+                global_action_cache:'active'=false
+            )
         )
     );
 
@@ -151,11 +173,16 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
     //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
     //Also preventing the player from tampering with button slots
     //Unless the slot is marked as a storage slot, in which case we allow it
-    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot)&&!has(gui_page:global_dynamic_slots,slot) || cb=='cancel', //If programmer decided to cancel event using the additional screen callback, it will be cancelled here
+    //Also unless the action is a button click, cos those could have other knock-on effects which we don't wanna cancel
+    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:global_storage_slots,slot)||has(gui_page:global_dynamic_slots,slot)) && action!='button' || cb=='cancel', //If programmer decided to cancel event using the additional screen callback, it will be cancelled here
         'cancel'
     );
 );
 
+global_action_cache={ //Sometimes a slot_update with important information comes after the event that triggered it
+    'data'->null,
+    'active'->false
+};
 
 //If gui supports page functionality, returns current page, else returns the gui screen
 __get_gui_page(gui_screen)->if(has(gui_screen, global_pages),
