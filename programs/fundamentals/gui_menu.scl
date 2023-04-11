@@ -1,7 +1,7 @@
 
 //Config
 
-global_inventory_sizes={
+global_inventory_sizes={ //cos inventory_size() function doesn't work properly with sone of these
     'anvil'->3,
     'beacon'->1,
     'blast_furnace'->3,
@@ -163,10 +163,13 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         )
     );
 
-    //Saving items in storage slots when closing
+    //Saving items in storage and dynamic slots when closing
     if(action=='close',
         for(gui_page:global_storage_slots,
             gui_page:global_storage_slots:_ = inventory_get(screen, _);
+        );
+        for(gui_page:global_dynamic_slots,
+            gui_page:global_dynamic_slots:_:0 = inventory_get(screen, _);
         );
     );
 
