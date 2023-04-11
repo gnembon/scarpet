@@ -32,6 +32,7 @@ global_inventory_sizes={
 global_static_buttons='static_buttons';
 global_dynamic_buttons='dynamic_buttons';
 global_storage_slots='storage_slots';
+global_dynamic_slots='dynamic_slots';
 global_pages='pages';
 global_main_page='main_page_title';
 global_current_page='current_page';
@@ -121,7 +122,7 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         has({'crafting_table', 'furnace', 'blast_furnace', 'smoker'}, inventory_shape), //If it is an inventory with green crafting book item in GUI
         if(has(gui_page, global_crafting_recipe_select) && action=='select_recipe',
             call(gui_page:global_crafting_recipe_select, player, screen, data:'recipe', data:'craft_all')
-        )
+        ),
     );
 
 
@@ -132,10 +133,14 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         );
     );
 
+    if(action=='slot_update' && has(gui_page:global_dynamic_slots,slot), //Updating dynamic slots
+        call(gui_page:global_dynamic_slots:slot:1, player, screen, slot, data:'stack')
+    );
+
     //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
     //Also preventing the player from tampering with button slots
     //Unless the slot is marked as a storage slot, in which case we allow it
-    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot),
+    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot)&&!has(gui_page:global_dynamic_slots,slot),
         'cancel'
     );
 );
