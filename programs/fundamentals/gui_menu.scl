@@ -85,6 +85,10 @@ __create_gui_screen(screen, gui_screen)->(// Fiddling with the screen right afte
         [item, count, nbt] = gui_page:global_storage_slots:_ || ['air', 0, null];
         inventory_set(screen, _, count, item, nbt)
     );
+    for(gui_page:global_dynamic_slots,
+        [item, count, nbt] = gui_page:global_dynamic_slots:_:0 || ['air', 0, null];
+        inventory_set(screen, _, count, item, nbt)
+    );
     for(gui_page:global_page_switcher,
         [item, count, nbt] = __parse_icon(gui_page:global_page_switcher:_:0);
         inventory_set(screen, _, count, item, nbt)
@@ -102,18 +106,7 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
             has(gui_page:global_dynamic_buttons, slot), //A more exciting button
             call(gui_page:global_dynamic_buttons:slot:1, screen, player, data:'button'),
             has(gui_page:global_page_switcher, slot), //Switching screens
-            gui_screen:global_current_page = gui_page:global_page_switcher:slot:1;
-            for(gui_page:global_storage_slots, //Saving storage slots when switching screens
-                gui_page:global_storage_slots:_ = inventory_get(screen, _);
-            );
-            loop(inventory_size, //Clearing inventory before switching
-                inventory_set(screen, _, 0)
-            );
-            close_screen(screen);
-            new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen))->(
-                __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
-            ));
-            __create_gui_screen(new_screen, gui_screen)
+            __switch_page(gui_screen, gui_page, gui_page:global_page_switcher:slot:1, screen, player)
         );
     );
 
@@ -164,17 +157,18 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         );
     );
 
-    cb = ''; //allowing programmer to cancel event in additional screen callback function
+    acb = ''; //allowing programmer to cancel event in additional screen callback function
 
     if(has(gui_page, global_additional_screen_callback),
-        cb = call(gui_page:global_additional_screen_callback, screen, player, action, data, gui_screen)
+        acb = call(gui_page:global_additional_screen_callback, screen, player, action, data, gui_screen)
     );
 
     //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
     //Also preventing the player from tampering with button slots
     //Unless the slot is marked as a storage slot, in which case we allow it
-    //Also unless the action is a button click, cos those could have other knock-on effects which we don't wanna cancel
-    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:global_storage_slots,slot)||has(gui_page:global_dynamic_slots,slot)) && action!='button' || cb=='cancel', //If programmer decided to cancel event using the additional screen callback, it will be cancelled here
+    //Also unless the action cache is active, in which case we're listening for any feedback which will get lost if we cancel
+    //But if the programmer decided to cancel event using the additional screen callback, it will be cancelled regardless
+    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:global_storage_slots,slot)||has(gui_page:global_dynamic_slots,slot)) && !global_action_cache:'active' || acb=='cancel',
         'cancel'
     );
 );
@@ -248,4 +242,22 @@ __parse_icon(icon)->if(type(icon)=='string',
         put(icon:2, 'display', nbt(str('{display:{Name:\'{"text":"%s"}\'}}', icon:1)));
         icon
     )
+);
+
+__switch_page(gui_screen, gui_page, new_page_name, old_screen, player)->(
+    gui_screen:global_current_page = new_page_name; //Changing current page
+    for(gui_page:global_storage_slots, //Saving storage slots when switching screens
+        gui_page:global_storage_slots:_ = inventory_get(old_screen, _);
+    );
+    for(gui_page:global_dynamic_slots, //Saving dynamic slots when switching screens
+        gui_page:global_dynamic_slots:_:0 = inventory_get(old_screen, _);
+    );
+    loop(inventory_size, //Clearing inventory before switching
+        inventory_set(old_screen, _, 0)
+    );
+    close_screen(old_screen);
+    new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen))->(
+        __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
+    ));
+    __create_gui_screen(new_screen, gui_screen)
 );
