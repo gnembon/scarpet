@@ -34,6 +34,7 @@ global_dynamic_buttons='dynamic_buttons';
 global_storage_slots='storage_slots';
 global_dynamic_slots='dynamic_slots';
 global_pages='pages';
+global_additional_screen_callback='additional_screen_callback';
 global_main_page='main_page_title';
 global_current_page='current_page';
 global_page_switcher='navigation_buttons';
@@ -113,6 +114,10 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         );
     );
 
+    if(action=='slot_update' && has(gui_page:global_dynamic_slots,slot), //Updating dynamic slots
+        call(gui_page:global_dynamic_slots:slot:1, player, screen, slot, data:'stack')
+    );
+
     //Special effects for special GUI types
     inventory_shape = __get_screen_shape(gui_screen);
     if(inventory_shape == 'anvil',
@@ -123,8 +128,8 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         if(has(gui_page, global_crafting_recipe_select) && action=='select_recipe',
             call(gui_page:global_crafting_recipe_select, player, screen, data:'recipe', data:'craft_all')
         ),
-    );
 
+    );
 
     //Saving items in storage slots when closing
     if(action=='close',
@@ -133,14 +138,16 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
         );
     );
 
-    if(action=='slot_update' && has(gui_page:global_dynamic_slots,slot), //Updating dynamic slots
-        call(gui_page:global_dynamic_slots:slot:1, player, screen, slot, data:'stack')
+    cb = ''; //allowing programmer to cancel event in additional screen callback function
+
+    if(has(gui_page, global_additional_screen_callback),
+        cb = call(gui_page:global_additional_screen_callback, screen, player, action, data, gui_screen)
     );
 
     //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
     //Also preventing the player from tampering with button slots
     //Unless the slot is marked as a storage slot, in which case we allow it
-    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot)&&!has(gui_page:global_dynamic_slots,slot),
+    if((action=='quick_move'||slot<inventory_size)&&!has(gui_page:global_storage_slots,slot)&&!has(gui_page:global_dynamic_slots,slot) || cb=='cancel', //If programmer decided to cancel event using the additional screen callback, it will be cancelled here
         'cancel'
     );
 );
