@@ -11,7 +11,7 @@ __on_server_starts() -> (
          for([str('player %s spawn at %f %f %f facing %f %f in %s',
                   _:'name', _:'x', _:'y', _:'z', _:'yaw', _:'pitch', _:'dim'),
               str('gamemode %s %s', _:'gm', _:'name')],
-            logger('warn', _);
+            logger('warn', '[keepalive.sc] ' + _);
             run(_);
          );
          modify(player(_:'name'), 'flying', _:'fly')
