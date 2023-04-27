@@ -12,7 +12,7 @@ if(global_teams == null,
 // Change these values to your liking
 global_afk_prefix = '';
 global_afk_suffix = '';
-global_afk_timeout = 5; // seconds
+global_afk_timeout = 180; // seconds
 
 if(scoreboard('afkX') == null, scoreboard_add('afkX'));
 if(scoreboard('afkY') == null, scoreboard_add('afkY'));
