@@ -1,15 +1,18 @@
-__config()->{
-    'scope'->'global',
-    'stay_loaded'->true
+__config() -> {
+    'scope' -> 'global',
+    'stay_loaded' -> true
 };
 
 global_teams = read_file('teams.json', 'json');
-if(global_teams == null, global_teams = write_file('teams.json', 'json', {}); global_teams = read_file('teams.json', 'json'));
+if(global_teams == null,
+    global_teams = write_file('teams.json', 'json', {});
+    global_teams = read_file('teams.json', 'json');
+);
 
 // Change these values to your liking
 global_afk_prefix = '';
 global_afk_suffix = '';
-global_afk_timeout = 180; // seconds
+global_afk_timeout = 5; // seconds
 
 if(scoreboard('afkX') == null, scoreboard_add('afkX'));
 if(scoreboard('afkY') == null, scoreboard_add('afkY'));
@@ -22,15 +25,12 @@ if(team_list('afk_players') == null,
     team_property('afk_players', 'suffix', global_afk_suffix);
 );
 
-// To run this only each second
-global_tick = 0;
-__on_tick()->(
-    if((global_tick + 1) % 20 != 0, global_tick += 1; return(), global_tick = 0);
+check_afk() -> (
     for(player('*'),
         if(and(
-                scoreboard('afkX', _) == scoreboard('afkX', _, _~'pos':0),
-                scoreboard('afkY', _) == scoreboard('afkY', _, _~'pos':1),
-                scoreboard('afkZ', _) == scoreboard('afkZ', _, _~'pos':2);
+            scoreboard('afkX', _) == scoreboard('afkX', _, _~'pos':0),
+            scoreboard('afkY', _) == scoreboard('afkY', _, _~'pos':1),
+            scoreboard('afkZ', _) == scoreboard('afkZ', _, _~'pos':2);
             ),
             scoreboard('afkScore', _, scoreboard('afkScore', _) + 1),
             scoreboard('afkScore', _, 0);
@@ -38,7 +38,6 @@ __on_tick()->(
         if(scoreboard('afkScore', _) >= global_afk_timeout,
             if(_~'team' == 'afk_players', continue());
             global_teams:_ = _~'team';
-            write_file('teams.json', 'json', global_teams);
             team_add('afk_players', _),
 
             if(_~'team' != 'afk_players', continue());
@@ -48,4 +47,13 @@ __on_tick()->(
             );
         );
     );
+    schedule(20, 'check_afk');
+);
+
+__on_start()->(
+    check_afk();
+);
+
+__on_close()->(
+    write_file('teams.json', 'json', global_teams);
 );
