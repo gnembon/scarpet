@@ -37,6 +37,7 @@ check_afk() -> (
         );
         if(scoreboard('afkScore', _) >= global_afk_timeout,
             if(_~'team' == 'afk_players', continue());
+            delete(global_teams, _);
             global_teams:_ = _~'team';
             team_add('afk_players', _),
 
