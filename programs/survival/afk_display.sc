@@ -27,7 +27,6 @@ global_tick = 0;
 __on_tick()->(
     if((global_tick + 1) % 20 != 0, global_tick += 1; return(), global_tick = 0);
     for(player('*'),
-        //run('say ' + global_teams:0);
         if(and(
                 scoreboard('afkX', _) == scoreboard('afkX', _, _~'pos':0),
                 scoreboard('afkY', _) == scoreboard('afkY', _, _~'pos':1),
