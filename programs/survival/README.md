@@ -3,6 +3,12 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ## Survival scarpet apps in alphabetical order with creator:
 
+### [afk_display.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/afk_display.sc):
+#### By akaikagaribi
+	Grays out a player's name if they're not moving for 3 minutes (configurable).
+	The functionality of this script is identical to that of Vanilla Tweaks' AFK Display datapack, but it saves
+	what team a player was on before moving them to the AFK team, and puts them back in that team when they return.
+
 ### [angel_block.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/angel_block.sc):
 #### By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 	Reimplementation of Angel Blocks from RandomThings mod in scarpet 1.4.
@@ -443,4 +449,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Xendergo
 	ch-yx
 	Crec0
+	akaikagaribi
 	(Many more hopefully!)
