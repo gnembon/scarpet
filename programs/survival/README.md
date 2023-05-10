@@ -270,9 +270,13 @@ Various scripts that modify various game elements, often replicating popular mod
 	It's useful in liaison with /carpet renewableCorals rule, as it can be used to simplify a coral block farm.
 
 ### [rope_ladders.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/rope_ladders.sc):
-#### By BisUmTo
-	Right clicking on a ladder with an other one, will extend the existing one down.
+#### By BisUmTo and Opsaaaaa
+	Right clicking on a ladder with another one, will extend the existing one down.
 	https://youtu.be/Mgz6XEIcpgc
+
+  	`easy_dismantle` while holding shift destroys connected ladders
+  	`easy_pickup` will teleport nearby ladder items to the player
+  	`sky_ropes` allows you to extend ropes into the sky while holding shift
 
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
