@@ -37,5 +37,5 @@ __on_server_shuts_down() -> (
       saved += _~'name';
    );
    store_app_data(data);
-   if (saved, logger('warn', 'saved '+saved+' for next startup'));
+   if (saved, logger('warn', '[keepalive.sc] saved '+saved+' for next startup'));
 );
