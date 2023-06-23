@@ -44,6 +44,7 @@ global_loom_pattern_select='on_select_banner_pattern';
 global_stonecutter_pattern_select='on_select_stonecutting_pattern';
 global_lectern_flip_page='on_flip_page';
 global_lectern_take_book='on_take_book';
+global_enchanting_table_enchantment_select='on_select_enchantment';
 
 
 new_gui_menu(gui_screen)->( //Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
@@ -160,7 +161,25 @@ __screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
                 call(gui_page:global_stonecutter_pattern_select, player, screen, global_action_cache:'data':'button', data:'stack');
                 global_action_cache:'active'=false
             )
-        )
+        ),
+        inventory_shape=='enchantment',//global_enchanting_table_enchantment_select
+        if(has(gui_page, global_enchanting_table_enchantment_select),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                button = global_action_cache:'data':'button' + 1;
+                call(gui_page:global_enchanting_table_enchantment_select,
+                    player, screen,
+                    screen_property(screen, 'enchantment_power_'+button),
+                    screen_property(screen, 'enchantment_id_'+button),
+                    screen_property(screen, 'enchantment_level_'+button),
+                );
+                global_action_cache:'active'=false
+            )
+        ),
     );
 
     //Saving items in storage and dynamic slots when closing
