@@ -84,6 +84,9 @@ __create_gui_screen(screen, player, gui_screen)->(
         [item, count, nbt] = __parse_icon(gui_page:'navigation_buttons':_:0);
         inventory_set(screen, _, count, item, nbt)
     );
+    if(has(gui_page, 'on_init'), //Running programmer-defined page initialiser
+        call(gui_page:'on_init', screen, player)
+    );
 );
 
 
