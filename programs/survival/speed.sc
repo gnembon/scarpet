@@ -2,48 +2,34 @@
 //By: Ghoulboy
 
 // stay loaded
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
+__config() -> {
+   'stay_loaded'->true
+};
+
+import('math', '_euclidean', '_round');
+
+__command() -> if(global_active = !global_active,
+    display_title(player(), 'actionbar', 'Speed display active');
+    global_pos = pos(player());
+    display_speed(),
+    display_title(player(), 'actionbar', 'Speed display inactive')
 );
 
-import('math','_euclidean');
-
-//Funcs
-
-__setup_player(player)->(
-    global_prevpos:player=pos(player);
-    global_pos:player=pos(player);
-    entity_event(player,'on_tick','__display')
-);
-
-__display(player)->(
-    if(tick_time()%global_refresh_rate==0,
-        global_pos:player=pos(player);
-
-        speed=_euclidean(global_pos:player,global_prevpos:player)*20/global_refresh_rate;
-        scoreboard('Speed',player,roundmath(speed*1000,1));
-
-        global_prevpos:player=pos(player)
-    )
-);
-
-__on_player_connects(player)->__setup_player(player);
-
-roundmath(num,precision)->return(round(num/precision)*precision);
-
-//Initial code
-
+global_active = false;
+global_refresh_rate = 5; //refresh once every 5 ticks
+global_pos = null;
 scoreboard_add('Speed');
 scoreboard_display('sidebar','Speed');
-global_prevpos={};
-global_pos={};
-global_refresh_rate=20;
+display_title(player(), 'actionbar','Divide number on the side of the screen by 1000 to get actual speed in m/s!');
 
-
-print('Divide number on the side of the screen by 1000 to get actual speed in m/s!');
-
-for(player('*'),
-    __setup_player(_)
+display_speed()->(
+    distance = _euclidean(global_pos, pos(player()));
+    speed = distance * 20 / global_refresh_rate;
+    //display_title(player(), 'title', '', 0, global_refresh_rate, global_refresh_rate/2+1);
+    //display_title(player(), 'subtitle', _round(speed, 0.001), 0, global_refresh_rate, global_refresh_rate/2+1);
+    scoreboard('Speed',player,_round(speed*1000,1));
+    global_pos = pos(player());
+    if(global_active,
+        schedule(global_refresh_rate, 'display_speed')
+    )
 );
