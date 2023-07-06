@@ -33,3 +33,5 @@ display_speed()->(
         schedule(global_refresh_rate, 'display_speed')
     )
 );
+
+__on_server_shuts_down()-> scoreboard_remove('Speed');
