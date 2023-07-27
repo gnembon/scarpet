@@ -200,7 +200,7 @@ _getIdealState(block) ->
     if (_contains(state, 'type'),
         //Slab Type
         if (_contains(['top', 'bottom'], state:'type') && half != -1,
-            state:'type' = halfSide(half);
+            state:'type' = _halfSide(half);
         );
     );
     if (_contains(state, 'facing'),
