@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Rotation Lock
-// v1.0.0
+// v1.0.1
 // scarpet script written by "TernaryC"
 // This description last updated 07/27/2023
 // 
@@ -73,6 +73,10 @@ _tooltip(text, outer(p)) ->
 (
     display_title(p, 'actionbar', text);
 );
+_sign(num) ->
+(
+	return(num / abs(num));
+);
 _getDir(yaw) ->
 (
     yaw += 45;
@@ -99,6 +103,28 @@ _flipDir(direction) ->
     i = dirs ~ direction + 3;
     if (i > 5, i += -6);
     return(dirs:i);
+);
+_castSide(b, raycast) ->
+(
+	blockpos = pos(b);
+	blockpos:0 += 0.5;
+	blockpos:1 += 0.5;
+	blockpos:2 += 0.5;
+	
+	difpos = [raycast:0 - blockpos:0, raycast:1 - blockpos:1, raycast:2 - blockpos:2];
+	
+	truepos = [];
+	for (difpos, truepos:_i = ceil(abs(difpos:_i) - 0.49999) * _sign(difpos:_i));
+	
+	direction = null;
+	if (truepos:0 == -1, direction = 'west');
+	if (truepos:0 ==  1, direction = 'east');
+	if (truepos:1 == -1, direction = 'down');
+	if (truepos:1 ==  1, direction = 'up');
+	if (truepos:2 == -1, direction = 'north');
+	if (truepos:2 ==  1, direction = 'south');
+	
+	return(direction);
 );
 _halfSide(half) ->
 (
@@ -132,11 +158,13 @@ _getCurrentState(outer(p)) ->
     newProfile = [null, null, null];
     
     direction = query(p, 'facing');
-    flat_direction = _getDir(query(p, 'yaw'));
+    flat_dir = _getDir(query(p, 'yaw'));
     
     raycast = query(p, 'trace', 5, 'blocks', 'exact');
+	rayhit  = query(p, 'trace', 5, 'blocks');
     if (raycast != null,
-        
+        hit_dir = _castSide(rayhit, raycast);
+		
         half = abs(floor((raycast:1 - floor(raycast:1)) * 2));
         if (_dirAxis(direction) == 'y',
             half = -1;
@@ -144,9 +172,12 @@ _getCurrentState(outer(p)) ->
             half = 1 - half;
         );
         
-        newProfile = [_flipDir(direction), half, _flipDir(flat_direction)];
+		flat = hit_dir;
+		if (_contains(['up', 'down'], flat), flat = flat_dir);
+		
+        newProfile = [hit_dir, half, _flipDir(flat)];
     ,
-        newProfile = [direction, -1, flat_direction];
+        newProfile = [direction, -1, flat_dir];
     );
     
     if (global_lockProfile != null && newProfile == global_lockProfile,
@@ -192,7 +223,7 @@ _getIdealState(block) ->
         //Stairs addendum
         if (_contains(state, 'half'),
             if (_contains(['top', 'bottom'], state:'half') && half != -1,
-                state:'half' = halfSide(half);
+                state:'half' = _halfSide(half);
             );
         );
     );
