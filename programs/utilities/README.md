@@ -57,6 +57,12 @@ for the display.
 
 _TODO: Update it!_
 
+### [lockrotation.sc](https://github.com/gnembon/scarpet/blob/master/programs/utilities/lockrotation.sc)
+#### By TernaryC
+
+A command to preserve the player's current orientation for future block placements.
+Recreation of the "lock rotation" feature from the Quark mod.
+
 ### [nether_ceiling_backup.sc](https://github.com/gnembon/scarpet/blob/master/programs/utilities/nether_ceiling_backup.sc)
 #### By gnembon
 
