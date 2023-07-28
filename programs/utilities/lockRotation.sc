@@ -27,6 +27,7 @@
 __on_start() ->
 (
     global_lockProfile = null;
+	global_rotated = null;
 );
 __command() -> _requestLock();
 
@@ -267,7 +268,6 @@ _getCurrentState(outer(p)) ->
     ,
         newProfile = [direction, -1, flat_dir];
     );
-	//print(newProfile);
     
     if (global_lockProfile != null && newProfile == global_lockProfile,
         global_lockProfile = null;
@@ -326,4 +326,22 @@ __on_player_places_block(player, item_tuple, hand, block) ->
 (
     properties = _getIdealState(block);
     set(pos(block), block, properties);
+	global_rotated = block;
+);
+__on_tick() ->
+(
+	if(global_rotated != null,
+		//sleep(1000);
+		//for(neighbours(global_rotated),
+		//	print(pos(_));
+		//	update(pos(_));
+		//);
+		//update(pos(global_rotated));
+		upos = [pos(global_rotated):0 + 1, pos(global_rotated):1, pos(global_rotated):2];
+		ublock = block(upos);
+		set(upos, 'air');
+		place_item('stone', upos);
+		set(upos, ublock);
+		global_rotated = null;
+	);
 );
