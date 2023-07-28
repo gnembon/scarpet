@@ -267,7 +267,7 @@ _getCurrentState(outer(p)) ->
     ,
         newProfile = [direction, -1, flat_dir];
     );
-	print(newProfile);
+	//print(newProfile);
     
     if (global_lockProfile != null && newProfile == global_lockProfile,
         global_lockProfile = null;
