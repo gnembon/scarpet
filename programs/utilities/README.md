@@ -61,6 +61,7 @@ _TODO: Update it!_
 #### By TernaryC
 
 A command to preserve the player's current orientation for future block placements.
+Use "/lockrotation" to save your orientation, including the way you're facing and which half of a block you're looking at.
 Recreation of the "lock rotation" feature from the Quark mod.
 
 ### [nether_ceiling_backup.sc](https://github.com/gnembon/scarpet/blob/master/programs/utilities/nether_ceiling_backup.sc)
