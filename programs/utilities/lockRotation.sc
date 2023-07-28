@@ -326,7 +326,7 @@ __on_player_places_block(player, item_tuple, hand, block) ->
 (
     properties = _getIdealState(block);
     set(pos(block), block, properties);
-	global_rotated = block;
+	if (_contains(block, 'stairs'), global_rotated = block);
 );
 __on_tick() ->
 (
