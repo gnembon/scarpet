@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Rotation Lock
-// v1.0.1
+// v1.0.2
 // scarpet script written by "TernaryC"
 // This description last updated 07/27/2023
 // 
@@ -104,7 +104,7 @@ _flipDir(direction) ->
     if (i > 5, i += -6);
     return(dirs:i);
 );
-_castSide(b, raycast) ->
+_castDif(b, raycast) ->
 (
 	blockpos = pos(b);
 	blockpos:0 += 0.5;
@@ -115,6 +115,12 @@ _castSide(b, raycast) ->
 	
 	truepos = [];
 	for (difpos, truepos:_i = ceil(abs(difpos:_i) - 0.49999) * _sign(difpos:_i));
+	
+	return(truepos);
+);
+_castSide(b, raycast) ->
+(
+	truepos = _castDif(b, raycast);
 	
 	direction = null;
 	if (truepos:0 == -1, direction = 'west');
@@ -151,8 +157,90 @@ _isBustable(block) ->
     if (_contains(['amethyst_cluster', 'bell', 'ladder', 'lever', 'pointed_dripstone', 'tripwire_hook'], block), return(true));
     return(false);
 );
+_2to3(coord, third) ->
+(
+	vector = [];
+	j = 0;
+	loop(3,
+		if (_ == third:1,
+			vector:_ = third:0;
+		,
+			vector:_ = coord:j;
+			j += 1;
+		);
+	);
+	return(vector);
+);
+_linetobox(point1, point2, xoff, yoff) ->
+(
+	return([point2:0 + xoff, point2:1 + yoff]);
+);
 
 // App Methods
+_displayProfile(raycast, blockhit, profile) ->
+(
+	if (raycast == null, return());
+	
+	b_at = pos(blockhit);
+	b_cent = [];
+	for (b_at, b_cent:_i = _ + 0.5);
+	b_op = [];
+	for (b_at, b_op:_i = _ + 1);
+	
+	hitdir = _castDif(blockhit, raycast);
+	sidepos = [];
+	for (b_cent, sidepos:_i = _ + (hitdir:_i * 0.505));
+	
+	filt = -1;
+	for (hitdir, if (_ != 0, filt = _i; break()));
+	third = [sidepos:filt, filt];
+	cent = [];
+	for (sidepos, if(_i != third:1, cent += _));
+	
+	corner = [[null,null], [null,null], [null,null], [null,null]];
+	corner:0:0 = cent:0 - 0.45;
+	corner:0:1 = cent:1 - 0.45;
+	corner:1:0 = cent:0 - 0.45;
+	corner:1:1 = cent:1 + 0.45;
+	corner:2:0 = cent:0 + 0.45;
+	corner:2:1 = cent:1 + 0.45;
+	corner:3:0 = cent:0 + 0.45;
+	corner:3:1 = cent:1 - 0.45;
+	
+	if (profile:1 != -1,
+		y = 0;
+		if (third:1 == 2, y = 1);
+		if (profile:1 == 0,
+			for(corner, if(_:y > sidepos:1, corner:_i:y += -0.45));
+		,
+			for(corner, if(_:y < sidepos:1, corner:_i:y +=  0.45));
+		);
+	);
+	
+	d = 20;   //duration
+	w = 0.15; //line thickness
+	draw_shape('box', d,
+		'from', _2to3(corner:0, third),
+		'to',   _2to3(_linetobox(corner:0, corner:1, w, 0), third),
+		'fill', 4294967295
+	);
+	draw_shape('box', d,
+		'from', _2to3(corner:1, third),
+		'to',   _2to3(_linetobox(corner:1, corner:2, 0, -w), third),
+		'fill', 4294967295
+	);
+	draw_shape('box', d,
+		'from', _2to3(corner:2, third),
+		'to',   _2to3(_linetobox(corner:2, corner:3, -w, 0), third),
+		'fill', 4294967295
+	);
+	draw_shape('box', d,
+		'from', _2to3(corner:3, third),
+		'to',   _2to3(_linetobox(corner:3, corner:0, 0, w), third),
+		'fill', 4294967295
+	);
+	undef(w);
+);
 _getCurrentState(outer(p)) ->
 (
     newProfile = [null, null, null];
@@ -172,17 +260,19 @@ _getCurrentState(outer(p)) ->
             half = 1 - half;
         );
         
-		flat = hit_dir;
+		flat = _flipDir(hit_dir);
 		if (_contains(['up', 'down'], flat), flat = flat_dir);
 		
         newProfile = [hit_dir, half, _flipDir(flat)];
     ,
         newProfile = [direction, -1, flat_dir];
     );
+	print(newProfile);
     
     if (global_lockProfile != null && newProfile == global_lockProfile,
         global_lockProfile = null;
     ,
+		_displayProfile(raycast, rayhit, newProfile);
         global_lockProfile = newProfile;
     );
 );
@@ -222,8 +312,9 @@ _getIdealState(block) ->
         );
         //Stairs addendum
         if (_contains(state, 'half'),
-            if (_contains(['top', 'bottom'], state:'half') && half != -1,
-                state:'half' = _halfSide(half);
+            if (_contains(['top', 'bottom'], state:'half'),
+				if (state:'open' == null, state:'facing' = _flipDir(flat_dir));
+                if (half != -1, state:'half' = _halfSide(half));
             );
         );
     );
