@@ -143,7 +143,7 @@ _contains(list, value) -> return(list ~ value != null);
 _isVertible(block) ->
 (
     if (_contains(block, 'shulker_box'), return(true));
-    if (_contains(['end_rod', 'lightning_rod'], block), return(true));
+    if (_contains(['end_rod', 'lightning_rod', 'grindstone'], block), return(true));
     return(false);
 );
 _isBustable(block) ->
