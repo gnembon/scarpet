@@ -58,12 +58,12 @@ global_Test_pages={
             'navigation_buttons'->{
                 0->['anvil', 'anvil_page'],
                 1->['beacon', 'beacon_page'],
-                2->['blast_furnace', 'blast_furnace_page'],
+                2->['blast_', 'blast__page'],
                 3->['brewing_stand', 'brewing_stand_page'],
                 4->['cartography_table', 'cartography_table_page'],
                 5->['crafting_table', 'crafting_page'],
                 6->['enchanting_table', 'enchantment_page'],
-                7->['furnace', 'furnace_page'],
+                7->['', '_page'],
                 8->['grindstone', 'grindstone_page'],
                 9->['hopper', 'hopper_page'],
                 10->['lectern', 'lectern_page'],
@@ -97,7 +97,8 @@ global_Test_pages={
             'inventory_shape'->'blast_furnace',
             'navigation_buttons'->{
                 0->['air', 'main_page']
-            }
+            },
+            'on_select_crafting_recipe'->_(player, screen, recipe, craft_all)->print(player, str('Selected %s recipe, %s to craft all', recipe, if(craft_all, 'tried', 'did not try')))
         },
         'brewing_stand_page'->{
             'title'->format('c Test GUI menu brewing_stand page'),
@@ -146,7 +147,8 @@ global_Test_pages={
             'inventory_shape'->'furnace',
             'navigation_buttons'->{
                 0->['air', 'main_page']
-            }
+            },
+            'on_select_crafting_recipe'->_(player, screen, recipe, craft_all)->print(player, str('Selected %s recipe, %s to craft all', recipe, if(craft_all, 'tried', 'did not try')))
         },
         'grindstone_page'->{
             'title'->format('c Test GUI menu grindstone page'),
@@ -211,7 +213,8 @@ global_Test_pages={
             'inventory_shape'->'smoker',
             'navigation_buttons'->{
                 0->['air', 'main_page']
-            }
+            },
+            'on_select_crafting_recipe'->_(player, screen, recipe, craft_all)->print(player, str('Selected %s recipe, %s to craft all', recipe, if(craft_all, 'tried', 'did not try')))
         },
         'stonecutter_page'->{
             'title'->format('c Test GUI menu stonecutter page'),
