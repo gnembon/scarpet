@@ -11,7 +11,8 @@
 //   of that mod or it's modules.
 //
 // By running the command "/lockrotation", the player records their current
-//   facing direction, as well as other data related to block placement.
+//   facing direction, as well as other data related to block placement, such
+//   as block half.
 // From then on, upon placing a block, the script will attempt to reorient the
 //   block to face the recorded placement data.
 //
@@ -27,7 +28,6 @@
 __on_start() ->
 (
     global_lockProfile = null;
-	global_rotated = null;
 );
 __command() -> _requestLock();
 
@@ -76,6 +76,7 @@ _tooltip(text, outer(p)) ->
 );
 _sign(num) ->
 (
+    if (num == 0, return(0));
 	return(num / abs(num));
 );
 _getDir(yaw) ->
@@ -208,7 +209,8 @@ _displayProfile(raycast, blockhit, profile) ->
 	corner:3:0 = cent:0 + 0.45;
 	corner:3:1 = cent:1 - 0.45;
 	
-	if (profile:1 != -1,
+	//Switch to half-block hologram if relevant
+	if (profile:1 != -1 && !_contains(['up', 'down'], profile:0),
 		y = 0;
 		if (third:1 == 2, y = 1);
 		if (profile:1 == 0,
@@ -272,8 +274,8 @@ _getCurrentState(outer(p)) ->
     if (global_lockProfile != null && newProfile == global_lockProfile,
         global_lockProfile = null;
     ,
-		_displayProfile(raycast, rayhit, newProfile);
         global_lockProfile = newProfile;
+		_displayProfile(raycast, rayhit, newProfile);
     );
 );
 _getIdealState(block) ->
@@ -324,24 +326,16 @@ _getIdealState(block) ->
                                                                                
 __on_player_places_block(player, item_tuple, hand, block) ->
 (
-    properties = _getIdealState(block);
-    set(pos(block), block, properties);
-	if (_contains(block, 'stairs'), global_rotated = block);
-);
-__on_tick() ->
-(
-	if(global_rotated != null,
-		//sleep(1000);
-		//for(neighbours(global_rotated),
-		//	print(pos(_));
-		//	update(pos(_));
-		//);
-		//update(pos(global_rotated));
-		upos = [pos(global_rotated):0 + 1, pos(global_rotated):1, pos(global_rotated):2];
-		ublock = block(upos);
-		set(upos, 'air');
-		place_item('stone', upos);
-		set(upos, ublock);
-		global_rotated = null;
-	);
+    if (global_lockProfile != null,
+        properties = _getIdealState(block);
+        set(pos(block), block, properties);
+        if (_contains(block, 'stairs'), 
+			// This code is a little janky, but is neccessary to correctly update shaped stairs.
+			upos = [pos(block):0 + 1, pos(block):1, pos(block):2];
+			ublock = block(upos);
+			set(upos, 'air');
+			place_item(ublock, upos);
+			set(upos, ublock);
+		);
+    );
 );
