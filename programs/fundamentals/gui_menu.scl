@@ -290,8 +290,8 @@ __parse_icon(icon)->if(type(icon)=='string',
         icon,
         length(icon)==4,
         icon:2 = icon:2 || nbt({}); //JIC input nbt was null
-        put(icon:2, 'display', nbt(str('{display:{Name:\'{"text":"%s"}\'}}', icon:1)));
-        icon
+        put(icon:2, 'display', nbt(str('{display:{Name:\'{"text":"%s"}\'}}', icon:3)));
+        [icon:0, icon:1, icon:2]
     )
 );
 
