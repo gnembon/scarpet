@@ -25,6 +25,8 @@ Scarpet is a part of the [carpet mod](https://github.com/gnembon/fabric-carpet/r
 
 [Vim plugin](https://github.com/twh2898/vim-scarpet)
 
+[Kate Syntax Highlighting](https://github.com/FedericoCarboni/kate-scarpet#readme)
+
 ## Changelog
 
 For history of changes, please consult update notes of [fabric-carpet releases](https://github.com/gnembon/fabric-carpet/releases) where scarpet is being developed and expanded.
