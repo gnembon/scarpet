@@ -12,6 +12,11 @@ Some apps are not fully documented yet, [feel free to contribute by improving th
 
 An app to count the amount of each different block in a volume, even showing graphs.
 
+### [calendar.sc](https://github.com/gnembon/scarpet/commits/master/programs/utilities/calendar.sc)
+#### By James103
+
+Displays the current in-game date and time in a bossbar, using the Gregorian calendar.
+
 ### [coord_export.sc](https://github.com/gnembon/scarpet/commits/master/programs/utilities/coord_export.sc)
 #### By aria1th
 
