@@ -1,0 +1,98 @@
+//A library script which contains the class of max heaps, implemented using classes.scl
+//If you want to know how a max heap works, see documentation of min_heaps.sc (which is implemented very differently)
+//
+//To use this, import it into your script, and then import 'call_function' from classes.scl, so you can use the methods
+//At the bottom, commented out, is an example script showing how it works and how to use it.
+//
+//By: Ghoulboy
+
+import('classes', 'new_class', 'new_object', 'call_function');
+
+max_heap_class = new_class('MaxHeap', {
+    '__init__'->_(self, max_size)->(
+        self:'max_size' = max_size;
+        self:'size' = 0;
+        _Heap = [];
+        loop(max_size, _Heap+=-1/0); //Negative infinity
+        self:'_Heap' = _Heap;
+        self:'_FRONT' = 0;
+        self
+    ),
+    '_parent'->_(self, pos)->[self, bitwise_shift_right(pos, 1)],
+    '_leftChild'->_(self, pos)->[self, bitwise_shift_left(pos, 1)],
+    '_rightChild'->_(self, pos)->[self, bitwise_shift_left(pos, 1) + 1],
+    '_isLeaf'->_(self, pos)->[self, pos*2 > self:'size'],
+    '_swap'->_(self, fpos, spos)->(
+        temp = self:'_Heap':fpos;
+        self:'_Heap':fpos = self:'_Heap':spos;
+        self:'_Heap':spos = temp;
+        self
+    ),
+    '_maxHeapify'->_(self, pos) -> (
+        //Getting all this stuff here cos it doesn't change and clutters up the code like crazy
+        left = call(self:'_leftChild', self, pos):1;
+        right = call(self:'_rightChild', self, pos):1;
+        selfpos = self:'_Heap':pos;
+        leftchild = self:'_Heap':left;
+        rightchild = self:'_Heap':right;
+        if(!call(self:'_isLeaf', self, pos):1 && (selfpos < leftchild || selfpos < rightchild),
+            heapifypos = if(leftchild>rightchild, left, right);
+            call(self:'_swap', self, pos, heapifypos);
+            call(self:'_maxHeapify', self, heapifypos)
+        );
+        self
+    ),
+    'insert'->_(self, element) -> (
+        if(self:'size' < self:'max_size',
+            self:'size' += 1;
+            self:'_Heap':(self:'size') = element;
+            current = self:'size';
+            while(self:'_Heap':current > self:'_Heap':(call(self:'_parent', self, current):1), self:'max_size',
+                call(self:'_swap', self, current, call(self:'_parent', self, current):1);
+                current = call(self:'_parent', self, current):1
+            )
+        );
+        self
+    ),
+    'remove'->_(self)->(
+        popped = self:'_Heap':(self:'_FRONT');
+        self:'_Heap':(self:'_FRONT') = self:'_Heap':(self:'size');
+        self:'size' += -1;
+        call(self:'_maxHeapify', self, self:'_FRONT');
+        [self, popped]
+    ),
+});
+
+max_heap(outer(max_heap_class), maxsize) -> new_object(max_heap_class, maxsize);
+
+//This is an example of using a MaxHeap in another app
+//
+//      The reason why we can import call_function from this app is because we have already imported it into this app.
+//import('max_heap', 'max_heap', 'call_function');
+//
+//heap = max_heap(5);
+//print(heap:'_Heap');                  => [-INFINITY, -INFINITY, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 1);
+//print(heap:'_Heap');                  => [1, -INFINITY, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 3);
+//print(heap:'_Heap');                  => [3, 1, -INFINITY, -INFINITY, -INFINITY]
+//call_function(heap, 'insert', 3);
+//print(heap:'_Heap');                  => [3, 3, -INFINITY, 1, -INFINITY]
+//call_function(heap, 'insert', 5);
+//print(heap:'_Heap');                  => [5, 3, 3, 1, -INFINITY]
+//call_function(heap, 'insert', 1);
+//print(heap:'_Heap');                  => [5, 3, 3, 1, -INFINITY, 1]
+//print(call_function(heap, 'remove')); => 5
+//      The extra 1 at the end below is here becase we don't remove it from the list, rather overwrite it later
+//print(heap:'_Heap');                  => [3, 3, 1, 1, -INFINITY, 1]
+//call_function(heap, 'insert', 7);
+//      The first 1 from before has overwritten the trailing 1
+//print(heap:'_Heap');                  => [7, 3, 3, 1, -INFINITY, 1]
+//      This gets ignored because the maximum size is 5
+//call_function(heap, 'insert', 6);
+//print(heap:'_Heap');                  => [7, 3, 3, 1, -INFINITY, 1]
+//print(call_function(heap, 'remove')); => 7
+//      Again we have a trailing 1 which the heap ignores, and will overwrite later
+//print(heap:'_Heap');                  => [3, 3, 1, 1, -INFINITY, 1]
+//
+//print(heap);                          => {remove: _, __name__: MaxHeap, _Heap: [3, 3, 1, 1, -INFINITY, 1], hash: _, class: _, equals: _, _leftChild: _, _isLeaf: _, _rightChild: _, _maxHeapify: _, nbt: _, __member_data__: {length: Object, hash: Object, class: Object, equals: Object, str: Object, nbt: Object, clone: Object, number: Object, compare: Object, json: Object, bool: Object}, compare: _, json: _, bool: _, length: _, __parents__: {}, str: _, clone: _, __init__: _, _swap: _, insert: _, _parent: _, _FRONT: 0, number: _, size: 4, max_size: 5}
