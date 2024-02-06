@@ -135,7 +135,7 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
             if ( shulker_item ~ 'shulker_box$' 
                   && scount == 1 
                   && (nametag = shulker_tag:'display.Name') != null
-                  && lower(parse_nbt(nametag):'text') ~ 'vacuum'
+                  && lower(parse_nbt(nametag)) ~ 'vacuum'
                   && (items = shulker_tag:'BlockEntityTag.Items[]') != null ,
                // well, not sure why nbt query for singleton lists return that element, not a list
                // but that's a Mojang thing
@@ -285,7 +285,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
          if ( shulker_item ~ 'shulker_box$' 
                && scount == 1 
                && (nametag = shulker_tag:'display.Name') != null
-               && (shulker_type = lower(parse_nbt(nametag):'text') ~ '(restock|swap)\\s+(same|keep|next|random|first)')
+               && (shulker_type = lower(parse_nbt(nametag)) ~ '(restock|swap)\\s+(same|keep|next|random|first)')
                && ([action_type, idx_choice] = shulker_type; (action_type!='restock' || count == 0 ) )
                && (shulker_stacks = shulker_tag:'BlockEntityTag.Items[]') != null ,
             if (type(shulker_stacks)=='nbt', shulker_stacks = [shulker_stacks]);
