@@ -59,6 +59,8 @@ __command() ->
             display_title(p, 'actionbar', format('y Entered camera mode'));
          )
       ));
+   , current_gamemode == 'creative',
+      display_title(p, 'actionbar', format('r You must be in survival mode to use camera mode'));
    );
    null
 );
