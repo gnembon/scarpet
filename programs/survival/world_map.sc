@@ -7,6 +7,7 @@ use:
  - eat your berry
  or
  - /world_map tp
+ - /world_map help
 ';
 
 __config() -> {
@@ -24,7 +25,12 @@ global_player_chunk_map = {};
 
 // use threads to seamlessly generate chunk data
 // slower than synced but no lag spikes
-global_parallel = true;
+//
+// in 1.18.1 things break if this is on
+// i think chunk loading is parallel now in the base game
+// and this interacts badly with world_map's attempt
+// to parallelize
+global_parallel = system_info('game_major_target') < 18;
 
 // generation or degeneration
 global_generate_forward = true;
@@ -32,6 +38,8 @@ global_generate_forward = true;
 // output timing and progress information
 global_debug = false;
 
+// biome changes with cave biomes are causing the trouble with 1.18
+global_has_cave_biomes = system_info('game_major_target') >= 18;
 
 // some common decorations
 global_decorations = {
@@ -81,9 +89,16 @@ global_features = {
    'red_mushroom_nether' -> [0.95, 1, 'red_mushroom'],
 };
 
+// this is the fallback if the biome is not explicitly configured
+// it should not be called unless you have modded biomes.
+// with 1.18.1 4 features disappeared (scaled, depth, material,
+// undermaterial) that allowed intelligent fallback behaviour
+// for modded biomes.  so that will only work in minecraft < 1.18.
+// it still allows to provide fallbacks for configured categories though -
+// e.g. wooded_badlands is provided by mesa.
 __create_custom_biome(biome) ->
 (
-   scale =  biome(biome, 'scale'); 
+   scale =  __safe_biome(biome, 'scale', 0.0); 
    cat = biome(biome, 'category');
    if (scale > 0.25,
       if (scale > 0.4,
@@ -92,17 +107,22 @@ __create_custom_biome(biome) ->
          cat += '_hills'
       )
    );
-   if (biome(biome, 'depth') < -0.2, cat = 'deep_ocean');
+   if (__safe_biome(biome, 'depth', 0.0) < -0.2, cat = 'deep_ocean');
    if (global_debug, print('Biome '+biome+' is modded, used '+cat+' as a base'));
    
    config = copy(global_biome_data:cat);
+   if (! config,
+      print('WARNING: Fallback category '+cat+' does not exist - ugly patches of diorite ...');
+      config = {}
+   );
    previous_main_block = config:'block';
-   main_block = str(biome(biome, 'top_material'));
-   under_block = str(biome(biome, 'under_material'));
+   main_block = str(__safe_biome(biome, 'top_material', config:'block') || 'diorite');
+   // we get a random element from the set, but we need something, anything
+   under_block = str(__safe_biome(biome, 'under_material', keys(config:'replaces'):0 || 'granite'));
    if (!has(config, 'decoration'), config:'decoration' = []);
    config:'block' = main_block;
-   config:'replaces' += under_block;
-   if (previous_main_block != main_block,
+   config:'replaces' = (config:'replaces' || {}) + under_block;
+   if (previous_main_block && previous_main_block != main_block,
       for(config:'decoration', decor = _;
          for (range(2, length(decor)),
             if(decor:_ == previous_main_block, decor:_ = main_block)
@@ -123,6 +143,14 @@ __create_custom_biome(biome) ->
    global_biome_data:biome = config;
    config
 );
+
+__safe_biome(biome, what, default) -> (
+   if (global_has_cave_biomes,
+      default,
+      biome(biome, what)
+   )
+);
+
 
 // all biomes information
 
@@ -660,6 +688,18 @@ global_biome_data:'mushroom' = global_biome_data:'mushroom_fields_shore';
 global_biome_data:'mushroom_hills' = global_biome_data:'mushroom_fields';
 global_biome_data:'mushroom_mountains' = global_biome_data:'mushroom_fields';
 
+
+// 1.18 biomes
+global_biome_data:'meadow' = global_biome_data:'plains';
+global_biome_data:'grove' = global_biome_data:'taiga_hills';
+global_biome_data:'snowy_slopes' = global_biome_data:'snowy_mountains';
+global_biome_data:'jagged_peaks' = global_biome_data:'snowy_mountains';
+global_biome_data:'stony_peaks' = global_biome_data:'mountains';
+// and as a fallback, provide something for the new biome category
+global_biome_data:'mountain' = global_biome_data:'mountains';
+
+
+
 global_biome_data:'nether' = global_biome_data:'nether_wastes';
 global_biome_data:'nether_hills' = __simple_biome('netherrack',
    [
@@ -862,12 +902,16 @@ global_chunk_statuses = [
 ];
 
 // fetches required Y levels to set a biome to
-// nether has 3d biomes while other dimensions 2d
-__required_biome_change_elevation(map_level, dim) -> if ( dim == 'the_nether', ([range(8)]-1)+map_level, [0]);
+// nether and overworld has 3d biomes, other dimensions are 2d
+// except in minecraft < 1.18 (no cave biomes) where only the nether is 3d
+__required_biome_change_elevation(map_level, dim) -> (
+   if (global_has_cave_biomes && dim == 'overworld' || dim == 'the_nether', 
+      ([range(8)]-1)+map_level, 
+      [0]);
+);
 
 
-
-__main_biome_block(biome) -> (global_biome_data:biome:'block' || __create_custom_biome(biome):'block' );
+__main_biome_block(biome) -> (global_biome_data:biome:'block' || __create_custom_biome(biome):'block');
 
 __to_chunk_coords(pos, dim) -> [floor(pos:0/16), floor(pos:2/16), dim];
 
@@ -1233,6 +1277,11 @@ __vacate(world_chunk, parallel, statuses, verbose) ->
 );
 
 // testing only
+//
+// __repop_lazy() seems broken with 1.18.1 - i start getting mysterious
+// errors out of structure_eligibyility after using it, even when i switch
+// to __repop_eager() for testing.  restarting the game and only using
+// __repop_eager() seems to work.
 
 __repop_lazy() ->
 (
@@ -1359,7 +1408,15 @@ __apply_biome_changes(world_chunk, block_setter, biome_setter) ->
    volume(16*chunk_x, map_level, 16*chunk_z, 16*chunk_x+15, map_level, 16*chunk_z+15,
       print_pos = pos(_);
       sampling_pos = call(world_mapper, print_pos)+[8,0,8];
+      // sample high up - in 1.18 we may get a cave biome otherwise
+      // 255 will work with old versions and is above cave biome levels
+      if (global_has_cave_biomes && dim == 'overworld', 
+         sampling_pos:1 = 255
+      );
       biome = biome(sampling_pos);
+      if (global_debug && biome ~ '_caves',
+        print('warning - cave biome ' + biome + ' at ' + sampling_pos)
+      );
       blockset += [biome, print_pos];
    );
    biome_ysets = __required_biome_change_elevation(map_level, dim);
@@ -1543,6 +1600,19 @@ tp() ->
       __tp(player());
    ));
 );
+
+// because i always forget how the miniportals worked ...
+help() -> '
+once on the map (by eating a sweetberry), you can
+
+* eat a sweetberry to leave the map
+* use (= rightlick) slime balls to display
+  slime chunks, increase the radius by holding more
+  slimeballs
+* place 1 obsidian in the ground and light it for mini-portal
+
+watch the video: https://www.youtube.com/watch?v=TqgyvnjEAn4
+';
 
 // verifies player has proper place to land on a terrain and if its not generated moves player to a safe position.
 __check_safe_landing(player, pos, dim, immediate) ->
