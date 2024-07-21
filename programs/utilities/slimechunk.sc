@@ -3,6 +3,5 @@ __command() ->
 (
     position = query(player(), 'pos');
     is_slimechunk = in_slime_chunk(position);
-    if (is_slimechunk == 'true', exit('§aSlime chunk!'));
-    if (is_slimechunk == 'false', exit('§cNot a slime chunk :\('));
+    if (is_slimechunk, '§aSlime chunk!', '§cNot a slime chunk :\(');
 );
