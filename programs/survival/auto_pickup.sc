@@ -44,7 +44,7 @@ _move_items_to_inventory(player, coords) ->
 			slot = -1;
 			while( (slot = inventory_find(player, item_name, slot+1)) != null, 41,
 				current = inventory_get(player, slot);
-				if ( current:1+count <= stack_limit(item_name) && current:2 == item_nbt,
+				if ( current:1+count <= stack_limit(item_name) && current:2:'components' == item_nbt:'components', // all credits to rv3r for this fix.
 					inventory_set(player, slot, count+current:1);
 					throw()
 				)			
