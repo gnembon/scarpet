@@ -1,6 +1,7 @@
 // Reimplementation of Silk Spawners mod in scarpet 1.5
 // By "Pegasus Epsilon" <pegasus@pimpninjas.org>
 // 1.16 update by Jackson Harada
+// 1.21 update by vlad2305m
 
 //keeps script loaded upon server start
 __config() -> (m(
@@ -14,13 +15,14 @@ __config() -> (m(
 __silk_spawner (player, block) -> (
         if (block != 'spawner', return());
         tool = player ~ 'holds';
-        if (!tool || get(tool, 0) != 'diamond_pickaxe', !tool || get(tool, 0) != 'netherite_pickaxe', return());
+        if (!tool || get(tool, 0) != 'diamond_pickaxe', if(!tool || get(tool, 0) != 'netherite_pickaxe', return()));
         nbt = get(tool, 2);
         if (!nbt, return());
-        ench = get(nbt, 'Enchantments[]');
+        ench = get(nbt, 'components');
+        ench = get(ench, 'minecraft:enchantments');
         if (!ench, return());
-        if (type(ench) != 'list', ench = l(ench));
-        for (ench, if (get(_, 'id') == 'minecraft:silk_touch', return(true)));
+        ench = get(ench, 'levels');
+        if (get(ench, 'minecraft:silk_touch'), return(true));
         false
 );
 
@@ -29,11 +31,12 @@ __silk_spawner (player, block) -> (
 __on_player_clicks_block (player, block, face) -> (
         if (!__silk_spawner(player, block), return());
         data = block_data(pos(block));
-        type = title(get(split(':', data:'SpawnData.id'), 1));
-		item_nbt = nbt('{Item:{id:"minecraft:spawner",Count:1b}}');
-        spawner_nbt = nbt('{Enchantments:[{}],display:{Name:"{\\\"text\\\":\\\"' + type + ' Spawner\\\",\\\"italic\\\":\\\"false\\\",\\\"color\\\":\\\"aqua\\\"}"}}');
-		put(spawner_nbt, 'BlockEntityTag', data);
-		put(item_nbt,'Item.tag',spawner_nbt);
+        type = title(get(split(':', data:'SpawnData.entity.id'), 1));
+		item_nbt = nbt('{Item:{id:"minecraft:spawner",count:1b}}');
+        spawner_nbt = nbt('{"minecraft:enchantment_glint_override":1b,"minecraft:custom_name":\'{"color":"aqua","italic":false,"text":"'+type+' Spawner"}\'}');
+        put(data, 'id', 'minecraft:spawner');
+		put(spawner_nbt, 'minecraft:block_entity_data', data);
+		put(item_nbt,'Item.components',spawner_nbt);
 		spawner_item = spawn('item', pos(block), item_nbt);
 		modify(spawner_item,'pickup_delay',10);
 		destroy(block)
@@ -44,7 +47,7 @@ __on_player_clicks_block (player, block, face) -> (
 __on_player_right_clicks_block (player, item, hand, block, face, hitvec) -> (
         if (item:0 != 'spawner', return());
 		if (hand != 'mainhand', return());
-        data = item:2:'BlockEntityTag{}';
+        data = item:2:'components."minecraft:block_entity_data"{}';
         if (!data, return());
         tgt = block(pos_offset(block, face));
         if (tgt != block('air'), return());
