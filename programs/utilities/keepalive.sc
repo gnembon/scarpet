@@ -3,7 +3,7 @@
 
 __config() -> {'scope' -> 'global'};
 
-__on_server_starts() -> (
+__spawn_players() -> (
    data = load_app_data();
    if (data && data:'players',
       data = parse_nbt(data:'players');
@@ -17,6 +17,10 @@ __on_server_starts() -> (
          modify(player(_:'name'), 'flying', _:'fly')
       )
    );
+);
+
+__on_server_starts() -> (
+  task('__spawn_players');
 );
 
 __on_server_shuts_down() -> (
