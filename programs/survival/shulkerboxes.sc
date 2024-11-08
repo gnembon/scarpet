@@ -33,7 +33,7 @@ will restock player inventory
  - random: will draw a random stack
 ';
 
-global_vacuum = 'collision';
+global_vacuum = 'pickup';
 
 toggle_vacuum() -> 
 (
@@ -134,25 +134,25 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
             // and have a custom name, which contains 'vacuum' and have non-empty inventory
             if ( shulker_item ~ 'shulker_box$' 
                   && scount == 1 
-                  && (nametag = shulker_tag:'display.Name') != null
-                  && lower(parse_nbt(nametag)) ~ 'vacuum'
-                  && (items = shulker_tag:'BlockEntityTag.Items[]') != null ,
+                  && (nametag = shulker_tag:'components':'minecraft:custom_name') != null
+                  && lower(nametag) ~ 'vacuum'
+                  && (items = shulker_tag:'components':'minecraft:container[]') != null ,
                // well, not sure why nbt query for singleton lists return that element, not a list
                // but that's a Mojang thing
                if (type(items)=='nbt', items = [items]);
                for ( items,
-                  stack_tag = _;
+                  stack_tag = _:'item';
                   list_position = _i;
                   // searching for matching items with same tag that can accomodate extra items.
                   if ( stack_tag:'id' == item_fqdn 
-                        && (initial_count = stack_tag:'Count') < item_limit 
-                        && search_tag == stack_tag:'tag',
+                        && (initial_count = stack_tag:'count') < item_limit,
+                        // && search_tag == stack_tag:'tag',
                      remaining_capacity = item_limit-initial_count;
                      restock_amount = min(remaining_capacity, refill_count);
                      // in that case we restock all or part of the refill item with the current sbox stack
                      if (do_change,
                         put(shulker_tag, 
-                           'BlockEntityTag.Items['+list_position+'].Count', 
+                           'components.minecraft:container['+list_position+'].item.count', 
                            (initial_count+restock_amount)+'b'
                         );
                         inventory_set(inventory, current_inventory_slot, 1, shulker_item, shulker_tag);
@@ -270,7 +270,7 @@ __get_inventory_indices_for_slot(slot, player) ->
 
 // gets stack and slot info and finds stack in restock / swap shulkerboxes eligible for 
 // restock
-__swap_stack(player, slot, previous_item, item, count, tag) ->
+__swap_stack(player, slot, previous_item, item, count, tag) -> 
 (
    item_fqdn = __to_fqdn(previous_item);
    // scanning inventory in order
@@ -284,18 +284,18 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
          // and have non-empty inventory
          if ( shulker_item ~ 'shulker_box$' 
                && scount == 1 
-               && (nametag = shulker_tag:'display.Name') != null
-               && (shulker_type = lower(parse_nbt(nametag)) ~ '(restock|swap)\\s+(same|keep|next|random|first)')
-               && ([action_type, idx_choice] = shulker_type; (action_type!='restock' || count == 0 ) )
-               && (shulker_stacks = shulker_tag:'BlockEntityTag.Items[]') != null ,
-            if (type(shulker_stacks)=='nbt', shulker_stacks = [shulker_stacks]);
+               && (nametag = shulker_tag:'components':'minecraft:custom_name') != null
+               && (shulker_type = lower(nametag) ~ '(restock|swap)\\s+(same|keep|next|random|first)')
+               && ([action_type, idx_choice] = parse_nbt(shulker_type);(action_type != 'restock' || count == 0))
+               && (shulker_stacks = shulker_tag:'components':'minecraft:container[]') != null,
+            if (type(shulker_stacks) == 'nbt', shulker_stacks = [shulker_stacks]);
             sb_item_count = length(shulker_stacks);
             for( shulker_stacks,
                // item matches and not a potion or matching potion effect as well as same and keep
-               if( _:'id' == item_fqdn && ( !(previous_item ~ 'potion$') || ( (idx_choice == 'same' || idx_choice == 'keep') && ( _:'tag':'Potion' == tag:'Potion' ) ) ),
+               if (_:'item':'id' == item_fqdn && (!(previous_item ~ 'potion$') || ((idx_choice == 'same' || idx_choice == 'keep') && (_:'item':'tag':'Potion' == tag:'Potion'))),
                   replacement_index = if (
                      // either not a potion or matches potion effect
-                     (idx_choice == 'same' || idx_choice == 'keep') && ( !(previous_item ~ 'potion$') || _:'tag':'Potion' == tag:'Potion' ),
+                     (idx_choice == 'same' || idx_choice == 'keep') && ( !(previous_item ~ 'potion$') || _:'item':'tag':'Potion' == tag:'Potion'),
                         _i,
                      idx_choice == 'random', 
                         floor(rand(sb_item_count)),
@@ -303,43 +303,49 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
                         0
                      ,
                      // else - logic for 'next'
-                        sequence = shulker_tag:'tag.RestockSequence';
-                        if (sequence == null,
-                        // new sbox
-                           if (!has(shulker_tag:'tag'), shulker_tag:'tag' = '{}');
-                           sequence = 0;
-                        ,
-                        // old sbox
-                           sequence = (sequence+1)%sb_item_count;
-                        );
-                        shulker_tag:'tag.RestockSequence' = sequence;
-                        sequence
+                     sequence = shulker_tag:'components':'tag.RestockSequence';
+                     if (sequence == null,
+                     // new sbox
+                        if (!has(shulker_tag:'components':'tag'), shulker_tag:'components':'tag' = '{}');
+                        sequence = 0;
+                     ,
+                     // old sbox
+                        sequence = (sequence+1)%sb_item_count;
+                     );
+                     shulker_tag:'components':'tag.RestockSequence' = sequence;
+                     sequence
                   );
+                  
                   // get stack info from the shulker box
                   swapped_item_tag = shulker_stacks:replacement_index;
-                  swapped_id = swapped_item_tag:'id';
-                  swapped_count = swapped_item_tag:'Count';
-                  swapped_tag = swapped_item_tag:'tag';
+                  swapped_id = swapped_item_tag:'item':'id';
+                  swapped_count = swapped_item_tag:'item':'count';
+                  swapped_tag = swapped_item_tag:'item':'tag';
+                  
                   // keep - skip if the stack size is 1
                   if (idx_choice == 'keep' && swapped_count == 1,
                      continue();
                   );
+
+
                   // shulker box changes
-                  if (count>0, // replace tag
+                  if (count > 0, // replace tag
                      // because 'minecraft:stone' gets parsed as a string 'minecraft' as a tag
                      // so we need extra quotes for that
-                     swapped_item_tag:'id' = '"'+__to_fqdn(item)+'"';
-                     swapped_item_tag:'Count' = count+'b';
-                     if (tag, swapped_item_tag:'tag' = tag, delete(swapped_item_tag:'tag'));
-                     put(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']', swapped_item_tag, 'replace');
+                     swapped_item_tag:'item':'id' = '"' + __to_fqdn(item) + '"';
+                     swapped_item_tag:'item':'count' = count + 'b';
+
+                     if (tag, swapped_item_tag:'item':'tag' = tag, delete(swapped_item_tag:'item':'tag'));
+                     put(shulker_tag, 'components.minecraft:container[' + replacement_index + ']', swapped_item_tag, 'replace');
                   , // else if, keep 1 in the shulker box
                   idx_choice == 'keep',
                      swapped_count += -1;
-                     swapped_item_tag:'Count' = 1+'b';
-                     put(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']', swapped_item_tag, 'replace');
+                     swapped_item_tag:'item':'count' = 1 + 'b';
+                     put(shulker_tag, 'components.minecraft:container[' + replacement_index + ']', swapped_item_tag, 'replace');
                   , // else remove that item from the list
-                     delete(shulker_tag, 'BlockEntityTag.Items['+replacement_index+']');
+                     delete(shulker_tag, 'components.minecraft:container[' + replacement_index + ']');
                   );
+      
                   inventory_set(inventory, islot, 1, shulker_item, shulker_tag);
                   inventory_set(player, slot, swapped_count, swapped_id, swapped_tag);
                   return();
@@ -349,6 +355,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
       )      
    )
 );
+
 
 // almost exact copy of totem usage detection from carried_totem.sc
 // totems have a stack size of 1, so they won't restock from a "keep" box
