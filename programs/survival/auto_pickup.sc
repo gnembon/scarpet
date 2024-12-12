@@ -41,9 +41,11 @@ _move_items_to_inventory(player, coords) ->
 		try
 		(
 			l(item_name, count, item_nbt) = (current_entity_item ~ 'item');
+			item_nbt = replace(item_nbt, 'count:\\d+,', '');
 			slot = -1;
 			while( (slot = inventory_find(player, item_name, slot+1)) != null, 41,
 				current = inventory_get(player, slot);
+				current:2 = replace(current:2, 'count:\\d+,', '');
 				if ( current:1+count <= stack_limit(item_name) && current:2 == item_nbt,
 					inventory_set(player, slot, count+current:1);
 					throw()
