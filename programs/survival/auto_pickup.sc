@@ -41,17 +41,20 @@ _move_items_to_inventory(player, coords) ->
 		try
 		(
 			l(item_name, count, item_nbt) = (current_entity_item ~ 'item');
-			slot = -1;
-			while( (slot = inventory_find(player, item_name, slot+1)) != null, 41,
-				current = inventory_get(player, slot);
-				matched_count_nbt = current:2;
-				if ( has(item_nbt, 'count'),
-					put(matched_count_nbt, 'count', count)
-				);
-				if ( current:1+count <= stack_limit(item_name) && matched_count_nbt == item_nbt,
-					inventory_set(player, slot, count+current:1);
-					throw()
-				)			
+			// special-case shulker boxes because of the carpet rule stackableShulkerBoxes
+			if (!(item_name ~ 'shulker_box' && has(item_nbt, 'components')),
+				slot = -1;
+				while( (slot = inventory_find(player, item_name, slot+1)) != null, 41,
+					current = inventory_get(player, slot);
+					matched_count_nbt = current:2;
+					if ( has(item_nbt, 'count'),
+						put(matched_count_nbt, 'count', count)
+					);
+					if ( current:1+count <= stack_limit(item_name) && matched_count_nbt == item_nbt,
+						inventory_set(player, slot, count+current:1);
+						throw()
+					)			
+				)
 			);
 			slot = inventory_find(player, null);
 			if (slot != null && slot < 36, // skip #40, like in vanilla
