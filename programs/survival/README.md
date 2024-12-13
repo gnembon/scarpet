@@ -255,6 +255,11 @@ Various scripts that modify various game elements, often replicating popular mod
 	If you run out of an item for any reason, it will be refilled from the hotbar, then shulker boxes in the hotbar.
 	Useful for large scale building, or afk sand placing around a monument.
 
+ ### [replace_hotbar.1.20.5+.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.1.20.5%2B.sc):
+ #### Originally by gnembonmc; updated by WesleyJ-128
+ 	Exact same functionality as ``replace_hotbar.sc``, but updated to work with in 1.20.5+ with the new item component
+  	system.
+
 ### [replace_inventory.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_inventory.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
@@ -447,4 +452,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	Xendergo
 	ch-yx
 	Crec0
+ 	WesleyJ-128
 	(Many more hopefully!)
