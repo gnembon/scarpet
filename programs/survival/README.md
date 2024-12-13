@@ -257,7 +257,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
  ### [replace_hotbar.1.20.5+.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.1.20.5%2B.sc):
  #### Originally by gnembonmc; updated by WesleyJ-128
- 	Exact same functionality as ``replace_hotbar.sc``, but updated to work with in 1.20.5+ with the new item component
+ 	Exact same functionality as replace_hotbar.sc, but updated to work with in 1.20.5+ with the new item component
   	system.
 
 ### [replace_inventory.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_inventory.sc):
