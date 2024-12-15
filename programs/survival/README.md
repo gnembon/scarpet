@@ -1,4 +1,3 @@
-# Survival scarpet apps
 Various scripts that modify various game elements, often replicating popular modded features, intended for use in (but not limited to) survival worlds.
 
 ## Survival scarpet apps in alphabetical order with creator:
@@ -399,8 +398,7 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [villager_poi.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/villager_poi.sc):
 #### By gnembonmc
-	Keeps track of villager poi system?
-	(Please enter an explanation, as it quite unclear)
+	When holding a map and looking at a villager, the corresponding POI blocks will fly from over the villager's head to their claimed bed, job site and bell. 
 
 ### [vines_instant_mine.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/vines_instant_mine.sc):
 #### By BisUmTo
