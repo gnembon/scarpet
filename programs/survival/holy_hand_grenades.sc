@@ -10,17 +10,13 @@ __holds(entity, hand, item_regex, enchantment) ->
 (
 	if (entity~'gamemode_id'==3, return(0));
 	holds = query(entity, 'holds', hand);
-	lvl = -1;
 	if( holds,
 		[what, count, nbt] = holds;
-		if ((what ~ item_regex) && (enchs = nbt:'Enchantments[]'),
-			if (type(enchs)!='list', enchs = [enchs]);
-			for ( filter(enchs, _:'id' == 'minecraft:'+enchantment),
-				lvl = max(lvl, _:'lvl')
-			)
+		if ((what ~ item_regex) && (lvl = nbt:('components.minecraft:enchantments.minecraft:'+enchantment)),
+			return(lvl)
 		)
 	);
-	lvl
+	-1
 );
 
 __distance(v1, v2) -> sqrt(reduce(v1-v2,_*_+_a,0));
@@ -38,8 +34,13 @@ __create_bullet(player, power) ->
 (
 	look = player ~ 'look';
 	fireball_pos = (player ~ 'pos')+[0, player ~ 'eye_height', 0]+look;
-	fireball = spawn('fireball',fireball_pos,
-		str('{power:[%.2f,%.2f,%.2f],direction:[0.0,0.0,0.0]},ExplosionPower:0',look/5)
+	if (system_info('game_major_target')+system_info('game_minor_target')/10 < 20.5,
+	    fireball = spawn('fireball',fireball_pos,
+        	str('{power:[%.2f,%.2f,%.2f],direction:[0.0,0.0,0.0]},ExplosionPower:0',look/5)
+        )
+    , // else
+        fireball = spawn('fireball',fireball_pos, str('{acceleration_power:0.2,ExplosionPower:0}'));
+        modify(fireball,'motion',look/5)
 	);
 	sound('item.firecharge.use',fireball_pos, 1, 1);
 	entity_event(fireball,'on_removed','__explode', look, power)
