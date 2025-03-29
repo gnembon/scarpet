@@ -43,26 +43,24 @@ __refill_endtick(player, old_item, slot) ->
 	for(range(35, 0, -1), 
 		if ((inv_item = inventory_get(player, _)):0 == item_name, // we found it
 			inventory_set(player,slot,inv_item:1, inv_item:0, inv_item:2);
-			inventory_set(player, _, 0);
+			inventory_set(player, _, null);
 			return()		
 		)
 	);
 	// now search in sboxes
 	for(range(35, 0, -1), sbox_slot = _;
 		if ( (shulker_box = inventory_get(player, sbox_slot)):0 ~ 'shulker_box', // found a shulkerbox			
-			sbox_items = shulker_box:2:'components':'minecraft:container[]';
+			sbox_items = shulker_box:2:'BlockEntityTag.Items[]';
 			// skip empty or uninitialized sboxes				
 			if (sbox_items,
 				//making sure we have a list, since one element is a scalar response
 				if (type(sbox_items)!='list', sbox_items = l(sbox_items));
-				long_item_name = 'minecraft:'+item_name;			
+				long_item_name = 'minecraft:'+item_name;				
 				for (sbox_items,
-					if (_:'item':'id' == long_item_name, // found it
-						inventory_set(player,slot, _:'item':'count', _:'item':'id', _:'item');
-            data = shulker_box:2;
-						delete(sbox_items, _i);
-            put(data, 'components."minecraft:container"', sbox_items);
-						inventory_set(player, sbox_slot, shulker_box:1, shulker_box:0, data);
+					if (_:'id' == long_item_name, // found it
+						inventory_set(player,slot, _:'Count', item_name, _:'tag');
+						delete(shulker_box:2, 'BlockEntityTag.Items['+_i+']');
+						inventory_set(player, sbox_slot, shulker_box:1, shulker_box:0, shulker_box:2);
 						return()
 					)
 				)
@@ -70,3 +68,4 @@ __refill_endtick(player, old_item, slot) ->
 		)
 	)
 )
+
