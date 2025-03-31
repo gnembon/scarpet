@@ -249,15 +249,16 @@ Various scripts that modify various game elements, often replicating popular mod
 	app, including the villager being in the end, needing to right click it with an elytra, the elyta being consumed, minimum
 	level of the villager and chances of the trade to fail.
 
-### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
+### [replace_hotbar_1.20.4-.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.sc):
 #### By gnembonmc
 	There is a video on his channel about this.
 	If you run out of an item for any reason, it will be refilled from the hotbar, then shulker boxes in the hotbar.
 	Useful for large scale building, or afk sand placing around a monument.
+ 	Works on versions 1.20.4 and below.
 
- ### [replace_hotbar.1.20.5+.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.1.20.5%2B.sc):
+ ### [replace_hotbar.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_hotbar.1.20.5%2B.sc):
  #### Originally by gnembonmc; updated by WesleyJ-128
- 	Exact same functionality as replace_hotbar.sc, but updated to work with in 1.20.5+ with the new item component
+ 	Exact same functionality as replace_hotbar.sc, but updated to work in 1.20.5+ with the new item component
   	system.
 
 ### [replace_inventory.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/replace_inventory.sc):
