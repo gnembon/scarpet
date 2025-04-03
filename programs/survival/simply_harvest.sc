@@ -1,74 +1,77 @@
-///
-// Simply Harvest
-// by Gnottero & BisUmTo
-// (Carpet Mod 1.4.20)
+// 
+// by Gnottero
+// (Carpet Mod 1.4.169)
+// Allows the player to harvest crops by right-clicking (setting the age of the crop back to zero)
+// Compatible with minecraft 1.21 and with any crop + nether warts
 //
-// Allows the player to right-click on a crop to harvest it. The "Fortune" enchantment affects drops
-///
 
-__config() -> {'stay_loaded' -> true, 'scope' -> 'global'};
-
-global_seeds = {
-    'wheat' -> 'wheat_seeds',
-    'potatoes' -> 'potato',
-    'carrots' -> 'carrot',
-    'beetroots' -> 'beetroot_seeds',
-    'nether_wart' -> 'nether_wart'
+__config() -> {
+    'stay_loaded' -> true
 };
 
-// variable indicating that harvesting occurred
-global_harvesting = false;
+
+// [Begin] Scarpet Events
 
 __on_player_right_clicks_block(player, item_tuple, hand, block, face, hitvec) -> (
-    if(hand=='offhand' || player~'gamemode_id' == 3, return());
-    if(block_tags(block,'crops') || block == 'nether_wart',
-        (
-            crop_age = block_state(block, 'age');
-            if(((crop_age == 7 && (block == 'wheat' || block == 'potatoes' || block == 'carrots')) || (crop_age == 3 && (block == 'beetroots' || block == 'nether_wart'))),
-                (
-                    can_destroy = item_tuple:2:'CanDestroy[]';
-                    if(type(can_destroy) != 'list', can_destroy = [can_destroy]);
-                    if(player~'gamemode_id' == 2 && can_destroy~('minecraft:' + block) == null, return());
-                    harvest(player, pos(block));
-                    if(player~'gamemode_id' == 1, set(pos(block), block, 'age', 0); return());
-                    global_harvesting = true;
-                    schedule(0,_(outer(block)) -> (
-                            global_harvesting = false;
-                            for(entity_area('item', pos(block), [2, 2, 2]),
-                                if(query(_, 'age') <= 1 && query(_, 'item'):0 == global_seeds:str(block),
-                                    nbt = query(_, 'nbt');
-                                    nbt:'Item.Count' = nbt:'Item.Count' - 1;
-                                    modify(_, 'nbt', nbt);
-                                    set(pos(block), block, 'age', 0);
-                                    return();
-                                )
-                            );
-                        )
-                    );
-                    // reset hand slot to prevent using up blocks
-                    // apparently mainhand can get checked right away
-                    // harvesting was just set to true, no need to check
-                    if(hand == 'mainhand',
-                        // visually update inventory
-                        inventory_set(player, slot = player~'selected_slot', inventory_get(player, slot):1);
-                        // cancel the rest of the event to prevent the item from being used
-                        return('cancel')
-                    )
-                );
-            );
-        );
+    if (hand != 'mainhand', return());
+    if (!canHarvest(player, item_tuple, hand, block), return());
+    age = block_state(block, 'age');
+    try(
+        block_state(str('%s[age=%d]', block, number(age) + 1)), 
+        'unknown_block',
+        harvestCrop(player, item_tuple, hand, block);
     );
 );
 
-// reset hand slot to prevent using up blocks
-// offhand requires this event for some reason
-__on_player_placing_block(player, item_tuple, hand, block) ->
-(
-    // only applies while harvesting
-    if(global_harvesting && hand == 'offhand',
-        // visually update inventory
-        inventory_set(player, slot = 40, inventory_get(player, slot):1);
-        // cancel the rest of the event to prevent the item from being used
-        return('cancel')
+// [End] Scarpet Events
+
+
+// [Begin] Custom Functions
+
+canHarvest(player, item_tuple, hand, block) -> (
+    
+    if (query(player, 'gamemode_id') == 3, return(false));
+    if (block_tags(block)~'crops' == null && block != 'nether_wart', return(false));
+    if (query(player, 'gamemode_id') == 2,
+        (
+            canBreak = parse_nbt(item_tuple:2:'components'):'minecraft:can_break';
+            if (type(canBreak) != null,
+                blockList = getBreakableBlocks(canBreak);
+                return(blockList~block != null);
+            );
+            return(false);
+        ),
+        return(true)
     );
 );
+
+
+harvestCrop(player, item_tuple, hand, block) -> (
+    harvest(player, pos(block));
+    set(pos(block), block, 'age', 0);
+    modify(player, 'swing', hand);
+);
+
+
+getBreakableBlocks(components) -> (
+    blockList = [];
+    if (type(components) == 'list',
+        (
+            for (components,
+                if (_:'blocks'~'#minecraft:',
+                    reduce(block_list(replace(_:'blocks', '#', '')), blockList += _, 0),
+                    blockList += replace(_:'blocks', 'minecraft:', '');
+                );
+            )
+        ),
+        (
+            if (components:'blocks'~'#minecraft:',
+                reduce(block_list(replace(components:'blocks', '#', '')), blockList += _, 0),
+                blockList += replace(components:'blocks', 'minecraft:', '');
+            );
+        )
+    );    
+    return(blockList)
+);
+
+// [End] Custom Functions
