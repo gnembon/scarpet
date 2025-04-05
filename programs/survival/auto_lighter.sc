@@ -14,14 +14,6 @@ __on_start() -> (
 	global_light_ground = true; //Whether or not we want to light the surface
 );
 
-
-// stay loaded
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
-
 __on_player_uses_item(player, item, hand) ->
 (
 	if (hand != 'mainhand', return());
