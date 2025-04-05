@@ -3,7 +3,7 @@
 
 __config() -> {'scope' -> 'global'};
 
-__on_server_starts() -> (
+__spawn_players() -> (
    data = load_app_data();
    if (data && data:'players',
       data = parse_nbt(data:'players');
@@ -13,9 +13,14 @@ __on_server_starts() -> (
               str('gamemode %s %s', _:'gm', _:'name')],
             logger('warn', _);
             run(_);
-         )
+         );
+         modify(player(_:'name'), 'flying', _:'fly')
       )
    );
+);
+
+__on_server_starts() -> (
+  task('__spawn_players');
 );
 
 __on_server_shuts_down() -> (
@@ -31,6 +36,7 @@ __on_server_shuts_down() -> (
       pdata:'yaw' = _~'yaw';
       pdata:'pitch' = _~'pitch';
       pdata:'gm' = _~'gamemode';
+      pdata:'fly' = _~'flying';
       put(data, 'players', pdata, -1);
       saved += _~'name';
    );

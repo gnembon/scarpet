@@ -10,7 +10,7 @@ __help() -> (
 	print(p, 'To select the region to affect right and left click with an iron sword to slect corners of the volume. Use /curves reset_positions to erase selection.');
 	print(p, 'To define size of box around player in continuous mode, use /cover set_size and /cover set_offset. Toggle on or off with /cover continuous. ');
 	print(p, 'Place block to cover in offhand and block to cover with in main hand.');
-	print(p, 'To create a list of block pairs, put s hulker box in each hand. Items in corresponding slots will make cover pairs.');
+	print(p, 'To create a list of block pairs, put a shulker box in each hand. Items in corresponding slots will make cover pairs.');
 	print(p, 'Undo the last n actions you did with /cover undo n. Use big numbers for continuos mode.');
 
 	print(player(), '');

@@ -87,7 +87,7 @@ __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimen
 
 		//scan each side of the portal for blocks based on the player's chosen mode
 		//	air -> face the side with more air blocks
-		//	solid -> face the side with less solid blocks
+		//	solid -> face the side with fewer solid blocks
 		sidelist = l[];
 		loop(2,
 			sign = 2 * _ - 1;
@@ -121,7 +121,7 @@ __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimen
 //tracks portal blocks along a diagonal until it encounters an edge,
 //	and then travels along the edge to find the corner
 //this is faster than using scan() on the portal(20 blocks up, down, left, and right) to
-//	find the corners because it checks less than 50 blocks instead of 1000+ blocks
+//	find the corners because it checks fewer than 50 blocks instead of 1000+ blocks
 //according to profile_expr(), it's about 10x faster,
 //this is also faster than scanning a single row up, down, left, and right because using
 //	the diagonal checks two directions at once

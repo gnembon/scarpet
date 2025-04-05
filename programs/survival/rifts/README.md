@@ -1,7 +1,9 @@
 # Rifts.
 App spawns random portals in the world that can be activated by paying an emerald to activate or to go through. 
 Will destroy land around the portals. Creates custom dimension for each spawned portal. Resulting world with 
-all its dimensions can still be used in vanilla and without the app.
+all its dimensions can still be used in vanilla and without the app. 
+
+Only runs with Minecraft versions 1.16.5 and 1.17. Incompatible with newer versions due to incompatible API changes.
 
 ## Features of Rifts
 

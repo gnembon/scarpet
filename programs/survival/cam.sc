@@ -117,9 +117,10 @@ __store_player_takeoff_params(player) ->
 
 __restore_player_params(player, config) ->
 (
-   run('execute in minecraft:'+config:'dimension'+' run tp @s ~ ~ ~');
+   [x, y, z] = config:'pos';
+   run('execute in minecraft:'+config:'dimension'+' run tp @s '+x+' '+y+' '+z);
    modify(player, 'gamemode', 'survival');
-   for(l('pos', 'motion', 'yaw', 'pitch'), modify(player, _, config:_));
+   for(l('motion', 'yaw', 'pitch'), modify(player, _, config:_));
    for (config:'effects',
       modify(player, 'effect', _:'name', _:'duration', _:'amplifier')
    );

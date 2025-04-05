@@ -1,21 +1,19 @@
 __holds(entity, item_regex, enchantment) -> 
 (
 	if (entity~'gamemode_id'==3, return(0));
-	for(l('mainhand','offhand'),
-		holds = query(entity, 'holds', _);
-		if( holds,
-			l(what, count, nbt) = holds;
-			if ((what ~ item_regex) && (enchs = get(nbt,'Enchantments[]')),
-				if (type(enchs)!='list', enchs = l(enchs));
-				for (enchs, 
-					if ( get(_,'id') == 'minecraft:'+enchantment,
-						lvl = max(lvl, get(_,'lvl'))
-					)
-				)	
+	max_lvl = -1;
+	for(['mainhand','offhand'],
+		if( holds = query(entity, 'holds', _),
+			[what, count, nbt] = holds;
+			if (what ~ item_regex,
+				max_lvl = max(max_lvl, 0);
+				if (lvl = nbt:('components.minecraft:enchantments.minecraft:'+enchantment),
+					max_lvl = max(lvl, max_lvl);
+				)
 			)
 		)
 	);
-	lvl
+	max_lvl;
 );
 
 __distance(v1, v2) -> sqrt(reduce(v1-v2,_*_+_a,0));
@@ -29,7 +27,7 @@ __on_player_breaks_block(player, block) ->
 (
 	if (!(player ~ 'sneaking'), return());
 	eff_level = __holds(player, '_pickaxe', 'sharpness');
-	if (eff_level == 0, return());
+	if (eff_level < 0, return());
 	block_name = str(block);
 	l(x,y,z) = pos(block);
 	__cascade_pick(player, 2+eff_level, block_name, pos(block), false)
