@@ -5,7 +5,6 @@
 //By SurfingDude_
 
 __config()->{
-    'stay_loaded' -> true,
     'scope' -> 'global',
     'requires' -> {
         'carpet' -> '>=1.4.57'
@@ -139,13 +138,12 @@ __on_player_dies(player)->(
     global_gdata:str(gravepos)={};
 
     c_for(i=0,i<inventory_size(player),i+=1,
-
         if(inventory_get(player,i)!=null,
             slotItem= inventory_get(player,i);
             global_gdata:str(gravepos):str(i) = slotItem;
             item_count+=1;     
         );
-    
+        inventory_set(player, i, 0);
     );
 
     global_gdata:str(gravepos):'name'= str(player);
@@ -156,7 +154,6 @@ __on_player_dies(player)->(
     global_gdata:str(gravepos):'canRequest'= true;
     global_gdata:str(gravepos):'dimension' = player~'dimension';
 
-    run(str('clear %s', player));
     modify(player,'xp_level',0);
     modify(player,'xp_progress',0);
 );
