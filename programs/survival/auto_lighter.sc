@@ -33,7 +33,7 @@ __on_player_uses_item(player, item, hand) ->
 			if (!ench && player~'gamemode_id'!=3,
 				global_spread_love = 1;
 				if (ench==null, put(item:2:'components', '{}'));
-				put(item:2:'components', '{enchantments:{levels:{"protection":1}}}');
+				put(item:2:'components', '{enchantments:{"protection":1}}');
 					global_survival=!(player~'gamemode_id' % 2);
 				schedule(0, 'spread_torches', player, player~'gamemode_id');
 			);
