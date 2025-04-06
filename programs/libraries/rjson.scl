@@ -1,0 +1,110 @@
+
+if(0,    //if you are using an old version, change it to 1
+    //workaround for old version
+    //raw-json string to text
+    rjson(rj)->(
+        barname='chyxrjson:rjson'+(rand(0.9)-'.');
+        if(bossbar(barname)==false,return(rjson(rj)));
+        command=run('bossbar set '+barname+' name '+rj);
+        res=bossbar(barname,'name');
+        bossbar(barname,'remove');
+        if (command:1,res,throw('not valid r-json'))
+    );
+,
+    //raw-json string to text
+    rjson(rj)->(
+        r1=item_display_name(['apple',1,encode_nbt({'display'->{'Name'->rj}})]);
+        r2=item_display_name(['stone',1,encode_nbt({'display'->{'Name'->rj}})]);
+        if(r1==r2,r1,throw('not valid r-json'))
+    );
+);
+
+//turns text-like values to a real text
+//will accept a [id, count, nbt] in the future
+__argument_rcv=(_(value)->(
+    if(type(value)=='string',pure_text(value),
+    type(value)=='text',value,
+    type(value)=='entity',value~'display_name',
+    type(value)=='list',item_display_name(value),
+    throw('not a text-like value'))
+));
+
+//string to text
+pure_text(str)->(
+    if(type(str)!='string',throw('not string'));
+    rjson(encode_json(str))
+);
+
+//text to raw json string
+text2rjson(text)->(
+    if(type(text)!='text',throw('not text'));
+    encode_json(text)
+);
+
+//modify a text-like value
+for(['color','font','insertion'],
+    call('fset_'+_,text,color,outer(_),outer(__argument_rcv))->(
+        text=call(__argument_rcv,text);
+        obj=decode_json(encode_json(text));
+        obj:_=color;
+        rjson(encode_json(obj))
+    );
+);
+
+//same format as format()
+fset_click(text,event,outer(__argument_rcv))->(
+    if(split('!?&@')~slice(event,0,1)==null,throw('not correct'));
+    text=call(__argument_rcv,text);
+    obj1=decode_json(encode_json(format(' dummy',event)));
+    obj2=decode_json(encode_json(text));
+    obj2:'clickEvent'=obj1:'extra':0:'clickEvent';
+    rjson(encode_json(obj2))
+);
+
+//format should be a string of biuso=>false or BIUSO=>true
+fset_format(text,format,outer(__argument_rcv))->(
+    fmts=['bold','italic','underlined','strikethrough','obfuscated'];
+    fmts1=['b','i','u','s','o'];
+    fmts2=['B','I','U','S','O'];
+    text=call(__argument_rcv,text);
+    obj=decode_json(encode_json(text));
+    loop(5,(
+        if(format~(fmts1:_),obj:(fmts:_)=false);
+        if(format~(fmts2:_),obj:(fmts:_)=true)
+    ));
+    rjson(encode_json(obj))
+);
+//join 2 text-like values
+hovertext(base,hover,outer(__argument_rcv))->(
+    base=call(__argument_rcv,base);
+    hover=call(__argument_rcv,hover);
+    obj1=decode_json(encode_json(base));
+    obj2=decode_json(encode_json(hover));
+    obj1:'hoverEvent'={'action'->'show_text','contents'->obj2};
+    rjson(encode_json(obj1))
+);
+
+
+//'with' can be any text-like argument
+translate(key,outer(__argument_rcv),...with)->(
+    with=map(with,call(__argument_rcv,_));
+    rjson(encode_json({'translate'->key,'with'->with}))
+);
+
+say(player,text)->translate('chat.type.text',player,text);
+bra(text)->translate('chat.square_brackets',text);
+
+
+keybind(key)->(
+    rjson(encode_json({'keybind'->key}))
+)
+
+
+//script run import('rjson',...import('rjson'))
+//script run x=''+fset_color('eee','red')+fset_insertion(format('e eee'),'click!');print(hovertext(x,x))
+
+//script run print(translate('death.attack.fireworks.item',p,'who',format('e apple')))
+
+//script run print(fset_font(keybind('key.inventory'),'alt'))
+
+//script run print(fset_format(p,'IBo'))
