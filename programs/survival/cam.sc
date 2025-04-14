@@ -19,6 +19,8 @@ __assert_player_can_cam_out(player) ->
 // none of your business below
 
 
+global_exit_messages = ['y Exited camera mode', 'r You tried to exit the world border'];
+global_exit_message = 0;
 
 
 __config() -> {
@@ -30,15 +32,16 @@ __command() ->
    p = player();
    current_gamemode = p~'gamemode';
    if ( current_gamemode == 'spectator',
+      entity_event(p, 'on_move', null);
       if (config = __get_player_stored_takeoff_params(p~'name'),
          __remove_camera_effects(p);
          __restore_player_params(p, config);
          __remove_player_config(p~'name');
-         display_title(p, 'actionbar', format('y Exited camera mode'));
+         display_title(p, 'actionbar', format(global_exit_messages:global_exit_message));
       ,
          if (__survival_defaults(p), 
             __remove_camera_effects(p);
-            display_title(p, 'actionbar', format('y Exited camera mode'));
+            display_title(p, 'actionbar', format(global_exit_messages:global_exit_message));
          );
       );
    , current_gamemode == 'survival' && !global_is_in_switching, // else if survival - switch to spectator
@@ -57,6 +60,19 @@ __command() ->
             __store_player_takeoff_params(p);
             __turn_to_camera_mode(p);
             display_title(p, 'actionbar', format('y Entered camera mode'));
+            entity_event(p, 'on_move', _(p, vel, p1, pos) -> (
+    			   center = system_info('world_center');
+   				size = system_info('world_size');
+    			   positive = center + size;
+    			   negative = center - size;
+    			   pos = p ~ 'pos';
+    			   if (pos:0 > positive:0 || pos:0 < negative:0
+      			|| pos:2 > positive:2 || pos:2 < negative:2,
+		  global_exit_message = 1;
+                  __command();
+		  global_exit_message = 0;
+    			   );
+			   ));
          )
       ));
    , current_gamemode == 'creative',
