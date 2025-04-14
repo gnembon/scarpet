@@ -1,0 +1,1428 @@
+//map of default directions for each block when placed with /setblock and no additional properties
+global_default_direction = {
+	['piston$','north']
+	['^piston_head$','north'],
+	['^small_amethyst_bud$','up'],
+	['^medium_amethyst_bud$','up'],
+	['^large_amethyst_bud$','up'],
+	['^amethyst_cluster$','up']
+};
+
+//list of blocks that are transparent but still have a full block collision box
+global_full_transparent = [
+	'leaves$',
+	'glass$',
+	'ice$',
+	'^glowstone$',
+	'^beacon$',
+	'^redstone_block$',
+	'^sea_lantern$',
+	'^observer$',
+	'^tnt$',
+	'^chorus_flower$',
+	'shulker_box$'
+];
+
+//list of blocks that pass solid() but are not full blocks
+global_not_solid = [
+	'^soul_sand$'
+];
+
+//list of tags of blocks with no collision box
+global_no_box_tags = [
+	'small_flowers',
+	'replaceable_plants',
+	'banners',
+	'rails',
+	'buttons',
+	'pressure_plates',
+	'signs',
+	'bee_growables',
+	'fire',
+	//just gonna leave portals here for now unless someone needs them
+	'portals'
+];
+
+//list of blocks with no collision box
+global_no_box_blocks = [
+	'air$',
+	'_stem$',
+	'torch$',
+	'^redstone_wire$',
+	'^(?!potted_).*?(_mushroom)$',
+	'^nether_wart$',
+	'^tripwire',
+	'^lever$',
+	'^sugar_cane$',
+	'grass$',
+	'^(?!potted_).*?(_fungus)$',
+	'^(?!potted_).*?(_roots)$',
+	'^kelp',
+	'^nether_sprouts$',
+	'^spore_blossom$',
+	'^scaffolding$',
+	'^cobweb$',
+	'^small_dripleaf$',
+	'^(?!potted_).*?(_sapling)$',
+	'vine',
+	'^light$',
+	'structure_void',
+	'_coral(?!_block)',
+
+	//for now, we'll set these liquids as null
+	'^water$',
+	'^lava$',
+	'^bubble_column$',
+	'^powder_snow$'
+];
+
+//map of all weird collision boxes
+global_box_map = {
+	['_slab$',
+		[
+			[[0,0,0],[1,0.5,1]]
+		]
+	],
+	['_stairs$',
+		[
+			[[0,0,0],[1,0.5,1]]
+		]
+	],
+	['^potted_',
+		[
+			[[0.3125,0,0.3125],[0.6875,0.375,0.6875]]
+		]
+	],
+	['^flower_pot$',
+		[
+			[[0.3125,0,0.3125],[0.6875,0.375,0.6875]]
+		]
+	],
+	['^end_portal_frame$',
+		[
+			[[0,0,0],[1,0.8125,1]]
+		]
+	],
+	['^brewing_stand$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.125,0.9375]],
+			[[0.4375,0.125,0.4375],[0.5625,0.875,0.5625]]
+		]
+	],
+	['^enchanting_table$',
+		[
+			[[0,0,0],[1,0.75,1]]
+		]
+	],
+	['^farmland$',
+		[
+			[[0,0,0],[1,0.9375,1]]
+		]
+	],
+	['^ender_chest$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.875,0.9375]]
+		]
+	],
+	['^dirt_path$',
+		[
+			[[0,0,0],[1,0.9375,1]]
+		]
+	],
+	['anvil$',
+		[
+			[[0.125,0,0.125],[0.875,0.25,0.875]],
+			[[0.25,0.25,0.1875],[0.75,0.3125,0.8125]],
+			[[0.375,0.3125,0.25],[0.625,0.625,0.75]],
+			[[0.1875,0.625,0],[0.8125,1,1]]
+		]
+	],
+	['_bed$',
+		[
+			[[0,0,0.8125],[0.1875,0.1875,1]],
+			[[0.8125,0,0.8125],[1,0.1875,1]],
+			[[0,0.1875,0],[1,0.5625,1]]
+		]
+	],
+	//ah yes, the fun one
+	['cauldron$',
+		[
+			[[0.125,0.1875,0.125],[0.875,0.25,0.875]],
+			
+			[[0,0,0],[0.25,1,0.125]],
+			[[0.25,0.1875,0],[0.75,1,0.125]],
+			[[0.75,0,0],[1,1,0.125]],
+			
+			[[0,0,0.875],[0.25,1,1]],
+			[[0.25,0.1875,0.875],[0.75,1,1]],
+			[[0.75,0,0.875],[1,1,1]],
+			
+			
+			[[0,0,0.125],[0.125,1,0.25]],
+			[[0,0,0.75],[0.125,1,0.875]],
+			[[0,0.1875,0.25],[0.125,1,0.75]],
+
+			[[0.875,0,0.125],[1,1,0.25]],
+			[[0.875,0,0.75],[1,1,0.875]],
+			[[0.875,0.1875,0.25],[1,1,0.75]]
+		]
+	],
+	['glass_pane$',
+		[
+			[[0.4375,0,0.4375],[0.5625,1,0.5625]]
+		]
+	],
+	['^iron_bars$',
+		[
+			[[0.4375,0,0.4375],[0.5625,1,0.5625]]
+		]
+	],
+	['_fence$'
+		[
+			[[0.375,0,0.375],[0.625,1.5,0.625]]
+		]
+	],
+	['^chorus_plant$',
+		[
+			[[0.1875,0.1875,0.1875],[0.8125,0.8125,0.8125]]
+		]
+	],
+	['_carpet$',
+		[
+			[[0,0,0],[1,0.0625,1]]
+		]
+	],
+	['^repeater$',
+		[
+			[[0,0,0],[1,0.125,1]]
+		]
+	],
+	['^comparator$',
+		[
+			[[0,0,0],[1,0.125,1]]
+		]
+	],
+	['^daylight_detector$',
+		[
+			[[0,0,0],[1,0.375,1]]
+		]
+	],
+	['^lily_pad$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.09375,0.9375]]
+		]
+	],
+	['^conduit$',
+		[
+			[[0.3125,0.3125,0.3125],[0.6875,0.6875,0.6875]]
+		]
+	],
+	['^stonecutter$',
+		[
+			[[0,0,0],[1,0.5625,1]]
+		]
+	],
+	['campfire$',
+		[
+			[[0,0,0],[1,0.4375,1]]
+		]
+	],
+	['^honey_block$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.9375,0.9375]]
+		]
+	],
+	['(?<!(?:_wall)|(?:piston))_head$',
+		[
+			[[0.25,0,0.25],[0.75,0.5,0.75]]
+		]
+	],
+	['(?<!_wall)_skull$',
+		[
+			[[0.25,0,0.25],[0.75,0.5,0.75]]
+		]
+	],
+	['^composter$',
+		[
+			[[0,0,0],[1,0.125,1]],
+
+			[[0,0.125,0],[1,1,0.125]],
+			[[0,0.125,0.875],[1,1,1]],
+
+			[[0,0.125,0.125],[0.125,1,0.875]],
+			[[0.875,0.125,0.125],[1,1,0.875]]
+		]
+	],
+	['^sculk_sensor$',
+		[
+			[[0,0,0],[1,0.5,1]]
+		]
+	],
+	['azalea$',
+		[
+			[[0.375,0,0.375],[0.625,0.5,0.625]],
+			[[0,0.5,0],[1,1,1]]
+		]
+	],
+	['^small_amethyst_bud$',
+		[
+			[[0.25,0,0.25],[0.75,0.1875,0.75]]
+		]
+	],
+	['^medium_amethyst_bud$',
+		[
+			[[0.1875,0,0.1875],[0.8125,0.25,0.8125]]
+		]
+	],
+	['^large_amethyst_bud$',
+		[
+			[[0.1875,0,0.1875],[0.8125,0.3125,0.8125]]
+		]
+	],
+	['^amethyst_cluster$',
+		[
+			[[0.1875,0,0.1875],[0.8125,0.4375,0.8125]]
+		]
+	],
+	['(?<!sea_|jack_o_)lantern$',
+		[
+			[[0.3125,0,0.3125],[0.6875,0.4375,0.6875]],
+			[[0.375,0.4375,0.375],[0.625,0.5625,0.625]]
+		]
+	],
+	['^bell$',
+		[
+			[[0,0,0.25],[1,1,0.75]]
+		]
+	],
+	['^ladder$',
+		[
+			[[0,0,0.8125],[1,1,1]]
+		]
+	],
+	['_rod$',
+		[
+			[[0.375,0,0.375],[0.625,1,0.625]]
+		]
+	],
+	['^lectern$',
+		[
+			[[0,0,0],[1,0.125,1]],
+			[[0.25,0.125,0.25],[0.75,0.875,0.75]]
+		]
+	],
+	['^snow$',
+		[
+			[[0,0,0],[1,0,1]]
+		]
+	],
+	['^cactus$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.9375,0.9375]]
+		]
+	],
+	['^chain$',
+		[
+			[[0.40625,0,0.40625],[0.59375,1,0.59375]]
+		]
+	],
+	['^cake$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.5,0.9375]]
+		]
+	],
+	['^turtle_egg$',
+		[
+			[[0.1875,0,0.1875],[0.75,0.4375,0.75]]
+		]
+	],
+	['^sea_pickle$',
+		[
+			[[0.375,0,0.375],[0.625,0.375,0.625]]
+		]
+	],
+	['candle$',
+		[
+			[[0.4375,0,0.4375],[0.5625,0.375,0.5625]]
+		]
+	],
+	['candle_cake$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.5,0.9375]],
+			[[0.4375,0.5,0.4375],[0.5625,0.875,0.5625]]
+		]
+	],
+	['_wall$',
+		[
+			[[0.3125,0,0.3125],[0.6875,1.5,0.6875]]
+		]
+	],
+	['_trapdoor$',
+		[
+			[[0,0,0],[1,0.1875,1]]
+		]
+	],
+	['_fence_gate$',
+		[
+			[[0,0,0.375],[1,1.5,0.625]]
+		]
+	],
+	['_door$',
+		[
+			[[0,0,0.8125],[1,1,1]]
+		]
+	],
+	['_wall_head$',
+		[
+			[[0.25,0.25,0.5],[0.75,0.75,1]]
+		]
+	],
+	['_wall_skull$',
+		[
+			[[0.25,0.25,0.5],[0.75,0.75,1]]
+		]
+	],
+	['(?<!ender_)chest$',
+		[
+			[[0.0625,0,0.0625],[0.9375,0.875,0.9375]]
+		]
+	],
+	['piston$',
+		[
+			[[0,0,0],[1,1,1]]
+		]
+	],
+	//hopper collision box is order dependent, keep the last list at the end
+	['^hopper$',
+		[
+			//top lip
+			[[0,0.625,0],[1,1,0.125]],
+			[[0,0.625,0.875],[1,1,1]],
+			[[0,0.625,0.125],[0.125,1,0.875]],
+			[[0.875,0.625,0.125],[1,1,0.875]],
+			//big middle region
+			[[0.25,0.25,0.25],[0.75,0.625,0.75]],
+			//base of top opening
+			[[0,0.625,0],[1,0.6875,1]],
+			//bottom portion
+			[[0.375,0,0.375],[0.625,0.25,0.625]]
+		]
+	],
+	['^big_dripleaf$',
+		[
+			[[0,0.6875,0],[1,0.9375,1]]
+		]
+	],
+	['^cocoa$',
+		[
+			[[0.375,0.4375,0.0625],[0.625,0.75,0.3125]]
+		]
+	],
+	['dragon_egg',
+		[
+			[[0.0625,0,0.0625],[0.9375,1,0.9375]]
+		]
+	],
+	['^grindstone$',
+		[
+			[[0.25,0.125,0],[0.75,0.875,0.75]],
+			[[0.125,0.3125,0.1875],[0.875,0.6875,0.5625]],
+			[[0.125,0.375,0.5625],[0.25,0.625,1]],
+			[[0.75,0.375,0.5625],[0.875,0.625,1]]
+		]
+	],
+	['^piston_head$',
+		[
+			[[0,0,0],[1,1,0.25]],
+			[[0.375,0.375,0.25],[0.625,0.625,1.25]]
+		]
+	],
+	['^bamboo$',
+		[
+			[[0.40625,0,0.40625],[0.59375,1,0.59375]]
+		]
+	],
+	['^pointed_dripstone$',
+		[
+			[[0.3125,0,0.3125],[0.6875,0.6875,0.6875]]
+		]
+	],
+	['^soul_sand$',
+		[
+			[[0,0,0],[1,0.875,1]]
+		]
+	]
+};
+
+//and now, every single collision box changing option for every single block state
+global_axis = ['x','y','z'];
+global_extended = [false,true];
+global_facing = ['north','east','south','west','up','down'];
+global_half = ['lower','upper','bottom','top'];
+global_part = ['foot','head'];
+global_hanging = [false,true];
+global_attachment = ['floor','ceiling','single_wall','double_wall'];
+global_eggs = [1,2,3,4];
+global_pickles = [1,2,3,4];
+global_candles = [1,2,3,4];
+global_type = ['single','double','left','right','bottom','top'];
+global_shape = ['straight','outer_left','outer_right','inner_left','inner_right'];
+global_hinge = ['left','right'];
+global_layers = [1,2,3,4,5,6,7,8];
+global_up = [false,true,'none'];
+global_down = [false,true,'none'];
+global_north = [false,true,'none','low','tall'];
+global_east = [false,true,'none','low','tall'];
+global_south = [false,true,'none','low','tall'];
+global_west = [false,true,'none','low','tall'];
+global_bites = [0,1,2,3,4,5,6];
+global_open = [false,true];
+global_age = [0,1,2];
+global_thickness = ['tip','frustum','base'];
+global_vertical_direction = ['up','down'];
+global_face = ['wall','floor','ceiling'];
+global_tilt = ['none','partial','full'];
+
+//returns list of paired triples of corners of rectangular prisms that comprise collision box
+//measured relative to lower southwest corner of block aka negative direction of every axis
+//cheap once (~ 0.08ms), gets called in loops in other functions
+bounds(arg) ->
+(
+	//recast as block to allow for most argument types
+	block = block(arg);
+
+	if(
+		//first check if it's solid or a full block
+		//solid check after full transparent to account for error on shulker box check
+		(bool(for(global_full_transparent,str(block) ~ _ != null)) || solid(block) && (global_not_solid ~ str(block)) == null),
+		bounds = [[[0,0,0],[1,1,1]]],
+		//then check if it is air or has a tag that excludes it
+		tags = block_tags(block);
+		air(block) || bool(for(global_no_box_tags,tags ~ _ != null)) || bool(for(global_no_box_blocks,str(block) ~ _ != null)),
+		bounds = null,
+		//then check all the other blocks
+		string = str(block);
+		state = block_state(block);
+		key = first(keys(global_box_map),
+			if(string ~ _,
+				bounds = copy(global_box_map:_);
+				true
+			)
+		);
+		//time to make the collision boxes much more complex based on block states
+		if(
+			//stairs can bend so now things get weird
+			key == '_stairs$',
+			shape = state:'shape';
+			if(
+				//not bent
+				shape == 'straight',
+				bounds += [[0,0.5,0],[1,1,0.5]],
+				//only top back right corner present
+				shape == 'outer_right',
+				bounds += [[0.5,0.5,0],[1,1,0.5]],
+				//only top back left corner present
+				shape == 'outer_left',
+				bounds += [[0,0.5,0],[0.5,1,0.5]],
+				//all but top front left corner present
+				shape == 'inner_right',
+				bounds += [[0,0.5,0],[1,1,0.5]];
+				bounds += [[0.5,0.5,0.5],[1,1,1]],
+				//all but top front right corner present
+				shape == 'inner_left',
+				bounds += [[0,0.5,0],[1,1,0.5]];
+				bounds += [[0,0.5,0.5],[0.5,1,1]];
+			),
+
+			//iron bars and glass panes can connect to 0 through 4 adjacent blocks in the x-z plane
+			key == 'glass_pane$' || key == '^iron_bars$',
+			north = bool(state:'north');
+			east = bool(state:'east');
+			south = bool(state:'south');
+			west = bool(state:'west');
+			add = [
+				[[0.4375,0,0],[0.5625,1,0.4375]],
+				[[0.5625,0,0.4375],[1,1,0.5625]],
+				[[0.4375,0,0.5625],[0.5625,1,1]],
+				[[0,0,0.4375],[0.4375,1,0.5625]]
+			];
+			for([north,east,south,west],
+				if(_,
+					bounds += add:_i;
+				);
+			),
+
+			//fences are like irons bars and glass panes with slightly wider and taller collision boxes
+			key == '_fence$',
+			north = bool(state:'north');
+			east = bool(state:'east');
+			south = bool(state:'south');
+			west = bool(state:'west');
+			add = [
+				[[0.375,0,0],[0.625,1.5,0.375]],
+				[[0.625,0,0.375],[1,1.5,0.625]],
+				[[0.375,0,0.625],[0.625,1.5,1]],
+				[[0,0,0.375],[0.375,1.5,0.625]]
+			];
+			for([north,east,south,west],
+				if(_,
+					bounds += add:_i;
+				);
+			),
+
+			//walls can get lower and thinner depending on their adjacent connections
+			//but lower visual appearance doesn't mean lower collision box
+			key == '_wall$',
+			up = bool(state:'up');
+			north = state:'north';
+			east = state:'east';
+			south = state:'south';
+			west = state:'west';
+			add = [
+				[[0.3125,0,0],[0.6875,1.5,0.3125]],
+				[[0.6875,0,0.3125],[1,1.5,0.6875]],
+				[[0.3125,0,0.6875],[0.6875,1.5,1]],
+				[[0,0,0.3125],[0.3125,1.5,0.6875]]
+			];
+			if(up,
+				bounds = [[[0.25,0,0.25],[0.75,1.5,0.75]]];
+			);
+			for([north,east,south,west],
+				if(_ != 'none',
+					bounds += add:_i;
+				);
+			),
+
+			//chorus plants can connect in any direction
+			key == '^chorus_plant$',
+			north = bool(state:'north');
+			east = bool(state:'east');
+			south = bool(state:'south');
+			west = bool(state:'west');
+			up = bool(state:'up');
+			down = bool(state:'down');
+			add = [
+				[[0.1875,0.1875,0],[0.8125,0.8125,0.1875]],
+				[[0.8125,0.1875,0.1875],[1,0.8125,0.8125]],
+				[[0.1875,0.1875,0.8125],[0.8125,0.8125,1]],
+				[[0,0.1875,0.1875],[0.1875,0.8125,0.8125]],
+				[[0.1875,0.8125,0.1875],[0.8125,1,0.8125]],
+				[[0.1875,0,0.1875],[0.8125,0.1875,0.8125]]
+			];
+			
+			for([north,east,south,west,up,down],
+				if(_,
+					bounds += add:_i;
+				);
+			),
+
+			//end rods and lightning rods have the same collision box and can be aligned along any axis
+			key == '_rod$',
+			bounds = __axis(bounds,state:'facing'),
+
+			//same with chains but they use the axis key
+			key == '^chain$',
+			bounds = __axis(bounds,state:'axis'),
+
+			//fence gates have no collision when open and visually sink down a little when connected to walls
+			//lol visuals don't matter though, the collision box doesn't change in that case
+			key == '_fence_gate$',
+			open = bool(state:'open');
+			if(open,
+				bounds = null
+			),
+
+			//doors can face 4 directions and be hinged to either side
+			key == '_door$',
+			open = bool(state:'open');
+			hinge = state:'hinge';
+			half = state:'half';
+			if(half == 'lower',
+				bounds = __concatenate(bounds,__translate(bounds,'y',1)),
+				half == 'upper',
+				bounds = __concatenate(bounds,__translate(bounds,'y',-1))
+			);
+			if(open,
+				if(hinge == 'right',
+					bounds = __rotate(bounds,'y'),
+					hinge == 'left',
+					bounds = __rotatenumber(bounds,'y',3)
+				);
+			),
+
+			//trapdoors, like doors, can be opened or closed
+			key == '_trapdoor$',
+			open = bool(state:'open');
+			if(open,
+				bounds = [[[0,0,0.8125],[1,1,1]]]
+			),
+
+			//cakes always face the same way, but they can have slices eaten
+			key == '^cake$',
+			bites = number(state:'bites');
+			bounds:0:0:0 = 0.0625 + 0.125 * bites,
+
+			//snow lets you sink down one eighth of a block(0.125) from the top layer
+			key == '^snow$',
+			bounds:0:1:1 = (number(state:'layers') - 1) * 0.125,
+
+			//cocoa beans have multiple growth stages
+			key == '^cocoa$',
+			age = number(state:'age');
+			bounds = [[[0.375 - 0.0625 * age,0.4375 - 0.125 * age,0.0625],[0.625 + 0.0625 * age,0.75,0.3125 + 0.125 * age]]],
+		
+			//grindstones can connect to the wall(default), floor, or ceiling
+			key == '^grindstone$',
+			face = state:'face';
+			if(face == 'floor',
+				loops = 1,
+				face == 'ceiling',
+				loops = 3
+			);
+			bounds = __rotatenumber(bounds,'x',loops),
+
+			//lanterns can hang from blocks
+			key == '(?<!sea_|jack_o_)lantern$',
+			if(bool(state:'hanging'),
+				bounds = __translate(
+					bounds,
+					'y',
+					0.0625
+				)
+			),
+
+			//pistons can be extended
+			key == 'piston$',
+			extended = bool(state:'extended');
+			if(extended,
+				bounds = __concatenate(
+					__translate(
+						global_box_map:'^piston_head$',
+						'z',
+						-1
+					),
+					[[[0,0,0.25],[1,1,1]]]
+				)
+			),
+
+			//beds, like doors, are two blocks at once; you might be looking at the head or the foot
+			key == '_bed$',
+			part = state:'part';
+			if(part == 'foot',
+				bounds = __concatenate(
+					bounds,
+					__translate(
+						__rotatenumber(bounds,'y',2),
+						'z',
+						-1
+					)
+				),
+				part == 'head',
+				bounds = __concatenate(
+					__rotatenumber(bounds,'y',2),
+					__translate(bounds,'z',1)
+				)
+			),
+
+			//hoppers can face down or any of the four cardinal directions
+			key == '^hopper$',
+			facing = state:'facing';
+			if(facing != 'down',
+				bounds:6 = [[0.375,0.25,0],[0.625,0.5,0.25]]
+			),
+
+			//we might have multiple candles
+			key == 'candle$',
+			candles = number(state:'candles');
+			if(candles == 2,
+				bounds = [[[0.3125,0,0.375],[0.6875,0.375,0.5625]]],
+				candles == 3,
+				bounds = [[[0.3125,0,0.375],[0.625,0.375,0.6875]]],
+				candles == 4,
+				bounds = [[[0.3125,0,0.3125],[0.6875,0.375,0.625]]]
+			),
+
+			//we might have multiple turtle eggs
+			key == '^turtle_egg$',
+			eggs = number(state:'eggs');
+			if(eggs > 1,
+				bounds = [[[0.0625,0,0.0625],[0.9375,0.4375,0.9375]]]
+			),
+
+			//we might have multiple sea pickles
+			key == '^sea_pickle$',
+			pickles = number(state:'pickles');
+			if(pickles == 2,
+				bounds = [[[0.1875,0,0.1875],[0.8125,0.375,0.8125]]],
+				pickles == 3,
+				bounds = [[[0.125,0,0.125],[0.875,0.375,0.875]]],
+				pickles == 4,
+				bounds = [[[0.125,0,0.125],[0.875,0.4375,0.875]]]
+			),
+
+			//dripleaf tilts as an entity stands on it
+			key == '^big_dripleaf$',
+			tilt = state:'tilt';
+			if(tilt == 'partial',
+				bounds = [[[0,0.6875,0],[1,0.8125,1]]],
+				tilt == 'full',
+				bounds = null
+			),
+
+			//chest collision box slightly changes when part of a double chest
+			key == '(?<!ender_)chest$',
+			type = state:'type';
+			if(type == 'left',
+				bounds += [[0.9375,0,0.0625],[1,0.875,0.9375]],
+				type == 'right',
+				bounds += [[0,0,0.0625],[0.0625,0.875,0.9375]]
+			),
+
+			//bells can hang or be supported by one or two side blocks
+			key == '^bell$',
+			attachment = state:'attachment';
+			if(attachment != 'floor',
+				bounds = [
+					[[0.25,0.25,0.25],[0.75,0.375,0.75]],
+					[[0.3125,0.375,0.3125],[0.6875,0.8125,0.6875]],
+					[[0.4375,0.8125,0.4375],[0.5625,0.9375,0.5625]]
+				];
+				if(attachment == 'ceiling',
+					bounds += [[0.4375,0.9375,0.4375],[0.5625,1,0.5625]],
+					attachment == 'single_wall',
+					bounds += [[0.4375,0.8125,0],[0.5625,0.9375,0.8125]],
+					attachment == 'double_wall',
+					bounds += [[0.4375,0.8125,0],[0.5625,0.9375,1]]
+				)
+			),
+
+			//dripstone can have different thicknesses and is not centered
+			key == '^pointed_dripstone$',
+			thickness = state:'thickness';
+			if(thickness == 'frustum',
+				bounds = [[[0.25,0,0.25],[0.75,1,0.75]]],
+				thickness == 'base',
+				bounds = [[[0.125,0,0.125],[0.875,1,0.875]]];
+			);
+			if(type(arg) == 'block',
+				[x,y,z] = pos(arg),
+				type(arg) == 'list',
+				[x,y,z] = arg,
+				[x,z] = [0,0]
+			);
+			bounds = __offsetTranslate(bounds,x,z,-0.125,0.125),
+
+			key == '^bamboo$',
+			if(type(arg) == 'block',
+				[x,y,z] = pos(arg),
+				type(arg) == 'list',
+				[x,y,z] = arg,
+				[x,z] = [0,0]
+			);
+			bounds = __offsetTranslate(bounds,x,z,-0.25,0.25)
+		);
+
+		//now we have to check for rotation and flipping
+		if(			
+			//slabs, stairs, trapdoors, and pointed dripstone can be upside-down
+			(key == '_slab$' || key == '_stairs$' || key == '_trapdoor$' || key == '^pointed_dripstone$') && (state:'type' == 'top' || state:'half' == 'top' || state:'vertical_direction' == 'down'),
+			bounds = __upside_down(bounds)
+		);
+		//now that we're at the end, apply rotations for 'facing' property for things that only rotate about the y-axis
+		facing = ['_wall_head$','_wall_skull$','^cocoa$','_fence_gate$','_trapdoor$','_door$','^ladder$','_bed$','_stairs$','anvil$','(?<!ender_)chest$','^hopper$','^grindstone$','^bell$',];
+		if(bounds != null && facing ~ key != null,
+			bounds = __rotatey(bounds,state:'facing')
+		);
+		//however some things are dumb and get all 6 directions
+		facing = keys(global_default_direction);
+		if(facing ~ key != null,
+			if(global_default_direction:key == 'up',
+				loop(3,
+					bounds = __rotate(bounds,'x');
+				)
+			);
+			bounds = __rotate6(bounds,state:'facing')
+		)
+	);
+
+	//rearrange values in vertices to all mins and all maxes for easier comparison later
+	for(bounds,
+		bounds:_i = [
+			[min(_:0:0,_:1:0),min(_:0:1,_:1:1),min(_:0:2,_:1:2)],
+			[max(_:0:0,_:1:0),max(_:0:1,_:1:1),max(_:0:2,_:1:2)]
+		]
+	);
+	//sort prisms by min vertex
+	bounds = sort_key(bounds || [],_:0) || null;
+
+	bounds
+);
+
+//checks to see if a point is in a set of bounds
+//first() because any region will do
+//all() because every coordinate must be between corners
+__inside(bounds,point) ->
+(
+	first(bounds,
+		corners = _;
+		all([range(3)],
+			min = min(corners:0:_,corners:1:_);
+			max = max(corners:0:_,corners:1:_);
+			min <= point:_ <= max
+		)
+	) != null
+);
+
+//checks to see if a point is within the collision box of a block
+insideblock(point) ->
+(
+	point_mod = map(point, _ % 1);
+	zeros = for(point_mod, _ == 0);
+
+	if(zeros == 0,
+		//if not on face, edge, or vertex, block will likely contain point
+		__inside(bounds(block(point)),point_mod),
+
+		//else we need to check multiple sides of a point
+
+		//not actually machine epsilon(2^-44) but modulus does weird things to that
+		machine_epsilon = 2^-40;
+		if(zeros == 3,
+			pointlist = [ [-machine_epsilon,-machine_epsilon,-machine_epsilon] ],
+			pointlist = []
+		);
+		for([range(3)],
+			if(point_mod:_i == 0,
+				list = [0,0,0];
+				list:_i = -machine_epsilon;
+				pointlist += list;
+			);
+			if(point_mod:_i == 0 && point_mod:(_i - 2) == 0,
+				list = [0,0,0];
+				list:_i = -machine_epsilon;
+				list:(_i - 2) = -machine_epsilon;
+				pointlist += list;
+			);
+		);
+
+		for(pointlist,
+			__inside(bounds(block(point + _)),map(_, _ % 1))
+		) > 0
+	
+	)
+);
+
+//centers bounds on [0.5,0.5,0.5] to make math easier
+//only used in low level operations
+__center(bounds) ->
+(
+	map(copy(bounds),[_:0 - 0.5,_:1 - 0.5])
+);
+
+//centers bounds on [0,0,0] to make interpretation easier
+//only used in low level operations
+__uncenter(bounds) ->
+(
+	map(copy(bounds),[_:0 + 0.5,_:1 + 0.5])
+);
+
+//mirrors bounds about x-z plane
+__upside_down(bounds) ->
+(
+	__uncenter(map(__center(bounds),[_:0 * [1,-1,1],_:1 * [1,-1,1]]));
+);
+
+//moves bounds by offset in direction of axis
+__translate(bounds,axis,offset) ->
+(
+	if(axis == 'x',
+		__uncenter(map(__center(bounds),[_:0 + [offset,0,0],_:1 + [offset,0,0]])),
+		axis == 'y',
+		__uncenter(map(__center(bounds),[_:0 + [0,offset,0],_:1 + [0,offset,0]])),
+		axis == 'z',
+		__uncenter(map(__center(bounds),[_:0 + [0,0,offset],_:1 + [0,0,offset]]))
+	)
+);
+
+//rotates bounds 90 degrees about specified axis
+__rotate(bounds,axis) ->
+(
+	if(axis == 'x',
+		__uncenter(map(__center(bounds),[__multiply(_:0,[[1,0,0],[0,0,1],[0,-1,0]]),__multiply(_:1,[[1,0,0],[0,0,1],[0,-1,0]])])),
+
+		axis == 'y',
+		__uncenter(map(__center(bounds),[__multiply(_:0,[[0,0,-1],[0,1,0],[1,0,0]]),__multiply(_:1,[[0,0,-1],[0,1,0],[1,0,0]])])),
+
+		axis == 'z',
+		__uncenter(map(__center(bounds),[__multiply(_:0,[[0,-1,0],[1,0,0],[0,0,1]]),__multiply(_:1,[[0,-1,0],[1,0,0],[0,0,1]])]))
+	)
+);
+
+//rotates bounds number time 90 degrees about specified axis
+__rotatenumber(bounds,axis,turns) ->
+(
+	loop(turns,
+		if(axis == 'x',
+			bounds = __uncenter(map(__center(bounds),[__multiply(_:0,[[1,0,0],[0,0,1],[0,-1,0]]),__multiply(_:1,[[1,0,0],[0,0,1],[0,-1,0]])])),
+
+			axis == 'y',
+			bounds = __uncenter(map(__center(bounds),[__multiply(_:0,[[0,0,-1],[0,1,0],[1,0,0]]),__multiply(_:1,[[0,0,-1],[0,1,0],[1,0,0]])])),
+
+			axis == 'z',
+			bounds = __uncenter(map(__center(bounds),[__multiply(_:0,[[0,-1,0],[1,0,0],[0,0,1]]),__multiply(_:1,[[0,-1,0],[1,0,0],[0,0,1]])]))
+		)
+	);
+	bounds
+);
+
+//for blocks that just use facing for rotation about the y-axis
+__rotatey(bounds,facing) ->
+(
+	loops = {['north',0],['west',1],['south',2],['east',3]}:facing;
+	__rotatenumber(bounds,'y',loops)
+);
+
+//for blocks that just use facing for all 6 directions
+__rotate6(bounds,facing) ->
+(
+	loops = {['north',0],['west',1],['south',2],['east',3]}:facing;
+	if(loops == null,
+		if(facing == 'up',
+			__rotate(bounds,'x'),
+			facing == 'down',
+			__rotatenumber(bounds,'x',3)
+		)
+	) || __rotatenumber(bounds,'y',loops)
+);
+
+//for collision boxes that are completely symmetric about their center but not equal in every direction
+//basically just end rods, lightning rods, and chains
+__axis(bounds,facing) ->
+(
+	if(facing == 'west' || facing == 'east' || facing == 'x',
+		__rotate(bounds,'z'),
+		
+		facing == 'north' || facing == 'south' || facing == 'z',
+		__rotate(bounds,'x'),
+
+		facing == 'up' || facing == 'down' || facing == 'y',
+		bounds
+	)
+);
+
+//don't mind me out here writing my own matrix muliplication because matrix.scl isn't out yet
+//expects 1x3 times 3x3 because that's all this script really needs
+__multiply(matrix1,matrix2) ->
+(
+	map([range(3)],
+		matrix1:0 * matrix2:0:_ + matrix1:1 * matrix2:1:_ + matrix1:2 * matrix2:2:_
+	)
+);
+
+//concatenates any number of lists
+__concatenate(... lists) ->
+(
+	output = [];
+	for(lists,
+		reduce(_,_a+=_,output);
+	);
+	output
+);
+
+//returns block settings 'a=b' style options
+__options(state,options) ->
+(
+	output = [''];
+	for(options,
+		output += ',' + state + '=' + _;
+	);
+	output
+);
+
+//returns all combinations from the values in lists given initial value
+__combinations(initial,...lists) ->
+(
+	product = 1;
+	indices = [];
+	for(lists,
+		product = copy(product) * length(_);
+		indices += 0;
+	);
+	output = [];
+	loop(product,
+		combination = initial;
+		for(lists,
+			combination += _:(indices:_i);
+		);
+		output += combination;
+
+		indices:0 = indices:0 + 1;
+		for(lists,
+			if(indices:_i == length(_),
+				indices:_i = 0;
+				if(_i + 1 < length(lists),
+					indices:(_i + 1) = indices:(_i + 1) + 1
+				)
+			)
+		)
+	);
+	output
+);
+
+//returns all state combinations of a block
+__blockcombinations(blockstring) ->
+(
+	output = [blockstring];
+	keys = keys(block_state(block(blockstring)));
+	blockstring = blockstring + '[';
+
+	combination_map = {
+		['axis',__options('axis',global_axis)],
+		['extended',__options('extended',global_extended)],
+		['facing',__options('facing',global_facing)],
+		['half',__options('half',global_half)],
+		['part',__options('part',global_part)],
+		['hanging',__options('hanging',global_hanging)],
+		['attachment',__options('attachment',global_attachment)],
+		['eggs',__options('eggs',global_eggs)],
+		['pickles',__options('pickles',global_pickles)],
+		['candles',__options('candles',global_candles)],
+		['type',__options('type',global_type)],
+		['shape',__options('shape',global_shape)],
+		['hinge',__options('hinge',global_hinge)],
+		['layers',__options('layers',global_layers)],
+		['up',__options('up',global_up)],
+		['down',__options('down',global_down)],
+		['north',__options('north',global_north)],
+		['east',__options('east',global_east)],
+		['south',__options('south',global_south)],
+		['west',__options('west',global_west)],
+		['bites',__options('bites',global_bites)],
+		['open',__options('open',global_open)],
+		['age',__options('age',global_age)],
+		['thickness',__options('thickness',global_thickness)],
+		['vertical_direction',__options('vertical_direction',global_vertical_direction)],
+		['face',__options('face',global_face)],
+		['tilt',__options('tilt',global_tilt)]
+	};
+
+	state_list = [];
+	for(keys,
+		value = combination_map:_;
+		if(value != null,
+			state_list += _
+		)
+	);
+
+	length = reduce(
+		map(state_list,combination_map:_),
+		_a + length(_),
+		0
+	);
+	//eliminate unnecessary values for block states
+	for(state_list,
+		state = _;
+		combination_map:state = filter(
+			combination_map:state,
+			try(
+				string = replace(blockstring + _ + ']','\\[,','[');
+				block(string),
+				'unknown_block',
+				false
+			)
+		)
+	);
+	length = reduce(
+		map(state_list,combination_map:_),
+		_a + length(_),
+		0
+	);
+
+	for(__combinations(blockstring,...map(state_list,combination_map:_)),
+		//use try() as a lazy check to see if the block can exist
+		try(
+			fullstring = replace(_ + ']','\\[,','[');
+			block = block(fullstring);
+			if(
+				//takes a long time, but it's worth it to remove repeats of default behaviors
+				all(output,
+					block_state(block(_)) != block_state(block)
+				),
+				output += fullstring
+			),
+			'unknown_block',
+			// nonsense line to make try() function and not return anything
+			x = 1;
+		)
+	);
+	output
+);
+
+//draws bounds of a block
+draw_bounds(blocks,ticks,colors,...positions) ->
+(
+	shapelist = [];
+	//if you didn't pass the function a list or you passed it a triple, turn it into a list
+	if(type(blocks) != 'list' || (all(blocks,type(_) == 'number') && length(blocks) == 3),
+		blocks = [blocks];
+	);
+	//recast everything as blocks, except any string you passed
+	//don't have the ability to handle those errors at this time
+	for(blocks,
+		if(type(_) != 'string' || positions != [],
+			block = block(_);
+			pos = positions:_i || pos(block);
+			for(bounds(block),
+				shapelist += ['box',ticks,'from',pos + _:0,'to',pos + _:1,'color',number(colors:0) || 0x00FF00FF,'fill',number(colors:1) || 0x00FF0033]
+			)
+		)
+	);
+	draw_shape(shapelist);
+);
+
+__position_catch(block) ->
+(
+	if(type(block) == 'string',
+		[0,0,0],
+		pos(block(block));
+	)
+);
+
+positioned_bounds(block, ...pos) ->
+(
+	pos = pos || __position_catch(block);
+	map(bounds(block),map(_,_ + pos))
+);
+
+//returns list of all unique collision boxes for sorting or other analysis
+//very expensive (~ 290ms)
+__all_collision_boxes() ->
+(
+	list = block_list();
+	//delete everything but the first value that matches a key
+	for(keys(global_box_map),
+		key = _;
+		first = first(list,str(_) ~ key != null);
+		for([range(length(list) - 1,-1,-1)],
+			if(str(list:_) ~ key != null && list:_ != first,
+				delete(list,_);
+			)
+		)
+	);
+	//delete things with no collision box
+	for([range(length(list) - 1,-1,-1)],
+		index = _;
+		tag = for(block_tags(list:index),
+			if(
+				global_no_box_tags ~ _ != null,
+				delete(list,index)
+			)
+		)
+	);
+	block_list = [];
+	for(list,
+		block_list += __blockcombinations(str(_));
+	);
+	//make a map so duplicate collision boxes get overridden
+	bounds_map = {};
+	for([range(length(block_list) - 1,-1,-1)],
+		for(block_list:_,
+			bounds_map:bounds(_) = _
+		)
+	);
+	//simple map reversal, don't worry the values won't have duplicates
+	block_map = {};
+	for(keys(bounds_map),
+		block_map:(bounds_map:_) = _;
+	);
+	global_all_boxes = map(sort_key(keys(block_map),[_,block_map:_]),block(_));
+);
+//task this on start
+task('__all_collision_boxes');
+
+box_list() ->
+(
+	global_all_boxes
+);
+
+//turns bounds(list of prisms) into triple of lists of x-values, y-values, z-values
+//effectively just matrix transpose
+__condense_bounds(bounds) ->
+(
+	output = [[],[],[]];
+	if(bounds == null || bounds == 0,
+		output = [[null],[null],[null]],
+		for(bounds,
+			for(_,
+				for(_,
+					output:_i += _
+				)
+			)
+		);
+	);
+	output
+);
+
+//returns minimum value along axis from set of condensed bounds
+__min_bounds(condensed_bounds,axis) ->
+(
+	if(axis == 'x',
+		coordinates = condensed_bounds:0,
+		axis == 'y',
+		coordinates = condensed_bounds:1,
+		axis == 'z',
+		coordinates = condensed_bounds:2,
+	);
+	min(coordinates)
+);
+
+//returns maximum value along axis from set of condensed bounds
+__max_bounds(condensed_bounds,axis) ->
+(
+	if(axis == 'x',
+		coordinates = condensed_bounds:0,
+		axis == 'y',
+		coordinates = condensed_bounds:1,
+		axis == 'z',
+		coordinates = condensed_bounds:2,
+	);
+	max(coordinates)
+);
+
+
+//returns list of blocks sorted by direction along axis including only include or excluding only exclude
+//depends on how many blocks you have
+filter_sort_direction(blocks,axis,direction,...values) ->
+(
+	blockmap = {};
+	axis_options = split(
+		'(?<=[+-])',
+		axis
+	);
+	if(length(axis_options) == 2,
+		axis_direction = axis_options:0,
+		axis_direction = '+'
+	);
+	axis_direction = number(axis_direction + '1');
+	axis_name = axis_options:1;
+
+	include_option = values:0;
+
+	if(include_option == 'include',
+		include = true,
+		include_option == 'exclude',
+		include = false,
+		//omitting values excludes no blocks
+		include_options == null,
+		include = false
+	);
+
+	if(include != null,
+		for(blocks,
+			if(blockmap:str(_) == null,
+				blockmap:str(_) = {};
+			);
+			if(direction == 'max',
+				value = __max_bounds(__condense_bounds(bounds(_)),axis_name),
+				direction == 'min',
+				value = __min_bounds(__condense_bounds(bounds(_)),axis_name)
+			);
+			if( ( include ) == (values ~ value != null),
+				blockmap:str(_):str(block_state(_)) = value
+			);
+		);
+
+		sorted_list = map(
+			sort_key(
+				filter(blocks,blockmap:str(_):str(block_state(_)) != null),
+				axis_direction * blockmap:str(_):str(block_state(_))
+			),
+			block(_)
+		),
+
+		[]
+	)
+);
+
+//returns boolean representing intersection of two rectangular prisms
+//prisms are pairs of points
+__prism_in_prism(prism1,prism2) ->
+(
+	delta_center = map( ( (prism2:0 + prism2:1) - (prism1:0 + prism1:1) ) / 2 , abs(_) );
+	side_lengths = map( (prism1:1 - prism1:0) / 2,abs(_) ) + map( (prism2:1 - prism2:0) / 2, abs(_) );
+	all(side_lengths,
+		_ >= delta_center:_i
+	) &&
+	for(side_lengths,
+		_ == delta_center:_i
+	) <= 1
+);
+
+//returns all blocks the entity is currently colliding with
+//somewhat cheap (~ 1.25ms)
+entity_block_collision(e) ->
+(
+	pos = e ~ 'pos';
+	width = e ~ 'width';
+	height = e ~  'height';
+	__prism_block_collision(pos,width,height)
+);
+
+//returns all blocks the prism is currently colliding with
+__prism_block_collision(pos,width,height) ->
+(
+	planar_offset = [width,0,width] / 2;
+	min_corner = pos - planar_offset;
+	max_corner = pos + planar_offset + [0,height,0];
+	e_prism = [min_corner,max_corner];
+	min_block = map(min_corner,floor(_)) - 1;
+	max_block = map(max_corner,ceil(_));
+	blocklist = [];
+	volume(min_block,max_block,
+		//get position of block
+		pos_block = [_x,_y,_z];
+		//get bounds of block
+		bounds = bounds(_);
+		//move bounds to position
+		for(bounds,
+			prism = _;
+			for(prism,
+				prism:_i = _ + pos_block
+			)
+		);
+		//check if block bounds intersect entity bounds
+		if(
+			first(bounds,
+				__prism_in_prism(e_prism,_)
+			) != null,
+			blocklist += _;
+		);
+	);
+	blocklist
+);
+
+__hashCode(x, z)->(
+	l = bitwise_xor(x * 3129871, z * 116129781);
+	l = l * l * 42317861 + l * 11;
+	l = bitwise_shift_right(l, 16);
+	[ ( bitwise_and( l, 15 ) / 15 - 0.5 ) * 0.5, ( bitwise_and( bitwise_shift_right( l, 8 ), 15 ) / 15 - 0.5 ) * 0.5 ]
+);
+
+__clamp(list, min, max) ->
+(
+	output = copy(list);
+	for(output,
+		if(_ > max,
+			output:_i = max,
+			_ < min,
+			output:_i = min
+		)
+	);
+	output
+);
+
+__offsetTranslate(bounds, x, z, min, max) ->
+(
+	offset = __clamp(__hashCode(x,z),min,max);
+	__translate(__translate(bounds,'x',offset:0),'z',offset:1)
+);
