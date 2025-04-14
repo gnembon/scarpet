@@ -160,9 +160,10 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [locate_block.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/locate_block.sc):
 #### By Ghoulboy
-	This will allow you to see how many blocks of a specific type there are in an area around a point.
-	locate will tell you first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat.
-	hist will print a histogram like in gnembon's ancient debris video, but this will accept any block, and if there are less than 	40 blocks for that y level, it will print a nice looking histogram.
+	This will allow you to see how many blocks of a specific type there are in a cubic area around a point.
+	/locate_block locate will tell you the positions of the first 100 blocks, as well as how many there are in total, and you can tp to them by clicking in chat.
+	/locate_block hist will print a nice looking histogram depicting the number of blocks in each y-level.
+	Both commands can either be executed from player's position or from a position specified by the player.
 
 
 ### [lodestone_chunk_loader.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/lodestone_chunk_loader.sc)
