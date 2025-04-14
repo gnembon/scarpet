@@ -11,7 +11,7 @@ __spawn_players() -> (
          for([str('player %s spawn at %f %f %f facing %f %f in %s',
                   _:'name', _:'x', _:'y', _:'z', _:'yaw', _:'pitch', _:'dim'),
               str('gamemode %s %s', _:'gm', _:'name')],
-            logger('warn', _);
+            logger('warn', '[keepalive.sc] ' + _);
             run(_);
          );
          modify(player(_:'name'), 'flying', _:'fly')
@@ -41,5 +41,5 @@ __on_server_shuts_down() -> (
       saved += _~'name';
    );
    store_app_data(data);
-   if (saved, logger('warn', 'saved '+saved+' for next startup'));
+   if (saved, logger('warn', '[keepalive.sc] saved '+saved+' for next startup'));
 );
