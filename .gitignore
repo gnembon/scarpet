@@ -20,3 +20,7 @@ bin/
 .classpath
 .project
 *.code-workspace
+
+
+# npp
+*.bak
