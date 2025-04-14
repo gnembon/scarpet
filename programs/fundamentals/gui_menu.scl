@@ -1,0 +1,321 @@
+
+//Config
+
+global_inventory_sizes={ //cos inventory_size() function doesn't work properly with some of these
+    'anvil'->3,
+    'beacon'->1,
+    'blast_furnace'->3,
+    'brewing_stand'->5,
+    'cartography_table'->3,
+    'crafting'->10,
+    'enchantment'->2,
+    'furnace'->3,
+    'generic_3x3'->9,
+    'generic_9x1'->9,
+    'generic_9x2'->18,
+    'generic_9x3'->27,
+    'generic_9x4'->36,
+    'generic_9x5'->45,
+    'generic_9x6'->54,
+    'grindstone'->3,
+    'hopper'->5,
+    'lectern'->1,
+    'loom'->4,
+    'merchant'->3,
+    'shulker_box'->27,
+    'smithing'->4,
+    'smoker'->3,
+    'stonecutter'->2,
+};
+
+//Stores GUI data in intermediary map form, so the programmer can call them at any time with call_gui_menu() function
+//Using call_gui_menu(map) will modify the map itself, so it's a good idea to store it as a global variable
+//This way, if items are stored in the inventory, they won't be lost
+//Even if no items are stored, storing the map returned by this function will help avoid excessive recomputations when re-generating the same GUI
+new_gui_menu(gui_screen)->(
+    if(type(gui_screen)!='map',
+        throw('Invalid gui creation: '+gui_screen)
+    );
+
+    if(has(gui_screen, 'pages') && !has(gui_screen:'pages', gui_screen:'main_page_title'),
+        throw('Tried to create a GUI Menu with page functionality, but did not find a main page with the title '+gui_screen:'main_page_title')
+    );
+
+    gui_screen:'current_page' = gui_screen:'main_page_title';
+
+    {
+        'inventory_shape'->_(outer(gui_screen))->__get_screen_shape(gui_screen), //shape of the inventory, copied from above
+        'title'->__get_screen_title(gui_screen), //Fancy GUI title
+        'on_created'->_(screen, player, outer(gui_screen))->__create_gui_screen(screen, player, gui_screen),
+        'callback'->_(screen, player, action, data, outer(gui_screen))->(
+            __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
+        ),
+    }
+);
+
+//Takes a map returned by the new_gui_menu() function, and interprets it as a gui menu, opening it up to the player
+//This function also initialises all the special functions of the gui menu, such as button presses etc.
+call_gui_menu(gui_menu, player)->( //Opens the screen to the player, returns screen for further manipulation
+    screen = create_screen(player, call(gui_menu:'inventory_shape'), gui_menu:'title', gui_menu:'callback');
+    call(gui_menu:'on_created', screen, player);
+    screen
+);
+
+// Fiddling with the screen right after it's made to add fancy visual bits and run initialisation
+__create_gui_screen(screen, player, gui_screen)->(
+    gui_page=_get_gui_page(gui_screen);
+    for(gui_page:'static_buttons', // Setting the icon for static buttons
+        [item, count, nbt] = __parse_icon(gui_page:'static_buttons':_:0);
+        inventory_set(screen, _, count, item, nbt)
+    );
+    for(gui_page:'dynamic_buttons', // Setting the icon for dynamic buttons
+        [item, count, nbt] = __parse_icon(gui_page:'dynamic_buttons':_:0);
+        inventory_set(screen, _, count, item, nbt)
+    );
+    for(gui_page:'storage_slots', // Setting the initial item for storage slots, or nothing if undefined
+        [item, count, nbt] = gui_page:'storage_slots':_ || ['air', 0, null];
+        inventory_set(screen, _, count, item, nbt)
+    );
+    for(gui_page:'dynamic_storage_slots', // Setting the initial item for dynamic storage slots, or nothing if undefined
+        [item, count, nbt] = gui_page:'dynamic_storage_slots':_:0 || ['air', 0, null];
+        inventory_set(screen, _, count, item, nbt)
+    );
+    for(gui_page:'navigation_buttons', // Setting the icon for navigation buttons
+        [item, count, nbt] = __parse_icon(gui_page:'navigation_buttons':_:0);
+        inventory_set(screen, _, count, item, nbt)
+    );
+    if(has(gui_page, 'on_init'), //Running programmer-defined page initialiser
+        call(gui_page:'on_init', screen, player)
+    );
+);
+
+
+//This is the function called whenever a gui_menu screen is updated. It's chonky, but runs pretty fast.
+//It's well optimized so it only does what it has to, with no runtime wasted on useless checks and operations.
+__screen_callback(screen, player, action, data, gui_screen, inventory_size)->(
+    gui_page=_get_gui_page(gui_screen);
+
+    slot = data:'slot'; //Grabbing slot, this is the focus of the action
+
+    if(action=='pickup', //This is equivalent of clicking (button action) on a slot, which may have been marked as a special slot
+        if(has(gui_page:'static_buttons', slot), //Plain, vanilla button, pressing of which can call another action
+            call(gui_page:'static_buttons':slot:1, player, data:'button'),
+            has(gui_page:'dynamic_buttons', slot), //A more exciting button, which can modify this inventory itself
+            call(gui_page:'dynamic_buttons':slot:1, screen, player, data:'button'),
+            has(gui_page:'navigation_buttons', slot), //Switching screens to a predetermined new page
+            _switch_page(gui_screen, gui_page, gui_page:'navigation_buttons':slot:1, screen, player)
+        );
+    );
+
+    if(action=='slot_update' && has(gui_page:'dynamic_storage_slots',slot), //Updating dynamic storage slots whenever anything happens to them.
+        call(gui_page:'dynamic_storage_slots':slot:1, player, screen, slot, data:'stack')
+    );
+
+    //Special effects for special GUI types
+    //Could have used handle_event() and custom events API, but these events are tied into gui_menu.scl script
+    //Risk of using events API is that programmer might try to use the events in an incorrect manner, causing problems
+    //And it's not like it simplifies the code much on either end tbh.
+    inventory_shape = __get_screen_shape(gui_screen);
+    if(inventory_shape == 'anvil', // Calling 'on_anvil_modify_item' event whenever the player modifies an item using an anvil
+        if(has(gui_page, 'on_anvil_modify_item') && action=='slot_update' && slot==2 && has(data, 'stack') && data:'stack',
+            call(gui_page:'on_anvil_modify_item', player, screen, item_display_name(data:'stack'), screen_property(screen, 'level_cost'))
+        ),
+        // Calling 'on_select_crafting_recipe' event when player selects item in green crafting book
+        has({'crafting_table', 'furnace', 'blast_furnace', 'smoker'}, inventory_shape),
+        if(has(gui_page, 'on_select_crafting_recipe') && action=='select_recipe',
+            call(gui_page:'on_select_crafting_recipe', player, screen, data:'recipe', data:'craft_all')
+        ),
+        // Calling 'on_take_book' when player pressed 'Take Book' button in lectern
+        // Calling 'on_flip_page' when player flips page in lectern
+        inventory_shape=='lectern',
+        if(action=='button',
+            button = data:'button';
+            if(has(gui_page, 'on_take_book') && button==3,
+                call(gui_page:'on_take_book', player, screen)
+            );
+            if(has(gui_page, 'on_flip_page') && button < 3,
+                page = screen_property(screen, 'page');
+                call(gui_page:'on_flip_page', player, screen, button, 2*button-3+page) //This looks silly, but the page number is not immediately updated, so I modify it instead
+            )
+        ),
+        // Calling 'on_select_banner_pattern' whenever player selects a banner pattern
+        //Action cache is used because data about which pattern was selected is given in the 'button' action
+        //But the 'slot_update' action is where the new banner is actually placed in the output slot.
+        //They happen back to back, and appear simultaneous, but internally they are not.
+        //See below for more details on action cache
+        inventory_shape=='loom',
+        if(has(gui_page, 'on_select_banner_pattern'),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                call(gui_page:'on_select_banner_pattern', player, screen, global_action_cache:'data':'button', parse_nbt(data:'stack':2):'BlockEntityTag':'Patterns':(-1):'Pattern');
+                global_action_cache:'active'=false
+            )
+        ),
+        // Calling 'on_select_stonecutting_pattern' when player selects stonecutter recipe
+        //Same as with loom, there is a separation between selecting recipe, and new item being placed in the output slot
+        inventory_shape=='stonecutter',
+        if(has(gui_page, 'on_select_stonecutting_pattern'),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                call(gui_page:'on_select_stonecutting_pattern', player, screen, global_action_cache:'data':'button', data:'stack');
+                global_action_cache:'active'=false
+            )
+        ),
+        //'on_select_enchantment', TODO test this properly
+        inventory_shape=='enchantment',
+        if(has(gui_page, 'on_select_enchantment'),
+            if(action=='button',
+                global_action_cache={
+                    'data'->data,
+                    'active'->true
+                },
+                global_action_cache:'active' && action=='slot_update',
+                button = global_action_cache:'data':'button' + 1;
+                call(gui_page:'on_select_enchantment',
+                    player, screen,
+                    screen_property(screen, 'enchantment_power_'+button),
+                    screen_property(screen, 'enchantment_id_'+button),
+                    screen_property(screen, 'enchantment_level_'+button),
+                );
+                global_action_cache:'active'=false
+            )
+        ),
+    );
+
+    //Saving items in storage slots and dynamic storage slots when closing the screen
+    if(action=='close',
+        for(gui_page:'storage_slots',
+            gui_page:'storage_slots':_ = inventory_get(screen, _);
+        );
+        for(gui_page:'dynamic_storage_slots',
+            gui_page:'dynamic_storage_slots':_:0 = inventory_get(screen, _);
+        );
+    );
+
+    acb = ''; //allowing programmer to cancel event in additional screen callback function
+
+    if(has(gui_page, 'additional_screen_callback'),
+        acb = call(gui_page:'additional_screen_callback', screen, player, action, data, gui_screen)
+    );
+
+    //Disabling quick move cos it messes up the GUI, and there's no reason to allow it
+    //Also preventing the player from tampering with button slots
+    //Unless the slot is marked as a storage slot or dynamic storage slot, in which case we allow it
+    //Also unless the action is clicking a button within the GUI, cos it has useful functionality
+    //But if the programmer decided to cancel event using the additional screen callback, it will be cancelled regardless
+    if((action=='quick_move'||slot<inventory_size) && !(has(gui_page:'storage_slots',slot)||has(gui_page:'dynamic_storage_slots',slot)) && action!='button' || acb=='cancel',
+        'cancel'
+    );
+);
+
+//Action cache allows to store data efficiently and effectively between actions
+//This is because sometimes a 'button' event will have later repercussions in a 'slot_update' action
+//So we we want information from the 'button' event in the 'slot_update' action, hence the cache
+//This basically just stores intermediary data, as well as information on whether or not it is active
+//Technically, since the 'slot_update' action immediately follows the 'button' action, the flag is unnecessary
+//But nice to have it in case something goes wrong.
+global_action_cache={ //Sometimes a slot_update with important information comes after the event that triggered it
+    'data'->null,
+    'active'->false
+};
+
+//This function checks whether an input GUI screen (in map form) supports page functionality
+//If so, it returns the current page, or elst jus the input GUI screen
+//The current GUI page refers to the section where information about button layout and slot allocation is displayed
+_get_gui_page(gui_screen)->if(has(gui_screen, 'pages'),
+    gui_screen:'pages':(gui_screen:'current_page'),
+    gui_screen
+);
+
+
+//Gets the title for the current page of the screen.
+//A title within the page gets first priority, if not, then use the title defined in the outermost map,
+//And if that is not there, then the same title as the main page.
+//And failing that, throw an error
+__get_screen_title(gui_screen)->(
+    gui_page=_get_gui_page(gui_screen);
+
+    if(!has(gui_screen, 'pages'),
+        gui_screen:'title',
+        has(gui_page, 'title'),
+        gui_page:'title',
+        has(gui_screen, 'title'),
+        gui_screen:'title',
+        has(gui_screen:'pages':(gui_screen:'main_page_title'), 'title'),
+        gui_screen:'pages':(gui_screen:'main_page_title'):'title',
+        throw('No title defined!')
+    )
+);
+
+//Same as above, but for inventory shapes
+__get_screen_shape(gui_screen)->(
+    gui_page=_get_gui_page(gui_screen);
+
+    inventory_shape = if(!has(gui_screen, 'pages'),
+        gui_screen:'inventory_shape',
+        has(gui_page, 'inventory_shape'),
+        gui_page:'inventory_shape',
+        has(gui_screen, 'inventory_shape'),
+        gui_screen:'inventory_shape',
+        has(gui_screen:'pages':(gui_screen:'main_page_title'), 'inventory_shape'),
+        gui_screen:'pages':(gui_screen:'main_page_title'):'inventory_shape',
+        throw('No GUI shape defined!')
+    );
+
+    if(!has(global_inventory_sizes, inventory_shape),
+        throw('Invalid gui creation: Must be one of '+keys(global_inventory_sizes)+', not '+inventory_shape)
+    );
+    inventory_shape
+);
+
+//Parses the item used as slot icon
+//If it's a string, returns [item_name, 1, null],
+//If it's a list of length 2, second item is the name of the item
+//If it's a triplet, then return that (making the assumption that it's a triplet of [item, count, nbt])
+//IF it's a list of length 4, first three arguments are [item, count, nbt], fourth is item name.
+__parse_icon(icon)->if(type(icon)=='string',
+    [icon, 1, null],
+    type(icon)=='list',
+    if(length(icon)==2,
+        [icon:0, 1, str('{display:{Name:\'{"text":"%s"}\'}}', icon:1)],
+        length(icon)==3,
+        icon,
+        length(icon)==4,
+        icon:2 = icon:2 || nbt({}); //JIC input nbt was null
+        put(icon:2, 'display', nbt(str('{display:{Name:\'{"text":"%s"}\'}}', icon:3)));
+        [icon:0, icon:1, icon:2]
+    )
+);
+
+//A simple function which allows to switch pages, used for all page-switching functionality, both within this script and outside
+//If you want to switch page, import and use this function
+//gui_screen argument refers to the big gui_screen map, a variable which should be accessible everywhere, and which contains all the data on the GUI screen
+//gui_page refers to the current GUI page open, prior to switching of pages
+//new_page_name is the name of the new page
+//old_screen refers to the screen variable which corresponded to the old page, and is also accessible everywhere
+//player is the player variable, used in the creation of screens.
+_switch_page(gui_screen, gui_page, new_page_name, old_screen, player)->(
+    gui_screen:'current_page' = new_page_name; //Changing current page
+    for(gui_page:'storage_slots', //Saving storage slots when switching screens
+        gui_page:'storage_slots':_ = inventory_get(old_screen, _);
+    );
+    for(gui_page:'dynamic_storage_slots', //Saving dynamic storage slots when switching screens
+        gui_page:'dynamic_storage_slots':_:0 = inventory_get(old_screen, _);
+    );
+    loop(inventory_size, //Clearing inventory before switching
+        inventory_set(old_screen, _, 0)
+    );
+    close_screen(old_screen);
+    new_screen = create_screen(player, __get_screen_shape(gui_screen), __get_screen_title(gui_screen), _(screen, player, action, data, outer(gui_screen))->(
+        __screen_callback(screen, player, action, data, gui_screen, global_inventory_sizes:__get_screen_shape(gui_screen))
+    ));
+    __create_gui_screen(new_screen, player, gui_screen)
+);
