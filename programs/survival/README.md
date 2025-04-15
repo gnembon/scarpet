@@ -38,7 +38,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	Set custom stack sizes for any bucket type with /bucketstack <bucket> <stacksize> and the buckets will stack when filled or picked up by a player.
 	Stacking requires identical nbt data for buckets of water mobs.
 	When using a stack of buckets, receive an empty bucket and continue using the stack as usual, just like honey bottles.
-	
+
 	Can't work in creative mode.
 
 ### [cam.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/cam.sc):
@@ -91,7 +91,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	you have a 1/50 chance of getting a wet sponge.
 	Can be used to make renewable sponge without the use of lightning RNG manipulation,
 	which in 1.14+ is impossible, hence the name easier_renweable_sponge.
-	
+
 ### [enchanting_table_bottling.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/enchanting_table_bottling.sc):
 #### By Firigion
 	Shift right clicking on an enchanting table with an empty glass bottle consumes it and generates a
@@ -171,7 +171,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	When a player clicks on a lodestone while sneaking it marks that chunk to be force loaded
 	and if they click on it again the unmarks that chunk.
 	Breaking the loadstone also unmarks the chunk.
-	
+
 	Note that with this script players can unmark forceload chunks set by admins.
 
 
@@ -194,7 +194,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [no_useless_llamas.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/no_useless_llama.sc)
 #### By Opsaaaaa
 	Have you ever thought "hay i could use a llama" only to find 5 llamas with only 3 slots?
-	This app makes every llama have a full sized inventory. Simply click on the llama with a chest. 
+	This app makes every llama have a full sized inventory. Simply click on the llama with a chest.
 
 
 ### [nopickup.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/nopickup.sc):
@@ -207,7 +207,7 @@ Various scripts that modify various game elements, often replicating popular mod
 	/nopickup clear will clear the blacklist, allowing the current player to pick up all items normally
 	Blacklists are player-bound and are saved even between server restarts
 	Requires carpet fabric-carpet-1.16.4-1.4.16+v201105 or above
-	
+
 ### [playerme.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/playerme.sc):
 #### by BisUmTo
 	A wrapper around the /player carpet command. It will only allow the caller to affect themselves
@@ -232,10 +232,10 @@ Various scripts that modify various game elements, often replicating popular mod
 
 ### [potion_master_cleric.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/potion_master_cleric.sc):
 #### By Opsaaaaa
-	Adds 7 randomized potion trades to the Cleric. 
+	Adds 7 randomized potion trades to the Cleric.
 	It makes Haste, Dolphins Grace, Levitation, Wither, Blindness, Luck, and Mining Fatigue available in survival as potions.
 	Each effect can appear as a regular, splash, or lingering potion.
-	Once a cleric becomes a Journeyman they can developer 0-3 potion trades. 
+	Once a cleric becomes a Journeyman they can developer 0-3 potion trades.
 
 ### [prospectors_pick.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/prospectors_pick.sc):
 #### By gnembonmc
@@ -286,7 +286,7 @@ Various scripts that modify various game elements, often replicating popular mod
 ### [shear_corals.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/shear_corals.sc):
 #### By Ghoulboy
 	You can shear a coral, dead or alive, and there will be 0-5 drops which can be either coral fans or corals.
-	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you 
+	This is not op, as if you don't have silk touch, you will have to do this underwater, and at that stage you
 	will likely be doing this while fighting off drowned, crouching on a magma block.
 	In creative it will not drop anything, like for any block.
 
@@ -320,8 +320,18 @@ Various scripts that modify various game elements, often replicating popular mod
 	While sneaking, the silk_touch enchantment saves the Blockstates and the Blockdata of mined blocks.
 	It doesn't apply to containers and blacklisted blocks.
 
+### [silk_breakables.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/break_all_blocks.sc):
+#### By "Scott Gudeman" (DragonCrafted87)
+	Merge and extend the scripts: silk_spawners, silk_budding_amethyst
+	configurable scipt that lets you:
+		- lower the hardness of blocks
+		- set the tool(s) this applies to
+		- change what they drop and properly obeys enchantments
+		- save the nbt data of spawners
+		- set the sound that plays when the block breaks
+
 ### [silk_budding_amethyst.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/silk_budding_amethyst.sc):
-#### By "Scott Gudeman" (DragonCcrafted87)
+#### By "Scott Gudeman" (DragonCrafted87)
 	Conversion of silk_spawners.sc
 	Allows to silk touch mine budding_amethyst if holding a diamond or netherite pick with silk touch.
 
@@ -452,4 +462,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	ch-yx
 	SurfingDude
 	Crec0
+	DragonCrafted87
 	(Many more hopefully!)
