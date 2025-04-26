@@ -29,6 +29,8 @@ create_datapack('invupd',
     }
 );
 global_nope=nbt('{nope:nopeChYx'+rand(1)+'nope}');
+global_nope_barrier=nbt('{id:"minecraft:barrier",components:{custom_data:'+global_nope+'}}');
+global_nope_structure_void=nbt('{id:"minecraft:structure_void",components:{custom_data:'+global_nope+'}}');
 
 global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...map(range(27),[9+_,18+_])];
 
@@ -58,7 +60,7 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
             run('player ' + fakeplayer + ' hotbar ' + (data:'slot'-8))
             // END FIX
         );
-        if(inventory_get(screen, data:'slot'):2==global_nope,
+        if(inventory_get(screen, data:'slot'):2:'components':'minecraft:custom_data' == global_nope,
             return('cancel')
         );
         if(action=='slot_update' && 0<=data:'slot' && data:'slot'<54,
@@ -68,8 +70,8 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
 
     global_fakeplayersscreen:fakeplayer=screen;
 
-    loop(54,inventory_set(screen,_, 1, 'minecraft:structure_void',global_nope));
-    inventory_set(screen,fakeplayer~'selected_slot'+9, 1, 'minecraft:barrier',global_nope);
+    loop(54,inventory_set(screen,_, 1, 'minecraft:structure_void',global_nope_structure_void));
+    inventory_set(screen,fakeplayer~'selected_slot'+9, 1, 'minecraft:barrier',global_nope_barrier);
     playertoscreen(fakeplayer,screen)
 );
 
@@ -117,8 +119,8 @@ __fakeplayer_switches_slot(fakeplayer, from, to)->(
 // END FIX
     screen=global_fakeplayersscreen:fakeplayer;
     if(screen,(
-        inventory_set(screen,from+9, 1, 'minecraft:structure_void',global_nope);
-        inventory_set(screen,to  +9, 1, 'minecraft:barrier',global_nope);
+        inventory_set(screen,from+9, 1, 'minecraft:structure_void',global_nope_structure_void);
+        inventory_set(screen,to  +9, 1, 'minecraft:barrier',global_nope_barrier);
     ))
 );
 
