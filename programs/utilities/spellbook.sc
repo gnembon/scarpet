@@ -408,7 +408,7 @@ give_book(name) -> (
   book = _read_book(name);
   p = player();
   _print_message(p, 
-    run(str('/give %s written_book%s', query(p, 'command_name'), _render_book_nbt(book))):1
+    run(str('/give %s written_book[written_book_content=%s]', query(p, 'command_name'), _render_book_nbt(book))):1
   );
 );
 

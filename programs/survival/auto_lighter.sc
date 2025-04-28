@@ -14,14 +14,6 @@ __on_start() -> (
 	global_light_ground = true; //Whether or not we want to light the surface
 );
 
-
-// stay loaded
-__config() -> (
-   m(
-      l('stay_loaded','true')
-   )
-);
-
 __on_player_uses_item(player, item, hand) ->
 (
 	if (hand != 'mainhand', return());
@@ -33,7 +25,7 @@ __on_player_uses_item(player, item, hand) ->
 			if (!ench && player~'gamemode_id'!=3,
 				global_spread_love = 1;
 				if (ench==null, put(item:2:'components', '{}'));
-				put(item:2:'components', '{enchantments:{levels:{"protection":1}}}');
+				put(item:2:'components', '{enchantments:{"protection":1}}');
 					global_survival=!(player~'gamemode_id' % 2);
 				schedule(0, 'spread_torches', player, player~'gamemode_id');
 			);
