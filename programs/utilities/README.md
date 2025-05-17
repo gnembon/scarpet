@@ -12,6 +12,10 @@ Some apps are not fully documented yet, [feel free to contribute by improving th
 
 An app to count the amount of each different block in a volume, even showing graphs.
 
+### [bots.sc](https://github.com/gnembon/scarpet/commits/master/programs/utilities/bots.sc)
+#### By foospils
+Enhanced replacement for keepalive.sc. Save and restore sets of bots (carpet players) and autosave/restore bots on server restart
+
 ### [coord_export.sc](https://github.com/gnembon/scarpet/commits/master/programs/utilities/coord_export.sc)
 #### By aria1th
 
