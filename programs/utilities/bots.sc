@@ -28,7 +28,7 @@ schedule(0, _() -> (
 ));
 
 _check_permission() -> (
-  if (player() == null, return(global_required_permission < 5));
+  if (player() == null || global_singleplayer, return(global_required_permission < 5));
   player()~'permission_level' >= global_required_permission;
 );
 
@@ -228,10 +228,12 @@ _on_exit() -> (
   ));
 );
 
-if (run('whitelist list'), ( //multiplayer
+if (system_info('server_ip') != null, (
+  global_singleplayer = false;
   __on_server_shuts_down() -> _on_exit();
   __on_server_starts() -> schedule(40, 'apply_set', '#autosave');
-), (                        //singleplayer
+), (
+  global_singleplayer = true;
   __on_close() -> _on_exit();
   __on_server_starts() -> schedule(1, 'apply_set', '#autosave');
 ));
