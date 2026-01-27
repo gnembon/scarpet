@@ -46,7 +46,7 @@ __on_player_picks_up_item(player, ingested_item_tuple) -> if (global_vacuum == '
    [item, count, tag] = ingested_item_tuple;
    // skipping nonstackables, since they won't stack anyways
    if (stack_limit(item) > 1,
-      // unless its all messeup up modded, you have to have a sufficient stack in the inventory
+      // unless its all messed up modded, you have to have a sufficient stack in the inventory
       // even if it is split into multiple
       [item_slot, current_count] = __locate_sufficient_stack(player, item, count, tag );
       items_left = __add_item_to_vacuum_sboxes(player, item, count, tag, true);
@@ -103,7 +103,7 @@ __locate_sufficient_stack(player, search_item, required_count, search_tag ) ->
    item_slot = -1;
    while( (item_slot = inventory_find(player, search_item, item_slot+1)) != null, inventory_size(player),
       [item, count, tag] = inventory_get(player, item_slot);
-      if( search_tag == tag && (current_count = count) >= required_count,
+      if( search_tag:'components' == tag:'components' && (current_count = count) >= required_count,
          return([item_slot, current_count]);
       )
    );
@@ -135,7 +135,7 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
             if ( shulker_item ~ 'shulker_box$'
                   && scount == 1
                   && (components = parse_nbt(shulker_tag:'components')) != null
-                  && (custom_name = parse_nbt(components:'minecraft:custom_name')) != null
+                  && (custom_name = components:'minecraft:custom_name') != null
                   && lower(custom_name) ~ 'vacuum'
                   && (shulker_stacks = components:'minecraft:container') != null,
                // well, not sure why nbt query for singleton lists return that element, not a list
@@ -144,9 +144,11 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
                for ( shulker_stacks,
                   stack_tag = _;
                   list_position = _i;
-                  // searching for matching items with same tag that can accomodate extra items.
+                  // searching for matching items with same tag that can accommodate extra items.
                   if ( stack_tag:'item':'id' == item_fqdn
-                      && (initial_count = stack_tag:'item':'count') < item_limit,
+                      && (initial_count = stack_tag:'item':'count') < item_limit 
+                      && ( (parse_nbt(search_tag:'components') == parse_nbt(stack_tag:'item':'components'))
+                         ||(parse_nbt(search_tag:'components') == stack_tag:'item':'components')),
                      remaining_capacity = item_limit - initial_count;
                      restock_amount = min(remaining_capacity, refill_count);
                      // in that case we restock all or part of the refill item with the current sbox stack
@@ -155,7 +157,7 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
                        put(shulker_tag, 'components.minecraft:container['+list_position+'].item.count', new_count);
                        inventory_set(inventory, current_inventory_slot, 1, shulker_item, shulker_tag);
                      );
-                     // if we were able to accomodate the rest of the stack
+                     // if we were able to accommodate the rest of the stack
                      if (remaining_capacity >= refill_count, return(0) );
                      // continue with the rest of the stack
                      refill_count = refill_count - restock_amount;
@@ -283,7 +285,7 @@ __swap_stack(player, slot, previous_item, item, count, tag) ->
          if ( shulker_item ~ 'shulker_box$'
                && scount == 1
                && (components = parse_nbt(shulker_tag:'components')) != null
-               && (custom_name = parse_nbt(components:'minecraft:custom_name')) != null
+               && (custom_name = components:'minecraft:custom_name') != null
                && (shulker_type = lower(custom_name) ~ '(restock|swap)\\s+(same|keep|next|random|first)')
                && ([action_type, idx_choice] = shulker_type; (action_type!='restock' || count == 0 ) )
                && (shulker_stacks = components:'minecraft:container') != null ,
