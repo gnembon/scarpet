@@ -418,10 +418,10 @@ Various scripts that modify various game elements, often replicating popular mod
 	I suppose you could use it with TNT to send it smashing into things as a powerful and volatile weapon
 
 ### [waypoints.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/waypoints.sc):
-#### By Firigion and boyenn
-	Adds a server-side waypoints system, where any player can add and teleport to waypoints that any player
-	creates. Permissions to	teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY). It also
-	features the ability to render a line in direction of a waypoint (see https://youtu.be/0N2qVahMD7s).
+#### By Firigion, boyenn and foospils
+	Adds a server-side waypoints system that allows any player to add, list, track and teleport to waypoints that any player creates.
+	Permissions to teleport are highly customizable (see https://youtu.be/OF_hY1sTRYY).
+	Tracking is visualized via a floating sphere in the direction of the destination and/or the actionbar.
 
 ### [world_map.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/world_map.sc):
 #### By gnembon
@@ -452,4 +452,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	ch-yx
 	SurfingDude
 	Crec0
+	foospils
 	(Many more hopefully!)
