@@ -14,6 +14,11 @@ Lets you cover a set of blocks with a set of other blocks for ease of spawnproof
 
 A tool to help you create helixes, spirals, waves, curvy circles stars _and much more_ (Idk what else, I'm probably forgetting something) parametrically. It comes with built in help command and interactive settings. If you need help or details on how stuff works, see [here](https://github.com/Firigion/scarpets#curves).
 
+### [mark_area.sc](https://github.com/gnembon/scarpet/blob/master/programs/building/mark_area.sc)
+#### By foospils
+
+Visualize the area selected in WorldEdit. Simple replacement for WorldEditCUI that works with newers versions of minecraft (tested up to 1.21.5).
+
 ### [soft_replace.sc](https://github.com/gnembon/scarpet/blob/master/programs/building/soft_replace.sc):
 #### By Firigion
 
@@ -23,3 +28,4 @@ Lets you replace blocks in an area with other blocks, preserving their block pro
 #### By Firigion
 
 A set of tools to define simple shapes (spheres, discs, circles, lines and planes) in 3D space by setting three points in the world and fitting the shape to those. Also has a fun eraser tool to delete blobs of connected blocks. [Here](https://github.com/Firigion/scarpets#shapes) you can find more specifi information.
+
