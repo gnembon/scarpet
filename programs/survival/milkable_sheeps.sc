@@ -24,7 +24,6 @@ __on_player_interacts_with_entity(player, entity, hand) -> (
 milk_sheep(player, hand) -> (
     [item, count, data] = query(player, 'holds', hand);
     hand_id = if(hand == 'offhand', 40, hand == 'mainhand', player~'selected_slot');
-    print(hand_id);
     if(item == 'bucket',
         (
             if((empty_slot = inventory_find(player, null)) >= 36, empty_slot = null);
