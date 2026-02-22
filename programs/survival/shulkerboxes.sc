@@ -103,7 +103,7 @@ __locate_sufficient_stack(player, search_item, required_count, search_tag ) ->
    item_slot = -1;
    while( (item_slot = inventory_find(player, search_item, item_slot+1)) != null, inventory_size(player),
       [item, count, tag] = inventory_get(player, item_slot);
-      if( search_tag == tag && (current_count = count) >= required_count,
+      if( search_tag:'components' == tag:'components' && (current_count = count) >= required_count,
          return([item_slot, current_count]);
       )
    );
@@ -146,7 +146,9 @@ __add_item_to_vacuum_sboxes(player, search_item, refill_count, search_tag, do_ch
                   list_position = _i;
                   // searching for matching items with same tag that can accomodate extra items.
                   if ( stack_tag:'item':'id' == item_fqdn
-                      && (initial_count = stack_tag:'item':'count') < item_limit,
+                      && (initial_count = stack_tag:'item':'count') < item_limit 
+                      && ( (parse_nbt(search_tag:'components') == parse_nbt(stack_tag:'item':'components'))
+                         ||(parse_nbt(search_tag:'components') == stack_tag:'item':'components')),
                      remaining_capacity = item_limit - initial_count;
                      restock_amount = min(remaining_capacity, refill_count);
                      // in that case we restock all or part of the refill item with the current sbox stack
