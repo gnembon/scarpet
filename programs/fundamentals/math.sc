@@ -1,6 +1,8 @@
 
 sum(list) -> reduce(list, _a+_, 0);
 
+sign(num) -> if (num < 0, -1, 1);
+
 int(num) -> if (num < 0, ceil(num), floor(num));
 
 //Only integer is accepted, and max is 32 binary digits
@@ -42,6 +44,35 @@ distance(vec1, vec2) -> sqrt(reduce(vec1 - vec2, _a + _*_, 0));
 
 dot(vec1, vec2) -> reduce(vec1 * vec2, _a + _, 0);
 
+norm(vec) -> sqrt(reduce(vec, _a + _*_, 0));
+
+normalize(vec) -> vec / sqrt(reduce(vec, _a + _*_, 0));
+
+cross(v, w) -> [v:1*w:2 - v:2*w:1, v:2*w:0 - v:0*w:2, v:0*w:1 - v:1*w:0];
+
+outer(v, w) -> map(w, v*_);
+
+cross_matrix(vec) -> (
+	[x, y, z] = vec;
+	[[0, -z, y], [z, 0, -x], [-y, x, 0]]
+);
+
+// the following methods assume a square matrix indexed by row (i.e, mat:0 is the first row)
+mat_times_vec(matrix, vec) -> map(matrix * map(vec, vec), reduce(_, _a+_, 0));
+
+mat_times_mat(mat1, mat2) -> (
+	mat2 = transpose(mat2);
+	map(mat1,
+		i = _i;
+		map(mat2,
+			j = _i;
+			dot(mat1:i, mat2:j)
+		)
+	)
+);
+
+transpose(m) -> map(m:0, i = _i; map(m, _:i) );
+
 highest_common_factor(num1,num2) -> (
 	q=1;
 	while(q!=0,num1*num2,
@@ -61,3 +92,6 @@ highest_common_factor_list(list)-> reduce(list, highest_common_factor(_,_a),list
 
 // computes LCM for a list of numbers
 lowest_common_multiple_list(list)-> reduce(list, lowest_common_multiple(_,_a), list:0);
+
+// convert yaw, pitch as given by MC into a normalized vector
+direction(yaw, pitch) -> [-sin(yaw)*cos(pitch), -sin(pitch), cos(pitch)*cos(yaw)];
