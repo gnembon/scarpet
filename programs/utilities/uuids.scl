@@ -1,0 +1,57 @@
+// Returns a new UUID int array
+generate_uuid() -> (
+    uuid = map(range(4), floor(rand(2^32)));
+    uuid:1 = bitwise_and(uuid:1, 0xffff0fff); // clear version
+    uuid:1 = bitwise_or(uuid:1, 0x00004000);  // set to version 4
+    uuid:2 = bitwise_and(uuid:2, 0x3fffffff); // clear variant
+    uuid:2 = bitwise_or(uuid:2, 0x80000000);  // set to IETF variant
+    uuid
+);
+
+// Returns a new UUID string
+generate_uuid_string() -> uuid_to_string(generate_uuid());
+
+// Converts UUID int array to UUID string
+uuid_to_string(uuid) -> (
+    if( type(uuid) != 'list' ||
+        length(uuid) != 4 ||
+        reduce(uuid, _a || type(_) != 'number', false),
+    // then
+        exit('Invalid UUID: ' + uuid)
+    );
+    str('%08x-%04x-%04x-%04x-%04x%08x', uuid:0, floor(uuid:1 / 2^16), uuid:1 % 2^16, floor(uuid:2 / 2^16), uuid:2 % 2^16, uuid:3)
+);
+
+// Converts UUID string to UUID int array
+string_to_uuid(uuid_string) -> (
+    if( type(uuid_string) != 'string' ||
+        c = split('-', uuid_string); 
+        length(c) != 5 ||
+        length(c:0) != 8 ||
+        length(c:1) != 4 ||
+        length(c:2) != 4 ||
+        length(c:3) != 4 ||
+        length(c:4) != 12,
+    // then
+        exit('Invalid UUID string: ' + uuid_string)
+    );
+    c = [c:0, c:1 + c:2, c:3 + slice(c:4, 0, 4), slice(c:4, 4, 12)];
+    try(
+        map(c, _hex_to_number(_)),
+    // catch
+        exit('Invalid UUID string: ' + uuid_string)
+    )
+);
+
+// HEX STRING TO NUMBER
+global_hex = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'];
+_hex_to_number(string) -> (
+    char = split('', lower(string));
+    for(char,
+        c = c * 16; 
+        t = global_hex ~ _;
+        if(t == null, exit('Invalid hexadecimal character \'' + _ + '\' in string: ' + string));
+        c += t
+    );
+    c
+);
