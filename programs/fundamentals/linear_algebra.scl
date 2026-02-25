@@ -1,0 +1,255 @@
+//A library of functions to create and manipulate matrices. It uses classes.scl, and is written as a class
+//To use it, import the matrix_data and matrix_empty functions from here and call_function from classes.scl
+//The matrix_data function takes in a list of lists of numbers, and returns an appropriate matrix
+//  my_matrix = matrix_data([[1, 2], [3, 4]])
+//The matrix_empty functoin takes in a row number and column number, and returns an empty matrix
+//  empty_matrix = matrix_empty(3, 4)
+//
+//To call a method, use call_function(matrix_object, function_name, args)
+//To get your matrix as a string, use call_function(matrix_object, 'str')
+//To access the matrix's fields, use matrix_object:fieldname
+//  matrix_data = matrix_object:'data'
+//  matrix_rows = matrix_object:'rows'
+//  matrix_cols = matrix_object:'cols'
+//  is_matrix_square = matrix_object:'is_square'
+//
+//By: Ghoulboy
+
+import('classes', 'new_class', 'call_function', 'new_object', 'instance_of');
+
+//Matrices
+
+//class code taken from https://gist.github.com/hallazzang/4e6abbb05ff2d3e168a87cf10691c4fb
+matrix_class = new_class('Matrix', {
+    'data'->null,
+    'rows'->0,
+    'cols'->0,
+    'is_square'->null,
+    '__init__'->_(self, ...args)->(
+        if(length(args)==1,
+            call(self:'__init_data', self, args:0),
+            length(args)==2,
+            call(self:'__init_empty', self, args:0, args:1),
+            throw('Must initialise a matrix with either 1 data value or a row number and column number')
+        )
+    ),
+    '__init_data'->_(self, data)->(
+        if(!is_matrix(data), throw('Must initialize a matrix with a list of lists of numbers with even lengths'));
+        self:'data' = data;
+        self:'rows'=length(data);
+        self:'cols'=length(data:0);
+        self:'is_square'=length(data)==length(data:0);
+        self
+    ),
+    '__init_empty'->_(self, rows, cols)->(
+        data = [];
+        col = [];
+        loop(cols, col+=0);
+        loop(rows, data+=copy(col));
+        self:'data' = data;
+        self:'rows'=rows;
+        self:'cols'=cols;
+        self:'is_square'=rows==cols;
+        self
+    ),
+    'str'->_(self)->[self, str(self:'data')],
+    'transpose'->_(self)->(
+        result = matrix_empty(self:'cols', self:'rows');
+        result:'data' = _iterate(result:'data', _(outer(self), v, r, c)->
+            self:'data':c:r
+        );
+        [self, result]
+    ),
+    'sub_matrix'->_(self, exclude_row, exclude_column)->(
+        result = matrix_empty(self:'rows'-1, self:'cols'-1);
+        p=0;
+        q=0;
+        result:'data'=_iterate(result:'data', _(outer(self), outer(exclude_row), outer(exclude_column), v, r, c)->(
+            x = if(r<exclude_row, r, r+1);
+            y = if(c<exclude_column, c, c+1);
+            self:'data':x:y
+        ));
+        [self, result]
+    ),
+    'row'->_(self, row)->[self, self:'data':row],
+    'column'->_(self, column)->(
+        col = [];
+        loop(length(self:'data'), col+=self:'data':_:column);
+        [self, col]
+    ),
+    'determinant'->_(self)->[self, if(!self:'is_square', null, call(self:'_determinant', self):1)],
+    '_determinant'->_(self)->(
+        data=self:'data';
+        if(self:'cols'==1,
+            result=data:0:0,
+            self:'cols'==2,
+            result=data:0:0*data:1:1-data:0:1*data:1:0,
+            result=0;
+            loop(self:'cols',
+                col=_;
+                sub = call_function(self, 'sub_matrix', 0, col);
+                result+=((col)%2*-2+1)*(data:0:col)*(call(sub:'_determinant', sub):1) 
+            )
+        );
+        [self, result]
+    ),
+    'inverse'->_(self)->( //todo fix this, seems broken
+        det = call_function(self, 'determinant');
+        result = null;
+        if(!self:'is_square' || det == 0,
+            self,
+            result = matrix_empty(self:'rows', self:'cols');
+            result:'data'=_iterate(self:'data', _(outer(self), outer(det), v, r, c)->(
+                sub = call_function(self, 'sub_matrix', r, c);
+                1/det*((r+c)%2*-2+1)*call(sub:'determinant', sub):1
+            ));
+            [self, result]
+        );
+    ),
+    'add'->_(self, matrix)->(
+        check_matrix(matrix);
+        if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
+            throw('Cannot add uneven matrices')
+        );
+        result = copy(self);
+        result:'data' = self:'data' + matrix:'data';
+        [self, result]
+    ),
+    'subtract'->_(self, matrix)->(
+        check_matrix(matrix);
+        if(matrix:'rows'!=self:'rows'||matrix:'cols'!=self:'cols',
+            throw('Cannot subtract uneven matrices')
+        );
+        result = copy(self);
+        result:'data' = self:'data' - matrix:'data';
+        [self, result]
+    ),
+    'multiply'->_(self, matrix)->(
+        check_matrix(matrix);
+        if(matrix:'rows'!=self:'cols',
+            throw('The first matrix\'s columns must equal the second\'s rows')
+        );
+        result = matrix_empty(self:'rows', matrix:'cols');
+        result:'data'=_iterate(result:'data', _(outer(self), outer(matrix), v, r, c)->(
+            sum(...(call_function(self, 'row', r)*call_function(matrix, 'column', c))) 
+        ));
+        [self, result]
+    ),
+});
+
+//Checks for a list of lists of numbers
+is_matrix(data)-> instance_of(data, 'Matrix') || (type(data)=='list' && (
+    init_length = length(data:0);
+    d = for(data,
+        l=_;
+        type(l)=='list' && for(l, type(_)=='number') == init_length
+    );
+    d==length(data)
+));
+
+//If it's not a matrix, throws an error
+check_matrix(data)->if(!is_matrix(data), throw('invalid_matrix', 'value_exception', data));
+
+//Iterate across rows and columns
+_iterate(data, func)->(
+    _data = data;
+    rows = length(_data);
+    cols = length(_data:0);
+    loop(rows,
+        r=_;
+        loop(cols,
+            c=_;
+            d=_data:r:c;
+            _data:r:c = call(func, d, r, c)
+        )
+    );
+    _data
+);
+
+//Vectors
+
+vector_class = new_class('Vector', {
+    'size'->0,
+    '__init__'->_(self, ...args)->(
+        if(length(args)==1,
+            call(self:'__init_empty', self, args:0),
+            call(self:'__init_data', self, args)
+        );
+    ),
+    '__init_data'->_(self, data)->(
+        if(!is_vector(data), throw('Must initialize a vector with a list of numbers'));
+        self:'data' = data;
+        self:'size'=length(data);
+        self
+    ),
+    '__init_empty'->_(self, size)->(
+        data = [];
+        loop(size, data+=0);
+        self:'data' = data;
+        self:'size'=size;
+        self
+    ),
+    'str'->_(self)->[self, str(self:'data')],
+    //'transpose'->_(self)->( // Goes from row matrix to column matrix
+    //    result = matrix_empty(self:'cols', self:'rows');
+    //    result:'data' = _iterate(result:'data', _(outer(self), v, r, c)->
+    //        self:'data':c:r
+    //    );
+    //    [self, result]
+    //),
+    'data_point'->_(self, pos)->[self, self:'data':pos], //todo new name for this
+    'add'->_(self, vector)->( //todo add matrix compatibility
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot add uneven vectors'));
+        result = copy(self);
+        result:'data' = self:'data' + vector:'data';
+        [self, result]
+    ),
+    'subtract'->_(self, vector)->( //todo add matrix compatibility
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot subtract uneven vectors'));
+        result = copy(self);
+        result:'data' = self:'data' - vector:'data';
+        [self, result]
+    ),
+    'dot_product'->_(self, vector)->(
+        check_vector(vector);
+        if(vector:'size'!=self:'size', throw('Cannot calculate a dot product with uneven vectors'));
+        [self, sum(...(self:'data'*vector:'data'))]
+    ),
+    'cross_product'->_(self, vector)->(
+        if(self:'size'!=3, throw(str('Tried to calculate cross product with vector of length %s, instead of 3', self:'size')));
+        check_vector(vector);
+        if(vector:'size'!=3, throw(str('Tried to calculate cross product with vector of length %s, instead of 3', vector:'size')));
+        [self, vector_data(
+            self:'data':1*vector:'data':2 - self:'data':2*vector:'data':1,
+            self:'data':2*vector:'data':0 - self:'data':0*vector:'data':2,
+            self:'data':0*vector:'data':1 - self:'data':1*vector:'data':0,
+        )]
+    ),
+    //'multiply'->_(self, matrix)->( //todo separate into dot product, cross product, and multiplication into a matrix
+    //    check_vector(matrix); 
+    //    if(matrix:'rows'!=self:'cols',
+    //        throw('The first matrix\'s columns must equal the second\'s rows')
+    //    );
+    //    result = matrix_empty(self:'rows', matrix:'cols');
+    //    result:'data'=_iterate(result:'data', _(outer(self), outer(matrix), v, r, c)->(
+    //        sum(...(call_function(self, 'row', r)*call_function(matrix, 'column', c))) 
+    //    ));
+    //    [self, result]
+    //),
+}, matrix_class);
+
+is_vector(data)-> instance_of(data, 'Vector') || (type(data)=='list' && all(data, type(_)=='number'));
+
+//If it's not a vector, throws an error
+check_vector(data)->if(!is_vector(data), throw('invalid_vector', 'value_exception', data));
+
+
+//Constructor functions
+
+matrix_data(outer(matrix_class), data)->new_object(matrix_class, data);
+matrix_empty(outer(matrix_class), rows, cols)->new_object(matrix_class, rows, cols)
+
+vector_data(outer(vector_class), ...data)->new_object(vector_class, ...data);
+vector_empty(outer(vector_class), size)->new_object(vector_class, size);
