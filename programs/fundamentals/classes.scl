@@ -1,0 +1,142 @@
+//Library functions which add classes to scarpet
+//
+//This implementation makes maps as classes, and each map has to have a __init__ function.
+//All functions must take at least one parameter (like in Python 'self'), and then any additional parameters.
+//If the function should return nothing, then return just the object itself (with any modifications that the function adds)
+//If the function should return something, return a list with the object as the first element, and return value as the second
+//For fields, just access and set them like you would access and set values in a normal map
+//
+//When declaring methods in the class, you can optionally add a _ infront of them to make them private.
+//This means that they cannot be called using call_function(), telling the programmer that they're potentially dangerous.
+//When calling functions within the class methods, just use call(self:function_name, self, args).
+//This allows you to access private functions within the object.
+//
+//When calling a function, use call_function(), with the object as the first parameter, function name as the second
+//and then any arguments at the end. If the function has a return value, then call_function() will return it, otherwise
+//it will return null.
+//
+//
+//For an example of all this, see max_heap.scl
+//By: Ghoulboy
+
+//Initializes a class with its parent classes, which are passed in as their classes, not their names
+//We need the classes to complete the declaration of the class by essentially filling in all the missing methods
+new_class(name, declarer, ...parents)->(
+    //Also means a class called Anonymous won't work
+    declarer:'__name__' = if(name=='', 'Anonymous', name);
+    declarer:'__parents__' = {}; //Using a set to avoid duplicate parentage
+    declarer:'__member_data__' = {}; //Used to improve error messages
+    for(parents,
+        class=_;
+        if(class:'__name__'=='Anonymous', throw('Cannot inherit from an anonymous class'));
+        declarer:'__parents__'+=class:'__name__';
+        for(class,
+            member = _;
+            if(member=='__parents__',//Pushing parents' parents into child's parents
+                declarer:'__parents__' = declarer:'__parents__' + class:'__parents__',
+                !has(declarer, member), //stuff which the declarer doesn't override
+                declarer:member = class:member;
+                //Cos methods beginning with __init are for initialisation, so we don't save those
+                if(!(member ~ '^__init'), declarer:'__member_data__':member = class:'__name__')
+            );
+        )
+    );
+    if(name!='Object',
+        object = global_object_class;
+        for(object,
+            member = _;
+            if(!has(declarer, member),
+                declarer:member = object:member;
+                declarer:'__member_data__':member = 'Object'
+            )
+        )
+    );
+    //Checking for initializer here cos it could have been stolen from a parent class
+    if(!has(declarer, '__init__') || type(declarer:'__init__')!='function', throw('missing_constructor', 'value_exception', declarer));
+    declarer
+);
+
+
+//Checks that a given input is a class.
+//NB: this only checks that it has a valid constructor and has a __name__ property
+is_class(class)->
+    type(class)=='map' && has(class, '__init__') && type(class:'__init__')=='function' && has(class, '__name__') && has(class, '__parents__');
+
+//This throws an exception if a given input is not a valid class
+check_class(class)->
+    if(!is_class(class), throw('invalid_class', 'value_exception', class));
+
+//the object is literally the same as class, except we have called initializer
+new_object(class, ...args)->(
+    check_class(class);
+    object = copy(class); //this is to avoid modifying the original map
+    call(object:'__init__', object, ...args);
+    
+);
+
+//Basically java instanceof operator
+instance_of(object, class_name)->is_class(object)&&(class_name=='Object' || object:'__name__'==class_name || has(object:'__parents__', class_name));
+
+//This is for calling public functions (which don't begin with _)
+//You can use call() directly, but this gives return value of functions neatly and blocks you from using private methods
+call_function(object, function, ...args)->(
+    check_class(object);
+    if(!has(object, function), throw('unknown_method', 'value_exception', function));
+    if(split(function):0 == '_', throw('hidden_method', 'value_exception', function));
+    cb = call(object:function, object, ...args);
+    if(type(cb)=='map',
+        object = cb; null,
+        type(cb)=='list',
+        object=cb:0; cb:1,
+        // must either return modified object, or a list pair of the object and the return value of the function
+        // Just checking here if we forgot to implement an abstract method from an interface
+        instance_of(object, 'Interface'),
+        //Copying Java's error message for unimplemented interface functions
+        throw(str('Class \'%s\' must implement abstract method \'%s\' inherited from class \'%s\'',
+            object:'__name__',
+            function,
+            object:'__member_data__':function
+        )),
+        throw('invalid_function_return', 'value_exception', cb)
+    )
+);
+
+
+//This is a fundamental base class which all classes inherit from.
+//It contains base methods which we can guarantee will be in all classes
+//A bit of the code is copied from Value.java, and some from Object.java
+global_object_class = new_class('Object', {
+    '__init__'->_(self)->throw('Cannot initialize class of '+self:'__name__'),
+    'str'->_(self)->[self, self:'__name__' + '@' + call_function(self, 'hash')],
+    'hash'->_(self)->[self, hash(self)],
+    'number'->_(self)->[self, length(call_function(self, 'str'))],
+    'class'->_(self)->[self, self:'__name__'],
+    'equals'->_(self, obj)->[self, self==obj],
+    'clone'->_(self)->[self, copy(self)],
+    'bool'->_(self)->[self, bool(call_function(self, 'number'))],
+    'compare'->_(self, other)->[self, call_function(self, 'number') - call_function(other, 'number')],
+    'length'->_(self)->[self, length(call_function(self, 'str'))],
+    'nbt'->_(self)->[self, nbt(call_function(self, 'str'))],
+    'json'->_(self)->[self, encode_json(call_function(self, 'str'))],
+}); 
+
+//This will be used to simulate interfaces, essentially.
+//Classes which want to be interfaces can inherit from this and not specify a constructor
+global_interface_class = new_class('Interface', {
+    '__init__'->_(self)->throw('Cannot initialize an interface class'),
+});
+
+//Some template classes. These may in time be moved to a separate file
+global_iterator_class = new_class('Iterator', {
+    'has_next'->_(self)->null,
+    'next'->_(self)->null,
+    'for_each'->_(self, function)->(
+        while(call_function(self, 'has_next'), 0x7FFFFFFFFFFFFFFF,
+            next = call(self:'next', self);
+            if(next==null, break());
+            call(function, next:1);
+        );
+        self
+    ),
+}, global_interface_class);
+
