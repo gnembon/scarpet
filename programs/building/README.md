@@ -23,3 +23,12 @@ Lets you replace blocks in an area with other blocks, preserving their block pro
 #### By Firigion
 
 A set of tools to define simple shapes (spheres, discs, circles, lines and planes) in 3D space by setting three points in the world and fitting the shape to those. Also has a fun eraser tool to delete blobs of connected blocks. [Here](https://github.com/Firigion/scarpets#shapes) you can find more specifi information.
+
+### scarpet_edit_installer.sc
+#### Installer by altrisi
+
+An app to easily install or update Scarpet Edit and its translations. It's not intended to be downloaded manually, and won't work that way. Instead, run `/script download building/scarpet_edit_installer.sc` in order to download it and make it install Scarpet Edit for you.
+
+Scarpet Edit is "A helpful app for designing and building. It is inspired by many mods, like World-Edit, but is not directly affiliated with any of them.".
+
+Check the [Scarpet Edit repo](https://github.com/Ghoulboy78/Scarpet-Edit) for more information, including documentation and steps to contribute. You can also see a list of commands ingame by running the `/se help` command. The full list of contributors can be found [over there](https://github.com/Ghoulboy78/Scarpet-edit/graphs/contributors).
