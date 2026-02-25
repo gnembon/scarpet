@@ -2,23 +2,41 @@
 //locate prints the first 100, and you can tp to those locations
 //hist gives a distribution over defined y values
 //By: Ghoulboy
-__command()->(print(''));
 
-locate(r,cx,cy,cz,block)->(
+__config()->{
+	'commands'->{
+		''->_()->print('Root call'),
+		'locate <radius> <block>'->['locate',null],
+		'locate <radius> <block> <pos>'->'locate',
+		'hist <radius> <block>'->['hist',null],
+		'hist <radius> <block> <pos>'->'hist',
+	},
+	'arguments'->{
+		'radius'->{
+			'type' -> 'int',
+			'min' -> 0,
+			'suggest' -> [10, 50, 100]
+		},
+	}
+};
+
+locate(r,block,c_pos)->(
+	[cx, cy, cz] = c_pos||pos(player());
 	i=0;
 	scan([cx, cy, cz], [r, r, r],
 		if(_==block,
 			if(i<100,
 			    pos = pos(_);
-				print(format('gi '+pos,str('!/script run modify(p,\'pos\',%s)',str(pos))))
+				print(player(), format('gi '+pos,str('!/script run modify(p,\'pos\',%s)',str(pos))))
 			);
 			i+=1
 		)
 	);
-	'Block: '+block+' was found '+i+' times'
+	print(player(), format('gi Block: '+block+' was found '+i+' times'))
 );
 
-hist(r,cx,cy,cz,block)->(
+hist(r,block,c_pos)->(
+	[cx, cy, cz] = c_pos||pos(player());
 	blocks={};
 	scan([cx,cy,cz],[r,r,r],
 		if(_==block,blocks:_y+=1)
@@ -26,7 +44,7 @@ hist(r,cx,cy,cz,block)->(
 	for(blocks,
 		if(blocks:_<40,
 			print(_+': '+'*'*blocks:_+'	'+blocks:_+' times'),
-			print(_+': '+blocks:_+' times')
+			print(_+': '+'*'*30+'	'+blocks:_+' times')
 		)
 	)
 )
