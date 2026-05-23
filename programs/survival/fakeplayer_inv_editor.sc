@@ -32,7 +32,7 @@ global_nope=nbt('{nope:nopeChYx'+rand(1)+'nope}');
 global_nope_barrier=nbt('{id:"minecraft:barrier",components:{custom_data:'+global_nope+'}}');
 global_nope_structure_void=nbt('{id:"minecraft:structure_void",components:{custom_data:'+global_nope+'}}');
 
-global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...map(range(27),[9+_,18+_])];
+global_slotmap=[[-3,7],[-7,1],[-6,2],[-5,3],[-4,4],...map(range(9),[_,45+_]),...map(range(27),[9+_,18+_])];
 
 
 global_fakeplayersscreen={};
