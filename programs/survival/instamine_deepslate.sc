@@ -43,7 +43,7 @@ __has_haste_2(player) -> (
 
 __has_efficiency_5(nbt) -> (
     // get enchantments list
-    enchants_list = nbt: 'components': 'minecraft:enchantments': 'levels';
+    enchants_list = nbt: 'components': 'minecraft:enchantments';
 
     // check if enchants exist
     if (enchants_list != null,
