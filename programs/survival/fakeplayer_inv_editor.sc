@@ -2,7 +2,7 @@ __config()->{
     'scope'->'global',
     'stay_loaded'->true,
     'requires' -> {
-        'carpet' -> '>=1.4.57',
+        'carpet' -> '>=1.4.173',
         'minecraft' -> '>=1.21',
     }
 };
