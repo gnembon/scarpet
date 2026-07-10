@@ -247,6 +247,14 @@ Various scripts that modify various game elements, often replicating popular mod
 	Fortune 1 shows only iron, coal and redstone.
 	Fortune 3 shows diamond, lapis,gold, redstone and emerald, not iron and coal
 
+### [react_bot_control.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/react_bot_control.sc):
+#### By weirdness-code
+	Allows for better configuration of the /player command, and fake player behavior, for server owners.
+	Features can be turned on or off, and include:
+	- Killing a player's bots after they leave, with an option to respawn bots automatically upon reconnecting
+	- A whitelist that allows players in it to bypass the script configuration
+	- Disabling killing other players' fake players, setting a max amount of spawnable fake players, disabling certain player sub-commands
+
 ### [renewable_elytra_trade.sc](https://github.com/gnembon/scarpet/blob/master/programs/survival/renewable_elytra_trade.sc):
 #### By Firigion
 	Renewable elytra through adding a trade to the otherwise useless leatherworker. The trade appears when interacting
@@ -452,4 +460,5 @@ Various scripts that modify various game elements, often replicating popular mod
 	ch-yx
 	SurfingDude
 	Crec0
+	weirdness-code
 	(Many more hopefully!)
