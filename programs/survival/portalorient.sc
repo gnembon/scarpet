@@ -88,7 +88,7 @@ __on_player_changes_dimension(player, from_pos, from_dimension, to_pos, to_dimen
 		//scan each side of the portal for blocks based on the player's chosen mode
 		//	air -> face the side with more air blocks
 		//	solid -> face the side with fewer solid blocks
-		sidelist = l[];
+		sidelist = [];
 		loop(2,
 			sign = 2 * _ - 1;
 			sidelist += volume(corners:0 + sign * offset,corners:1 + sign * offset,
