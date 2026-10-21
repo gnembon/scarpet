@@ -77,9 +77,9 @@ __cascade_smash(center_pos, ttl, bias, position) ->
 	[x, y, z] = position;
 	[cx, cy, cz] = center_pos;
 	[dx, dy, dz] = bias;
-	nbttag = nbt('{BlockState:{Name:"minecraft:'+block_name+'"},Time:1}');
+	nbttag = nbt('{BlockState:{id:"minecraft:'+block_name+'"},Time:1}');
 	if (block_data, put(nbttag, 'TileEntityData', block_data));
-	if (properties_tag, put(nbttag, 'BlockState.Properties', properties_tag));
+	if (properties_tag, put(nbttag, 'BlockState.properties', properties_tag));
 	falling_block = spawn( 'falling_block', x+0.5, y+0.5, z+0.5, nbttag );
 	modify(falling_block,'motion',
 		((x-cx)/10+rand(0.05)+dx)/hardness,
